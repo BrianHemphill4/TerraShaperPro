@@ -1,0 +1,16 @@
+{
+  "name": "@terrasherper/scripts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "ingest:plants": "tsx src/ingest-plants.ts"
+  },
+  "dependencies": {
+    "@terrasherper/db": "0.1.0",
+    "csv-parse": "^5.5.6",
+    "tsx": "^4.16.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+} 

@@ -1,0 +1,188 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20.x'
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+jobs:
+  deploy-web:
+    name: Deploy Web App
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web app
+        run: npm run build -- --filter=web
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_CLERK_SIGN_IN_URL: /sign-in
+          NEXT_PUBLIC_CLERK_SIGN_UP_URL: /sign-up
+          NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: /dashboard
+          NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: /dashboard
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./apps/web
+
+  deploy-api:
+    name: Deploy API Gateway
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build API Gateway
+        run: npm run build -- --filter=api-gateway
+
+      - name: Build Docker image
+        run: |
+          docker build -t terrashaper-api-gateway:${{ github.sha }} \
+            --build-arg NODE_VERSION=${{ env.NODE_VERSION }} \
+            -f apps/api-gateway/Dockerfile \
+            .
+
+      - name: Configure Google Cloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for Google Cloud
+        run: gcloud auth configure-docker
+
+      - name: Push Docker image
+        run: |
+          docker tag terrashaper-api-gateway:${{ github.sha }} gcr.io/${{ secrets.GCP_PROJECT_ID }}/terrashaper-api-gateway:${{ github.sha }}
+          docker tag terrashaper-api-gateway:${{ github.sha }} gcr.io/${{ secrets.GCP_PROJECT_ID }}/terrashaper-api-gateway:latest
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/terrashaper-api-gateway:${{ github.sha }}
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/terrashaper-api-gateway:latest
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy terrashaper-api-gateway \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/terrashaper-api-gateway:${{ github.sha }} \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated \
+            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            --set-env-vars DIRECT_DATABASE_URL=${{ secrets.DIRECT_DATABASE_URL }} \
+            --set-env-vars REDIS_URL=${{ secrets.REDIS_URL }} \
+            --set-env-vars CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }} \
+            --set-env-vars SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+
+  deploy-worker:
+    name: Deploy Render Worker
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Render Worker
+        run: npm run build -- --filter=render-worker
+
+      - name: Build Docker image
+        run: |
+          docker build -t terrashaper-render-worker:${{ github.sha }} \
+            --build-arg NODE_VERSION=${{ env.NODE_VERSION }} \
+            -f apps/render-worker/Dockerfile \
+            .
+
+      - name: Configure Google Cloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for Google Cloud
+        run: gcloud auth configure-docker
+
+      - name: Push Docker image
+        run: |
+          docker tag terrashaper-render-worker:${{ github.sha }} gcr.io/${{ secrets.GCP_PROJECT_ID }}/terrashaper-render-worker:${{ github.sha }}
+          docker tag terrashaper-render-worker:${{ github.sha }} gcr.io/${{ secrets.GCP_PROJECT_ID }}/terrashaper-render-worker:latest
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/terrashaper-render-worker:${{ github.sha }}
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/terrashaper-render-worker:latest
+
+      - name: Deploy to Cloud Run Jobs
+        run: |
+          gcloud run jobs update terrashaper-render-worker \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/terrashaper-render-worker:${{ github.sha }} \
+            --region us-central1 \
+            --parallelism 10 \
+            --max-retries 3 \
+            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            --set-env-vars DIRECT_DATABASE_URL=${{ secrets.DIRECT_DATABASE_URL }} \
+            --set-env-vars REDIS_URL=${{ secrets.REDIS_URL }} \
+            --set-env-vars GCS_BUCKET=${{ secrets.GCS_BUCKET }} \
+            --set-env-vars SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+
+  run-migrations:
+    name: Run Database Migrations
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [deploy-web, deploy-api, deploy-worker]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run migrations
+        run: npm run db:migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_DATABASE_URL: ${{ secrets.DIRECT_DATABASE_URL }}

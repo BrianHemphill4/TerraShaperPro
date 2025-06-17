@@ -1,0 +1,579 @@
+Ref #,P1,Underscore,Species Name,Common Name,Common / Nicknames,"Sun Preference (Full Sun or Partial Sun, Full Shade)",Maintenance Level (1-5),Drought Resistant (1-5),Disease Risk (1-5 years),Avg Lifespand (in yrs),Nickname,Plant Type
+1,1,Live_Oak,Quercus virginiana,Live Oak,Live Oak,Full Sun,1,4,2,150,,Shade Tree
+2,1,Shumard_Red_Oak,Quercus shumardii,Shumard Red Oak,Shumard Red Oak - Shumard Oak,Full Sun,1,3,2,120,Shumard Oak,Shade Tree
+3,1,Bur_Oak,Quercus macrocarpa,Bur Oak,Bur Oak,Full Sun,1,4,1,200,,Shade Tree
+4,1,Chinkapin_Oak,Quercus muehlenbergii,Chinkapin Oak,Chinkapin Oak,Full Sun,1,4,1,150,,Shade Tree
+5,1,Escarpment_Live_Oak,Quercus fusiformis,Escarpment Live Oak,Escarpment Live Oak,Full Sun,1,5,1,200,,Shade Tree
+6,1,Water_Oak,Quercus nigra,Water Oak,Water Oak,Full Sun,2,2,4,80,,Shade Tree
+7,1,Willow_Oak,Quercus phellos,Willow Oak,Willow Oak,Full Sun,2,2,3,100,,Shade Tree
+8,1,Post_Oak,Quercus stellata,Post Oak,Post Oak,Full Sun,1,5,1,200,,Shade Tree
+9,1,Cedar_Elm,Ulmus crassifolia,Cedar Elm,Cedar Elm,Full Sun,2,4,3,120,,Shade Tree
+10,1,Lacebark_Elm,Ulmus parvifolia,Lacebark Elm,Lacebark Elm - Chinese Elm,Full Sun,1,4,1,120,Chinese Elm,Shade Tree
+11,1,American_Elm,Ulmus americana,American Elm,American Elm,Full Sun,2,3,5,100,,Shade Tree
+12,1,Sugar_Hackberry,Celtis laevigata,Sugar Hackberry,Sugar Hackberry,Full Sun,1,4,3,100,,Shade Tree
+13,1,Bald_Cypress,Taxodium distichum,Bald Cypress,Bald Cypress,Full Sun,2,2,2,600,,Shade Tree
+14,1,American_Sycamore,Platanus occidentalis,American Sycamore,American Sycamore,Full Sun,2,2,4,200,,Shade Tree
+15,1,Pecan,Carya illinoinensis,Pecan,Pecan,Full Sun,3,3,4,150,,Shade Tree
+16,1,Sweetgum,Liquidambar styraciflua,Sweetgum,Sweetgum,Full Sun,3,2,2,150,,Shade Tree
+17,1,Silver_Maple,Acer saccharinum,Silver Maple,Silver Maple,Full Sun,3,2,4,100,,Shade Tree
+18,1,Red_Maple,Acer rubrum,Red Maple,Red Maple,Full Sun,2,2,3,120,,Shade Tree
+19,1,Green_Ash,Fraxinus pennsylvanica,Green Ash,Green Ash - Urbanite Ash,Full Sun,2,3,5,80,Urbanite Ash,Shade Tree
+20,1,Ginkgo,Ginkgo biloba,Ginkgo,Ginkgo - Maidenhair Tree,Full Sun,1,3,1,150,Maidenhair Tree,Shade Tree
+21,1,Loblolly_Pine,Pinus taeda,Loblolly Pine,Loblolly Pine,Full Sun,2,2,3,100,,Shade Tree
+22,1,Afghan_Pine,Pinus eldarica,Afghan Pine,Afghan Pine - Eldarica Pine,Full Sun,1,4,2,100,Eldarica Pine,Evergreen Tree
+23,1,Italian_Cypress,Cupressus sempervirens,Italian Cypress,Italian Cypress,Full Sun,1,4,3,100,,Evergreen Tree
+24,1,Deodar_Cedar,Cedrus deodara,Deodar Cedar,Deodar Cedar,Full Sun,2,3,2,150,,Evergreen Tree
+25,1,Southern_Magnolia,Magnolia grandiflora,Southern Magnolia,Southern Magnolia,Full Sun,3,2,2,120,,Evergreen Tree
+26,1,Sweetbay_Magnolia,Magnolia virginiana,Sweetbay Magnolia,Sweetbay Magnolia,Partial Sun,2,2,2,80,,Ornamental Tree
+27,1,Chinese_Pistache,Pistacia chinensis,Chinese Pistache,Chinese Pistache,Full Sun,1,4,1,100,,Shade Tree
+28,1,Littleleaf_Linden,Tilia cordata,Littleleaf Linden,Littleleaf Linden,Full Sun,3,2,3,150,,Shade Tree
+29,1,Natchez_Crape_Myrtle,Lagerstroemia indica 'Natchez',Natchez Crape Myrtle,Natchez Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+30,1,Japanese_Pagoda_Tree,Sophora japonica,Japanese Pagoda Tree,Japanese Pagoda Tree,Full Sun,2,3,2,100,,Shade Tree
+31,1,Mexican_Plum,Prunus mexicana,Mexican Plum,Mexican Plum,Full Sun,2,3,3,60,,Ornamental Tree
+32,1,Anna_Apple,Malus domestica 'Anna',Anna Apple,Anna Apple,Full Sun,4,2,4,30,,Edible / Ornamental Tree
+33,1,Eastern_Redbud,Cercis canadensis,Eastern Redbud,Eastern Redbud,Partial Sun,1,3,3,50,,Ornamental Tree
+34,1,Chaste_Tree,Vitex agnus-castus,Chaste Tree,Chaste Tree - Vitex,Full Sun,1,4,1,40,Vitex,Ornamental Tree
+35,1,Desert_Willow,Chilopsis linearis,Desert Willow,Desert Willow,Full Sun,1,5,1,50,,Ornamental Tree
+36,1,Yellow_Bells,Tecoma stans,Yellow Bells,Yellow Bells - Esperanza,Full Sun,1,4,2,40,Esperanza,Shrub / Tree
+37,1,Crape_Myrtle,Lagerstroemia indica,Crape Myrtle,Crape Myrtle,Full Sun,1,3,3,40,,Ornamental Tree
+38,1,Dynamite_Crape_Myrtle,Lagerstroemia indica 'Dynamite',Dynamite Crape Myrtle,Dynamite Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+39,1,Tuscarora_Crape_Myrtle,Lagerstroemia indica 'Tuscarora',Tuscarora Crape Myrtle,Tuscarora Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+40,1,Muskogee_Crape_Myrtle,Lagerstroemia indica 'Muskogee',Muskogee Crape Myrtle,Muskogee Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+41,1,Catawba_Crape_Myrtle,Lagerstroemia indica 'Catawba',Catawba Crape Myrtle,Catawba Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+42,1,Acoma_Crape_Myrtle,Lagerstroemia indica 'Acoma',Acoma Crape Myrtle,Acoma Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+43,1,Kwanzan_Flowering_Cherry,Prunus serrulata 'Kwanzan',Kwanzan Flowering Cherry,Kwanzan Flowering Cherry,Full Sun,3,2,4,30,,Ornamental Tree
+44,1,Yoshino_Cherry,Prunus yedoensis,Yoshino Cherry,Yoshino Cherry - Yoshino,Full Sun,3,2,4,40,Yoshino,Ornamental Tree
+45,1,Bonanza_Peach,Prunus persica 'Bonanza',Bonanza Peach,Bonanza Peach,Full Sun,4,2,4,20,,Edible / Ornamental Tree
+46,1,American_Persimmon,Diospyros virginiana,American Persimmon,American Persimmon,Full Sun,1,3,2,80,,Edible Tree
+47,1,Texas_Persimmon,Diospyros texana,Texas Persimmon,Texas Persimmon,Full Sun,1,4,1,100,,Edible / Ornamental Tree
+48,1,Wonderful_Pomegranate,Punica granatum 'Wonderful',Wonderful Pomegranate,Wonderful Pomegranate,Full Sun,1,4,2,40,,Edible / Ornamental Tree
+49,1,Republic-of-Texas_Orange,Citrus sinensis 'Republic of Texas',Republic-of-Texas Orange,Republic-of-Texas Orange,Full Sun,3,2,3,50,,Edible Tree
+50,1,Mimosa,Albizia julibrissin,Mimosa,Mimosa - Silk Tree,Full Sun,2,3,5,40,Silk Tree,Ornamental Tree
+51,1,Star_Magnolia,Magnolia stellata,Star Magnolia,Star Magnolia,Partial Sun,2,2,2,80,,Ornamental Tree
+52,1,Red_Buckeye,Aesculus pavia,Red Buckeye,Red Buckeye,Partial Sun,2,2,3,50,,Ornamental Tree
+53,1,Arbequina_Olive,Olea europaea 'Arbequina',Arbequina Olive,Arbequina Olive,Full Sun,1,5,1,100,,Edible / Ornamental Tree
+54,1,Japanese_Boxwood,Buxus microphylla,Japanese Boxwood,Japanese Boxwood - Boxwood,Partial Sun,3,2,4,40,Boxwood,Shrub
+55,1,American_Boxwood,Buxus sempervirens,American Boxwood,American Boxwood - Boxwood,Partial Sun,3,2,4,50,Boxwood,Shrub
+56,1,Dwarf_Yaupon_Holly,Ilex vomitoria 'Nana',Dwarf Yaupon Holly,Dwarf Yaupon Holly - Yaupon,Full Sun,1,4,1,80,Yaupon,Shrub
+57,1,Yaupon_Holly,Ilex vomitoria,Yaupon Holly,Yaupon Holly - Yaupon,Full Sun,1,4,1,100,Yaupon,Shrub
+58,1,Burford_Holly,Ilex cornuta 'Burfordii',Burford Holly,Burford Holly,Full Sun,1,3,2,80,,Shrub
+59,1,Nellie_R._Stevens_Holly,Ilex × 'Nellie R. Stevens',Nellie R. Stevens Holly,Nellie R. Stevens Holly - Nellie Stevens,Full Sun,1,3,1,100,Nellie Stevens,Shrub
+60,1,Indian_Hawthorn,Rhaphiolepis indica,Indian Hawthorn,Indian Hawthorn,Full Sun,1,3,4,30,,Shrub
+61,1,Chinese_Fringe_Flower,Loropetalum chinense,Chinese Fringe Flower,Chinese Fringe Flower - Loropetalum,Partial Sun,1,3,1,40,Loropetalum,Shrub
+62,1,Red_Tip_Photinia,Photinia × fraseri,Red Tip Photinia,Red Tip Photinia - Red Tip,Full Sun,2,3,5,25,Red Tip,Shrub
+63,1,Heavenly_Bamboo,Nandina domestica,Heavenly Bamboo,Heavenly Bamboo - Nandina,Partial Sun,1,4,1,40,Nandina,Shrub
+64,1,Glossy_Abelia,Abelia × grandiflora,Glossy Abelia,Glossy Abelia,Full Sun,1,3,1,40,,Shrub
+65,1,Waxleaf_Privet,Ligustrum japonicum,Waxleaf Privet,Waxleaf Privet - Japanese Privet,Full Sun,2,3,2,50,Japanese Privet,Shrub
+66,1,Crimson_Pygmy_Barberry,Berberis thunbergii 'Crimson Pygmy',Crimson Pygmy Barberry,Crimson Pygmy Barberry,Full Sun,1,3,1,40,,Shrub
+67,1,Knock_Out_Rose,Rosa 'Radrazz',Knock Out Rose,Knock Out Rose - Knock Out,Full Sun,2,2,2,20,Knock Out,Shrub
+68,1,Double_Knock_Out_Rose,Rosa 'Radcor',Double Knock Out Rose,Double Knock Out Rose,Full Sun,2,2,2,20,,Shrub
+69,1,Lady_Banks_Rose,Rosa banksiae,Lady Banks Rose,Lady Banks Rose,Full Sun,1,3,1,50,,Shrub
+70,1,Bridal_Wreath_Spirea,Spiraea prunifolia,Bridal Wreath Spirea,Bridal Wreath Spirea - Bridal Wreath,Full Sun,1,3,1,40,Bridal Wreath,Shrub
+71,1,Sasanqua_Camellia,Camellia sasanqua,Sasanqua Camellia,Sasanqua Camellia - Autumn Camellia,Partial Sun,3,2,3,80,Autumn Camellia,Shrub
+72,1,Gardenia,Gardenia jasminoides,Gardenia,Gardenia - Cape Jasmine,Partial Sun,4,1,4,30,Cape Jasmine,Shrub
+73,1,Fragrant_Tea_Olive,Osmanthus fragrans,Fragrant Tea Olive,Fragrant Tea Olive - Tea Olive,Partial Sun,2,3,1,80,Tea Olive,Shrub
+74,1,Japanese_Pittosporum,Pittosporum tobira,Japanese Pittosporum,Japanese Pittosporum - Pittosporum,Full Sun,2,3,2,60,Pittosporum,Shrub
+75,1,Texas_Sage,Leucophyllum frutescens,Texas Sage,Texas Sage - Cenizo,Full Sun,1,5,1,80,Cenizo,Shrub
+76,1,Rose_of_Sharon,Hibiscus syriacus,Rose of Sharon,Rose of Sharon - Althea,Full Sun,2,3,2,30,Althea,Shrub
+77,1,Agarita,Mahonia trifoliolata,Agarita,Agarita,Full Sun,1,4,1,80,,Shrub
+78,1,Common_Bermudagrass,Cynodon dactylon,Common Bermudagrass,Common Bermudagrass - Bermuda,Full Sun,4,4,2,Perennial,Bermuda,Turf Grass
+79,1,St._Augustinegrass,Stenotaphrum secundatum,St. Augustinegrass,St. Augustinegrass - St. Augustine,Full Sun,3,2,4,Perennial,St. Augustine,Turf Grass
+80,1,Zoysia_Grass,Zoysia japonica,Zoysia Grass,Zoysia Grass - Zoysia,Full Sun,3,3,2,Perennial,Zoysia,Turf Grass
+81,1,Buffalograss,Bouteloua dactyloides,Buffalograss,Buffalograss,Full Sun,1,4,1,Perennial,,Turf Grass
+82,1,Tall_Fescue,Festuca arundinacea,Tall Fescue,Tall Fescue,Partial Sun,3,2,3,Perennial,,Turf Grass
+83,1,Pink_Muhly_Grass,Muhlenbergia capillaris,Pink Muhly Grass,Pink Muhly Grass - Gulf Muhly,Full Sun,1,4,1,10,Gulf Muhly,Ornamental Grass
+84,1,Lindheimer_Muhly,Muhlenbergia lindheimeri,Lindheimer Muhly,Lindheimer Muhly,Full Sun,1,4,1,10,,Ornamental Grass
+85,1,Hameln_Fountain_Grass,Pennisetum alopecuroides 'Hameln',Hameln Fountain Grass,Hameln Fountain Grass,Full Sun,1,3,1,8,,Ornamental Grass
+86,1,Purple_Fountain_Grass,Pennisetum setaceum 'Rubrum',Purple Fountain Grass,Purple Fountain Grass,Full Sun,1,3,1,5,,Ornamental Grass
+87,1,Gracillimus_Maiden_Grass,Miscanthus sinensis 'Gracillimus',Gracillimus Maiden Grass,Gracillimus Maiden Grass,Full Sun,1,3,1,15,,Ornamental Grass
+88,1,Zebra_Grass,Miscanthus sinensis 'Zebrinus',Zebra Grass,Zebra Grass,Full Sun,1,3,1,15,,Ornamental Grass
+89,1,Dallas_Blues_Switchgrass,Panicum virgatum 'Dallas Blues',Dallas Blues Switchgrass,Dallas Blues Switchgrass,Full Sun,1,4,1,15,,Ornamental Grass
+90,1,Little_Bluestem,Schizachyrium scoparium,Little Bluestem,Little Bluestem,Full Sun,1,5,1,10,,Ornamental Grass
+91,1,Lilyturf,Liriope muscari,Lilyturf,Lilyturf - Monkey Grass,Partial Sun,1,3,2,Perennial,Monkey Grass,Groundcover
+92,1,Mondo_Grass,Ophiopogon japonicus,Mondo Grass,Mondo Grass,Partial Sun,1,3,1,Perennial,,Groundcover
+93,1,Asian_Jasmine,Trachelospermum asiaticum,Asian Jasmine,Asian Jasmine,Partial Sun,1,3,1,Perennial,,Groundcover
+94,1,English_Ivy,Hedera helix,English Ivy,English Ivy,Partial Sun / Shade,2,3,2,Perennial,,Groundcover (Invasive)
+95,1,Bigleaf_Periwinkle,Vinca major,Bigleaf Periwinkle,Bigleaf Periwinkle - Vinca,Partial Shade,1,3,1,Perennial,Vinca,Groundcover
+96,1,Silver_Ponyfoot,Dichondra argentea,Silver Ponyfoot,Silver Ponyfoot,Full Sun,1,4,1,Perennial,,Groundcover
+97,1,Trumpet_Vine,Campsis radicans,Trumpet Vine,Trumpet Vine - Trumpet Creeper,Full Sun,2,4,2,50,Trumpet Creeper,Vine
+98,1,Chinese_Wisteria,Wisteria sinensis,Chinese Wisteria,Chinese Wisteria - Wisteria,Full Sun,3,3,2,100,Wisteria,Vine
+99,1,Virginia_Creeper,Parthenocissus quinquefolia,Virginia Creeper,Virginia Creeper,Partial Sun,1,4,1,50,,Vine
+100,1,Crossvine,Bignonia capreolata,Crossvine,Crossvine,Full / Partial Sun,1,3,1,50,,Vine
+101,1,Carolina_Jessamine,Gelsemium sempervirens,Carolina Jessamine,Carolina Jessamine,Full / Partial Sun,1,3,1,30,,Vine
+102,1,Japanese_Honeysuckle,Lonicera japonica,Japanese Honeysuckle,Japanese Honeysuckle,Partial Sun,2,4,2,25,,Vine (Invasive)
+103,1,Stella_de_Oro_Daylily,Hemerocallis 'Stella de Oro',Stella de Oro Daylily,Stella de Oro Daylily - Daylily,Full Sun,1,3,1,10,Daylily,Perennial Flower
+104,1,Bearded_Iris,Iris germanica,Bearded Iris,Bearded Iris,Full Sun,1,3,2,20,,Perennial Flower
+105,1,Mealy_Blue_Sage,Salvia farinacea,Mealy Blue Sage,Mealy Blue Sage,Full Sun,1,4,1,5,,Perennial Flower
+106,1,Mexican_Bush_Sage,Salvia leucantha,Mexican Bush Sage,Mexican Bush Sage,Full Sun,1,4,1,5,,Perennial Flower
+107,1,Indian_Blanket,Gaillardia pulchella,Indian Blanket,Indian Blanket,Full Sun,1,4,1,2,,Perennial Flower
+108,1,Coreopsis,Coreopsis grandiflora,Coreopsis,Coreopsis,Full Sun,1,3,1,5,,Perennial Flower
+109,1,Goldsturm_Black-eyed_Susan,Rudbeckia fulgida 'Goldsturm',Goldsturm Black-eyed Susan,Goldsturm Black-eyed Susan,Full Sun,1,3,1,5,,Perennial Flower
+110,1,Purple_Coneflower,Echinacea purpurea,Purple Coneflower,Purple Coneflower - Echinacea,Full Sun,1,4,1,5,Echinacea,Perennial Flower
+111,1,Butterfly_Weed,Asclepias tuberosa,Butterfly Weed,Butterfly Weed,Full Sun,1,4,1,10,,Perennial Flower
+112,1,Gayfeather,Liatris mucronata,Gayfeather,Gayfeather,Full Sun,1,4,1,5,,Perennial Flower
+113,1,Aromatic_Aster,Aster oblongifolius,Aromatic Aster,Aromatic Aster,Full Sun,1,4,1,5,,Perennial Flower
+114,1,Whirling_Butterflies,Gaura lindheimeri,Whirling Butterflies,Whirling Butterflies - Gaura,Full Sun,1,4,1,5,Gaura,Perennial Flower
+115,1,Pink_Evening_Primrose,Oenothera speciosa,Pink Evening Primrose,Pink Evening Primrose,Full Sun,1,4,1,5,,Perennial Flower
+116,1,Prairie_Verbena,Verbena bipinnatifida,Prairie Verbena,Prairie Verbena,Full Sun,1,4,1,3,,Perennial Flower
+117,1,Catmint,Nepeta cataria,Catmint,Catmint,Full Sun,1,3,1,5,,Perennial Flower
+118,1,Lamb’s_Ear,Stachys byzantina,Lamb’s Ear,Lamb’s Ear,Full Sun,1,3,2,4,,Perennial Flower
+119,1,Wax_Begonia,Begonia × semperflorens-cultorum,Wax Begonia,Wax Begonia,Partial Shade,2,2,3,1,,Annual Flower
+120,1,Impatiens,Impatiens walleriana,Impatiens,Impatiens - Busy Lizzie,Full / Deep Shade,2,1,4,1,Busy Lizzie,Annual Flower
+121,1,Madagascar_Periwinkle,Catharanthus roseus,Madagascar Periwinkle,Madagascar Periwinkle - Vinca,Full Sun,1,3,2,1,Vinca,Annual Flower
+122,1,Pansy,Viola × wittrockiana,Pansy,Pansy,Partial Sun,2,1,3,1,,Annual Flower
+123,1,Coleus,Coleus scutellarioides,Coleus,Coleus,Partial Shade,2,2,2,1,,Annual Foliage
+124,1,Ornamental_Sweet_Potato,Ipomoea batatas,Ornamental Sweet Potato,Ornamental Sweet Potato,Full Sun,1,2,2,1,,Annual Vine/Groundcover
+125,1,Zinnia,Zinnia elegans,Zinnia,Zinnia,Full Sun,1,2,3,1,,Annual Flower
+126,1,French_Marigold,Tagetes patula,French Marigold,French Marigold - Marigold,Full Sun,1,3,1,1,Marigold,Annual Flower
+127,1,Sunflower,Helianthus annuus,Sunflower,Sunflower,Full Sun,1,3,2,1,,Annual Flower
+128,1,Petunia,Petunia × atkinsiana,Petunia,Petunia,Full Sun,2,2,3,1,,Annual Flower
+129,1,Century_Plant,Agave americana,Century Plant,Century Plant,Full Sun,1,5,1,30,,Succulent
+130,1,Parry’s_Agave,Agave parryi,Parry’s Agave,Parry’s Agave,Full Sun,1,5,1,25,,Succulent
+131,1,Beaked_Yucca,Yucca rostrata,Beaked Yucca,Beaked Yucca,Full Sun,1,5,1,50,,Succulent
+132,1,Spineless_Prickly_Pear,Opuntia ellisiana,Spineless Prickly Pear,Spineless Prickly Pear,Full Sun,1,5,1,40,,Cactus
+133,1,Desert_Spoon,Dasylirion wheeleri,Desert Spoon,Desert Spoon,Full Sun,1,5,1,50,,Succulent
+134,1,Big_Bluestem,Andropogon gerardii,Big Bluestem,Big Bluestem,Full Sun,1,4,1,10,,Ornamental Grass
+135,1,Mexican_Feather_Grass,Nassella tenuissima,Mexican Feather Grass,Mexican Feather Grass,Full Sun,1,4,1,10,,Ornamental Grass
+136,1,Purple_Three_Awn,Aristida purpurea,Purple Three Awn,Purple Three Awn,Full Sun,1,5,1,8,,Ornamental Grass
+137,1,Giant_Sacaton,Sporobolus wrightii,Giant Sacaton,Giant Sacaton,Full Sun,1,4,1,10,,Ornamental Grass
+138,1,Purple_Love_Grass,Eragrostis spectabilis,Purple Love Grass,Purple Love Grass,Full Sun,1,4,1,5,,Ornamental Grass
+139,1,Ruby_Grass,Melinis nerviglumis,Ruby Grass,Ruby Grass,Full Sun,1,3,1,5,,Ornamental Grass
+140,1,Blue_Wood_Sedge,Carex flaccosperma,Blue Wood Sedge,Blue Wood Sedge,Partial Shade,1,3,1,5,,Sedge
+141,1,Texas_Sedge,Carex texensis,Texas Sedge,Texas Sedge,Partial Sun,1,4,1,5,,Sedge
+142,1,Everillo_Japanese_Sedge,Carex oshimensis 'Everillo',Everillo Japanese Sedge,Everillo Japanese Sedge,Partial Shade,1,3,1,5,,Sedge
+143,1,Inland_Sea_Oats,Chasmanthium latifolium,Inland Sea Oats,Inland Sea Oats,Partial Shade,1,3,1,10,,Ornamental Grass
+144,1,Common_Rush,Juncus effusus,Common Rush,Common Rush,Full Sun,2,1,2,5,,Rush
+145,1,Ice_Dance_Sedge,Carex morrowii 'Ice Dance',Ice Dance Sedge,Ice Dance Sedge,Partial Shade,1,3,1,5,,Sedge
+146,1,Fireworks_Fountain_Grass,Pennisetum setaceum 'Fireworks',Fireworks Fountain Grass,Fireworks Fountain Grass,Full Sun,1,3,1,5,,Ornamental Grass
+147,1,Creeping_Lilyturf,Liriope spicata,Creeping Lilyturf,Creeping Lilyturf,Partial Shade,1,3,1,Perennial,,Groundcover
+148,1,Carpet_Bugle,Ajuga reptans,Carpet Bugle,Carpet Bugle,Partial Shade,1,3,2,Perennial,,Groundcover
+149,1,Periwinkle,Vinca minor,Periwinkle,Periwinkle,Shade / Partial,1,3,2,Perennial,,Groundcover
+150,1,Frogfruit,Phyla nodiflora,Frogfruit,Frogfruit,Full Sun,1,4,1,Perennial,,Groundcover
+151,1,Dragon’s_Blood_Sedum,Sedum spurium,Dragon’s Blood Sedum,Dragon’s Blood Sedum,Full Sun,1,5,1,Perennial,,Groundcover
+152,1,Mexican_Sedum,Sedum mexicanum,Mexican Sedum,Mexican Sedum,Full Sun,1,5,1,Perennial,,Groundcover
+153,1,Dead_Nettle,Lamium maculatum,Dead Nettle,Dead Nettle,Partial Shade,1,3,2,Perennial,,Groundcover
+154,1,Creeping_Thyme,Thymus serpyllum,Creeping Thyme,Creeping Thyme,Full Sun,1,4,1,Perennial,,Groundcover / Herb
+155,1,Daffodil,Narcissus pseudonarcissus,Daffodil,Daffodil,Full Sun,1,3,1,30,,Bulb
+156,1,Tulip,Tulipa gesneriana,Tulip,Tulip,Full Sun,2,2,2,2,,Bulb
+157,1,Hyacinth,Hyacinthus orientalis,Hyacinth,Hyacinth,Full Sun,2,2,2,3,,Bulb
+158,1,Grape_Hyacinth,Muscari armeniacum,Grape Hyacinth,Grape Hyacinth,Full Sun,1,3,1,10,,Bulb
+159,1,Giant_Allium,Allium giganteum,Giant Allium,Giant Allium,Full Sun,1,3,1,5,,Bulb
+160,1,Crinum_Lily,Crinum × herbertii,Crinum Lily,Crinum Lily,Full Sun,2,3,2,30,,Bulb
+161,1,Red_Spider_Lily,Lycoris radiata,Red Spider Lily,Red Spider Lily,Full Sun,1,3,1,20,,Bulb
+162,1,Texas_Spider_Lily,Hymenocallis liriosme,Texas Spider Lily,Texas Spider Lily,Full/Partial Sun,1,3,1,20,,Bulb
+163,1,Rain_Lily,Zephyranthes candida,Rain Lily,Rain Lily,Full Sun,1,3,1,10,,Bulb
+164,1,Havard_Agave,Agave havardiana,Havard Agave,Havard Agave,Full Sun,1,5,1,30,,Succulent
+165,1,Thorn-crested_Agave,Agave lophantha,Thorn-crested Agave,Thorn-crested Agave,Full Sun,1,5,1,20,,Succulent
+166,1,Squid_Agave,Agave bracteosa,Squid Agave,Squid Agave,Full Sun,1,5,1,20,,Succulent
+167,1,Engelmann_Prickly_Pear,Opuntia engelmannii,Engelmann Prickly Pear,Engelmann Prickly Pear,Full Sun,1,5,1,40,,Cactus
+168,1,Purple_Prickly_Pear,Opuntia macrocentra,Purple Prickly Pear,Purple Prickly Pear,Full Sun,1,5,1,40,,Cactus
+169,1,Tree_Cholla,Cylindropuntia imbricata,Tree Cholla,Tree Cholla,Full Sun,1,5,1,40,,Cactus
+170,1,Lace_Cactus,Echinocereus reichenbachii,Lace Cactus,Lace Cactus,Full Sun,1,5,1,30,,Cactus
+171,1,Texas_Sotol,Dasylirion texanum,Texas Sotol,Texas Sotol,Full Sun,1,5,1,30,,Succulent
+172,1,Texas_Tuberose,Manfreda maculosa,Texas Tuberose,Texas Tuberose,Full Sun,1,4,1,15,,Succulent
+173,1,Dwarf_Palmetto,Sabal minor,Dwarf Palmetto,Dwarf Palmetto,Partial Sun,1,3,1,100,,Palm
+174,1,Texas_Palmetto,Sabal mexicana,Texas Palmetto,Texas Palmetto,Full Sun,1,3,1,100,,Palm
+175,1,Windmill_Palm,Trachycarpus fortunei,Windmill Palm,Windmill Palm,Full Sun,1,3,1,80,,Palm
+176,1,Mexican_Fan_Palm,Washingtonia robusta,Mexican Fan Palm,Mexican Fan Palm,Full Sun,1,3,1,90,,Palm
+177,1,Sago_Palm,Cycas revoluta,Sago Palm,Sago Palm - King Sago,Partial Sun,1,4,1,100,King Sago,Cycad
+178,1,Sweet_Basil,Ocimum basilicum,Sweet Basil,Sweet Basil,Full Sun,2,2,3,1,,Herb
+179,1,Spearmint,Mentha spicata,Spearmint,Spearmint,Partial Sun,2,2,2,3,,Herb
+180,1,Common_Thyme,Thymus vulgaris,Common Thyme,Common Thyme,Full Sun,1,3,1,5,,Herb
+181,1,Oregano,Origanum vulgare,Oregano,Oregano,Full Sun,1,4,1,5,,Herb
+182,1,Chives,Allium schoenoprasum,Chives,Chives,Full Sun,1,2,1,5,,Herb
+183,1,Parsley,Petroselinum crispum,Parsley,Parsley,Partial Sun,2,2,1,2,,Herb
+184,1,Dill,Anethum graveolens,Dill,Dill,Full Sun,1,2,1,1,,Herb
+185,1,Lemongrass,Cymbopogon citratus,Lemongrass,Lemongrass,Full Sun,1,3,1,4,,Herb
+186,1,Bay_Laurel,Laurus nobilis,Bay Laurel,Bay Laurel,Full Sun,2,3,1,50,,Herb / Shrub
+187,1,Ornamental_Pepper,Capsicum annuum,Ornamental Pepper,Ornamental Pepper,Full Sun,2,2,2,1,,Annual / Edible
+188,1,Peach,Prunus persica,Peach,Peach,Full Sun,4,2,5,20,,Edible Tree
+189,1,Apple,Malus domestica,Apple,Apple,Full Sun,4,2,5,25,,Edible Tree
+190,1,Apricot,Prunus armeniaca,Apricot,Apricot,Full Sun,4,2,4,25,,Edible Tree
+191,1,Pear,Pyrus communis,Pear,Pear,Full Sun,3,3,4,30,,Edible Tree
+192,1,Japanese_Plum,Prunus salicina,Japanese Plum,Japanese Plum,Full Sun,3,2,4,25,,Edible Tree
+193,1,Fig,Ficus carica,Fig,Fig,Full Sun,2,3,2,50,,Edible Tree
+194,1,Grapevine,Vitis vinifera,Grapevine,Grapevine,Full Sun,3,3,4,50,,Vine / Fruit
+195,1,Red_Mulberry,Morus rubra,Red Mulberry,Red Mulberry,Full Sun,2,3,2,75,,Edible Tree
+196,1,Black_Walnut,Juglans nigra,Black Walnut,Black Walnut,Full Sun,2,3,2,150,,Edible Tree
+197,1,Satsuma_Mandarin,Citrus reticulata,Satsuma Mandarin,Satsuma Mandarin,Full Sun,3,2,3,30,,Edible Tree
+198,1,Korean_Boxwood,Buxus sinica var. insularis,Korean Boxwood,Korean Boxwood,Partial Sun,3,2,3,40,,Shrub
+199,1,Sioux_Crape_Myrtle,Lagerstroemia indica 'Sioux',Sioux Crape Myrtle,Sioux Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+200,1,Choctaw_Crape_Myrtle,Lagerstroemia indica 'Choctaw',Choctaw Crape Myrtle,Choctaw Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+201,1,Miami_Crape_Myrtle,Lagerstroemia indica 'Miami',Miami Crape Myrtle,Miami Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+202,1,Tonto_Crape_Myrtle,Lagerstroemia indica 'Tonto',Tonto Crape Myrtle,Tonto Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+203,1,Red_Rocket_Crape_Myrtle,Lagerstroemia indica 'Red Rocket',Red Rocket Crape Myrtle,Red Rocket Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+204,1,Sunny_Knock_Out_Rose,Rosa 'Sunny Knock Out',Sunny Knock Out Rose,Sunny Knock Out Rose,Full Sun,2,2,2,20,,Shrub
+205,1,White_Knock_Out_Rose,Rosa 'White Knock Out',White Knock Out Rose,White Knock Out Rose,Full Sun,2,2,2,20,,Shrub
+206,1,Sweet_Drift_Rose,Rosa 'Sweet Drift',Sweet Drift Rose,Sweet Drift Rose,Full Sun,2,2,2,20,,Shrub
+207,1,Coral_Drift_Rose,Rosa 'Coral Drift',Coral Drift Rose,Coral Drift Rose,Full Sun,2,2,2,20,,Shrub
+208,1,New_Gold_Lantana,Lantana camara 'New Gold',New Gold Lantana,New Gold Lantana,Full Sun,1,4,1,5,,Perennial / Annual
+209,1,Dallas_Red_Lantana,Lantana camara 'Dallas Red',Dallas Red Lantana,Dallas Red Lantana,Full Sun,1,4,1,5,,Perennial / Annual
+210,1,Miss_Huff_Lantana,Lantana camara 'Miss Huff',Miss Huff Lantana,Miss Huff Lantana,Full Sun,1,4,1,8,,Perennial / Annual
+211,1,Hot_Lips_Autumn_Sage,Salvia greggii 'Hot Lips',Hot Lips Autumn Sage,Hot Lips Autumn Sage,Full Sun,1,4,1,10,,Perennial Shrub
+212,1,Lipstick_Autumn_Sage,Salvia greggii 'Lipstick',Lipstick Autumn Sage,Lipstick Autumn Sage,Full Sun,1,4,1,10,,Perennial Shrub
+213,1,Wasabi_Coleus,Coleus scutellarioides 'Wasabi',Wasabi Coleus,Wasabi Coleus,Partial Shade,2,2,2,1,,Annual Foliage
+214,1,Redhead_Coleus,Coleus scutellarioides 'Redhead',Redhead Coleus,Redhead Coleus,Partial Shade,2,2,2,1,,Annual Foliage
+215,1,Morning_Light_Maiden_Grass,Miscanthus sinensis 'Morning Light',Morning Light Maiden Grass,Morning Light Maiden Grass,Full Sun,1,3,1,15,,Ornamental Grass
+216,1,Shenandoah_Switchgrass,Panicum virgatum 'Shenandoah',Shenandoah Switchgrass,Shenandoah Switchgrass,Full Sun,1,4,1,15,,Ornamental Grass
+217,1,Blonde_Ambition_Grama,Bouteloua gracilis 'Blonde Ambition',Blonde Ambition Grama,Blonde Ambition Grama,Full Sun,1,5,1,10,,Ornamental Grass
+218,1,Arp_Rosemary,Rosmarinus officinalis 'Arp',Arp Rosemary,Arp Rosemary,Full Sun,1,4,1,15,,Herb
+219,1,Spanish_Lavender,Lavandula stoechas,Spanish Lavender,Spanish Lavender,Full Sun,1,4,2,6,,Herb
+220,1,Pineapple_Sage,Salvia elegans,Pineapple Sage,Pineapple Sage,Full Sun,1,3,1,5,,Herb / Perennial
+221,1,Colorado_Water_Lily,Nymphaea 'Colorado',Colorado Water Lily,Colorado Water Lily,Full Sun,2,2,1,7,,Aquatic
+222,1,Empress_Lotus,Nelumbo nucifera 'Empress',Empress Lotus,Empress Lotus,Full Sun,2,2,1,15,,Aquatic
+223,1,Fire_Flag,Thalia geniculata,Fire Flag,Fire Flag,Full Sun,2,2,1,8,,Aquatic
+224,1,Pickerel_Weed,Pontederia cordata,Pickerel Weed,Pickerel Weed,Full Sun,2,2,1,6,,Aquatic
+225,1,Umbrella_Plant,Cyperus alternifolius,Umbrella Plant,Umbrella Plant,Full Sun,2,2,1,5,,Aquatic
+226,1,Chinese_Privet,Ligustrum sinense,Chinese Privet,Chinese Privet,Full Sun,2,3,3,40,,Shrub (Invasive)
+227,1,Silverthorn,Elaeagnus pungens,Silverthorn,Silverthorn,Full Sun,1,4,2,50,,Shrub (Invasive)
+228,1,Kudzu,Pueraria montana var. lobata,Kudzu,Kudzu,Full Sun,1,4,1,30,,Vine (Invasive)
+229,1,Amur_Honeysuckle,Lonicera maackii,Amur Honeysuckle,Amur Honeysuckle,Full Sun,2,3,3,40,,Shrub (Invasive)
+230,1,Princess_Tree,Paulownia tomentosa,Princess Tree,Princess Tree,Full Sun,2,3,3,50,,Tree (Invasive)
+231,1,Nuttall_Oak,Quercus texana,Nuttall Oak,Nuttall Oak,Full Sun,1,3,2,120,,Shade Tree
+232,1,Northern_Red_Oak,Quercus rubra,Northern Red Oak,Northern Red Oak,Full Sun,1,3,2,120,,Shade Tree
+233,1,Trident_Maple,Acer buergerianum,Trident Maple,Trident Maple,Full Sun,1,3,1,80,,Ornamental Tree
+234,1,Shantung_Maple,Acer truncatum,Shantung Maple,Shantung Maple,Full Sun,1,3,1,100,,Ornamental Tree
+235,1,Allee_Elm,Ulmus 'Allee',Allee Elm,Allee Elm,Full Sun,1,4,1,120,,Shade Tree
+236,1,Eastern_Cottonwood,Populus deltoides,Eastern Cottonwood,Eastern Cottonwood,Full Sun,2,2,4,70,,Shade Tree
+237,1,Western_Soapberry,Sapindus drummondii,Western Soapberry,Western Soapberry,Full Sun,1,4,1,90,,Shade Tree
+238,1,Blue_Atlas_Cedar,Cedrus atlantica 'Glauca',Blue Atlas Cedar,Blue Atlas Cedar,Full Sun,1,3,1,120,,Evergreen Tree
+239,1,Arizona_Cypress,Cupressus arizonica,Arizona Cypress,Arizona Cypress,Full Sun,1,5,1,80,,Evergreen Tree
+240,1,Skyrocket_Juniper,Juniperus scopulorum 'Skyrocket',Skyrocket Juniper,Skyrocket Juniper,Full Sun,1,5,1,50,,Evergreen Tree
+241,1,Emerald_Green_Arborvitae,Thuja occidentalis 'Emerald Green',Emerald Green Arborvitae,Emerald Green Arborvitae,Full Sun,2,2,3,40,,Evergreen Tree
+242,1,Green_Giant_Arborvitae,Thuja plicata 'Green Giant',Green Giant Arborvitae,Green Giant Arborvitae,Full Sun,1,3,2,60,,Evergreen Tree
+243,1,Creeping_Juniper,Juniperus horizontalis,Creeping Juniper,Creeping Juniper,Full Sun,1,5,1,40,,Shrub / Groundcover
+244,1,Spartan_Juniper,Juniperus chinensis 'Spartan',Spartan Juniper,Spartan Juniper,Full Sun,1,4,1,50,,Evergreen Tree
+245,1,Possumhaw_Holly,Ilex decidua,Possumhaw Holly,Possumhaw Holly,Full Sun,1,3,1,80,,Shrub / Small Tree
+246,1,Flowering_Dogwood,Cornus florida,Flowering Dogwood,Flowering Dogwood,Partial Sun,3,2,4,70,,Ornamental Tree
+247,1,Border_Forsythia,Forsythia × intermedia,Border Forsythia,Border Forsythia,Full Sun,1,3,2,25,,Shrub
+248,1,Limelight_Hydrangea,Hydrangea paniculata 'Limelight',Limelight Hydrangea,Limelight Hydrangea,Full/Partial Sun,2,3,2,40,,Shrub
+249,1,Virginia_Sweetspire,Itea virginica,Virginia Sweetspire,Virginia Sweetspire,Partial Sun,1,3,1,30,,Shrub
+250,1,Oregon_Grape_Holly,Mahonia aquifolium,Oregon Grape Holly,Oregon Grape Holly,Partial Sun,2,3,2,60,,Shrub
+251,1,Scarlet_Firethorn,Pyracantha coccinea,Scarlet Firethorn,Scarlet Firethorn,Full Sun,2,3,3,40,,Shrub
+252,1,Arrowwood_Viburnum,Viburnum dentatum,Arrowwood Viburnum,Arrowwood Viburnum,Full/Partial Sun,1,3,2,50,,Shrub
+253,1,Soft_Leaf_Yucca,Yucca recurvifolia,Soft Leaf Yucca,Soft Leaf Yucca,Full Sun,1,5,1,50,,Succulent
+254,1,Beargrass,Nolina texana,Beargrass,Beargrass,Full Sun,1,5,1,60,,Succulent
+255,1,Boston_Ivy,Parthenocissus tricuspidata,Boston Ivy,Boston Ivy,Partial Sun,1,4,1,40,,Vine
+256,1,Jackman_Clematis,Clematis jackmanii,Jackman Clematis,Jackman Clematis,Full/Partial Sun,2,2,2,15,,Vine
+258,1,Little_Ze_bra_Maiden_Grass,Miscanthus sinensis 'Little Ze bra',Little Ze bra Maiden Grass,Little Ze bra Maiden Grass,Full Sun,1,3,1,15,,Ornamental Grass
+259,1,Karl_Foerster_Feather_Reed_Grass,Calamagrostis × acutiflora 'Karl Foerster',Karl Foerster Feather Reed Grass,Karl Foerster Feather Reed Grass,Full Sun,1,3,1,10,,Ornamental Grass
+260,1,Indiangrass,Sorghastrum nutans,Indiangrass,Indiangrass,Full Sun,1,4,1,10,,Ornamental Grass
+261,1,Eastern_Gamagrass,Tripsacum dactyloides,Eastern Gamagrass,Eastern Gamagrass,Full Sun,1,3,1,10,,Shrub
+262,1,Barrenwort,Epimedium grandiflorum,Barrenwort,Barrenwort - Bishop’s Hat,Partial Shade,1,3,1,20,Bishop’s Hat,Perennial
+263,1,Spotted_Emu_Bush,Eremophila maculata,Spotted Emu Bush,Spotted Emu Bush,Full Sun,1,4,1,25,,Shrub
+264,1,Gold_Nugget_Loquat,Eriobotrya japonica ‘Gold Nugget’,Gold Nugget Loquat,Gold Nugget Loquat,Full Sun,2,3,2,40,,Edible Tree
+265,1,Santa_Barbara_Daisy,Erigeron karvinskianus,Santa Barbara Daisy,Santa Barbara Daisy,Full Sun,1,3,1,4,,Perennial
+266,1,Alpine_Geranium,Erodium reichardii,Alpine Geranium,Alpine Geranium,Full/Partial Sun,1,3,1,4,,Groundcover
+267,1,Pink_Princess_Escallonia,Escallonia ‘Pink Princess’,Pink Princess Escallonia,Pink Princess Escallonia,Full Sun,1,3,2,30,,Shrub
+268,1,Silver_Dollar_Eucalyptus,Eucalyptus cinerea,Silver Dollar Eucalyptus,Silver Dollar Eucalyptus,Full Sun,1,4,1,60,,Tree
+269,1,Baby_Joe_Joe-Pye_Weed,Eupatorium dubium ‘Baby Joe’,Baby Joe Joe-Pye Weed,Baby Joe Joe-Pye Weed,Full Sun,2,3,2,5,,Perennial
+270,1,Tasmanian_Tiger_Spurge,Euphorbia characias ‘Tasmanian Tiger’,Tasmanian Tiger Spurge,Tasmanian Tiger Spurge,Full Sun,1,4,1,5,,Perennial
+271,1,African_Bush_Daisy,Euryops pectinatus,African Bush Daisy,African Bush Daisy,Full Sun,1,3,1,5,,Shrub
+272,1,Fountain_Bamboo,Fargesia rufa,Fountain Bamboo,Fountain Bamboo - Clumping Bamboo,Partial Shade,2,3,1,15,Clumping Bamboo,Bamboo
+273,1,Tree_Ivy,Fatshedera lizei,Tree Ivy,Tree Ivy,Partial Shade,1,3,2,20,,Vine/Shrub
+274,1,Fishhook_Barrel_Cactus,Ferocactus wislizeni,Fishhook Barrel Cactus,Fishhook Barrel Cactus,Full Sun,1,5,1,50,,Cactus
+275,1,Elijah_Blue_Fescue,Festuca glauca ‘Elijah Blue’,Elijah Blue Fescue,Elijah Blue Fescue,Full Sun,1,3,1,8,,Ornamental Grass
+276,1,Creeping_Fig,Ficus pumila,Creeping Fig,Creeping Fig,Partial Shade,2,3,2,40,,Vine
+277,1,Queen_of_the_Prairie,Filipendula rubra,Queen of the Prairie,Queen of the Prairie,Full Sun,1,3,2,5,,Perennial
+278,1,Weeping_Forsythia,Forsythia suspensa,Weeping Forsythia,Weeping Forsythia,Full Sun,1,3,2,25,,Shrub
+279,1,Ozark_Beauty_Strawberry,Fragaria × ananassa ‘Ozark Beauty’,Ozark Beauty Strawberry,Ozark Beauty Strawberry,Full Sun,2,2,2,3,,Edible Groundcover
+280,1,Freesia,Freesia refracta,Freesia,Freesia,Full Sun,2,2,2,2,,Bulb
+281,1,Mesa_Yellow_Blanketflower,Gaillardia × grandiflora ‘Mesa Yellow’,Mesa Yellow Blanketflower,Mesa Yellow Blanketflower,Full Sun,1,4,1,4,,Perennial
+282,1,Common_Snowdrop,Galanthus nivalis,Common Snowdrop,Common Snowdrop,Partial Shade,1,2,1,5,,Bulb
+283,1,Thryallis,Galphimia gracilis,Thryallis,Thryallis,Full Sun,1,4,1,15,,Shrub
+284,1,Ox_Tongue,Gasteria bicolor,Ox Tongue,Ox Tongue,Partial Sun,1,5,1,25,,Succulent
+285,1,Treasure_Flower,Gazania rigens,Treasure Flower,Treasure Flower,Full Sun,1,4,1,3,,Annual/Perennial
+286,1,Australian_Willow,Geijera parviflora,Australian Willow,Australian Willow,Full Sun,1,4,1,60,,Tree
+287,1,Rozanne_Cranesbill,Geranium ‘Rozanne’,Rozanne Cranesbill,Rozanne Cranesbill,Full/Partial Sun,1,3,1,8,,Perennial
+288,1,Skyline_Honeylocust,Gleditsia triacanthos var. inermis ‘Skyline’,Skyline Honeylocust,Skyline Honeylocust,Full Sun,1,4,1,80,,Shade Tree
+289,1,Globe_Amaranth,Gomphrena globosa ‘Buddy Purple’,Globe Amaranth,Globe Amaranth,Full Sun,1,3,1,1,,Annual
+290,1,Superb_Grevillea,Grevillea ‘Superb’,Superb Grevillea,Superb Grevillea,Full Sun,1,4,1,20,,Shrub
+291,1,Pincushion_Hakea,Hakea laurina,Pincushion Hakea,Pincushion Hakea,Full Sun,1,4,1,25,,Shrub
+292,1,Common_Witch_Hazel,Hamamelis virginiana,Common Witch Hazel,Common Witch Hazel,Partial Shade,2,3,1,60,,Shrub
+293,1,Purple_Coral_Pea,Hardenbergia violacea,Purple Coral Pea,Purple Coral Pea - Lilac Vine,Full/Partial Sun,1,4,1,15,Lilac Vine,Vine
+294,1,Blue_Mist_Hebe,Hebe ‘Blue Mist’,Blue Mist Hebe,Blue Mist Hebe,Full Sun,1,3,2,8,,Shrub
+295,1,Sunrose,Helianthemum nummularium,Sunrose,Sunrose - Rock Rose,Full Sun,1,4,1,5,Rock Rose,Groundcover
+296,1,Blue_Oat_Grass,Helictotrichon sempervirens,Blue Oat Grass,Blue Oat Grass,Full Sun,1,4,1,8,,Ornamental Grass
+297,1,Heliotrope,Heliotropium arborescens,Heliotrope,Heliotrope,Full Sun,2,2,2,2,,Annual
+298,1,Lenten_Rose,Helleborus orientalis,Lenten Rose,Lenten Rose,Shade/Partial,1,3,1,25,,Perennial
+299,1,Lord_Baltimore_Hardy_Hibiscus,Hibiscus moscheutos ‘Lord Baltimore’,Lord Baltimore Hardy Hibiscus,Lord Baltimore Hardy Hibiscus,Full Sun,2,2,2,5,,Perennial
+300,1,Confederate_Rose,Hibiscus mutabilis,Confederate Rose,Confederate Rose,Full Sun,2,3,2,10,,Shrub
+301,1,Chinese_Hat_Plant,Holmskioldia sanguinea,Chinese Hat Plant,Chinese Hat Plant,Full Sun,2,3,1,10,,Shrub
+302,1,Guacamole_Hosta,Hosta ‘Guacamole’,Guacamole Hosta,Guacamole Hosta,Shade/Partial,2,2,2,15,,Shade Perennial
+303,1,Wax_Plant,Hoya carnosa,Wax Plant,Wax Plant,Partial Shade,1,3,1,25,,Vine
+304,1,Annabelle_Hydrangea,Hydrangea arborescens ‘Annabelle’,Annabelle Hydrangea,Annabelle Hydrangea,Partial Sun,2,3,2,40,,Shrub
+305,1,St_John’s_Wort,Hypericum calycinum,St John’s Wort,St John’s Wort - Aaron’s Beard,Full Sun,1,4,1,20,Aaron’s Beard,Groundcover
+306,1,Sky_Pencil_Japanese_Holly,Ilex crenata ‘Sky Pencil’,Sky Pencil Japanese Holly,Sky Pencil Japanese Holly,Partial Sun,1,3,1,40,,Shrub
+307,1,Yellow_Anise,Illicium parviflorum,Yellow Anise,Yellow Anise,Partial Shade,1,3,1,50,,Shrub
+308,1,Chinese_Indigo,Indigofera kirilowii,Chinese Indigo,Chinese Indigo,Full Sun,1,3,1,25,,Shrub
+309,1,Cypress_Vine,Ipomoea quamoclit,Cypress Vine,Cypress Vine,Full Sun,1,3,1,1,,Vine
+310,1,Japanese_Iris,Iris ensata,Japanese Iris,Japanese Iris,Full/Partial Sun,2,2,1,10,,Perennial
+311,1,Henry’s_Garnet_Sweetspire,Itea virginica ‘Henry’s Garnet’,Henry’s Garnet Sweetspire,Henry’s Garnet Sweetspire,Partial Sun,1,3,1,30,,Shrub
+312,1,Arabian_Jasmine,Jasminum sambac,Arabian Jasmine,Arabian Jasmine,Full Sun,2,3,2,8,,Vine/Shrub
+313,1,Shrimp_Plant,Justicia brandegeeana,Shrimp Plant,Shrimp Plant,Partial Sun,2,2,2,6,,Shrub
+314,1,Mexican_Honeysuckle,Justicia spicigera,Mexican Honeysuckle,Mexican Honeysuckle,Full Sun,1,3,1,8,,Shrub
+315,1,Dwarf_Japanese_Garden_Juniper,Juniperus procumbens ‘Nana’,Dwarf Japanese Garden Juniper,Dwarf Japanese Garden Juniper,Full Sun,1,5,1,40,,Groundcover
+316,1,Velvet_Elephant_Ear,Kalanchoe beharensis,Velvet Elephant Ear,Velvet Elephant Ear,Partial Sun,1,5,1,20,,Succulent
+317,1,Mountain_Laurel_(Kalmia),Kalmia latifolia,Mountain Laurel (Kalmia),Mountain Laurel (Kalmia),Partial Shade,3,2,3,60,,Shrub
+318,1,Golden_Rain_Tree,Koelreuteria paniculata,Golden Rain Tree,Golden Rain Tree,Full Sun,1,3,2,50,,Ornamental Tree
+319,1,Beauty_Bush,Kolkwitzia amabilis,Beauty Bush,Beauty Bush,Full Sun,1,3,1,25,,Shrub
+320,1,Fantasy_Crape_Myrtle,Lagerstroemia fauriei ‘Fantasy’,Fantasy Crape Myrtle,Fantasy Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+321,1,Texas_Lantana,Lantana urticoides,Texas Lantana,Texas Lantana - Calico Bush,Full Sun,1,5,1,8,Calico Bush,Shrub
+322,1,Saratoga_Bay_Laurel,Laurus nobilis ‘Saratoga’,Saratoga Bay Laurel,Saratoga Bay Laurel,Full Sun,1,3,1,50,,Shrub/Tree
+323,1,Hidcote_Lavender,Lavandula angustifolia ‘Hidcote’,Hidcote Lavender,Hidcote Lavender,Full Sun,1,4,2,8,,Herb
+324,1,Safari_Sunset_Conebush,Leucadendron ‘Safari Sunset’,Safari Sunset Conebush,Safari Sunset Conebush,Full Sun,1,4,1,20,,Shrub
+325,1,Pincushion_Protea,Leucospermum cordifolium,Pincushion Protea,Pincushion Protea,Full Sun,1,4,1,15,,Shrub
+326,1,Becky_Shasta_Daisy,Leucanthemum ‘Becky’,Becky Shasta Daisy,Becky Shasta Daisy,Full Sun,1,3,1,5,,Perennial
+327,1,Lynn’s_Legacy_Texas_Sage,Leucophyllum langmaniae,Lynn’s Legacy Texas Sage,Lynn’s Legacy Texas Sage,Full Sun,1,5,1,40,,Shrub
+328,1,Coastal_Doghobble,Leucothoe axillaris,Coastal Doghobble,Coastal Doghobble,Shade/Partial,2,3,1,30,,Shrub
+329,1,Cliff_Maids,Lewisia cotyledon,Cliff Maids,Cliff Maids,Full Sun,1,3,1,5,,Perennial
+330,1,Canyon_Prince_Wild_Rye,Leymus condensatus ‘Canyon Prince’,Canyon Prince Wild Rye,Canyon Prince Wild Rye,Full Sun,1,4,1,8,,Ornamental Grass
+331,1,Othello_Leopard_Plant,Ligularia dentata ‘Othello’,Othello Leopard Plant,Othello Leopard Plant,Partial Shade,2,2,2,10,,Perennial
+332,1,Sea_Lavender,Limonium perezii,Sea Lavender,Sea Lavender - Statice,Full Sun,1,4,1,7,Statice,Perennial
+333,1,Blue_Flax,Linum perenne,Blue Flax,Blue Flax,Full Sun,1,4,1,5,,Perennial
+334,1,Cardinal_Flower,Lobelia cardinalis,Cardinal Flower,Cardinal Flower,Partial Shade,2,2,2,4,,Perennial
+335,1,Breeze_Lomandra,Lomandra longifolia ‘Breeze’,Breeze Lomandra,Breeze Lomandra,Full Sun,1,4,1,15,,Grass-like Perennial
+336,1,Baggesen’s_Gold_Box_Honeysuckle,Lonicera nitida ‘Baggesen’s Gold’,Baggesen’s Gold Box Honeysuckle,Baggesen’s Gold Box Honeysuckle,Full Sun,1,3,1,30,,Shrub
+337,1,Goji_Berry,Lycium barbarum,Goji Berry,Goji Berry - Wolfberry,Full Sun,1,4,2,15,Wolfberry,Shrub
+338,1,Golden_Creeping_Jenny,Lysimachia nummularia ‘Aurea’,Golden Creeping Jenny,Golden Creeping Jenny - Moneywort,Partial Shade,1,2,1,5,Moneywort,Groundcover
+339,1,Catalina_Ironwood,Lyonothamnus floribundus subsp. aspleniifolius,Catalina Ironwood,Catalina Ironwood,Full Sun,1,3,1,60,,Tree
+340,1,Yellow_Trumpet_Vine,Macfadyena unguis-cati,Yellow Trumpet Vine,Yellow Trumpet Vine,Full Sun,1,4,1,40,,Vine
+341,1,Butterflies_Magnolia,Magnolia × ‘Butterflies’,Butterflies Magnolia,Butterflies Magnolia,Full Sun,2,3,2,80,,Ornamental Tree
+342,1,Charity_Mahonia,Mahonia × media ‘Charity’,Charity Mahonia,Charity Mahonia,Partial Shade,2,3,1,60,,Shrub
+343,1,Barbados_Cherry,Malpighia glabra,Barbados Cherry,Barbados Cherry - Acerola,Full Sun,2,3,2,30,Acerola,Shrub/Tree
+344,1,Mexican_Turk’s_Cap,Malvaviscus arboreus var. mexicanus,Mexican Turk’s Cap,Mexican Turk’s Cap,Partial Sun,1,3,1,15,,Shrub
+345,1,Macho_Mocha_Mangave,Manfreda ‘Macho Mocha’,Macho Mocha Mangave,Macho Mocha Mangave,Full Sun,1,4,1,15,,Succulent
+346,1,Mayten_Tree,Maytenus boaria,Mayten Tree,Mayten Tree,Full Sun,2,3,2,70,,Ornamental Tree
+347,1,Paperbark_Tea_Tree,Melaleuca quinquenervia,Paperbark Tea Tree,Paperbark Tea Tree,Full Sun,1,4,1,70,,Tree
+348,1,Chinaberry,Melia azedarach,Chinaberry,Chinaberry,Full Sun,1,3,3,50,,Tree (Invasive)
+349,1,Corsican_Mint,Mentha requienii,Corsican Mint,Corsican Mint,Partial Shade,2,2,1,2,,Groundcover
+350,1,Dawn_Redwood,Metasequoia glyptostroboides,Dawn Redwood,Dawn Redwood,Full Sun,2,2,2,100,,Shade Tree
+351,1,Bowles’_Golden_Grass,Milium effusum ‘Aureum’,Bowles’ Golden Grass,Bowles’ Golden Grass,Partial Shade,1,3,1,5,,Ornamental Grass
+352,1,Sticky_Monkey_Flower,Mimulus aurantiacus,Sticky Monkey Flower,Sticky Monkey Flower,Full Sun,1,3,1,5,,Shrub
+353,1,Jacob_Cline_Bee_Balm,Monarda didyma ‘Jacob Cline’,Jacob Cline Bee Balm,Jacob Cline Bee Balm,Full Sun,2,3,2,5,,Perennial
+354,1,Swiss_Cheese_Plant,Monstera deliciosa,Swiss Cheese Plant,Swiss Cheese Plant,Partial Shade,2,3,1,40,,Vine
+355,1,Chaparral_Weeping_Mulberry,Morus alba ‘Chaparral’,Chaparral Weeping Mulberry,Chaparral Weeping Mulberry,Full Sun,2,3,2,60,,Ornamental Tree
+356,1,Deer_Grass,Muhlenbergia rigens,Deer Grass,Deer Grass,Full Sun,1,4,1,10,,Ornamental Grass
+357,1,Compact_Myrtle,Myrtus communis ‘Compacta’,Compact Myrtle,Compact Myrtle,Full Sun,1,3,1,50,,Shrub
+358,1,Harbor_Dwarf_Nandina,Nandina domestica ‘Harbor Dwarf’,Harbor Dwarf Nandina,Harbor Dwarf Nandina,Full/Partial Sun,1,3,1,40,,Shrub
+359,1,Tête-à-Tête_Daffodil,Narcissus ‘Tête-à-Tête’,Tête-à-Tête Daffodil,Tête-à-Tête Daffodil,Full Sun,1,3,1,30,,Bulb
+360,1,Pink_Sensation_Water_Lily,Nymphaea ‘Pink Sensation’,Pink Sensation Water Lily,Pink Sensation Water Lily,Full Sun,2,2,1,7,,Aquatic
+361,1,Flamingo_Water_Celery,Oenanthe javanica ‘Flamingo’,Flamingo Water Celery,Flamingo Water Celery,Partial Sun,2,2,1,4,,Aquatic
+362,1,Little_Ollie_Dwarf_Olive,Olea europaea ‘Little Ollie’,Little Ollie Dwarf Olive,Little Ollie Dwarf Olive,Full Sun,1,4,1,60,,Shrub
+363,1,Santa_Rita_Prickly_Pear,Opuntia santa-rita,Santa Rita Prickly Pear,Santa Rita Prickly Pear - Purple Prickly Pear,Full Sun,1,5,1,40,Purple Prickly Pear,Cactus
+364,1,Kent_Beauty_Ornamental_Oregano,Origanum ‘Kent Beauty’,Kent Beauty Ornamental Oregano,Kent Beauty Ornamental Oregano,Full Sun,1,4,1,5,,Perennial
+365,1,Goshiki_False_Holly,Osmanthus heterophyllus ‘Goshiki’,Goshiki False Holly,Goshiki False Holly,Partial Sun,1,3,1,50,,Shrub
+366,1,Serenity_African_Daisy,Osteospermum ‘Serenity Purple’,Serenity African Daisy,Serenity African Daisy,Full Sun,1,3,1,3,,Annual/Perennial
+367,1,Zinfandel_Shamrock,Oxalis spiralis ‘Zinfandel’,Zinfandel Shamrock,Zinfandel Shamrock,Partial Shade,1,3,1,3,,Perennial
+368,1,Money_Tree,Pachira aquatica,Money Tree,Money Tree,Partial Sun,2,3,2,30,,Tropical Tree
+369,1,Japanese_Spurge,Pachysandra terminalis,Japanese Spurge,Japanese Spurge,Shade,1,3,1,20,,Groundcover
+370,1,Sarah_Bernhardt_Peony,Paeonia lactiflora ‘Sarah Bernhardt’,Sarah Bernhardt Peony,Sarah Bernhardt Peony,Full/Partial Sun,2,3,1,50,,Perennial
+371,1,Christ’s_Thorn,Paliurus spina-christi,Christ’s Thorn,Christ’s Thorn - Christ’s Thorn,Full Sun,1,4,1,60,Christ’s Thorn,Shrub
+372,1,Bower_Vine,Pandorea jasminoides,Bower Vine,Bower Vine,Full/Partial Sun,1,3,1,20,,Vine
+373,1,Northwind_Switchgrass,Panicum virgatum ‘Northwind’,Northwind Switchgrass,Northwind Switchgrass,Full Sun,1,4,1,15,,Ornamental Grass
+374,1,Ball_Cactus,Parodia magnifica,Ball Cactus,Ball Cactus,Full Sun,1,5,1,40,,Cactus
+375,1,Persian_Ironwood,Parrotia persica,Persian Ironwood,Persian Ironwood,Full Sun,1,3,1,100,,Ornamental Tree
+376,1,Purple_Passionflower,Passiflora incarnata,Purple Passionflower,Purple Passionflower - Maypop,Full Sun,1,4,1,20,Maypop,Vine
+377,1,Rock_Rose,Pavonia lasiopetala,Rock Rose,Rock Rose,Full Sun,1,4,1,10,,Shrub
+378,1,Zonal_Geranium,Pelargonium hortorum,Zonal Geranium,Zonal Geranium,Full Sun,2,2,2,1,,Annual
+379,1,Prairie_Penstemon,Penstemon cobaea,Prairie Penstemon,Prairie Penstemon - Cobaea Beard-tongue,Full Sun,1,3,1,4,Cobaea Beard-tongue,Perennial
+380,1,Husker_Red_Penstemon,Penstemon digitalis ‘Husker Red’,Husker Red Penstemon,Husker Red Penstemon,Full Sun,1,3,1,4,,Perennial
+381,1,Blue_Spire_Russian_Sage,Perovskia ‘Blue Spire’,Blue Spire Russian Sage,Blue Spire Russian Sage,Full Sun,1,4,1,10,,Perennial
+382,1,Giant_Fleeceflower,Persicaria polymorpha,Giant Fleeceflower,Giant Fleeceflower,Full Sun,1,3,1,15,,Perennial
+383,1,Purple_Prairie_Clover,Petalostemum purpureum,Purple Prairie Clover,Purple Prairie Clover,Full Sun,1,4,1,5,,Perennial
+384,1,Jerusalem_Sage,Phlomis fruticosa,Jerusalem Sage,Jerusalem Sage,Full Sun,1,4,1,15,,Shrub
+385,1,Canary_Island_Date_Palm,Phoenix canariensis,Canary Island Date Palm,Canary Island Date Palm,Full Sun,2,4,1,70,,Palm
+386,1,Rainbow_Queen_New_Zealand_Flax,Phormium tenax ‘Rainbow Queen’,Rainbow Queen New Zealand Flax,Rainbow Queen New Zealand Flax,Full Sun,1,3,1,15,,Groundcover
+389,1,Diablo_Ninebark,Physocarpus opulifolius ‘Diabolo’,Diablo Ninebark,Diablo Ninebark,Full Sun,1,3,2,30,,Shrub
+390,,,Picea pungens ‘Hoopsii’,Hoopsii Blue Spruce,Hoopsii Blue Spruce,Full Sun,2,2,2,80,,Conifer
+391,,,Pimenta dioica,Allspice Tree,Allspice Tree,Full Sun,2,3,2,60,,Edible Tree
+392,,,Piper auritum,Hoja Santa,Hoja Santa - Mexican Pepperleaf,Partial Shade,2,3,1,10,Mexican Pepperleaf,Herb
+393,,,Pistacia lentiscus,Mastic Tree,Mastic Tree,Full Sun,1,4,1,100,,Shrub/Tree
+394,1,Silver_Queen_Pittosporum,Pittosporum tenuifolium ‘Silver Queen’,Silver Queen Pittosporum,Silver Queen Pittosporum,Full Sun,1,3,2,40,,Shrub
+395,1,London_Plane_Tree,Platanus × hispanica,London Plane Tree,London Plane Tree,Full Sun,2,3,3,120,,Shade Tree
+396,,,Plumbago auriculata,Cape Plumbago,Cape Plumbago,Full Sun,1,3,1,10,,Shrub
+397,1,Japanese_Yew,Podocarpus macrophyllus,Japanese Yew,Japanese Yew,Partial Sun,1,3,1,80,,Tree/Shrub
+398,,,Podranea ricasoliana,Pink Trumpet Vine,Pink Trumpet Vine,Full Sun,1,3,1,30,,Vine
+399,,,Polemonium caeruleum,Jacob’s Ladder,Jacob’s Ladder,Full Sun,1,3,1,20,,Perennial
+400,,,Polygala myrtifolia,Sweet Pea Shrub,Sweet Pea Shrub,Full Sun,1,3,1,20,,Shrub
+401,,,Polygonum aubertii,Silver Lace Vine,Silver Lace Vine - Mile-a-Minute Vine,Full Sun,1,3,1,20,Mile-a-Minute Vine,Vine
+402,,,Poncirus trifoliata ‘Flying Dragon’,Flying Dragon Hardy Orange,Flying Dragon Hardy Orange,Full Sun,1,3,1,20,,Shrub
+403,1,Moss_Rose,Portulaca grandiflora,Moss Rose,Moss Rose,Full Sun,2,3,3,2,,Annual
+404,,,Potentilla fruticosa,Shrubby Cinquefoil,Shrubby Cinquefoil,Full Sun,1,3,1,20,,Shrub
+405,,,Pratia pedunculata,Baby’s Tears,Baby’s Tears,Partial Shade,1,3,1,20,,Groundcover
+406,,,Protea cynaroides,King Protea,King Protea,Full Sun,1,3,1,20,,Shrub
+407,,,Prunus laurocerasus ‘Otto Luyken’,Otto Luyken Cherry Laurel,Otto Luyken Cherry Laurel,Full Sun,1,3,1,20,,Shrub
+408,,,Pseudosasa japonica,Arrow Bamboo,Arrow Bamboo,Full Sun,1,3,1,20,,Bamboo
+409,,,Psidium guajava ‘Tropicana’,Tropicana Guava,Tropicana Guava,Full Sun,1,3,1,20,,Edible Shrub
+410,,,Punica granatum ‘Nana’,Dwarf Pomegranate,Dwarf Pomegranate,Full Sun,1,3,1,20,,Shrub
+411,,,Pyrrosia lingua,Tongue Fern,Tongue Fern,Partial Shade,1,3,1,20,,Fern
+412,,,Quercus polymorpha,Mexican White Oak,Mexican White Oak - Monterrey Oak,Full Sun,1,3,1,80,Monterrey Oak,Shade Tree
+413,,,Quercus rostrata,Netleaf Oak,Netleaf Oak,Full Sun,1,3,1,80,,Shade Tree
+414,,,Quercus × warei ‘Regal Prince’,Regal Prince Oak,Regal Prince Oak,Full Sun,1,3,1,80,,Shade Tree
+415,,,Rhaphidophora tetrasperma,Mini Monstera,Mini Monstera,Full Sun,1,3,1,20,,Vine
+416,,,Rhododendron ‘Formosa’,Formosa Azalea,Formosa Azalea,Partial Shade,1,3,1,20,,Shrub
+417,,,Rhodophiala bifida,Oxblood Lily,Oxblood Lily,Partial Shade,1,3,1,2,,Bulb
+418,,,Ribes sanguineum,Flowering Currant,Flowering Currant,Full Sun,1,3,1,20,,Shrub
+419,,,Ricinus communis ‘Carmencita’,Carmencita Castor Bean,Carmencita Castor Bean,Full Sun,1,3,1,20,,Annual (Toxic)
+420,1,Tuscan_Blue_Rosemary,Rosmarinus officinalis ‘Tuscan Blue’,Tuscan Blue Rosemary,Tuscan Blue Rosemary,Full Sun,1,3,3,2,,Herb
+421,,,Rubus fruticosus ‘Apache’,Apache Thornless Blackberry,Apache Thornless Blackberry,Full Sun,1,3,1,20,,Edible Shrub
+422,,,Rudbeckia maxima,Giant Coneflower,Giant Coneflower,Full Sun,1,3,1,20,,Perennial
+423,,,Russelia equisetiformis,Firecracker Plant,Firecracker Plant,Full Sun,1,3,1,20,,Shrub
+424,,,Sabal palmetto,Cabbage Palm,Cabbage Palm,Full Sun,1,3,1,80,,Palm
+425,1,Corkscrew_Willow,Salix matsudana ‘Tortuosa’,Corkscrew Willow,Corkscrew Willow,Full Sun,1,3,3,80,,Ornamental Tree
+426,,,Salvia coccinea ‘Summer Jewel Red’,Summer Jewel Red Sage,Summer Jewel Red Sage,Full Sun,1,3,1,20,,Annual/Perennial
+427,,,Salvia guaranitica ‘Black & Blue’,Black & Blue Anise Sage,Black & Blue Anise Sage,Full Sun,1,3,1,20,,Perennial
+428,1,Purple_Rain_Sage,Salvia verticillata ‘Purple Rain’,Purple Rain Sage,Purple Rain Sage,Full Sun,1,3,1,20,,Perennial
+429,,,Sambucus nigra ‘Black Lace’,Black Lace Elderberry,Black Lace Elderberry,Full Sun,1,3,1,20,,Shrub
+430,,,Santolina chamaecyparissus,Lavender Cotton,Lavender Cotton,Full Sun,1,3,1,20,,Shrub
+431,,,Sarcococca ruscifolia,Fragrant Sarcococca,Fragrant Sarcococca - Sweet Box,Partial Shade,1,3,1,20,Sweet Box,Shrub
+432,,,Satsuma mandarin (Citrus unshiu),Owari Satsuma,Owari Satsuma,Full Sun,1,3,1,20,,Edible Tree
+433,1,Fan_Flower,Scaevola aemula,Fan Flower,Fan Flower,Full Sun,1,3,1,20,,Annual
+434,,,Schizolobium parahyba,Brazilian Fern Tree,Brazilian Fern Tree,Partial Shade,1,3,1,80,,Shade Tree
+435,,,Sedum ‘Autumn Charm’,Autumn Charm Stonecrop,Autumn Charm Stonecrop,Full Sun,1,5,1,20,,Perennial
+436,,,Senecio serpens,Blue Chalksticks,Blue Chalksticks,Full Sun,1,5,1,20,,Succulent
+437,,,Sesleria autumnalis,Autumn Moor Grass,Autumn Moor Grass,Full Sun,1,4,1,8,,Ornamental Grass
+438,,,Silphium laciniatum,Compass Plant,Compass Plant,Full Sun,1,3,1,20,,Perennial
+439,,,Sisyrinchium angustifolium,Blue-eyed Grass,Blue-eyed Grass,Full Sun,1,4,1,8,,Perennial
+440,,,Solanum jasminoides,Potato Vine,Potato Vine,Full Sun,1,3,1,20,,Vine
+441,,,Solanum quitoense,Naranjilla,Naranjilla,Full Sun,1,3,1,20,,Shrub
+442,,,Sophora secundiflora ‘Silver Peso’,Silver Peso Texas Mountain Laurel,Silver Peso Texas Mountain Laurel,Full Sun,1,3,1,20,,Shrub
+443,,,Spartina pectinata ‘Aureomarginata’,Variegated Prairie Cordgrass,Variegated Prairie Cordgrass,Full Sun,1,4,1,20,,Ornamental Grass
+444,,,Spigelia marilandica,Indian Pink,Indian Pink,Full Sun,1,3,1,20,,Perennial
+445,,,Sporobolus airoides,Alkali Sacaton,Alkali Sacaton,Full Sun,1,3,1,20,,Ornamental Grass
+446,,,Stachys ‘Bella Grigio’,Lamb’s Ear Bella Grigio,Lamb’s Ear Bella Grigio,Full Sun,1,3,1,20,,Perennial
+447,,,Stephanotis floribunda,Madagascar Jasmine,Madagascar Jasmine - Bridal Veil,Partial Shade,1,3,1,20,Bridal Veil,Vine
+448,,,Strelitzia reginae,Bird of Paradise,Bird of Paradise,Full Sun,1,3,1,20,,Perennial
+449,,,Styrax japonicus,Japanese Snowbell,Japanese Snowbell,Full Sun,1,3,1,20,,Ornamental Tree
+450,,,Syzygium paniculatum,Australian Brush Cherry,Australian Brush Cherry,Full Sun,1,3,1,20,,Shrub/Tree
+451,,,Tagetes lemmonii,Mexican Marigold,Mexican Marigold,Full Sun,2,3,1,2,,Shrub
+452,,,Talinum paniculatum ‘Limon’,Lime Jewels of Opar,Lime Jewels of Opar,Full Sun,1,3,1,20,,Perennial
+454,,,Taxodium mucronatum,Montezuma Cypress,Montezuma Cypress,Full Sun,1,3,1,80,,Shade Tree
+455,,,Tecomaria capensis,Cape Honeysuckle,Cape Honeysuckle,Full Sun,1,3,1,20,,Shrub
+456,,,Tetraneuris acaulis,Angelita Daisy,Angelita Daisy,Full Sun,1,3,1,2,,Perennial
+457,,,Thalictrum rochebrunianum,Lavender Mist Meadow Rue,Lavender Mist Meadow Rue,Full Sun,1,3,1,20,,Perennial
+458,,,Thespesia populnea,Portia Tree,Portia Tree,Full Sun,1,3,1,80,,Tropical Tree
+459,1,Black-eyed_Susan_Vine,Thunbergia alata,Black-eyed Susan Vine,Black-eyed Susan Vine,Full Sun,1,3,1,20,,Vine
+460,,,Thymus serpyllum ‘Elfin’,Elfin Thyme,Elfin Thyme,Full Sun,1,3,1,20,,Groundcover
+461,,,Tilia americana ‘Redmond’,Redmond Linden,Redmond Linden,Full Sun,1,3,1,20,,Shade Tree
+462,,,Tradescantia sillamontana,White Velvet Spiderwort,White Velvet Spiderwort,Partial Shade,1,3,1,20,,Groundcover
+463,1,Madison_Confederate_Jasmine,Trachelospermum jasminoides ‘Madison’,Madison Confederate Jasmine,Madison Confederate Jasmine,Partial Shade,1,3,1,20,,Vine
+464,1,Miniature_Windmill_Palm,Trachycarpus wagnerianus,Miniature Windmill Palm,Miniature Windmill Palm,Full Sun,1,3,1,80,,Palm
+466,,,Trichostema dichotomum,Blue Curls,Blue Curls,Full Sun,1,3,1,20,,Annual
+467,,,Trifolium repens ‘Atropurpureum’,Purple Shamrock Clover,Purple Shamrock Clover,Full Sun,1,3,1,20,,Groundcover
+468,,,Tulipa clusiana,Lady Tulip,Lady Tulip,Full Sun,2,3,1,2,,Bulb
+469,,,Turnera diffusa,Damiana,Damiana,Full Sun,1,3,1,20,,Shrub
+470,,,Ulex europaeus,Gorse,Gorse,Full Sun,1,3,1,20,,Shrub
+471,,,Vaccinium corymbosum ‘Blueray’,Blueray Blueberry,Blueray Blueberry,Full Sun,1,3,1,20,,Edible Shrub
+472,,,Verbena canadensis ‘Homestead Purple’,Homestead Purple Verbena,Homestead Purple Verbena,Full Sun,2,3,1,2,,Perennial
+473,,,Veronica spicata ‘Red Fox’,Red Fox Speedwell,Red Fox Speedwell,Full Sun,2,3,1,2,,Perennial
+474,,,Viburnum plicatum ‘Shasta’,Shasta Doublefile Viburnum,Shasta Doublefile Viburnum,Full Sun,1,3,1,20,,Shrub
+475,,,Vinca minor ‘Illumination’,Illumination Periwinkle,Illumination Periwinkle,Partial Shade,1,3,1,20,,Groundcover
+477,,,Washingtonia filifera,California Fan Palm,California Fan Palm,Full Sun,1,3,1,80,,Palm
+478,,,Westringia fruticosa,Coast Rosemary,Coast Rosemary,Full Sun,1,3,3,2,,Shrub
+479,,,Wisteria frutescens ‘Amethyst Falls’,Amethyst Falls Wisteria,Amethyst Falls Wisteria,Full Sun,1,3,1,20,,Vine
+480,,,Xanthorrhoea preissii,Grass Tree,Grass Tree,Full Sun,1,4,1,80,,Tree
+481,,,Xylosma congestum,Shiny Xylosma,Shiny Xylosma,Full Sun,1,3,1,20,,Shrub
+482,,,Yucca filifera,Tree Yucca,Tree Yucca,Full Sun,1,5,1,80,,Succulent
+483,,,Yucca rostrata ‘Sapphire Skies’,Sapphire Skies Beaked Yucca,Sapphire Skies Beaked Yucca,Full Sun,1,5,1,20,,Succulent
+484,,,Zantedeschia aethiopica,White Calla Lily,White Calla Lily,Partial Shade,1,3,1,2,,Perennial
+485,,,Zea mays ‘Glass Gem’,Glass Gem Corn,Glass Gem Corn,Full Sun,2,3,3,8,,Ornamental Edible
+486,,,Zelkova serrata ‘Green Vase’,Green Vase Japanese Zelkova,Green Vase Japanese Zelkova,Full Sun,1,3,1,80,,Shade Tree
+487,,,Zingiber officinale,Culinary Ginger,Culinary Ginger,Full Sun,1,3,1,20,,Perennial
+488,,,Ziziphus jujuba ‘Li’,Li Jujube,Li Jujube - Chinese Date,Full Sun,1,3,1,20,Chinese Date,Edible Tree
+489,1,Emerald_Zoysia,Zoysia matrella ‘Emerald’,Emerald Zoysia,Emerald Zoysia,Full Sun,1,3,1,20,,Turf Grass
+490,,,Abutilon megapotamicum,Trailing Abutilon,Trailing Abutilon - Flowering Maple,Partial Shade,1,3,1,20,Flowering Maple,Shrub / Vine
+491,,,Acacia farnesiana,Sweet Acacia,Sweet Acacia - Huisache,Full Sun,1,3,1,20,Huisache,Ornamental Tree
+492,1,Pineapple_Guava,Acca sellowiana,Pineapple Guava,Pineapple Guava - Feijoa,Full Sun,1,3,1,80,Feijoa,Shrub / Tree
+493,,,Aesculus hippocastanum,Horse Chestnut,Horse Chestnut,Full Sun,1,3,3,80,,Shade Tree
+494,,,Albizia kalkora,Kalkora Mimosa,Kalkora Mimosa - Silk Tree,Full Sun,1,3,1,40,Silk Tree,Ornamental Tree
+495,,,Allium schoenoprasum ‘Forescate’,Ornamental Chives,Ornamental Chives - Forescate,Full Sun,2,3,2,3,Forescate,Perennial
+496,,,Alnus serrulata,Smooth Alder,Smooth Alder - Hazel Alder,Full Sun,1,3,1,60,Hazel Alder,Shrub
+497,,,Anemone × hybrida ‘Honorine Jobert’,Japanese Windflower,Japanese Windflower - Anemone,Partial Shade,2,3,1,20,Anemone,Perennial
+498,,,Araucaria heterophylla,Norfolk Island Pine,Norfolk Island Pine - Norfolk Pine,Full Sun,1,3,1,80,Norfolk Pine,Conifer
+499,,,Arbutus unedo,Strawberry Tree,Strawberry Tree,Full Sun,1,3,1,80,,Shrub / Tree
+500,,,Aristolochia macrophylla,Dutchman’s Pipe,Dutchman’s Pipe - Pipevine,Partial Shade,1,3,1,40,Pipevine,Vine
+501,,,Asimina triloba,Pawpaw,Pawpaw - Paw Paw,Partial Sun,1,3,1,60,Paw Paw,Fruit Tree
+502,,,Atriplex canescens,Four-wing Saltbush,Four-wing Saltbush - Saltbush,Full Sun,1,5,1,20,Saltbush,Shrub
+503,,,Baeckea frutescens,Australian Heath Myrtle,Australian Heath Myrtle,Full Sun,1,3,1,30,,Shrub
+504,,,Bauhinia lunarioides,Anacacho Orchid Tree,Anacacho Orchid Tree - Texas Orchid,Full Sun,1,3,1,40,Texas Orchid,Ornamental Tree
+505,,,Belamcanda chinensis,Blackberry Lily,Blackberry Lily - Leopard Lily,Full Sun,1,3,1,4,Leopard Lily,Perennial
+506,,,Berlandiera lyrata,Chocolate Flower,Chocolate Flower,Full Sun,1,4,1,4,,Perennial
+507,,,Bletilla striata,Chinese Ground Orchid,Chinese Ground Orchid - Hardy Orchid,Partial Shade,2,3,1,10,Hardy Orchid,Perennial
+509,,,Caesalpinia mexicana,Mexican Bird-of-Paradise,Mexican Bird-of-Paradise,Full Sun,1,4,1,30,,Shrub / Tree
+510,,,Calothamnus quadrifidus,One-sided Bottlebrush,One-sided Bottlebrush,Full Sun,1,4,1,25,,Shrub
+511,,,Caragana arborescens,Siberian Peashrub,Siberian Peashrub - Caragana,Full Sun,1,4,1,40,Caragana,Shrub
+513,,,Cassia fistula,Golden Shower Tree,Golden Shower Tree,Full Sun,1,3,1,40,,Ornamental Tree
+514,,,Castanea mollissima,Chinese Chestnut,Chinese Chestnut,Full Sun,1,3,3,80,,Shade Tree
+515,,,Cedrela odorata,Spanish Cedar,Spanish Cedar,Full Sun,1,3,2,80,,Tree
+516,,,Cercocarpus montanus,Mountain Mahogany,Mountain Mahogany,Full Sun,1,4,1,60,,Shrub
+517,,,Chaenomeles japonica,Japanese Flowering Quince,Japanese Flowering Quince,Full Sun,1,3,1,30,,Shrub
+518,,,Chrysactinia mexicana,Damianita Daisy,Damianita Daisy - Damianita,Full Sun,1,4,1,5,Damianita,Shrub
+519,,,Cissus trifoliata,Cow Itch Vine,Cow Itch Vine - Sorrelvine,Full Sun,1,3,1,25,Sorrelvine,Vine
+520,,,Clerodendrum bungei,Glory Bower,Glory Bower - Cashmere Bouquet,Partial Sun,1,3,1,20,Cashmere Bouquet,Shrub
+521,,,Clusia rosea,Autograph Tree,Autograph Tree,Full Sun,1,3,1,60,,Shrub / Tree
+522,,,Colletia paradoxa,Anchor Plant,Anchor Plant - Jet Thorn,Full Sun,1,4,1,40,Jet Thorn,Shrub
+523,,,Conocarpus erectus,Buttonwood,Buttonwood,Full Sun,1,4,1,60,,Tree
+524,,,Cordyline australis,Cabbage Tree,Cabbage Tree,Full Sun,1,3,1,40,,Ornamental Tree
+525,,,Corylus americana,American Hazelnut,American Hazelnut,Full Sun,1,3,1,60,,Shrub
+526,,,Cotyledon orbiculata,Pig’s Ear,Pig’s Ear,Full Sun,1,5,1,25,,Succulent
+527,,,Crataegus viridis ‘Winter King’,Winter King Hawthorn,Winter King Hawthorn,Full Sun,1,3,1,50,,Ornamental Tree
+528,,,Cuphea llavea,Bat-faced Cuphea,Bat-faced Cuphea,Full Sun,1,3,1,4,,Perennial
+529,,,Cussonia paniculata,Highveld Cabbage Tree,Highveld Cabbage Tree,Full Sun,1,3,1,40,,Tree
+530,,,Cyrilla racemiflora,Swamp Cyrilla,Swamp Cyrilla - Titi,Full Sun,1,2,1,40,Titi,Shrub / Tree
+531,,,Daphniphyllum macropodum,Daphniphyllum,Daphniphyllum,Partial Shade,1,3,1,60,,Shrub
+532,,,Daphne odora,Winter Daphne,Winter Daphne,Partial Shade,2,2,2,15,,Shrub
+533,,,Debregeasia orientalis,Woolly Rock Fig,Woolly Rock Fig,Partial Shade,1,3,1,40,,Shrub
+534,,,Dianthus deltoides,Maiden Pink,Maiden Pink,Full Sun,2,3,1,3,,Perennial
+535,,,Dimorphotheca ecklonis,African Daisy,African Daisy - Cape Daisy,Full Sun,1,3,1,4,Cape Daisy,Annual / Perennial
+536,,,Dodonaea viscosa,Hopbush,Hopbush,Full Sun,1,4,1,25,,Shrub
+537,,,Dracaena draco,Dragon Tree,Dragon Tree,Full Sun,1,4,1,80,,Succulent Tree
+538,,,Eriobotrya deflexa,Bronze Loquat,Bronze Loquat,Full Sun,1,3,1,40,,Tree
+539,,,Escobaria missouriensis,Missouri Foxtail Cactus,Missouri Foxtail Cactus,Full Sun,1,5,1,40,,Cactus
+540,,,Eucomis comosa,Pineapple Lily,Pineapple Lily,Full Sun,2,3,1,5,,Bulb
+541,,,Fatshedera × hedera ‘Annelise’,Variegated Tree-Ivy,Variegated Tree-Ivy,Partial Shade,1,3,1,20,,Vine / Shrub
+542,,,Fothergilla gardenii,Dwarf Fothergilla,Dwarf Fothergilla,Partial Shade,1,3,1,30,,Shrub
+543,,,Fraxinus americana,White Ash,White Ash,Full Sun,1,3,3,80,,Shade Tree
+544,,,Garrya elliptica,Silk-tassel Bush,Silk-tassel Bush,Full Sun,1,3,1,40,,Shrub
+545,,,Gelsemium sempervirens ‘Margarita’,Margarita Carolina Jessamine,Margarita Carolina Jessamine,Full/Partial Sun,1,3,1,30,,Vine
+546,,,Gossypium hirsutum,Cotton,Cotton,Full Sun,2,3,3,2,,Annual / Ornamental
+547,,,Gymnocladus dioicus,Kentucky Coffeetree,Kentucky Coffeetree,Full Sun,1,3,1,80,,Shade Tree
+548,,,Halesia carolina,Carolina Silverbell,Carolina Silverbell,Partial Sun,1,3,1,60,,Ornamental Tree
+549,,,Hesperaloe funifera,Giant Red Yucca,Giant Red Yucca,Full Sun,1,5,1,40,,Succulent
+550,,,Heuchera sanguinea,Coral Bells,Coral Bells - Alumroot,Partial Shade,1,3,1,5,Alumroot,Perennial
+551,,,Hibiscus rosa-sinensis,Tropical Hibiscus,Tropical Hibiscus - Chinese Hibiscus,Full Sun,2,2,2,10,Chinese Hibiscus,Shrub
+552,,,Hydrangea quercifolia ‘Snow Queen’,Snow Queen Oakleaf Hydrangea,Snow Queen Oakleaf Hydrangea,Partial Shade,2,3,2,40,,Shrub
+553,,,Indigofera heterantha,Himalayan Indigo,Himalayan Indigo,Full Sun,1,3,1,20,,Shrub
+554,,,Iochroma cyaneum,Violet Tubeflower,Violet Tubeflower,Full Sun,1,3,1,10,,Shrub
+556,,,Jasminum mesnyi,Primrose Jasmine,Primrose Jasmine,Full/Partial Sun,1,3,1,30,,Shrub
+557,,,Juglans major,Arizona Walnut,Arizona Walnut,Full Sun,1,3,2,100,,Tree
+558,,,Justicia candicans,Red Justicia,Red Justicia,Partial Sun,1,3,1,6,,Shrub
+559,,,Kalopanax septemlobus,Castor Aralia,Castor Aralia,Full Sun,1,3,1,80,,Tree
+560,,,Kerria japonica ‘Pleniflora’,Double Kerria,Double Kerria - Japanese Rose,Partial Sun,1,3,1,25,Japanese Rose,Shrub
+561,1,Queen’s_Crape_Myrtle,Lagerstroemia speciosa,Queen’s Crape Myrtle,Queen’s Crape Myrtle,Full Sun,1,3,2,40,,Ornamental Tree
+562,,,Lapageria rosea,Chilean Bellflower,Chilean Bellflower,Partial Shade,2,2,1,15,,Vine
+563,,,Laurus azorica,Azores Laurel,Azores Laurel,Full Sun,1,3,1,50,,Shrub / Tree
+564,,,Lepechinia hastata,Pitcher Sage,Pitcher Sage,Full Sun,1,3,1,15,,Shrub
+565,,,Leptospermum laevigatum,Australian Tea Tree,Australian Tea Tree,Full Sun,1,4,1,40,,Shrub
+566,,,Lespedeza thunbergii,Bush Clover,Bush Clover,Full Sun,1,4,1,20,,Shrub
+567,,,Levisticum officinale,Lovage,Lovage,Full Sun,2,3,1,5,,Herb
+568,,,Libocedrus decurrens (syn. Calocedrus),Incense Cedar,Incense Cedar,Full Sun,1,3,1,100,,Evergreen Tree
+569,,,Limonium latifolium,Sea Lavender,Sea Lavender - Statice,Full Sun,1,4,1,7,Statice,Perennial
+570,,,Lithodora diffusa ‘Grace Ward’,Lithodora,Lithodora,Full Sun,1,3,1,5,,Groundcover
+571,,,Lupinus texensis,Texas Bluebonnet,Texas Bluebonnet - Bluebonnet,Full Sun,2,3,1,3,Bluebonnet,Annual
+572,,,Lyonia lucida,Fetterbush,Fetterbush,Partial Shade,1,3,1,30,,Shrub
+573,,,Maclura pomifera,Osage Orange,Osage Orange - Bois d’Arc,Full Sun,1,3,1,80,Bois d’Arc,Tree
+574,,,Magnolia figo,Banana Shrub,Banana Shrub,Partial Shade,2,3,1,60,,Shrub
+575,,,Mahonia repens,Creeping Oregon Grape,Creeping Oregon Grape,Partial Shade,1,3,1,40,,Groundcover
+576,,,Malus angustifolia,Southern Crabapple,Southern Crabapple,Full Sun,2,3,3,60,,Small Tree
+577,,,Melianthus major,Honey Bush,Honey Bush,Full Sun,1,3,1,20,,Shrub
+578,,,Metrosideros excelsa,New Zealand Christmas Tree,New Zealand Christmas Tree,Full Sun,1,3,1,80,,Tree
+579,,,Morus alba ‘Pendula’,Weeping Mulberry,Weeping Mulberry,Full Sun,1,3,3,50,,Ornamental Tree
+580,,,Myrtus communis ‘Tarentina’,Dwarf Myrtle,Dwarf Myrtle,Full Sun,1,3,1,60,,Shrub
+581,1,Firepower_Nandina,Nandina domestica ‘Firepower’,Firepower Nandina,Firepower Nandina,Full/Partial Sun,1,3,1,40,,Shrub
+582,,,Nerium oleander ‘Petite Salmon’,Petite Salmon Oleander,Petite Salmon Oleander,Full Sun,2,3,2,30,,Shrub
+583,,,Nicotiana alata,Flowering Tobacco,Flowering Tobacco,Partial Sun,2,2,2,1,,Annual / Perennial
+584,,,Nyssa sylvatica,Blackgum,Blackgum - Tupelo,Full Sun,1,3,1,100,Tupelo,Shade Tree
+585,,,Ochna serrulata,Mickey Mouse Plant,Mickey Mouse Plant,Partial Sun,1,3,1,40,,Shrub
+586,,,Osmanthus fragrans ‘Fudingzhu’,Fudingzhu Tea Olive,Fudingzhu Tea Olive - Fragrant Tea Olive,Partial Shade,1,3,1,80,Fragrant Tea Olive,Shrub
+587,,,Oxydendrum arboreum,Sourwood,Sourwood,Full Sun,1,3,1,80,,Ornamental Tree
