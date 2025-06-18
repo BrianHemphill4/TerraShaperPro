@@ -82,17 +82,6 @@
   ],
   "env": {
     "NEXT_PUBLIC_APP_URL": "$VERCEL_URL",
-    "NEXT_PUBLIC_API_URL": "https://api.terrashaperpro.com",
-    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": "@clerk-publishable-key",
-    "CLERK_SECRET_KEY": "@clerk-secret-key",
-    "DATABASE_URL": "@database-url",
-    "DIRECT_URL": "@database-direct-url",
-    "NEXT_PUBLIC_SENTRY_DSN": "@sentry-dsn",
-    "SENTRY_ORG": "@sentry-org",
-    "SENTRY_PROJECT": "@sentry-project",
-    "SENTRY_AUTH_TOKEN": "@sentry-auth-token",
-    "GOOGLE_CLOUD_PROJECT_ID": "@google-cloud-project-id",
-    "GOOGLE_CLOUD_STORAGE_BUCKET": "@google-cloud-storage-bucket",
-    "REDIS_URL": "@redis-url"
+    "NEXT_PUBLIC_API_URL": "https://api.terrashaperpro.com"
   }
 }
