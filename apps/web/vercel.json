@@ -1,11 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "buildCommand": "cd ../.. && npx turbo run build --filter=web",
-  "outputDirectory": ".next",
-  "installCommand": "cd ../.. && npm install",
-  "devCommand": "cd ../.. && npm run dev -- --filter=web",
-  "ignoreCommand": "cd ../.. && ./scripts/vercel-ignore-build.sh",
+  "buildCommand": "npx turbo run build --filter=web",
+  "outputDirectory": "apps/web/.next",
+  "installCommand": "npm install",
+  "devCommand": "npm run dev -- --filter=web",
+  "ignoreCommand": "./scripts/vercel-ignore-build.sh",
   "regions": ["iad1"],
   "functions": {
     "app/api/trpc/[trpc]/route.ts": {
