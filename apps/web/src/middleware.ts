@@ -8,6 +8,94 @@ import createMiddleware from 'next-intl/middleware';
 
 import { AllLocales, AppConfig } from './utils/AppConfig';
 
+// Helper function to get allowed origins
+function getAllowedOrigins(): string[] {
+  const origins: string[] = [];
+  
+  // Development origins
+  if (process.env.NODE_ENV === 'development') {
+    origins.push(
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3001',
+      'http://127.0.0.1:3002'
+    );
+  }
+  
+  // Production origins
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    origins.push(process.env.NEXT_PUBLIC_API_URL);
+  }
+  
+  // Add production domains
+  origins.push(
+    'https://terrashaperpro.com',
+    'https://www.terrashaperpro.com',
+    'https://app.terrashaperpro.com',
+    'https://api.terrashaperpro.com'
+  );
+  
+  return origins;
+}
+
+// Apply security headers
+function applySecurityHeaders(response: NextResponse, request: NextRequest): NextResponse {
+  // CORS headers for API routes
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    const origin = request.headers.get('origin');
+    const allowedOrigins = getAllowedOrigins();
+    
+    if (origin && allowedOrigins.includes(origin)) {
+      response.headers.set('Access-Control-Allow-Origin', origin);
+    }
+    
+    response.headers.set('Access-Control-Allow-Credentials', 'true');
+    response.headers.set('Access-Control-Allow-Methods', 'GET,DELETE,PATCH,POST,PUT,OPTIONS');
+    response.headers.set(
+      'Access-Control-Allow-Headers',
+      'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
+    );
+    response.headers.set('Access-Control-Max-Age', '86400');
+    
+    // Handle preflight requests
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 200, headers: response.headers });
+    }
+  }
+  
+  // Security headers for all routes
+  response.headers.set('X-DNS-Prefetch-Control', 'on');
+  response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Referrer-Policy', 'origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  
+  // Content Security Policy
+  const cspHeader = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.com https://*.clerk.accounts.dev https://challenges.cloudflare.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "img-src 'self' blob: data: https: http://localhost:*",
+    "font-src 'self' https://fonts.gstatic.com",
+    "connect-src 'self' https://clerk.com https://*.clerk.accounts.dev wss://*.clerk.accounts.dev https://api.sentry.io https://*.ingest.sentry.io",
+    "frame-src 'self' https://clerk.com https://*.clerk.accounts.dev https://challenges.cloudflare.com",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "media-src 'self'",
+    "object-src 'none'",
+    "upgrade-insecure-requests",
+  ].join('; ');
+  
+  response.headers.set('Content-Security-Policy', cspHeader);
+  
+  return response;
+}
+
 const intlMiddleware = createMiddleware({
   locales: AllLocales,
   localePrefix: AppConfig.localePrefix,
@@ -61,11 +149,13 @@ export default function middleware(
         return NextResponse.redirect(orgSelection);
       }
 
-      return intlMiddleware(req);
+      const response = intlMiddleware(req);
+      return applySecurityHeaders(response, req);
     })(request, event);
   }
 
-  return intlMiddleware(request);
+  const response = intlMiddleware(request);
+  return applySecurityHeaders(response, request);
 }
 
 export const config = {

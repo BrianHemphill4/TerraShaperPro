@@ -26,6 +26,8 @@ storybook-static
 
 # cache
 .swc/
+.cache/
+**/node_modules/.cache/
 
 # production
 /build
