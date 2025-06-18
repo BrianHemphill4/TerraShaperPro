@@ -1,0 +1,28 @@
+
+
+> @terrasherper/api-gateway@0.1.0 lint
+> eslint .
+
+[1G[0K
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'eslint-plugin-jest-dom' imported from /Users/brianhemphill/Documents/TerraShaperPro/eslint.config.mjs
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:854:18)
+    at defaultResolve (node:internal/modules/esm/resolve:984:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:25)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:137:49)
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m Lifecycle script `lint` failed with error:
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mcode[39m [33m2[39m
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mpath[39m /Users/brianhemphill/Documents/TerraShaperPro/apps/api-gateway
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mworkspace[39m @terrasherper/api-gateway@0.1.0
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mlocation[39m /Users/brianhemphill/Documents/TerraShaperPro/apps/api-gateway
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m command failed
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mcommand[39m sh -c eslint .
+[1G[0K⠙[1G[0K
