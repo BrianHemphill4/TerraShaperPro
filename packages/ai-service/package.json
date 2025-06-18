@@ -19,6 +19,8 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.27.3",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@next/eslint-plugin-next": "^14.2.30",
     "@types/node": "^20.10.4",
     "eslint": "^8.55.0",
