@@ -56,6 +56,8 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.27.3",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@next/bundle-analyzer": "^14.2.15",
     "@next/eslint-plugin-next": "^14.2.30",
     "@percy/cli": "1.30.1",

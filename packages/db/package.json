@@ -21,6 +21,8 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.27.3",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@next/eslint-plugin-next": "^14.2.30",
     "@types/pg": "^8.11.10",
     "drizzle-kit": "^0.31.1",
