@@ -1,0 +1,100 @@
+name: Preview Deployment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'turbo.json'
+
+env:
+  NODE_VERSION: '20.x'
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+jobs:
+  deploy-preview:
+    name: Deploy Preview
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm run test -- --filter=web
+      
+      - name: Deploy Preview to Vercel
+        uses: amondnet/vercel-action@v25
+        id: vercel-deploy
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-comment: true
+          github-deployment: true
+          github-deployment-environment: Preview
+          working-directory: ./apps/web
+          alias-domains: pr-{{PR_NUMBER}}.terrashaper-preview.vercel.app
+      
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(comment => {
+              return comment.user.type === 'Bot' && comment.body.includes('Preview deployment ready');
+            });
+            
+            const body = `### 🚀 Preview deployment ready!
+            
+            **Preview URL**: ${{ steps.vercel-deploy.outputs.preview-url }}
+            **Inspect**: https://vercel.com/${{ secrets.VERCEL_ORG_ID }}/${{ secrets.VERCEL_PROJECT_ID }}/${{ steps.vercel-deploy.outputs.deployment-id }}
+            
+            #### Preview Details:
+            - **Commit**: \`${{ github.event.pull_request.head.sha }}\`
+            - **Branch**: \`${{ github.event.pull_request.head.ref }}\`
+            - **Deployment**: ${{ steps.vercel-deploy.outputs.deployment-id }}
+            
+            <details>
+            <summary>Lighthouse Scores</summary>
+            
+            Run lighthouse CI to get performance metrics.
+            
+            </details>`;
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body
+              });
+            }

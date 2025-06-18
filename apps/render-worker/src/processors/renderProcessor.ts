@@ -5,6 +5,8 @@ import {
   ProviderFactory, 
   PromptGenerator,
   QualityChecker,
+  ReviewQueueService,
+  FailureDetectionService,
   RenderProvider,
   ProviderConfig,
   ImageGenerationOptions,
@@ -19,6 +21,8 @@ const promptGenerator = new PromptGenerator();
 const qualityChecker = new QualityChecker();
 const storage = new Storage();
 
+let reviewQueueService: ReviewQueueService;
+let failureDetectionService: FailureDetectionService;
 let initialized = false;
 
 async function initializeProviders() {
@@ -29,13 +33,29 @@ async function initializeProviders() {
       apiKey: process.env.GOOGLE_API_KEY!,
       projectId: process.env.GOOGLE_CLOUD_PROJECT!,
       region: process.env.GOOGLE_CLOUD_REGION || 'us-central1',
+      timeout: 60000,
+      maxRetries: 3,
     }],
     [RenderProvider.OPENAI_GPT_IMAGE, {
       apiKey: process.env.OPENAI_API_KEY!,
+      timeout: 60000,
+      maxRetries: 3,
     }],
   ]);
   
   await providerManager.initialize(configs);
+  
+  // Initialize quality review and failure detection services
+  reviewQueueService = new ReviewQueueService(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  
+  failureDetectionService = new FailureDetectionService(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  
   initialized = true;
 }
 
@@ -51,8 +71,8 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
     await job.updateProgress(10);
     
     const convertedAnnotations: Annotation[] = annotations
-      .filter(a => a.type === 'assetInstance')
-      .map(a => ({
+      .filter((a: any) => a.type === 'assetInstance')
+      .map((a: any) => ({
         id: a.data.id,
         type: a.data.category || 'plant',
         name: a.data.name,
@@ -105,9 +125,40 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
       }
     );
     
-    if (!qualityResult.passed) {
-      throw new Error(`Quality check failed: ${qualityResult.issues.join(', ')}`);
+    // Check for duplicate renders
+    const duplicateCheck = await reviewQueueService.checkForDuplicates(
+      qualityResult.metadata.perceptualHash!
+    );
+    
+    if (duplicateCheck.isDuplicate) {
+      throw new Error(`Duplicate render detected: Similar to render ${duplicateCheck.similarRenders[0].renderId} (${(duplicateCheck.similarRenders[0].similarity * 100).toFixed(1)}% similarity)`);
     }
+    
+    // Add to review queue if quality check failed or manual review required
+    const forceManualReview = settings.forceManualReview || 
+                            job.attemptsMade > 1 || 
+                            settings.quality > 75;
+    
+    if (!qualityResult.passed || forceManualReview) {
+      await reviewQueueService.addToReviewQueue(
+        renderId,
+        qualityResult.score,
+        qualityResult.issues,
+        {
+          resolution: qualityResult.metadata.resolution!,
+          format: qualityResult.metadata.format!,
+          size: qualityResult.metadata.size!,
+          perceptualHash: qualityResult.metadata.perceptualHash!,
+          renderSettings: settings,
+        },
+        forceManualReview
+      );
+      
+      if (!qualityResult.passed) {
+        throw new Error(`Quality check failed: ${qualityResult.issues.join(', ')}`);
+      }
+    }
+    
     await job.updateProgress(80);
     
     const bucket = storage.bucket(process.env.GCS_BUCKET_NAME!);
@@ -158,6 +209,7 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
       .from('renders')
       .update({
         status: 'completed',
+        qualityStatus: qualityResult.passed ? 'auto_approved' : 'pending_review',
         imageUrl: publicUrl,
         thumbnailUrl,
         metadata: {
@@ -196,10 +248,16 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
       .from('renders')
       .update({
         status: 'failed',
+        qualityStatus: 'rejected',
         error: error instanceof Error ? error.message : 'Unknown error',
         completedAt: new Date().toISOString(),
       })
       .eq('id', renderId);
+    
+    // Check for failure patterns after updating the render status
+    if (failureDetectionService) {
+      await failureDetectionService.checkForFailurePatterns();
+    }
     
     throw error;
   }
