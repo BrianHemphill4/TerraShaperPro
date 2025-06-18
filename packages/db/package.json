@@ -5,7 +5,7 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
-    "db:generate": "dotenv -e ../../.env -- ../../node_modules/.bin/drizzle-kit generate --no-warnings",
+    "db:generate": "dotenv -e ../../.env -- drizzle-kit generate",
     "db:migrate": "dotenv -e ../../.env -- ../../node_modules/.bin/drizzle-kit migrate",
     "db:studio": "dotenv -e ../../.env -- ../../node_modules/.bin/drizzle-kit studio",
     "lint": "echo \"(db) nothing to lint\"",
@@ -21,7 +21,7 @@
     "@types/cors": "^2.8.19",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "drizzle-orm": "^0.44.2",
+    "drizzle-orm": "^0.36.4",
     "pg": "^8.13.0",
     "vitest": "3.2.4"
   },
@@ -31,7 +31,8 @@
     "@commitlint/config-conventional": "^19.8.1",
     "@next/eslint-plugin-next": "^14.2.30",
     "@types/pg": "^8.11.10",
-    "drizzle-kit": "^0.31.1",
+    "dotenv-cli": "^7.4.4",
+    "drizzle-kit": "^0.28.1",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-format": "^1.0.1",
     "eslint-plugin-jest-dom": "^5.5.0",

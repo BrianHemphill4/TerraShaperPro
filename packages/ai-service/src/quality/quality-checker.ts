@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import { PerceptualHashService } from './phash.service';
 
 export type QualityCheckResult = {
@@ -133,7 +134,9 @@ export class QualityChecker {
   }
 
   private async getResolution(imageData: Buffer | string): Promise<{ width: number; height: number }> {
-    return { width: 1024, height: 1024 };
+    const data = typeof imageData === 'string' ? Buffer.from(imageData, 'base64') : imageData;
+    const metadata = await sharp(data).metadata();
+    return { width: metadata.width || 0, height: metadata.height || 0 };
   }
 
   private async assessImageQuality(imageData: Buffer | string): Promise<number> {
@@ -141,14 +144,32 @@ export class QualityChecker {
     
     let score = 1.0;
     
-    const compressionRatio = this.estimateCompressionRatio(data);
-    if (compressionRatio > 0.9) {
-      score -= 0.1;
-    }
-    
-    const entropy = this.calculateEntropy(data);
-    if (entropy < 0.5) {
-      score -= 0.2;
+    try {
+      const stats = await sharp(data).stats();
+      
+      // Check for low contrast (flat images)
+      const channelRange = stats.channels.map(c => c.max - c.min);
+      const avgRange = channelRange.reduce((a, b) => a + b, 0) / channelRange.length;
+      if (avgRange < 50) {
+        score -= 0.3; // Very low contrast
+      } else if (avgRange < 100) {
+        score -= 0.1; // Low contrast
+      }
+      
+      // Check for noise/artifacts using standard deviation
+      const avgStdDev = stats.channels.reduce((sum, c) => sum + c.stdev, 0) / stats.channels.length;
+      if (avgStdDev > 80) {
+        score -= 0.2; // High noise
+      }
+      
+      // Check entropy
+      const entropy = this.calculateEntropy(data);
+      if (entropy < 0.5) {
+        score -= 0.2;
+      }
+    } catch (error) {
+      // If sharp fails, fall back to basic check
+      score -= 0.5;
     }
     
     return Math.max(0, Math.min(1, score));

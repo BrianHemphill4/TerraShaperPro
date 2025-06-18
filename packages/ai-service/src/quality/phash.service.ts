@@ -1,4 +1,10 @@
 
+import sharp from 'sharp';
+import { imageHash } from 'image-hash';
+import { promisify } from 'util';
+
+const getImageHash = promisify(imageHash);
+
 export class PerceptualHashService {
   private hashCache: Map<string, string>;
 
@@ -9,11 +15,11 @@ export class PerceptualHashService {
   async generateHash(imageData: Buffer | string): Promise<string> {
     const data = typeof imageData === 'string' ? Buffer.from(imageData, 'base64') : imageData;
     
-    const simplified = await this.simplifyImage(data);
-    
-    const dct = this.discreteCosineTransform(simplified);
-    
-    const hash = this.calculateHash(dct);
+    // Use image-hash library for better perceptual hashing
+    const hash = await getImageHash({
+      data,
+      ext: 'png'
+    }, 16, true) as string;
     
     return hash;
   }
@@ -30,7 +36,8 @@ export class PerceptualHashService {
       }
     }
 
-    const similarity = 1 - (distance / hash1.length);
+    // Calculate similarity as percentage
+    const similarity = 1 - (distance / (hash1.length * 4)); // 4 bits per hex char
     return similarity;
   }
 
@@ -39,18 +46,15 @@ export class PerceptualHashService {
     return similarity >= threshold;
   }
 
-  private async simplifyImage(imageData: Buffer): Promise<number[][]> {
-    const size = 32;
-    const simplified: number[][] = [];
+  private async simplifyImage(imageData: Buffer): Promise<Buffer> {
+    // Resize image to 32x32 for DCT calculation
+    const resized = await sharp(imageData)
+      .resize(32, 32, { fit: 'fill' })
+      .greyscale()
+      .raw()
+      .toBuffer();
     
-    for (let y = 0; y < size; y++) {
-      simplified[y] = [];
-      for (let x = 0; x < size; x++) {
-        simplified[y][x] = Math.random() * 255;
-      }
-    }
-    
-    return simplified;
+    return resized;
   }
 
   private discreteCosineTransform(matrix: number[][]): number[][] {

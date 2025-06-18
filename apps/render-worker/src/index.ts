@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 import { createRenderWorker } from '@terrashaper/queue';
+import type { RenderJobData, RenderJobResult } from '@terrashaper/queue';
 import { processRenderJob } from './processors/renderProcessor';
+import { startFailureMonitor } from './processors/failureMonitor';
 import { connection } from './config/redis';
 import { initSentry, captureException } from './lib/sentry';
 
@@ -17,11 +19,11 @@ const worker = createRenderWorker(
   concurrency
 );
 
-worker.on('completed', (job, result) => {
+worker.on('completed', (job: any, result: RenderJobResult) => {
   console.log(`✓ Render ${job.id} completed in ${result.processingTime}ms`);
 });
 
-worker.on('failed', (job, err) => {
+worker.on('failed', (job: any, err: Error) => {
   console.error(`✗ Render ${job?.id} failed:`, err.message);
   captureException(err as Error, {
     jobId: job?.id,
@@ -29,7 +31,7 @@ worker.on('failed', (job, err) => {
   });
 });
 
-worker.on('progress', (job, progress) => {
+worker.on('progress', (job: any, progress: number) => {
   console.log(`◊ Render ${job.id} progress: ${progress}%`);
 });
 
@@ -47,3 +49,6 @@ process.on('SIGINT', async () => {
 });
 
 console.log(`🚀 Render Worker started with concurrency: ${concurrency}`);
+
+// Start failure monitoring
+startFailureMonitor();

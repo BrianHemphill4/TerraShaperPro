@@ -5,6 +5,7 @@ import { organizations } from './auth';
 export const projectStatusEnum = pgEnum('project_status', ['draft', 'active', 'archived']);
 export const renderStatusEnum = pgEnum('render_status', ['pending', 'processing', 'completed', 'failed']);
 export const renderProviderEnum = pgEnum('render_provider', ['google-imagen', 'openai-dalle']);
+export const renderQualityStatusEnum = pgEnum('render_quality_status', ['pending_review', 'approved', 'rejected', 'auto_approved']);
 
 export const projects = pgTable('projects', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -48,6 +49,7 @@ export const renders = pgTable('renders', {
   thumbnailUrl: text('thumbnail_url'),
   provider: renderProviderEnum('provider').notNull(),
   status: renderStatusEnum('status').default('pending').notNull(),
+  qualityStatus: renderQualityStatusEnum('quality_status'),
   processingTimeMs: integer('processing_time_ms'),
   errorMessage: text('error_message'),
   settings: jsonb('settings').default({}).notNull(),

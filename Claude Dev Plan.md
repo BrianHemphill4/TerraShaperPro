@@ -80,17 +80,17 @@ A comprehensive landscape design and planning application for professional lands
     - OpenAI gpt-image-1 adapter [Pending]
     - Provider switching logic [Pending]
 
-22. **Implement Dynamic Prompt Generation Engine** - AI [Pending]
-    - Template system for prompts
-    - Annotation-to-prompt converter
-    - Style and quality modifiers
-    - Prompt caching with hash
+22. **Implement Dynamic Prompt Generation Engine** - AI [Complete]
+    - Template system for prompts [Complete]
+    - Annotation-to-prompt converter [Complete]
+    - Style and quality modifiers [Complete]
+    - Prompt caching with hash [Complete]
 
-23. **Set up render job processing flow** - AI [Pending]
-    - Job creation and enqueueing
-    - Worker job consumption
-    - Progress tracking via SSE
-    - Error handling and retries
+23. **Set up render job processing flow** - AI [Complete]
+    - Job creation and enqueueing [Complete]
+    - Worker job consumption [Complete]
+    - Progress tracking via SSE [Complete]
+    - Error handling and retries [Complete]
 
 24. **Implement image quality assurance** - AI [Pending]
     - pHash comparison system
