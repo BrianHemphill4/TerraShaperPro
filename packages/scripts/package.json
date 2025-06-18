@@ -17,6 +17,7 @@
     "@antfu/eslint-config": "^2.27.3",
     "@next/eslint-plugin-next": "^14.2.30",
     "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-format": "^1.0.1",
     "eslint-plugin-jest-dom": "^5.5.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-playwright": "^2.2.0",
