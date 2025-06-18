@@ -1,4 +1,4 @@
-import { AIProvider, ProviderConfig } from '../types/ai-provider.interface';
+import type { AIProvider, ProviderConfig } from '../types/ai-provider.interface';
 import { RenderProvider } from '../types/render.types';
 import { GoogleImagenProvider } from './google-imagen.provider';
 import { OpenAIGPTImageProvider } from './openai-gpt-image.provider';

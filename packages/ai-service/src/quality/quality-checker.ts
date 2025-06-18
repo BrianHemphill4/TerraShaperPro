@@ -1,6 +1,6 @@
 import { PerceptualHashService } from './phash.service';
 
-export interface QualityCheckResult {
+export type QualityCheckResult = {
   passed: boolean;
   score: number;
   issues: string[];
@@ -12,7 +12,7 @@ export interface QualityCheckResult {
   };
 }
 
-export interface QualityThresholds {
+export type QualityThresholds = {
   minResolution: { width: number; height: number };
   maxFileSize: number;
   minQualityScore: number;
@@ -162,17 +162,17 @@ export class QualityChecker {
   private calculateEntropy(data: Buffer): number {
     const frequencies = new Map<number, number>();
     
-    for (const byte of data) {
+    Array.from(data).forEach(byte => {
       frequencies.set(byte, (frequencies.get(byte) || 0) + 1);
-    }
+    });
     
     let entropy = 0;
     const dataLength = data.length;
     
-    for (const count of frequencies.values()) {
+    Array.from(frequencies.values()).forEach(count => {
       const probability = count / dataLength;
       entropy -= probability * Math.log2(probability);
-    }
+    });
     
     return entropy / 8;
   }

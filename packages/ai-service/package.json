@@ -8,7 +8,8 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "lint": "eslint src --fix",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@google-cloud/aiplatform": "^3.10.0",
@@ -17,9 +18,20 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^2.27.3",
+    "@next/eslint-plugin-next": "^14.2.30",
     "@types/node": "^20.10.4",
     "eslint": "^8.55.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-jest-dom": "^5.5.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-playwright": "^2.2.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-tailwindcss": "^3.18.0",
+    "eslint-plugin-testing-library": "^7.5.3",
     "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "prettier-plugin-tailwindcss": "^0.6.12",
     "typescript": "^5.3.3"
   },
   "exports": {

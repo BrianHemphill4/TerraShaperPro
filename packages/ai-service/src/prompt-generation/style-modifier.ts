@@ -1,7 +1,7 @@
 export class StyleModifier {
-  private styleModifiers: Map<string, string[]>;
-  private moodModifiers: Map<string, string[]>;
-  private colorSchemeModifiers: Map<string, string[]>;
+  private styleModifiers: Map<string, string[]> = new Map();
+  private moodModifiers: Map<string, string[]> = new Map();
+  private colorSchemeModifiers: Map<string, string[]> = new Map();
 
   constructor() {
     this.initializeModifiers();
