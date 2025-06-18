@@ -29,7 +29,7 @@ fi
 
 # Build the application
 echo "🏗️ Building application..."
-npm run build -- --filter=web
+npx turbo run build --filter=web
 
 # Run post-build optimizations
 echo "✨ Running post-build optimizations..."
