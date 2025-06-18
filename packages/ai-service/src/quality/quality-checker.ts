@@ -1,4 +1,7 @@
+import { Buffer } from 'node:buffer';
+
 import sharp from 'sharp';
+
 import { PerceptualHashService } from './phash.service';
 
 export type QualityCheckResult = {
@@ -77,7 +80,7 @@ export class QualityChecker {
 
     try {
       metadata.perceptualHash = await this.phashService.generateHash(imageData);
-    } catch (error) {
+    } catch {
       issues.push('Failed to generate perceptual hash');
     }
 
@@ -167,7 +170,7 @@ export class QualityChecker {
       if (entropy < 0.5) {
         score -= 0.2;
       }
-    } catch (error) {
+    } catch {
       // If sharp fails, fall back to basic check
       score -= 0.5;
     }

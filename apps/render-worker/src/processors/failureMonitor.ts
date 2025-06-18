@@ -1,6 +1,6 @@
-import { Worker } from 'bullmq';
 import { FailureDetectionService } from '@terrashaper/ai-service';
-import { connection } from '../config/redis';
+
+import { logger } from '../lib/logger';
 import { captureException } from '../lib/sentry';
 
 const MONITOR_INTERVAL = 5 * 60 * 1000; // 5 minutes
@@ -8,13 +8,13 @@ const MONITOR_INTERVAL = 5 * 60 * 1000; // 5 minutes
 export function startFailureMonitor() {
   const failureDetectionService = new FailureDetectionService(
     process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
 
   // Set up alert handler
   failureDetectionService.onAlert(async (alert) => {
-    console.error(`🚨 Failure Alert: ${alert.message}`, alert.details);
-    
+    logger.error(`🚨 Failure Alert: ${alert.message}`, alert.details);
+
     // Send to monitoring service (e.g., PagerDuty, Slack, etc.)
     if (process.env.SLACK_WEBHOOK_URL) {
       try {
@@ -24,20 +24,21 @@ export function startFailureMonitor() {
           body: JSON.stringify({
             text: `🚨 Render Service Alert (${alert.severity})`,
             attachments: [{
-              color: alert.severity === 'critical' ? 'danger' : 
-                     alert.severity === 'high' ? 'warning' : 'info',
+              color: alert.severity === 'critical'
+                ? 'danger'
+                : alert.severity === 'high' ? 'warning' : 'info',
               fields: [
                 { title: 'Type', value: alert.type, short: true },
                 { title: 'Severity', value: alert.severity, short: true },
                 { title: 'Message', value: alert.message },
-                { title: 'Details', value: JSON.stringify(alert.details, null, 2) }
+                { title: 'Details', value: JSON.stringify(alert.details, null, 2) },
               ],
-              timestamp: new Date(alert.createdAt).toISOString()
-            }]
-          })
+              timestamp: new Date(alert.createdAt).toISOString(),
+            }],
+          }),
         });
       } catch (err) {
-        console.error('Failed to send Slack alert:', err);
+        logger.error('Failed to send Slack alert:', err);
       }
     }
   });
@@ -46,20 +47,20 @@ export function startFailureMonitor() {
   const checkHealth = async () => {
     try {
       const health = await failureDetectionService.healthCheck();
-      console.log('🏥 Health Check:', {
+      logger.info('🏥 Health Check:', {
         healthy: health.healthy,
         failureRate: `${(health.recentFailureRate * 100).toFixed(1)}%`,
-        activeAlerts: health.activeAlerts
+        activeAlerts: health.activeAlerts,
       });
 
       if (!health.healthy) {
         captureException(new Error('Render service unhealthy'), {
           level: 'warning',
-          extra: health
+          extra: health,
         });
       }
     } catch (error) {
-      console.error('Health check failed:', error);
+      logger.error('Health check failed:', error);
       captureException(error as Error);
     }
   };
@@ -73,7 +74,7 @@ export function startFailureMonitor() {
       await failureDetectionService.checkForFailurePatterns();
       await checkHealth();
     } catch (error) {
-      console.error('Failure monitoring error:', error);
+      logger.error('Failure monitoring error:', error);
       captureException(error as Error);
     }
   }, MONITOR_INTERVAL);
@@ -87,5 +88,5 @@ export function startFailureMonitor() {
     clearInterval(intervalId);
   });
 
-  console.log('🔍 Failure monitoring started');
+  logger.info('🔍 Failure monitoring started');
 }

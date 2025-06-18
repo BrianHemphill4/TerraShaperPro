@@ -1,14 +1,15 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import * as Sentry from '@sentry/node';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 
-export interface FailurePattern {
+export type FailurePattern = {
   type: 'timeout' | 'quality' | 'api_error' | 'invalid_prompt' | 'resource_limit';
   count: number;
   timeframe: number; // minutes
   threshold: number;
 }
 
-export interface FailureAlert {
+export type FailureAlert = {
   id: string;
   type: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -200,13 +201,13 @@ export class FailureDetectionService {
     renders.forEach(render => {
       const error = render.error || '';
       if (error.includes('rate limit')) {
-        categories['rate_limit'] = (categories['rate_limit'] || 0) + 1;
+        categories.rate_limit = (categories.rate_limit || 0) + 1;
       } else if (error.includes('authentication')) {
-        categories['auth_error'] = (categories['auth_error'] || 0) + 1;
+        categories.auth_error = (categories.auth_error || 0) + 1;
       } else if (error.includes('quota')) {
-        categories['quota_exceeded'] = (categories['quota_exceeded'] || 0) + 1;
+        categories.quota_exceeded = (categories.quota_exceeded || 0) + 1;
       } else {
-        categories['unknown'] = (categories['unknown'] || 0) + 1;
+        categories.unknown = (categories.unknown || 0) + 1;
       }
     });
 
@@ -332,7 +333,7 @@ export class FailureDetectionService {
         recentFailureRate: failureRate,
         activeAlerts: activeAlerts.length,
       };
-    } catch (error) {
+    } catch {
       return {
         healthy: false,
         recentFailureRate: 1,

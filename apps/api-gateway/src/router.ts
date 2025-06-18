@@ -1,5 +1,8 @@
-import { publicProcedure, router } from './trpc';
 import { z } from 'zod';
+
+import { renderRouter } from './routers/render.router';
+import { storageRouter } from './routers/storage.router';
+import { publicProcedure, router } from './trpc';
 
 const healthRouter = router({
   healthz: publicProcedure.query(() => 'yay!'),
@@ -7,11 +10,13 @@ const healthRouter = router({
 
 export const appRouter = router({
   health: healthRouter,
+  render: renderRouter,
+  storage: storageRouter,
   hello: publicProcedure
     .input(
       z.object({
         name: z.string(),
-      }),
+      })
     )
     .query(({ input }) => {
       return {
@@ -20,4 +25,4 @@ export const appRouter = router({
     }),
 });
 
-export type AppRouter = typeof appRouter; 
+export type AppRouter = typeof appRouter;

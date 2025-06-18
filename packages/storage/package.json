@@ -1,0 +1,38 @@
+{
+  "name": "@terrashaper/storage",
+  "version": "1.0.0",
+  "description": "Google Cloud Storage integration for TerraShaperPro",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^7.7.0",
+    "sharp": "^0.33.5",
+    "mime-types": "^2.1.35"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.27.3",
+    "@types/mime-types": "^2.1.4",
+    "@types/node": "^20.0.0",
+    "eslint": "^8.57.1",
+    "tsup": "^8.0.0",
+    "typescript": "^5.6.3"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ]
+}

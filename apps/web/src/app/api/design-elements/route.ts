@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { db, designElements, eq } from '@terrasherper/db';
+import type { NextRequest} from 'next/server';
+import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 

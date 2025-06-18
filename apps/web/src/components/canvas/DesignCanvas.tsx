@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-// @ts-ignore
+// @ts-expect-error - fabric.js doesn't have proper TypeScript definitions
 import { fabric } from 'fabric';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import styles from './DesignCanvas.module.css';
 
-interface DesignCanvasProps {
+type DesignCanvasProps = {
   onReady?: (canvas: fabric.Canvas) => void;
   onElementsChange?: (elements: any[]) => void;
 }
@@ -20,6 +21,31 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentPoints, setCurrentPoints] = useState<{ x: number; y: number }[]>([]);
   const [tempLine, setTempLine] = useState<fabric.Polyline | null>(null);
+
+  const notifyElementsChange = useCallback(() => {
+    if (canvas && onElementsChange) {
+      const elements = canvas.getObjects()
+        .filter(obj => obj.id && !obj.evented === false) // Filter out grid lines
+        .map(obj => ({
+          id: obj.id,
+          type: obj.type,
+          left: obj.left,
+          top: obj.top,
+          width: obj.width,
+          height: obj.height,
+          angle: obj.angle,
+          scaleX: obj.scaleX,
+          scaleY: obj.scaleY,
+          plantId: obj.plantId,
+          plantName: obj.plantName,
+          points: obj.points,
+          fill: obj.fill,
+          stroke: obj.stroke,
+          strokeWidth: obj.strokeWidth,
+        }));
+      onElementsChange(elements);
+    }
+  }, [canvas, onElementsChange]);
 
   useEffect(() => {
     if (canvasEl.current && containerRef.current) {
@@ -57,20 +83,21 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
 
       // Handle window resizing
       const resizeObserver = new ResizeObserver(entries => {
-        for (let entry of entries) {
+        for (const entry of entries) {
           const { width, height } = entry.contentRect;
           fabricCanvas.setWidth(width).setHeight(height).renderAll();
         }
       });
       resizeObserver.observe(containerRef.current);
 
-      // Handle drop events
+      // Handle drop events  
+      const canvasElement = canvasEl.current;
       const handleDrop = (e: DragEvent) => {
         e.preventDefault();
         const plantData = e.dataTransfer?.getData('plant');
         if (plantData) {
           const plant = JSON.parse(plantData);
-          const rect = canvasEl.current!.getBoundingClientRect();
+          const rect = canvasElement!.getBoundingClientRect();
           const x = e.clientX - rect.left;
           const y = e.clientY - rect.top;
 
@@ -137,8 +164,8 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
         e.dataTransfer!.dropEffect = 'copy';
       };
 
-      canvasEl.current.addEventListener('drop', handleDrop);
-      canvasEl.current.addEventListener('dragover', handleDragOver);
+      canvasElement.addEventListener('drop', handleDrop);
+      canvasElement.addEventListener('dragover', handleDragOver);
 
       // Handle object changes
       fabricCanvas.on('object:modified', notifyElementsChange);
@@ -146,37 +173,12 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
 
       return () => {
         resizeObserver.disconnect();
-        canvasEl.current?.removeEventListener('drop', handleDrop);
-        canvasEl.current?.removeEventListener('dragover', handleDragOver);
+        canvasElement?.removeEventListener('drop', handleDrop);
+        canvasElement?.removeEventListener('dragover', handleDragOver);
         fabricCanvas.dispose();
       };
     }
-  }, [onReady]);
-
-  const notifyElementsChange = () => {
-    if (canvas && onElementsChange) {
-      const elements = canvas.getObjects()
-        .filter(obj => obj.id && !obj.evented === false) // Filter out grid lines
-        .map(obj => ({
-          id: obj.id,
-          type: obj.type,
-          left: obj.left,
-          top: obj.top,
-          width: obj.width,
-          height: obj.height,
-          angle: obj.angle,
-          scaleX: obj.scaleX,
-          scaleY: obj.scaleY,
-          plantId: obj.plantId,
-          plantName: obj.plantName,
-          points: obj.points,
-          fill: obj.fill,
-          stroke: obj.stroke,
-          strokeWidth: obj.strokeWidth,
-        }));
-      onElementsChange(elements);
-    }
-  };
+  }, [onReady, notifyElementsChange]);
 
   // Drawing mode handlers
   useEffect(() => {
@@ -264,7 +266,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
       canvas.off('mouse:move', handleMouseMove);
       canvas.off('mouse:dblclick', handleMouseDblClick);
     };
-  }, [canvas, drawingMode, isDrawing, currentPoints, tempLine]);
+  }, [canvas, drawingMode, isDrawing, currentPoints, tempLine, notifyElementsChange]);
 
   const handleModeChange = (mode: DrawingMode) => {
     setDrawingMode(mode);
@@ -292,6 +294,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
     <div className={styles.container} ref={containerRef}>
       <div className={styles.toolbar}>
         <button 
+          type="button"
           className={`${styles.toolButton} ${drawingMode === 'select' ? styles.active : ''}`}
           onClick={() => handleModeChange('select')}
           title="Select"
@@ -301,6 +304,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
           </svg>
         </button>
         <button 
+          type="button"
           className={`${styles.toolButton} ${drawingMode === 'polygon' ? styles.active : ''}`}
           onClick={() => handleModeChange('polygon')}
           title="Draw Polygon (double-click to finish)"
@@ -310,6 +314,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
           </svg>
         </button>
         <button 
+          type="button"
           className={`${styles.toolButton} ${drawingMode === 'polyline' ? styles.active : ''}`}
           onClick={() => handleModeChange('polyline')}
           title="Draw Polyline (double-click to finish)"
@@ -320,6 +325,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
         </button>
         <div className={styles.separator}></div>
         <button 
+          type="button"
           className={styles.toolButton}
           onClick={handleDelete}
           title="Delete selected"

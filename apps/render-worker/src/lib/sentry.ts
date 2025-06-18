@@ -5,20 +5,20 @@ export function initSentry() {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     environment: process.env.NODE_ENV || 'development',
-    
+
     // Performance Monitoring
     tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
-    
+
     // Set sampling rate for profiling - this is relative to tracesSampleRate
     profilesSampleRate: 1.0,
-    
+
     integrations: [
       // Add profiling integration
       nodeProfilingIntegration(),
     ],
-    
+
     // Set transaction name source
-    beforeSend(event, hint) {
+    beforeSend(event, _hint) {
       // Sanitize any sensitive data
       if (event.request?.cookies) {
         delete event.request.cookies;
@@ -29,7 +29,7 @@ export function initSentry() {
       }
       return event;
     },
-    
+
     // Configure error filtering
     ignoreErrors: [
       // Ignore common browser errors
@@ -70,7 +70,7 @@ export function startTransaction(name: string, op: string) {
 
 export function withSentry<T extends (...args: any[]) => any>(
   fn: T,
-  options?: { name?: string; op?: string }
+  options?: { name?: string; op?: string },
 ): T {
   return ((...args: Parameters<T>) => {
     return Sentry.startSpan(
@@ -78,7 +78,7 @@ export function withSentry<T extends (...args: any[]) => any>(
         name: options?.name || fn.name || 'anonymous',
         op: options?.op || 'function',
       },
-      () => fn(...args)
+      () => fn(...args),
     );
   }) as T;
 }

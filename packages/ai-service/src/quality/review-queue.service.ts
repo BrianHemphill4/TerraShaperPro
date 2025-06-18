@@ -1,6 +1,7 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 
-export interface QualityReview {
+export type QualityReview = {
   id: string;
   renderId: string;
   projectId: string;
@@ -22,7 +23,7 @@ export interface QualityReview {
   };
 }
 
-export interface ReviewCriteria {
+export type ReviewCriteria = {
   autoApproveThreshold: number;
   autoRejectThreshold: number;
   requireManualReviewFor: string[];

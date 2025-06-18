@@ -9,7 +9,7 @@ export interface RenderQueueEventData {
 }
 
 class QueueEventEmitter extends EventEmitter {
-  private queueEvents: QueueEvents;
+  private queueEvents!: QueueEvents;
   private initialized = false;
 
   constructor() {

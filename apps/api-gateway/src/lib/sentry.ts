@@ -5,21 +5,21 @@ export function initSentry() {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     environment: process.env.NODE_ENV || 'development',
-    
+
     // Performance Monitoring
     tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
-    
+
     // Set sampling rate for profiling - this is relative to tracesSampleRate
     profilesSampleRate: 1.0,
-    
+
     integrations: [
       // Automatically instrument Node.js libraries and frameworks
-      ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations(),
+      ...Sentry.getDefaultIntegrations({}),
       nodeProfilingIntegration(),
     ],
-    
+
     // Set transaction name source
-    beforeSend(event, hint) {
+    beforeSend(event, _hint) {
       // Sanitize any sensitive data
       if (event.request?.cookies) {
         delete event.request.cookies;
@@ -30,7 +30,7 @@ export function initSentry() {
       }
       return event;
     },
-    
+
     // Configure error filtering
     ignoreErrors: [
       // Ignore common browser errors

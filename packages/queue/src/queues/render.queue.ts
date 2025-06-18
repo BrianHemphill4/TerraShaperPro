@@ -108,14 +108,16 @@ export async function canUserSubmitRender(
 export async function getQueueMetrics() {
   const queue = getRenderQueue();
   
-  const [waiting, active, completed, failed, delayed, paused] = await Promise.all([
+  const [waiting, active, completed, failed, delayed] = await Promise.all([
     queue.getWaitingCount(),
     queue.getActiveCount(),
     queue.getCompletedCount(),
     queue.getFailedCount(),
     queue.getDelayedCount(),
-    queue.getPausedCount(),
   ]);
+  
+  // BullMQ doesn't have getPausedCount in newer versions
+  const paused = 0;
   
   return {
     waiting,

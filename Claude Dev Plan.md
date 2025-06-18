@@ -65,6 +65,15 @@ A comprehensive landscape design and planning application for professional lands
     - Created restrictive CORS for render worker
     - Implemented CSP headers for all services
 
+### Pending Infrastructure Fixes ⏳
+21. **Fix pre-commit hooks and linting issues** - AI [Pending]
+    - Create @terrashaper/queue module with exports
+    - Fix TypeScript errors in api-gateway
+    - Fix ESLint errors in render-worker
+    - Fix ESLint errors in web app
+    - Update ESLint configuration for non-Next.js apps
+    - Ensure all pre-commit hooks pass
+
 ### Pending Infrastructure ⏳
 17. **Configure Vercel deployment for web app** - Human [Pending]
 18. **Set up staging and production environments** - Human [Pending]
@@ -74,50 +83,50 @@ A comprehensive landscape design and planning application for professional lands
 ## Phase 1: Core Rendering Pipeline [PRIORITY - NEXT 2 WEEKS]
 
 ### Week 1: AI Service Integration
-21. **Create AI Render Service Abstraction Layer** - AI [In Progress]
+22. **Create AI Render Service Abstraction Layer** - AI [In Progress]
     - Abstract interface for AI providers [Complete]
     - Google Imagen-4-Ultra adapter [Blocked - SDK update needed]
     - OpenAI gpt-image-1 adapter [Pending]
     - Provider switching logic [Pending]
 
-22. **Implement Dynamic Prompt Generation Engine** - AI [Complete]
+23. **Implement Dynamic Prompt Generation Engine** - AI [Complete]
     - Template system for prompts [Complete]
     - Annotation-to-prompt converter [Complete]
     - Style and quality modifiers [Complete]
     - Prompt caching with hash [Complete]
 
-23. **Set up render job processing flow** - AI [Complete]
+24. **Set up render job processing flow** - AI [Complete]
     - Job creation and enqueueing [Complete]
     - Worker job consumption [Complete]
     - Progress tracking via SSE [Complete]
     - Error handling and retries [Complete]
 
-24. **Implement image quality assurance** - AI [Pending]
-    - pHash comparison system
-    - Automatic quality checks
-    - Manual review queue
-    - Failure detection
+25. **Implement image quality assurance** - AI [Complete]
+    - pHash comparison system [Complete]
+    - Automatic quality checks [Complete]
+    - Manual review queue [Complete]
+    - Failure detection [Complete]
 
 ### Week 2: Storage & Delivery
-25. **Configure Google Cloud Storage integration** - Human [Pending]
+26. **Configure Google Cloud Storage integration** - Human [Pending]
     - Bucket setup with versioning
     - Signed URL generation
     - CDN configuration
     - Image optimization pipeline
 
-26. **Build render result storage** - AI [Pending]
+27. **Build render result storage** - AI [Pending]
     - Store render outputs
     - Generate thumbnails
     - Track render metadata
     - Link to projects
 
-27. **Implement credit system** - AI [Pending]
+28. **Implement credit system** - AI [Pending]
     - Credit tracking per user/org
     - Credit consumption on render
     - Refund on failures
     - Usage dashboard
 
-28. **Create render progress UI** - AI [Pending]
+29. **Create render progress UI** - AI [Pending]
     - Real-time progress bar
     - Queue position display
     - Error messaging
