@@ -23,7 +23,7 @@ export const ProviderConfigSchema = z.object({
 
 export type ProviderConfig = z.infer<typeof ProviderConfigSchema>;
 
-export interface GenerationResult {
+export type GenerationResult = {
   imageUrl: string;
   imageBase64?: string;
   metadata: {
@@ -36,21 +36,21 @@ export interface GenerationResult {
   };
 }
 
-export interface AIProvider {
+export type AIProvider = {
   name: string;
   
-  initialize(config: ProviderConfig): Promise<void>;
+  initialize: (config: ProviderConfig) => Promise<void>;
   
-  generateImage(
+  generateImage: (
     prompt: string,
     options?: ImageGenerationOptions
-  ): Promise<GenerationResult>;
+  ) => Promise<GenerationResult>;
   
-  validatePrompt(prompt: string): Promise<boolean>;
+  validatePrompt: (prompt: string) => Promise<boolean>;
   
-  estimateCost(options: ImageGenerationOptions): Promise<number>;
+  estimateCost: (options: ImageGenerationOptions) => Promise<number>;
   
-  getStatus(): Promise<{
+  getStatus: () => Promise<{
     available: boolean;
     latency?: number;
     quota?: {

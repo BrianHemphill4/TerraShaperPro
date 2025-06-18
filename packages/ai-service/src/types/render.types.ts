@@ -3,7 +3,7 @@ export enum RenderProvider {
   OPENAI_GPT_IMAGE = 'openai-gpt-image',
 }
 
-export interface RenderRequest {
+export type RenderRequest = {
   id: string;
   provider: RenderProvider;
   prompt: string;
@@ -16,7 +16,7 @@ export interface RenderRequest {
   metadata?: Record<string, any>;
 }
 
-export interface RenderResponse {
+export type RenderResponse = {
   id: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   result?: {

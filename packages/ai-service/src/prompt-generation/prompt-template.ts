@@ -1,4 +1,4 @@
-import { PromptTemplate } from '../types/prompt.types';
+import type { PromptTemplate } from '../types/prompt.types';
 
 export const defaultPromptTemplates: Record<string, PromptTemplate> = {
   landscape: {

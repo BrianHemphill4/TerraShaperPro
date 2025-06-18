@@ -1,15 +1,17 @@
-import { VertexAI } from '@google-cloud/aiplatform';
-import { 
+// Temporarily disabled - need to update Google Cloud AI Platform SDK usage
+// import { VertexAI } from '@google-cloud/aiplatform';
+
+import type { 
   AIProvider, 
-  ProviderConfig, 
+  GenerationResult, 
   ImageGenerationOptions, 
-  GenerationResult 
+  ProviderConfig
 } from '../types/ai-provider.interface';
 import { withRetry } from '../utils/retry';
 
 export class GoogleImagenProvider implements AIProvider {
   name = 'Google Imagen 4 Ultra';
-  private vertexAI: VertexAI | null = null;
+  private vertexAI: any | null = null;
   private config: ProviderConfig | null = null;
 
   async initialize(config: ProviderConfig): Promise<void> {
@@ -19,78 +21,20 @@ export class GoogleImagenProvider implements AIProvider {
       throw new Error('Google Cloud project ID is required');
     }
 
-    this.vertexAI = new VertexAI({
-      project: config.projectId,
-      location: config.region || 'us-central1',
-      apiEndpoint: config.baseUrl,
-    });
+    // TODO: Update to use correct Google Cloud AI Platform SDK
+    throw new Error('Google Imagen provider temporarily disabled - SDK update needed');
   }
 
   async generateImage(
     prompt: string,
-    options: ImageGenerationOptions = {}
+    options: ImageGenerationOptions = {
+      width: 1024,
+      height: 1024,
+      style: 'realistic',
+      quality: 'high'
+    }
   ): Promise<GenerationResult> {
-    if (!this.vertexAI) {
-      throw new Error('Provider not initialized');
-    }
-
-    const startTime = Date.now();
-
-    try {
-      const model = 'imagen-4-ultra';
-      const imageGenModel = this.vertexAI.preview.getGenerativeModel({
-        model,
-      });
-
-      const request = {
-        prompt,
-        numberOfImages: 1,
-        aspectRatio: this.getAspectRatio(options.width || 1024, options.height || 1024),
-        negativePrompt: this.getNegativePrompt(options.style || 'realistic'),
-        personGeneration: 'dont_allow',
-        addWatermark: false,
-        seed: options.seed,
-      };
-
-      const response = await withRetry(
-        () => imageGenModel.generateImages(request),
-        {
-          maxAttempts: 3,
-          initialDelay: 2000,
-          shouldRetry: (error) => {
-            const message = error.message.toLowerCase();
-            return (
-              message.includes('rate limit') ||
-              message.includes('quota') ||
-              message.includes('timeout') ||
-              message.includes('unavailable')
-            );
-          },
-        }
-      );
-      
-      if (!response.images || response.images.length === 0) {
-        throw new Error('No images generated');
-      }
-
-      const image = response.images[0];
-      const duration = Date.now() - startTime;
-
-      return {
-        imageUrl: image.uri || '',
-        imageBase64: image.bytesBase64Encoded,
-        metadata: {
-          provider: this.name,
-          model,
-          prompt,
-          timestamp: new Date(),
-          duration,
-          cost: await this.estimateCost(options),
-        },
-      };
-    } catch (error) {
-      throw new Error(`Image generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+    throw new Error('Google Imagen provider temporarily disabled - SDK update needed');
   }
 
   async validatePrompt(prompt: string): Promise<boolean> {
@@ -103,7 +47,11 @@ export class GoogleImagenProvider implements AIProvider {
     }
 
     const bannedTerms = [
-      'nsfw', 'nude', 'violence', 'gore', 'hate',
+      'nsfw', 
+'nude', 
+'violence', 
+'gore', 
+'hate',
     ];
 
     const lowerPrompt = prompt.toLowerCase();
@@ -131,26 +79,7 @@ export class GoogleImagenProvider implements AIProvider {
     latency?: number;
     quota?: { used: number; total: number };
   }> {
-    if (!this.vertexAI) {
-      return { available: false };
-    }
-
-    try {
-      const startTime = Date.now();
-      await this.validatePrompt('test');
-      const latency = Date.now() - startTime;
-
-      return {
-        available: true,
-        latency,
-        quota: {
-          used: 0,
-          total: 50000,
-        },
-      };
-    } catch {
-      return { available: false };
-    }
+    return { available: false };
   }
 
   private getAspectRatio(width: number, height: number): string {

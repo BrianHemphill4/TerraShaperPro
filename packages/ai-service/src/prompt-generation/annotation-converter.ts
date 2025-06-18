@@ -1,6 +1,6 @@
-import { Annotation } from '../types/prompt.types';
+import type { Annotation } from '../types/prompt.types';
 
-interface PlantInfo {
+type PlantInfo = {
   scientificName: string;
   commonName: string;
   description: string;

@@ -1,9 +1,10 @@
 import OpenAI from 'openai';
-import { 
+
+import type { 
   AIProvider, 
-  ProviderConfig, 
+  GenerationResult, 
   ImageGenerationOptions, 
-  GenerationResult 
+  ProviderConfig
 } from '../types/ai-provider.interface';
 import { withRetry } from '../utils/retry';
 
@@ -25,7 +26,12 @@ export class OpenAIGPTImageProvider implements AIProvider {
 
   async generateImage(
     prompt: string,
-    options: ImageGenerationOptions = {}
+    options: ImageGenerationOptions = {
+      width: 1024,
+      height: 1024,
+      style: 'realistic',
+      quality: 'high'
+    }
   ): Promise<GenerationResult> {
     if (!this.openai) {
       throw new Error('Provider not initialized');
@@ -37,7 +43,7 @@ export class OpenAIGPTImageProvider implements AIProvider {
       const enhancedPrompt = this.enhancePrompt(prompt, options);
       
       const response = await withRetry(
-        () => this.openai.images.generate({
+        () => this.openai!.images.generate({
           model: 'gpt-image-1',
           prompt: enhancedPrompt,
           n: 1,
@@ -83,7 +89,7 @@ export class OpenAIGPTImageProvider implements AIProvider {
       };
     } catch (error) {
       if (error instanceof OpenAI.APIError) {
-        throw new Error(`OpenAI API error: ${error.message}`);
+        throw new TypeError(`OpenAI API error: ${error.message}`);
       }
       throw new Error(`Image generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }

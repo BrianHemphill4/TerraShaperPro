@@ -1,4 +1,3 @@
-import { createHash } from 'crypto';
 
 export class PerceptualHashService {
   private hashCache: Map<string, string>;
@@ -101,7 +100,7 @@ export class PerceptualHashService {
       }
     }
     
-    const hexHash = parseInt(hash, 2).toString(16).padStart(16, '0');
+    const hexHash = Number.parseInt(hash, 2).toString(16).padStart(16, '0');
     return hexHash;
   }
 

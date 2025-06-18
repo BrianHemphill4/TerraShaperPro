@@ -1,8 +1,8 @@
-import { AIProvider, ProviderConfig } from '../types/ai-provider.interface';
-import { RenderProvider } from '../types/render.types';
+import type { AIProvider, ProviderConfig } from '../types/ai-provider.interface';
+import type { RenderProvider } from '../types/render.types';
 import { ProviderFactory } from './provider-factory';
 
-interface ProviderStatus {
+type ProviderStatus = {
   provider: RenderProvider;
   available: boolean;
   latency?: number;
@@ -18,9 +18,9 @@ export class ProviderManager {
   async initialize(configs: Map<RenderProvider, ProviderConfig>): Promise<void> {
     const initPromises: Promise<void>[] = [];
 
-    for (const [type, config] of configs) {
+    Array.from(configs.entries()).forEach(([type, config]) => {
       initPromises.push(this.initializeProvider(type, config));
-    }
+    });
 
     await Promise.allSettled(initPromises);
     
@@ -74,9 +74,9 @@ export class ProviderManager {
   private async updateProviderStatuses(): Promise<void> {
     const statusPromises: Promise<void>[] = [];
 
-    for (const [type, provider] of this.providers) {
+    Array.from(this.providers.entries()).forEach(([type, provider]) => {
       statusPromises.push(this.updateProviderStatus(type, provider));
-    }
+    });
 
     await Promise.allSettled(statusPromises);
   }

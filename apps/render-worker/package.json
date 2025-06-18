@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@google-cloud/storage": "^7.7.0",
@@ -23,10 +24,21 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^2.27.3",
+    "@next/eslint-plugin-next": "^14.2.30",
     "@types/node": "^22.7.6",
     "@types/pg": "^8.11.10",
     "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-jest-dom": "^5.5.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-playwright": "^2.2.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-tailwindcss": "^3.18.0",
+    "eslint-plugin-testing-library": "^7.5.3",
     "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "prettier-plugin-tailwindcss": "^0.6.12",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.3"
   }

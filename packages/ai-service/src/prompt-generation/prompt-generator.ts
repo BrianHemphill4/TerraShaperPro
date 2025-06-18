@@ -1,15 +1,15 @@
-import { createHash } from 'crypto';
-import { 
-  PromptGenerationContext, 
-  PromptTemplate,
-  Annotation 
-} from '../types/prompt.types';
-import { PromptTemplateManager } from './prompt-template';
-import { AnnotationConverter } from './annotation-converter';
-import { StyleModifier } from './style-modifier';
-import { QualityModifier } from './quality-modifier';
+import { createHash } from 'node:crypto';
 
-export interface GeneratedPrompt {
+import type { 
+  PromptGenerationContext, 
+  PromptTemplate
+} from '../types/prompt.types';
+import { AnnotationConverter } from './annotation-converter';
+import { PromptTemplateManager } from './prompt-template';
+import { QualityModifier } from './quality-modifier';
+import { StyleModifier } from './style-modifier';
+
+export type GeneratedPrompt = {
   prompt: string;
   hash: string;
   metadata: {

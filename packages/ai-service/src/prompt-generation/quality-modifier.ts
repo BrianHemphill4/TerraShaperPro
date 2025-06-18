@@ -1,6 +1,6 @@
 export class QualityModifier {
-  private qualityPresets: Map<string, string[]>;
-  private technicalSpecs: string[];
+  private qualityPresets: Map<string, string[]> = new Map();
+  private technicalSpecs: string[] = [];
 
   constructor() {
     this.initializePresets();

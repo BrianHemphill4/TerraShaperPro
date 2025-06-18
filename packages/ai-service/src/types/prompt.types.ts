@@ -30,7 +30,7 @@ export const PromptTemplateSchema = z.object({
 
 export type PromptTemplate = z.infer<typeof PromptTemplateSchema>;
 
-export interface PromptGenerationContext {
+export type PromptGenerationContext = {
   annotations: Annotation[];
   template: PromptTemplate;
   userPreferences?: {
