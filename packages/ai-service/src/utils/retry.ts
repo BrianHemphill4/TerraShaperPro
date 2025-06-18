@@ -44,9 +44,13 @@ export async function withRetry<T>(
         throw lastError;
       }
 
-      console.log(
-        `Attempt ${attempt} failed: ${lastError.message}. Retrying in ${delay}ms...`
-      );
+      // Log retry attempts in development only
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.log(
+          `Attempt ${attempt} failed: ${lastError.message}. Retrying in ${delay}ms...`
+        );
+      }
 
       await new Promise(resolve => setTimeout(resolve, delay));
       
@@ -54,5 +58,5 @@ export async function withRetry<T>(
     }
   }
 
-  throw lastError!;
+  throw new Error(`All retry attempts failed: ${lastError!.message}`);
 }

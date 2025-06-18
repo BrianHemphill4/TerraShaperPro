@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import styles from './AssetPalette.module.css';
 
-interface Plant {
+type Plant = {
   id: string;
   scientificName: string;
   commonNames: string[];
@@ -102,6 +103,7 @@ const AssetPalette = () => {
                     title={`${plant.commonNames?.[0] || plant.scientificName}\nHeight: ${plant.mature_height_ft_min || '?'}-${plant.mature_height_ft_max || '?'} ft\nSpread: ${plant.mature_spread_ft_min || '?'}-${plant.mature_spread_ft_max || '?'} ft`}
                   >
                     {plant.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={plant.imageUrl}
                         alt={plant.scientificName}

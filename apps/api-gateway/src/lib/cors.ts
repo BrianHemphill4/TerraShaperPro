@@ -1,8 +1,8 @@
-import { FastifyCorsOptions } from '@fastify/cors';
+import type { FastifyCorsOptions } from '@fastify/cors';
 
 export const getCorsOptions = (): FastifyCorsOptions => {
   const isDevelopment = process.env.NODE_ENV !== 'production';
-  
+
   // Allowed origins based on environment
   const allowedOrigins = isDevelopment
     ? [
@@ -37,10 +37,10 @@ export const getCorsOptions = (): FastifyCorsOptions => {
       // Reject origin in production
       return callback(new Error('Not allowed by CORS'), false);
     },
-    
+
     // Allowed methods
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    
+
     // Allowed headers
     allowedHeaders: [
       'Content-Type',
@@ -50,19 +50,19 @@ export const getCorsOptions = (): FastifyCorsOptions => {
       'Origin',
       'x-trpc-source',
     ],
-    
+
     // Expose headers to the client
     exposedHeaders: ['x-trpc-source'],
-    
+
     // Allow credentials (cookies, authorization headers)
     credentials: true,
-    
+
     // Cache preflight response for 24 hours
     maxAge: 86400,
-    
+
     // Add CORS headers to errors
     preflightContinue: false,
-    
+
     // Add CORS headers to successful responses
     optionsSuccessStatus: 204,
   };
@@ -72,22 +72,22 @@ export const getCorsOptions = (): FastifyCorsOptions => {
 export const securityHeaders = {
   // Prevent XSS attacks
   'X-XSS-Protection': '1; mode=block',
-  
+
   // Prevent content type sniffing
   'X-Content-Type-Options': 'nosniff',
-  
+
   // Prevent clickjacking
   'X-Frame-Options': 'DENY',
-  
+
   // Force HTTPS
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-  
+
   // Referrer policy
   'Referrer-Policy': 'strict-origin-when-cross-origin',
-  
+
   // Permissions policy
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-  
+
   // Content Security Policy
   'Content-Security-Policy': [
     "default-src 'self'",

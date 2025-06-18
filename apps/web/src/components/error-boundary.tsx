@@ -1,16 +1,17 @@
 'use client';
 
-import React, { Component, ReactNode } from 'react';
 import * as Sentry from '@sentry/nextjs';
 import { captureException } from '@terrashaper/sentry';
+import type { ReactNode } from 'react';
+import React, { Component } from 'react';
 
-interface Props {
+type Props = {
   children: ReactNode;
   fallback?: (error: Error, errorInfo: React.ErrorInfo) => ReactNode;
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 
-interface State {
+type State = {
   hasError: boolean;
   error: Error | null;
   errorInfo: React.ErrorInfo | null;
@@ -66,11 +67,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // Default error UI
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-          <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6">
-            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
+        <div className="flex min-h-screen items-center justify-center bg-gray-100">
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-red-100">
               <svg
-                className="w-6 h-6 text-red-600"
+                className="size-6 text-red-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -83,29 +84,31 @@ export class ErrorBoundary extends Component<Props, State> {
                 />
               </svg>
             </div>
-            <h1 className="mt-4 text-xl font-semibold text-center text-gray-900">
+            <h1 className="mt-4 text-center text-xl font-semibold text-gray-900">
               Something went wrong
             </h1>
-            <p className="mt-2 text-sm text-center text-gray-600">
+            <p className="mt-2 text-center text-sm text-gray-600">
               We've been notified about this issue and are working to fix it.
             </p>
             {this.state.eventId && (
-              <p className="mt-4 text-xs text-center text-gray-500">
+              <p className="mt-4 text-center text-xs text-gray-500">
                 Error ID: {this.state.eventId}
               </p>
             )}
             <div className="mt-6 flex flex-col gap-3">
               <button
+                type="button"
                 onClick={() => window.location.reload()}
-                className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 Reload Page
               </button>
               <button
+                type="button"
                 onClick={() => {
                   Sentry.showReportDialog({ eventId: this.state.eventId! });
                 }}
-                className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="w-full rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 Report Issue
               </button>

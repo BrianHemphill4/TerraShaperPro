@@ -93,7 +93,7 @@ export class ProviderManager {
         latency: status.latency,
         lastChecked: new Date(),
       });
-    } catch (error) {
+    } catch {
       this.providerStatus.set(type, {
         provider: type,
         available: false,

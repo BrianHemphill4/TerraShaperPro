@@ -1,7 +1,9 @@
 
-import sharp from 'sharp';
+import { Buffer } from 'node:buffer';
+import { promisify } from 'node:util';
+
 import { imageHash } from 'image-hash';
-import { promisify } from 'util';
+import sharp from 'sharp';
 
 const getImageHash = promisify(imageHash);
 

@@ -28,6 +28,7 @@ export default antfu({
     'next-env.d.ts',
   ],
 }, ...tailwind.configs['flat/recommended'], jsxA11y.flatConfigs.recommended, {
+  files: ['apps/web/**/*'],
   plugins: {
     '@next/next': nextPlugin,
   },

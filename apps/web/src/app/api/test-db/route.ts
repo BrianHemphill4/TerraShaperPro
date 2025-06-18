@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { db, plants } from '@terrasherper/db';
+import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 

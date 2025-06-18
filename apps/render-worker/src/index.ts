@@ -1,54 +1,57 @@
-import dotenv from 'dotenv';
+// import type { RenderJobResult } from '@terrashaper/queue';
 import { createRenderWorker } from '@terrashaper/queue';
-import type { RenderJobData, RenderJobResult } from '@terrashaper/queue';
-import { processRenderJob } from './processors/renderProcessor';
-import { startFailureMonitor } from './processors/failureMonitor';
+import dotenv from 'dotenv';
+
+import type { RenderJobResult } from '../../../packages/queue/src/types';
 import { connection } from './config/redis';
-import { initSentry, captureException } from './lib/sentry';
+import { logger } from './lib/logger';
+import { captureException, initSentry } from './lib/sentry';
+import { startFailureMonitor } from './processors/failureMonitor';
+import { processRenderJob } from './processors/renderProcessor';
 
 dotenv.config();
 
 // Initialize Sentry before anything else
 initSentry();
 
-const concurrency = parseInt(process.env.WORKER_CONCURRENCY || '5');
+const concurrency = Number.parseInt(process.env.WORKER_CONCURRENCY || '5');
 
-const worker = createRenderWorker(
-  processRenderJob,
-  connection,
-  concurrency
-);
+const worker = createRenderWorker(processRenderJob, connection, concurrency);
 
 worker.on('completed', (job: any, result: RenderJobResult) => {
-  console.log(`✓ Render ${job.id} completed in ${result.processingTime}ms`);
+  logger.info(`✓ Render ${job.id} completed in ${result.processingTime}ms`);
 });
 
 worker.on('failed', (job: any, err: Error) => {
-  console.error(`✗ Render ${job?.id} failed:`, err.message);
+  logger.error(`✗ Render ${job?.id} failed:`, err, {
+    jobId: job?.id,
+    jobData: job?.data,
+  });
   captureException(err as Error, {
     jobId: job?.id,
     jobData: job?.data,
   });
 });
 
-worker.on('progress', (job: any, progress: number) => {
-  console.log(`◊ Render ${job.id} progress: ${progress}%`);
+worker.on('progress', (job: any, progress: any) => {
+  const progressValue = typeof progress === 'object' ? progress.percent || 0 : progress;
+  logger.debug(`◊ Render ${job.id} progress: ${progressValue}%`);
 });
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, closing worker...');
+  logger.info('SIGTERM received, closing worker...');
   await worker.close();
   process.exit(0);
 });
 
 process.on('SIGINT', async () => {
-  console.log('SIGINT received, closing worker...');
+  logger.info('SIGINT received, closing worker...');
   await worker.close();
   process.exit(0);
 });
 
-console.log(`🚀 Render Worker started with concurrency: ${concurrency}`);
+logger.info(`🚀 Render Worker started with concurrency: ${concurrency}`);
 
 // Start failure monitoring
 startFailureMonitor();
