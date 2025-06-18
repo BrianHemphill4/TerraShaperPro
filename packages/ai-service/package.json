@@ -13,6 +13,12 @@
   },
   "dependencies": {
     "@google-cloud/aiplatform": "^3.10.0",
+    "@sentry/nextjs": "^8.55.0",
+    "@sentry/node": "^8.55.0",
+    "@sentry/profiling-node": "^9.30.0",
+    "@sentry/tracing": "^7.120.3",
+    "@types/cors": "^2.8.19",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "openai": "^4.20.0",
     "zod": "^3.22.4"

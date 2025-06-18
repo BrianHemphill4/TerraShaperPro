@@ -13,8 +13,7 @@ export function initSentry() {
     profilesSampleRate: 1.0,
     
     integrations: [
-      // Automatically instrument Node.js libraries and frameworks
-      ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations(),
+      // Add profiling integration
       nodeProfilingIntegration(),
     ],
     
@@ -66,7 +65,7 @@ export function addBreadcrumb(breadcrumb: Sentry.Breadcrumb) {
 }
 
 export function startTransaction(name: string, op: string) {
-  return Sentry.startSpan({ name, op });
+  return Sentry.startSpan({ name, op }, () => {});
 }
 
 export function withSentry<T extends (...args: any[]) => any>(

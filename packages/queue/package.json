@@ -19,7 +19,13 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "bullmq": "^5.0.0"
+    "@sentry/nextjs": "^8.55.0",
+    "@sentry/node": "^8.55.0",
+    "@sentry/profiling-node": "^9.30.0",
+    "@sentry/tracing": "^7.120.3",
+    "@types/cors": "^2.8.19",
+    "bullmq": "^5.0.0",
+    "cors": "^2.8.5"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.27.3",

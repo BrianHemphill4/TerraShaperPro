@@ -9,7 +9,13 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@sentry/nextjs": "^8.55.0",
+    "@sentry/node": "^8.55.0",
+    "@sentry/profiling-node": "^9.30.0",
+    "@sentry/tracing": "^7.120.3",
     "@terrasherper/db": "0.1.0",
+    "@types/cors": "^2.8.19",
+    "cors": "^2.8.5",
     "csv-parse": "^5.5.6",
     "tsx": "^4.16.2"
   },

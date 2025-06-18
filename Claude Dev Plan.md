@@ -49,12 +49,25 @@ A comprehensive landscape design and planning application for professional lands
     - Commit-msg hook enforces conventional commits
     - Pre-push hook runs linting and format checks
 
+### Recently Completed Infrastructure ✓
+16. **Set up CI/CD pipeline with GitHub Actions** - AI [Complete]
+    - Created comprehensive CI workflow with linting, type checking, testing, and security scanning
+    - Created deployment workflow for production releases
+    - Configured automated dependency auditing and vulnerability scanning
+19. **Set up error tracking with Sentry** - AI [Complete]
+    - Installed Sentry packages for Next.js, Node, and profiling
+    - Created Sentry configuration files for server, client, and edge
+    - Implemented error boundary component for React
+    - Added Sentry integration to API gateway and render worker
+20. **Configure CORS policies** - AI [Complete]
+    - Configured CORS for API gateway with Fastify
+    - Added security headers to Next.js middleware
+    - Created restrictive CORS for render worker
+    - Implemented CSP headers for all services
+
 ### Pending Infrastructure ⏳
-16. **Set up CI/CD pipeline with GitHub Actions** - AI [Pending]
 17. **Configure Vercel deployment for web app** - Human [Pending]
 18. **Set up staging and production environments** - Human [Pending]
-19. **Set up error tracking with Sentry** - AI [Pending]
-20. **Configure CORS policies** - AI [Pending]
 
 ---
 
