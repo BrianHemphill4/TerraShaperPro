@@ -2,6 +2,17 @@ import 'fabric';
 
 declare module 'fabric' {
   namespace fabric {
+    interface IEvent<E extends Event = Event> {
+      e: E;
+      target?: fabric.Object;
+      subTargets?: fabric.Object[];
+      button?: number;
+      isClick?: boolean;
+      pointer?: fabric.Point;
+      absolutePointer?: fabric.Point;
+      transform?: fabric.Transform;
+    }
+
     type IObjectOptions = {
       id?: string;
       plantId?: string;
