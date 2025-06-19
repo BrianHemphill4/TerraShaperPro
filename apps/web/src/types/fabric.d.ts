@@ -60,5 +60,15 @@ declare module 'fabric' {
       plantId?: string;
       plantName?: string;
     } & Object;
+
+    type IPolygonOptions = {
+      id?: string;
+      material?: string;
+      points?: Array<{ x: number; y: number }> | fabric.Point[];
+    } & IObjectOptions;
+
+    type Polygon = {
+      points?: Array<{ x: number; y: number }> | fabric.Point[];
+    } & Object;
   }
 }

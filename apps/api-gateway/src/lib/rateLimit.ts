@@ -19,7 +19,7 @@ export const getRateLimitOptions = (): FastifyRateLimitOptions => {
     skipSuccessfulRequests: false,
 
     // Custom error response
-    errorResponseBuilder: (request: any, context: any) => {
+    errorResponseBuilder: (_request: any, context: any) => {
       return {
         code: 'RATE_LIMITED',
         message: 'Too many requests, please try again later.',

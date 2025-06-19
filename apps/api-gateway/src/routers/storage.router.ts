@@ -4,7 +4,22 @@ import { z } from 'zod';
 
 import { protectedProcedure, router } from '../trpc';
 
-const storageService = new StorageService();
+let storageService: StorageService | null = null;
+
+function getStorageService(): StorageService {
+  if (!storageService) {
+    try {
+      storageService = new StorageService();
+    } catch (error) {
+      console.warn('StorageService initialization failed:', error);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Storage service not configured',
+      });
+    }
+  }
+  return storageService;
+}
 
 const uploadRequestSchema = z.object({
   fileName: z.string().min(1).max(255),
@@ -61,7 +76,11 @@ export const storageRouter = router({
 
       try {
         const expires = new Date(Date.now() + expiresInMinutes * 60 * 1000);
-        const downloadUrl = await storageService.generateDownloadUrl(bucketType, fileName, expires);
+        const downloadUrl = await getStorageService().generateDownloadUrl(
+          bucketType,
+          fileName,
+          expires
+        );
 
         return {
           downloadUrl,
@@ -81,7 +100,7 @@ export const storageRouter = router({
     const { fileName, bucketType } = input;
 
     try {
-      const exists = await storageService.fileExists(bucketType, fileName);
+      const exists = await getStorageService().fileExists(bucketType, fileName);
       return { exists, fileName };
     } catch {
       throw new TRPCError({
@@ -96,7 +115,7 @@ export const storageRouter = router({
     const { fileName, bucketType } = input;
 
     try {
-      const exists = await storageService.fileExists(bucketType, fileName);
+      const exists = await getStorageService().fileExists(bucketType, fileName);
       if (!exists) {
         throw new TRPCError({
           code: 'NOT_FOUND',
@@ -104,7 +123,7 @@ export const storageRouter = router({
         });
       }
 
-      const metadata = await storageService.getFileMetadata(bucketType, fileName);
+      const metadata = await getStorageService().getFileMetadata(bucketType, fileName);
 
       return {
         fileName,
@@ -130,7 +149,7 @@ export const storageRouter = router({
     const { fileName, bucketType } = input;
 
     try {
-      const exists = await storageService.fileExists(bucketType, fileName);
+      const exists = await getStorageService().fileExists(bucketType, fileName);
       if (!exists) {
         throw new TRPCError({
           code: 'NOT_FOUND',
@@ -138,7 +157,7 @@ export const storageRouter = router({
         });
       }
 
-      await storageService.deleteFile(bucketType, fileName);
+      await getStorageService().deleteFile(bucketType, fileName);
 
       return { success: true, fileName };
     } catch (error) {

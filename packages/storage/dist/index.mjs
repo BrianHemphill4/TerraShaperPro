@@ -1,3 +1,7 @@
+// src/client.ts
+import { Buffer } from "buffer";
+import { Storage } from "@google-cloud/storage";
+
 // src/config.ts
 function getStorageConfig() {
   const projectId = process.env.GCS_PROJECT_ID;
@@ -18,15 +22,23 @@ function getStorageConfig() {
 }
 
 // src/client.ts
-import { Storage } from "@google-cloud/storage";
 var storageClient = null;
 function getStorageClient() {
   if (!storageClient) {
     const config = getStorageConfig();
-    storageClient = new Storage({
-      projectId: config.projectId,
-      keyFilename: config.keyFilename
-    });
+    if (process.env.GCS_KEY_BASE64) {
+      const keyJson = Buffer.from(process.env.GCS_KEY_BASE64, "base64").toString("utf-8");
+      const keyData = JSON.parse(keyJson);
+      storageClient = new Storage({
+        projectId: keyData.project_id,
+        credentials: keyData
+      });
+    } else {
+      storageClient = new Storage({
+        projectId: config.projectId,
+        keyFilename: config.keyFilename
+      });
+    }
   }
   return storageClient;
 }
@@ -36,9 +48,6 @@ function getBucket(bucketType) {
   const bucketName = bucketType === "renders" ? config.rendersBucket : config.assetsBucket;
   return client.bucket(bucketName);
 }
-
-// src/storage-service.ts
-import { lookup } from "mime-types";
 
 // src/image-processor.ts
 import sharp from "sharp";
@@ -100,7 +109,11 @@ var ImageProcessor = class {
   }
 };
 
+// src/render-storage.ts
+import { Buffer as Buffer2 } from "buffer";
+
 // src/storage-service.ts
+import { lookup } from "mime-types";
 var StorageService = class {
   config = getStorageConfig();
   async uploadFile(options) {
@@ -275,115 +288,6 @@ var StorageService = class {
   }
 };
 
-// src/upload-utils.ts
-var UploadUtils = class {
-  static storageService = new StorageService();
-  /**
-   * Generate a direct upload URL for client-side uploads
-   */
-  static async generateDirectUploadUrl(bucketType, fileName, contentType, expiresInMinutes = 15) {
-    const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1e3);
-    const uploadUrl = await this.storageService.generateUploadUrl(
-      bucketType,
-      fileName,
-      contentType,
-      expiresAt
-    );
-    const bucketName = bucketType === "renders" ? process.env.GCS_RENDERS_BUCKET : process.env.GCS_ASSETS_BUCKET;
-    const publicUrl = this.storageService.getPublicUrl(bucketName, fileName);
-    return {
-      uploadUrl,
-      fileName,
-      publicUrl,
-      expiresAt
-    };
-  }
-  /**
-   * Generate unique file name with timestamp and random suffix
-   */
-  static generateFileName(prefix, extension) {
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(2, 8);
-    return `${prefix}/${timestamp}-${random}.${extension}`;
-  }
-  /**
-   * Generate file name for render result
-   */
-  static generateRenderFileName(renderId, format = "webp") {
-    return `renders/${renderId}.${format}`;
-  }
-  /**
-   * Generate file name for asset
-   */
-  static generateAssetFileName(assetId, format = "webp") {
-    return `assets/${assetId}.${format}`;
-  }
-  /**
-   * Generate file name for user upload
-   */
-  static generateUserUploadFileName(userId, originalFileName) {
-    const extension = originalFileName.split(".").pop() || "jpg";
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(2, 8);
-    return `uploads/${userId}/${timestamp}-${random}.${extension}`;
-  }
-  /**
-   * Validate file type for uploads
-   */
-  static validateImageFile(contentType, maxSizeMB = 10) {
-    const allowedTypes = [
-      "image/jpeg",
-      "image/jpg",
-      "image/png",
-      "image/webp",
-      "image/gif"
-    ];
-    if (!allowedTypes.includes(contentType.toLowerCase())) {
-      return {
-        valid: false,
-        error: `Invalid file type. Allowed: ${allowedTypes.join(", ")}`
-      };
-    }
-    return { valid: true };
-  }
-  /**
-   * Get CORS configuration for direct uploads
-   */
-  static getCorsConfig() {
-    return {
-      origin: [
-        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-        "https://terrashaper.pro",
-        "https://*.terrashaper.pro"
-      ],
-      methods: ["GET", "PUT", "POST", "OPTIONS"],
-      allowedHeaders: [
-        "Content-Type",
-        "Content-Length",
-        "x-goog-content-length-range",
-        "x-goog-resumable"
-      ],
-      maxAgeSeconds: 3600
-    };
-  }
-  /**
-   * Create presigned POST policy for direct browser uploads
-   */
-  static async generatePresignedPost(bucketType, fileName, contentType, maxSizeBytes = 10 * 1024 * 1024) {
-    const uploadUrl = await this.storageService.generateUploadUrl(
-      bucketType,
-      fileName,
-      contentType
-    );
-    return {
-      url: uploadUrl,
-      fields: {
-        "Content-Type": contentType
-      }
-    };
-  }
-};
-
 // src/render-storage.ts
 var RenderStorageService = class extends StorageService {
   /**
@@ -473,7 +377,7 @@ var RenderStorageService = class extends StorageService {
     await this.uploadFile({
       bucket: "renders",
       fileName: `${fileName}_metadata.json`,
-      buffer: Buffer.from(JSON.stringify(metadataContent, null, 2)),
+      buffer: Buffer2.from(JSON.stringify(metadataContent, null, 2)),
       contentType: "application/json",
       makePublic: false,
       metadata: {
@@ -598,6 +502,115 @@ var RenderStorageService = class extends StorageService {
       console.error("Failed to generate download URLs:", error);
     }
     return urls;
+  }
+};
+
+// src/upload-utils.ts
+var UploadUtils = class {
+  static storageService = new StorageService();
+  /**
+   * Generate a direct upload URL for client-side uploads
+   */
+  static async generateDirectUploadUrl(bucketType, fileName, contentType, expiresInMinutes = 15) {
+    const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1e3);
+    const uploadUrl = await this.storageService.generateUploadUrl(
+      bucketType,
+      fileName,
+      contentType,
+      expiresAt
+    );
+    const bucketName = bucketType === "renders" ? process.env.GCS_RENDERS_BUCKET : process.env.GCS_ASSETS_BUCKET;
+    const publicUrl = this.storageService.getPublicUrl(bucketName, fileName);
+    return {
+      uploadUrl,
+      fileName,
+      publicUrl,
+      expiresAt
+    };
+  }
+  /**
+   * Generate unique file name with timestamp and random suffix
+   */
+  static generateFileName(prefix, extension) {
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 8);
+    return `${prefix}/${timestamp}-${random}.${extension}`;
+  }
+  /**
+   * Generate file name for render result
+   */
+  static generateRenderFileName(renderId, format = "webp") {
+    return `renders/${renderId}.${format}`;
+  }
+  /**
+   * Generate file name for asset
+   */
+  static generateAssetFileName(assetId, format = "webp") {
+    return `assets/${assetId}.${format}`;
+  }
+  /**
+   * Generate file name for user upload
+   */
+  static generateUserUploadFileName(userId, originalFileName) {
+    const extension = originalFileName.split(".").pop() || "jpg";
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 8);
+    return `uploads/${userId}/${timestamp}-${random}.${extension}`;
+  }
+  /**
+   * Validate file type for uploads
+   */
+  static validateImageFile(contentType, _maxSizeMB = 10) {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+      "image/gif"
+    ];
+    if (!allowedTypes.includes(contentType.toLowerCase())) {
+      return {
+        valid: false,
+        error: `Invalid file type. Allowed: ${allowedTypes.join(", ")}`
+      };
+    }
+    return { valid: true };
+  }
+  /**
+   * Get CORS configuration for direct uploads
+   */
+  static getCorsConfig() {
+    return {
+      origin: [
+        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+        "https://terrashaper.pro",
+        "https://*.terrashaper.pro"
+      ],
+      methods: ["GET", "PUT", "POST", "OPTIONS"],
+      allowedHeaders: [
+        "Content-Type",
+        "Content-Length",
+        "x-goog-content-length-range",
+        "x-goog-resumable"
+      ],
+      maxAgeSeconds: 3600
+    };
+  }
+  /**
+   * Create presigned POST policy for direct browser uploads
+   */
+  static async generatePresignedPost(bucketType, fileName, contentType, _maxSizeBytes = 10 * 1024 * 1024) {
+    const uploadUrl = await this.storageService.generateUploadUrl(
+      bucketType,
+      fileName,
+      contentType
+    );
+    return {
+      url: uploadUrl,
+      fields: {
+        "Content-Type": contentType
+      }
+    };
   }
 };
 export {
