@@ -25,8 +25,8 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
     if (canvas && onElementsChange) {
       const elements = canvas
         .getObjects()
-        .filter((obj) => obj.id && !obj.evented === false) // Filter out grid lines
-        .map((obj) => ({
+        .filter((obj: any) => obj.id && !obj.evented === false) // Filter out grid lines
+        .map((obj: any) => ({
           id: obj.id,
           type: obj.type,
           left: obj.left,
@@ -115,7 +115,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
               id: `plant-${Date.now()}`,
               plantId: plant.id,
               plantName: plant.commonName,
-            });
+            } as any);
             fabricCanvas.add(img);
             fabricCanvas.setActiveObject(img);
             fabricCanvas.renderAll();
@@ -133,7 +133,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
             id: `plant-${Date.now()}`,
             plantId: plant.id,
             plantName: plant.commonName,
-          });
+          } as any);
 
           const text = new fabric.Text(plant.commonName.charAt(0), {
             left: x - 8,
@@ -150,7 +150,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
             id: `plant-${Date.now()}`,
             plantId: plant.id,
             plantName: plant.commonName,
-          });
+          } as any);
 
           fabricCanvas.add(group);
           fabricCanvas.setActiveObject(group);
@@ -211,7 +211,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
           setCurrentPoints([...currentPoints, point]);
 
           if (tempLine) {
-            tempLine.points = [...currentPoints, point];
+            (tempLine as any).points = [...currentPoints, point];
             canvas.renderAll();
           }
         }
@@ -223,7 +223,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
 
       const pointer = canvas.getPointer(e.e);
       const points = [...currentPoints, { x: pointer.x, y: pointer.y }];
-      tempLine.points = points;
+      (tempLine as any).points = points;
       canvas.renderAll();
     };
 
@@ -239,13 +239,13 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
               stroke: '#10b981',
               strokeWidth: 2,
               id: `${drawingMode}-${Date.now()}`,
-            })
+            } as any)
           : new fabric.Polyline(currentPoints, {
               fill: 'transparent',
               stroke: '#10b981',
               strokeWidth: 2,
               id: `${drawingMode}-${Date.now()}`,
-            });
+            } as any);
 
       canvas.add(shape);
       canvas.setActiveObject(shape);
