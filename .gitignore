@@ -48,6 +48,12 @@ yarn-error.log*
 .env
 .env*.local
 
+# Google Cloud credentials
+gcs-key.json
+gcs_keys.json
+*-key.json
+*_keys.json
+
 # local folder
 local
 

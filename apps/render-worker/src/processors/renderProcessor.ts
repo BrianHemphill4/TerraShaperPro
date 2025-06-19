@@ -1,6 +1,5 @@
 import { Buffer } from 'node:buffer';
 
-import { Storage } from '@google-cloud/storage';
 import { createClient } from '@supabase/supabase-js';
 import type {
   Annotation,
@@ -20,12 +19,12 @@ import type { Job } from 'bullmq';
 
 // import type { RenderJobData, RenderJobResult } from '@terrashaper/queue';
 import type { RenderJobData, RenderJobResult } from '../../../../packages/queue/src/types';
+import { getStorage } from '../lib/gcs';
 import { logger } from '../lib/logger';
 
 const providerManager = new ProviderManager();
 const promptGenerator = new PromptGenerator();
 const qualityChecker = new QualityChecker();
-const storage = new Storage();
 
 let reviewQueueService: ReviewQueueService;
 let failureDetectionService: FailureDetectionService;
@@ -173,6 +172,7 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
 
     await job.updateProgress(80);
 
+    const storage = getStorage();
     const bucket = storage.bucket(process.env.GCS_BUCKET_NAME!);
     const fileName = `renders/${projectId}/${renderId}.${settings.format.toLowerCase()}`;
     const thumbnailFileName = `renders/${projectId}/${renderId}_thumb.${settings.format.toLowerCase()}`;
