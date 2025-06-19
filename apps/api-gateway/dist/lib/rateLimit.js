@@ -16,7 +16,7 @@ const getRateLimitOptions = () => {
     skipOnError: false,
     skipSuccessfulRequests: false,
     // Custom error response
-    errorResponseBuilder: (request, context) => {
+    errorResponseBuilder: (_request, context) => {
       return {
         code: 'RATE_LIMITED',
         message: 'Too many requests, please try again later.',

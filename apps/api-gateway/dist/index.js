@@ -25,7 +25,7 @@ server.register(cors_1.default, (0, cors_2.getCorsOptions)());
 // Register rate limiting
 server.register(rate_limit_1.default, (0, rateLimit_1.getRateLimitOptions)());
 // Add security headers
-server.addHook('onSend', async (request, reply) => {
+server.addHook('onSend', async (_request, reply) => {
   Object.entries(cors_2.securityHeaders).forEach(([key, value]) => {
     reply.header(key, value);
   });
