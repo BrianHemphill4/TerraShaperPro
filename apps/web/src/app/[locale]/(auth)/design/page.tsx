@@ -1,5 +1,7 @@
 'use client';
 
+import '@/types/fabric';
+
 import { fabric } from 'fabric';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -92,7 +94,7 @@ const DesignPage = () => {
               id: properties.id,
               plantId: properties.plantId,
               plantName: properties.plantName,
-            });
+            } as fabric.IGroupOptions);
 
             canvas.add(group);
           }
@@ -107,7 +109,7 @@ const DesignPage = () => {
             scaleX: properties.scaleX || 1,
             scaleY: properties.scaleY || 1,
             id: properties.id,
-          });
+          } as fabric.IPolylineOptions);
           canvas.add(polygon);
         } else if (element.elementType === 'polyline') {
           const polyline = new fabric.Polyline(properties.points || [], {
@@ -120,7 +122,7 @@ const DesignPage = () => {
             scaleX: properties.scaleX || 1,
             scaleY: properties.scaleY || 1,
             id: properties.id,
-          });
+          } as fabric.IPolylineOptions);
           canvas.add(polyline);
         }
       });

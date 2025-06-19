@@ -1,5 +1,7 @@
 'use client';
 
+import '@/types/fabric';
+
 import { fabric } from 'fabric';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
