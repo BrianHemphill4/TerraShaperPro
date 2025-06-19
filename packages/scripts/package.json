@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "build": "echo \"No build required for @terrasherper/scripts\"",
     "ingest:plants": "tsx src/ingest-plants.ts",
     "lint": "echo \"(scripts) nothing to lint\"",
     "lint:fix": "echo \"(scripts) nothing to fix\"",
