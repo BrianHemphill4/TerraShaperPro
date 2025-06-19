@@ -9,6 +9,8 @@ import { getRateLimitOptions } from './lib/rateLimit';
 import { initSentry } from './lib/sentry';
 import { appRouter } from './router';
 
+export type { AppRouter } from './router';
+
 // Initialize Sentry before anything else
 initSentry();
 
@@ -24,7 +26,7 @@ server.register(cors, getCorsOptions());
 server.register(rateLimit, getRateLimitOptions());
 
 // Add security headers
-server.addHook('onSend', async (request, reply) => {
+server.addHook('onSend', async (_request, reply) => {
   Object.entries(securityHeaders).forEach(([key, value]) => {
     reply.header(key, value);
   });

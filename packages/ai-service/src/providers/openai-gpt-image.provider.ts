@@ -9,7 +9,7 @@ import type {
 import { withRetry } from '../utils/retry';
 
 export class OpenAIGPTImageProvider implements AIProvider {
-  name = 'OpenAI GPT-Image-1';
+  name = 'OpenAI DALL-E 3';
   private openai: OpenAI | null = null;
   private config: ProviderConfig | null = null;
 
@@ -44,7 +44,7 @@ export class OpenAIGPTImageProvider implements AIProvider {
       
       const response = await withRetry(
         () => this.openai!.images.generate({
-          model: 'gpt-image-1',
+          model: 'dall-e-3',
           prompt: enhancedPrompt,
           n: 1,
           size: this.getSize(options.width || 1024, options.height || 1024),
@@ -80,7 +80,7 @@ export class OpenAIGPTImageProvider implements AIProvider {
         imageBase64: image.b64_json,
         metadata: {
           provider: this.name,
-          model: 'gpt-image-1',
+          model: 'dall-e-3',
           prompt: enhancedPrompt,
           timestamp: new Date(),
           duration,
@@ -140,12 +140,12 @@ export class OpenAIGPTImageProvider implements AIProvider {
       const startTime = Date.now();
       
       const models = await this.openai.models.list();
-      const gptImageAvailable = models.data.some(model => model.id.includes('gpt-image'));
+      const dalleAvailable = models.data.some(model => model.id.includes('dall-e'));
       
       const latency = Date.now() - startTime;
 
       return {
-        available: gptImageAvailable,
+        available: dalleAvailable,
         latency,
       };
     } catch {

@@ -189,14 +189,14 @@ function canUserSubmitRender(userId, subscriptionTier) {
 function getQueueMetrics() {
   return __async(this, null, function* () {
     const queue = getRenderQueue();
-    const [waiting, active, completed, failed, delayed, paused] = yield Promise.all([
+    const [waiting, active, completed, failed, delayed] = yield Promise.all([
       queue.getWaitingCount(),
       queue.getActiveCount(),
       queue.getCompletedCount(),
       queue.getFailedCount(),
-      queue.getDelayedCount(),
-      queue.getPausedCount()
+      queue.getDelayedCount()
     ]);
+    const paused = 0;
     return {
       waiting,
       active,
