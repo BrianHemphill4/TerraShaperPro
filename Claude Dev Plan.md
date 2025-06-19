@@ -28,8 +28,8 @@ A comprehensive landscape design and planning application for professional lands
 9. **Create landing pages and marketing structure** - AI [Complete]
 10. **Implement basic design canvas with Fabric.js** - AI [Complete]
 
-### In Progress Infrastructure 🔄
-12. **Set up Google Cloud Storage for assets** - Human [In Progress]
+### Pending Infrastructure ⏳
+12. **Set up Google Cloud Storage for assets** - Human [Pending]
 
 ### Recently Completed Infrastructure ✓
 11. **Configure BullMQ and Redis for job queuing** - AI [Complete]
@@ -65,7 +65,8 @@ A comprehensive landscape design and planning application for professional lands
     - Created restrictive CORS for render worker
     - Implemented CSP headers for all services
 
-### Pending Infrastructure Fixes ⏳
+### Pending Infrastructure ⏳
+18. **Set up staging and production environments** - Human [Pending]
 21. **Fix pre-commit hooks and linting issues** - AI [Pending]
     - Create @terrashaper/queue module with exports
     - Fix TypeScript errors in api-gateway
@@ -74,9 +75,11 @@ A comprehensive landscape design and planning application for professional lands
     - Update ESLint configuration for non-Next.js apps
     - Ensure all pre-commit hooks pass
 
-### Pending Infrastructure ⏳
-17. **Configure Vercel deployment for web app** - Human [Pending]
-18. **Set up staging and production environments** - Human [Pending]
+### Recently Completed Infrastructure ✓
+17. **Configure Vercel deployment for web app** - Human [Complete]
+    - Added root vercel.json configuration
+    - Configured environment variables in Vercel
+    - Successfully deployed to production
 
 ---
 
