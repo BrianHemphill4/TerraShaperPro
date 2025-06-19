@@ -61,7 +61,7 @@ function applySecurityHeaders(response: NextResponse, request: NextRequest): Nex
     
     // Handle preflight requests
     if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 200, headers: response.headers });
+      return NextResponse.rewrite(new URL(request.url), { status: 200, headers: response.headers });
     }
   }
   

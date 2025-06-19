@@ -1,6 +1,5 @@
 'use client';
 
-// @ts-expect-error - fabric.js doesn't have proper TypeScript definitions
 import { fabric } from 'fabric';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -53,7 +52,6 @@ const DesignPage = () => {
         
         if (element.elementType === 'plant') {
           if (properties.imageUrl) {
-            // @ts-expect-error - fabric.js doesn't have proper TypeScript definitions
             fabric.Image.fromURL(properties.imageUrl, (img: any) => {
               img.set({
                 left: Number.parseFloat(element.positionX),
@@ -70,7 +68,6 @@ const DesignPage = () => {
               canvas.add(img);
             });
           } else {
-            // @ts-expect-error - fabric.js doesn't have proper TypeScript definitions
             const circle = new fabric.Circle({
               radius: 25,
               fill: '#10b981',
@@ -78,7 +75,6 @@ const DesignPage = () => {
               strokeWidth: 2,
             });
             
-            // @ts-expect-error - fabric.js doesn't have proper TypeScript definitions
             const text = new fabric.Text(element.name.charAt(0), {
               fontSize: 20,
               fill: 'white',
@@ -86,7 +82,6 @@ const DesignPage = () => {
               originY: 'center',
             });
 
-            // @ts-expect-error - fabric.js doesn't have proper TypeScript definitions
             const group = new fabric.Group([circle, text], {
               left: Number.parseFloat(element.positionX),
               top: Number.parseFloat(element.positionY),
@@ -101,7 +96,6 @@ const DesignPage = () => {
             canvas.add(group);
           }
         } else if (element.elementType === 'polygon') {
-          // @ts-expect-error - fabric.js doesn't have proper TypeScript definitions
           const polygon = new fabric.Polygon(properties.points || [], {
             left: Number.parseFloat(element.positionX),
             top: Number.parseFloat(element.positionY),
@@ -115,7 +109,6 @@ const DesignPage = () => {
           });
           canvas.add(polygon);
         } else if (element.elementType === 'polyline') {
-          // @ts-expect-error - fabric.js doesn't have proper TypeScript definitions
           const polyline = new fabric.Polyline(properties.points || [], {
             left: Number.parseFloat(element.positionX),
             top: Number.parseFloat(element.positionY),

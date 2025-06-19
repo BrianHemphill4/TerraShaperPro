@@ -16,8 +16,10 @@
     "@sentry/tracing": "^7.120.3",
     "@terrasherper/db": "0.1.0",
     "@types/cors": "^2.8.19",
+    "clsx": "^2.1.1",
     "cors": "^2.8.5",
     "csv-parse": "^5.5.6",
+    "tailwind-merge": "^2.6.0",
     "tsx": "^4.16.2"
   },
   "devDependencies": {
@@ -25,6 +27,7 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@next/eslint-plugin-next": "^14.2.30",
+    "autoprefixer": "^10.4.21",
     "dotenv-cli": "^7.4.4",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-format": "^1.0.1",
@@ -36,6 +39,8 @@
     "eslint-plugin-testing-library": "^7.5.3",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.5.6",
     "prettier-plugin-tailwindcss": "^0.6.12",
     "typescript": "^5.6.3"
   }
