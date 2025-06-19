@@ -100,7 +100,10 @@ export const renderRouter = router({
         sourceImageUrl: input.sourceImageUrl,
         maskImageUrl: input.maskImageUrl,
         prompt: input.prompt,
-        annotations: input.annotations,
+        annotations: input.annotations as Array<{
+          type: 'mask' | 'assetInstance' | 'textLabel';
+          data: any;
+        }>,
         settings: input.settings,
       });
 
@@ -227,4 +230,72 @@ export const renderRouter = router({
     const metrics = await getQueueMetrics();
     return metrics;
   }),
+
+  retry: protectedProcedure
+    .input(
+      z.object({
+        renderId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Get the original render
+      const { data: render, error } = await ctx.supabase
+        .from('renders')
+        .select('*')
+        .eq('id', input.renderId)
+        .eq('userId', ctx.session.userId)
+        .single();
+
+      if (error || !render || render.status !== 'failed') {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Cannot retry this render',
+        });
+      }
+
+      // Create a new render with the same settings
+      const newRenderId = uuidv4();
+      const now = new Date().toISOString();
+
+      await ctx.supabase.from('renders').insert({
+        id: newRenderId,
+        projectId: render.projectId,
+        sceneId: render.sceneId,
+        userId: ctx.session.userId,
+        organizationId: ctx.session.organizationId,
+        status: 'queued',
+        provider: render.provider,
+        prompt: render.prompt,
+        systemPrompt: render.systemPrompt,
+        annotations: render.annotations,
+        settings: render.settings,
+        sourceImageUrl: render.sourceImageUrl,
+        maskImageUrl: render.maskImageUrl,
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      // Add new job to queue
+      const job = await addRenderJob({
+        renderId: newRenderId,
+        projectId: render.projectId,
+        sceneId: render.sceneId,
+        userId: ctx.session.userId,
+        organizationId: ctx.session.organizationId,
+        subscriptionTier: ctx.session.subscriptionTier as 'starter' | 'pro' | 'growth',
+        sourceImageUrl: render.sourceImageUrl,
+        maskImageUrl: render.maskImageUrl,
+        prompt: render.prompt,
+        annotations: render.annotations,
+        settings: render.settings,
+      });
+
+      await ctx.supabase.from('renders').update({ jobId: job.id }).eq('id', newRenderId);
+
+      return {
+        renderId: newRenderId,
+        jobId: job.id,
+        status: 'queued',
+      };
+    }),
 });

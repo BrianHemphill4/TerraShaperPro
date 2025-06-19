@@ -2,11 +2,13 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.renderRouter = void 0;
 const queue_1 = require('@terrashaper/queue');
+// import { StorageService } from '@terrashaper/storage';
 const server_1 = require('@trpc/server');
 const observable_1 = require('@trpc/server/observable');
 const uuid_1 = require('uuid');
 const zod_1 = require('zod');
 const trpc_1 = require('../trpc');
+// const storageService = new StorageService();
 const renderSettingsSchema = zod_1.z.object({
   provider: zod_1.z.enum(['google-imagen', 'openai-gpt-image']),
   resolution: zod_1.z.enum(['1024x1024', '2048x2048', '4096x4096']),
@@ -192,4 +194,65 @@ exports.renderRouter = (0, trpc_1.router)({
     const metrics = await (0, queue_1.getQueueMetrics)();
     return metrics;
   }),
+  retry: trpc_1.protectedProcedure
+    .input(
+      zod_1.z.object({
+        renderId: zod_1.z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Get the original render
+      const { data: render, error } = await ctx.supabase
+        .from('renders')
+        .select('*')
+        .eq('id', input.renderId)
+        .eq('userId', ctx.session.userId)
+        .single();
+      if (error || !render || render.status !== 'failed') {
+        throw new server_1.TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Cannot retry this render',
+        });
+      }
+      // Create a new render with the same settings
+      const newRenderId = (0, uuid_1.v4)();
+      const now = new Date().toISOString();
+      await ctx.supabase.from('renders').insert({
+        id: newRenderId,
+        projectId: render.projectId,
+        sceneId: render.sceneId,
+        userId: ctx.session.userId,
+        organizationId: ctx.session.organizationId,
+        status: 'queued',
+        provider: render.provider,
+        prompt: render.prompt,
+        systemPrompt: render.systemPrompt,
+        annotations: render.annotations,
+        settings: render.settings,
+        sourceImageUrl: render.sourceImageUrl,
+        maskImageUrl: render.maskImageUrl,
+        createdAt: now,
+        updatedAt: now,
+      });
+      // Add new job to queue
+      const job = await (0, queue_1.addRenderJob)({
+        renderId: newRenderId,
+        projectId: render.projectId,
+        sceneId: render.sceneId,
+        userId: ctx.session.userId,
+        organizationId: ctx.session.organizationId,
+        subscriptionTier: ctx.session.subscriptionTier,
+        sourceImageUrl: render.sourceImageUrl,
+        maskImageUrl: render.maskImageUrl,
+        prompt: render.prompt,
+        annotations: render.annotations,
+        settings: render.settings,
+      });
+      await ctx.supabase.from('renders').update({ jobId: job.id }).eq('id', newRenderId);
+      return {
+        renderId: newRenderId,
+        jobId: job.id,
+        status: 'queued',
+      };
+    }),
 });

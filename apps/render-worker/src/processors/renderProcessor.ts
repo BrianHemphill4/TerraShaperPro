@@ -15,6 +15,7 @@ import {
   RenderProvider,
   ReviewQueueService,
 } from '@terrashaper/ai-service';
+import { ImageProcessor } from '@terrashaper/storage';
 import type { Job } from 'bullmq';
 
 // import type { RenderJobData, RenderJobResult } from '@terrashaper/queue';
@@ -73,12 +74,30 @@ async function initializeProviders() {
 }
 
 export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJobResult> {
-  const { renderId, projectId, prompt, settings, annotations } = job.data;
+  const { renderId, projectId, prompt, settings, annotations, userId, organizationId } = job.data;
   const startTime = Date.now();
 
   try {
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     await job.updateProgress(5);
     logger.info(`Starting render ${renderId} for project ${projectId}`);
+
+    // Check and consume credits
+    const creditCost = getCreditCost(settings);
+    const { data: consumeResult, error: consumeError } = await supabase.rpc('consume_credits', {
+      p_organization_id: organizationId,
+      p_user_id: userId,
+      p_render_id: renderId,
+      p_amount: creditCost,
+      p_description: `Render: ${settings.resolution} @ ${settings.quality || 'high'} quality`,
+    });
+
+    if (consumeError || !consumeResult) {
+      throw new Error('Insufficient credits');
+    }
 
     await initializeProviders();
     await job.updateProgress(10);
@@ -175,7 +194,7 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
     const storage = getStorage();
     const bucket = storage.bucket(process.env.GCS_BUCKET_NAME!);
     const fileName = `renders/${projectId}/${renderId}.${settings.format.toLowerCase()}`;
-    const thumbnailFileName = `renders/${projectId}/${renderId}_thumb.${settings.format.toLowerCase()}`;
+    const thumbnailFileName = `renders/${projectId}/${renderId}_thumb.webp`;
 
     let imageBuffer: Buffer;
     if (result.imageBase64) {
@@ -200,22 +219,18 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
     await file.makePublic();
     const publicUrl = `https://storage.googleapis.com/${process.env.GCS_BUCKET_NAME}/${fileName}`;
 
-    const thumbnailBuffer = imageBuffer;
+    // Create proper thumbnail
+    const thumbnailBuffer = await ImageProcessor.createThumbnail(imageBuffer);
     const thumbnailFile = bucket.file(thumbnailFileName);
     await thumbnailFile.save(thumbnailBuffer, {
       metadata: {
-        contentType: `image/${settings.format.toLowerCase()}`,
+        contentType: 'image/webp',
       },
     });
     await thumbnailFile.makePublic();
     const thumbnailUrl = `https://storage.googleapis.com/${process.env.GCS_BUCKET_NAME}/${thumbnailFileName}`;
 
     await job.updateProgress(95);
-
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
 
     await supabase
       .from('renders')
@@ -266,6 +281,18 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
       })
       .eq('id', renderId);
 
+    // Refund credits on failure (except for insufficient credits error)
+    if (error instanceof Error && error.message !== 'Insufficient credits') {
+      const creditCost = getCreditCost(settings);
+      await supabase.rpc('refund_credits', {
+        p_organization_id: organizationId,
+        p_user_id: userId,
+        p_render_id: renderId,
+        p_amount: creditCost,
+        p_reason: `Render failed: ${error.message}`,
+      });
+    }
+
     // Check for failure patterns after updating the render status
     if (failureDetectionService) {
       await failureDetectionService.checkForFailurePatterns();
@@ -289,4 +316,26 @@ function mapQualityLevel(quality?: number): 'low' | 'medium' | 'high' | 'ultra' 
     return 'high';
   }
   return 'ultra';
+}
+
+function getCreditCost(settings: any): number {
+  // Base cost is 1 credit
+  let cost = 1;
+
+  // Higher resolution costs more
+  const [width, height] = settings.resolution.split('x').map(Number);
+  const pixels = width * height;
+  if (pixels > 1024 * 1024) {
+    cost += 1; // 2 credits for > 1MP
+  }
+  if (pixels > 2048 * 2048) {
+    cost += 2; // 4 credits for > 4MP
+  }
+
+  // Ultra quality costs extra
+  if (settings.quality && settings.quality > 75) {
+    cost += 1;
+  }
+
+  return cost;
 }

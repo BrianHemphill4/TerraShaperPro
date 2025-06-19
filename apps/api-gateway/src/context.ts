@@ -8,16 +8,32 @@ export type Session = {
 
 export type SupabaseQueryBuilder = {
   eq: (_column: string, _value: any) => SupabaseQueryBuilder;
+  in: (_column: string, _values: any[]) => SupabaseQueryBuilder;
+  contains: (_column: string, _value: any) => SupabaseQueryBuilder;
+  textSearch: (_column: string, _query: string) => SupabaseQueryBuilder;
+  order: (_column: string, _options?: { ascending?: boolean }) => SupabaseQueryBuilder;
+  range: (_from: number, _to: number) => SupabaseQueryBuilder;
   single: () => Promise<{ data?: any; error?: any }>;
+  limit: (_count: number) => SupabaseQueryBuilder;
+  gte: (_column: string, _value: any) => SupabaseQueryBuilder;
+  not: (_column: string, _operator: string, _value: any) => SupabaseQueryBuilder;
+  then: (onfulfilled?: (value: any) => any) => Promise<any>;
 };
 
 export type SupabaseClient = {
   from: (_table: string) => {
-    insert: (data: any) => { select: () => { single: () => Promise<{ data?: any; error?: any }> } };
+    insert: (data: any) => {
+      select: () => { single: () => Promise<{ data?: any; error?: any }> };
+      error?: any;
+    };
     update: (data: any) => {
       eq: (_column: string, _value: any) => Promise<{ data?: any; error?: any }>;
     };
-    select: (_columns?: string) => SupabaseQueryBuilder;
+    delete: () => SupabaseQueryBuilder;
+    select: (
+      _columns?: string,
+      _options?: { count?: 'exact'; head?: boolean }
+    ) => SupabaseQueryBuilder;
   };
 };
 
@@ -34,10 +50,25 @@ export function createContext(_opts: CreateFastifyContextOptions) {
   };
 
   // Create chainable query builder
-  const createQueryBuilder = (): SupabaseQueryBuilder => ({
-    eq: (_column: string, _value: any) => createQueryBuilder(),
-    single: () => Promise.resolve({ data: { id: 'mock-id', jobId: 'mock-job-id' }, error: null }),
-  });
+  const createQueryBuilder = (): SupabaseQueryBuilder => {
+    const builder: SupabaseQueryBuilder = {
+      eq: (_column: string, _value: any) => builder,
+      in: (_column: string, _values: any[]) => builder,
+      contains: (_column: string, _value: any) => builder,
+      textSearch: (_column: string, _query: string) => builder,
+      order: (_column: string, _options?: { ascending?: boolean }) => builder,
+      range: (_from: number, _to: number) => builder,
+      single: () => Promise.resolve({ data: { id: 'mock-id', jobId: 'mock-job-id' }, error: null }),
+      limit: (_count: number) => builder,
+      gte: (_column: string, _value: any) => builder,
+      not: (_column: string, _operator: string, _value: any) => builder,
+      then: (onfulfilled?: (value: any) => any) => {
+        const result = { data: [{ id: 'mock-id' }], error: null, count: 1 };
+        return Promise.resolve(onfulfilled ? onfulfilled(result) : result);
+      },
+    };
+    return builder;
+  };
 
   // Mock Supabase client
   const supabase: SupabaseClient = {
@@ -46,11 +77,14 @@ export function createContext(_opts: CreateFastifyContextOptions) {
         select: () => ({
           single: () => Promise.resolve({ data, error: null }),
         }),
+        error: null,
       }),
       update: (data: any) => ({
         eq: (_column: string, _value: any) => Promise.resolve({ data, error: null }),
       }),
-      select: (_columns?: string) => createQueryBuilder(),
+      delete: () => createQueryBuilder(),
+      select: (_columns?: string, _options?: { count?: 'exact'; head?: boolean }) =>
+        createQueryBuilder(),
     }),
   };
 

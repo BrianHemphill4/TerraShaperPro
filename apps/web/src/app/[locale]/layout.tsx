@@ -6,6 +6,7 @@ import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 
 import { DemoBadge } from '@/components/DemoBadge';
+import { TRPCProvider } from '@/providers/TRPCProvider';
 import { AllLocales } from '@/utils/AppConfig';
 
 export const metadata: Metadata = {
@@ -60,9 +61,11 @@ export default function RootLayout(props: {
             locale={props.params.locale}
             messages={messages}
           >
-            {props.children}
+            <TRPCProvider>
+              {props.children}
 
-            <DemoBadge />
+              <DemoBadge />
+            </TRPCProvider>
           </NextIntlClientProvider>
         </body>
       </html>
