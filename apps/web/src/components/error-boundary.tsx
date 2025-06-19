@@ -1,9 +1,10 @@
 'use client';
 
 import * as Sentry from '@sentry/nextjs';
-import { captureException } from '@/sentry';
 import type { ReactNode } from 'react';
 import React, { Component } from 'react';
+
+import { captureException } from '@/sentry';
 
 type Props = {
   children: ReactNode;

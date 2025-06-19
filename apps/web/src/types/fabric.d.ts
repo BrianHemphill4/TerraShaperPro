@@ -9,15 +9,24 @@ declare module 'fabric' {
     }
     
     interface Object {
+      id?: string;
+      plantId?: string;
+      plantName?: string;
       points?: { x: number; y: number }[] | fabric.Point[];
     }
+    
+    interface IGroupOptions extends IObjectOptions {}
+    interface ICircleOptions extends IObjectOptions {}
+    interface IImageOptions extends IObjectOptions {}
     
     interface Polyline {
-      points?: { x: number; y: number }[] | fabric.Point[];
+      points?: any[];
     }
     
-    interface IPolylineOptions extends IObjectOptions {
-      points?: { x: number; y: number }[] | fabric.Point[];
+    interface Image {
+      id?: string;
+      plantId?: string;
+      plantName?: string;
     }
   }
 }
