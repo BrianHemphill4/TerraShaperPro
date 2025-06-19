@@ -23,6 +23,7 @@ storybook-static
 # next.js
 /.next
 /out
+apps/web/.next
 
 # cache
 .swc/

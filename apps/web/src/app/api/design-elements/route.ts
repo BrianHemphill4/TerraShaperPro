@@ -1,8 +1,8 @@
 import { db, designElements, eq } from '@terrasherper/db';
-import type { NextRequest} from 'next/server';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 // GET - Load design elements for a project
 export async function GET(request: NextRequest) {
@@ -11,10 +11,7 @@ export async function GET(request: NextRequest) {
     const projectId = searchParams.get('projectId');
 
     if (!projectId) {
-      return NextResponse.json(
-        { error: 'Project ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Project ID is required' }, { status: 400 });
     }
 
     const elements = await db
@@ -22,16 +19,22 @@ export async function GET(request: NextRequest) {
       .from(designElements)
       .where(eq(designElements.projectId, projectId));
 
-    return NextResponse.json({
-      message: `Successfully fetched ${elements.length} design elements.`,
-      data: elements,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        message: `Successfully fetched ${elements.length} design elements.`,
+        data: elements,
+      },
+      { status: 200 }
+    );
   } catch (e) {
     const error = e as Error;
-    return NextResponse.json({
-      message: 'Failed to fetch design elements.',
-      error: error.message,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        message: 'Failed to fetch design elements.',
+        error: error.message,
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -49,9 +52,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Delete existing elements for the project first
-    await db
-      .delete(designElements)
-      .where(eq(designElements.projectId, projectId));
+    await db.delete(designElements).where(eq(designElements.projectId, projectId));
 
     // Insert new elements
     if (elements.length > 0) {
@@ -82,14 +83,20 @@ export async function POST(request: NextRequest) {
       await db.insert(designElements).values(elementsToInsert);
     }
 
-    return NextResponse.json({
-      message: `Successfully saved ${elements.length} design elements.`,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        message: `Successfully saved ${elements.length} design elements.`,
+      },
+      { status: 200 }
+    );
   } catch (e) {
     const error = e as Error;
-    return NextResponse.json({
-      message: 'Failed to save design elements.',
-      error: error.message,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        message: 'Failed to save design elements.',
+        error: error.message,
+      },
+      { status: 500 }
+    );
   }
 }

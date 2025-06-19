@@ -2,31 +2,52 @@ import 'fabric';
 
 declare module 'fabric' {
   namespace fabric {
-    interface IObjectOptions {
+    type IObjectOptions = {
       id?: string;
       plantId?: string;
       plantName?: string;
-    }
-    
-    interface Object {
+    };
+
+    type Object = {
       id?: string;
       plantId?: string;
       plantName?: string;
       points?: { x: number; y: number }[] | fabric.Point[];
-    }
-    
-    interface IGroupOptions extends IObjectOptions {}
-    interface ICircleOptions extends IObjectOptions {}
-    interface IImageOptions extends IObjectOptions {}
-    
-    interface Polyline {
-      points?: any[];
-    }
-    
-    interface Image {
+    };
+
+    type IGroupOptions = {
       id?: string;
       plantId?: string;
       plantName?: string;
-    }
+    } & IObjectOptions;
+
+    type ICircleOptions = {
+      id?: string;
+      plantId?: string;
+      plantName?: string;
+    } & IObjectOptions;
+
+    type IImageOptions = {
+      id?: string;
+      plantId?: string;
+      plantName?: string;
+    } & IObjectOptions;
+
+    type IPolylineOptions = {
+      id?: string;
+      plantId?: string;
+      plantName?: string;
+      points?: Array<{ x: number; y: number }> | fabric.Point[];
+    } & IObjectOptions;
+
+    type Polyline = {
+      points?: Array<{ x: number; y: number }> | fabric.Point[];
+    } & Object;
+
+    type Image = {
+      id?: string;
+      plantId?: string;
+      plantName?: string;
+    } & Object;
   }
 }

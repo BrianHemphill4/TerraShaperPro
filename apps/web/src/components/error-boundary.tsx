@@ -10,14 +10,14 @@ type Props = {
   children: ReactNode;
   fallback?: (error: Error, errorInfo: React.ErrorInfo) => ReactNode;
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
-}
+};
 
 type State = {
   hasError: boolean;
   error: Error | null;
   errorInfo: React.ErrorInfo | null;
   eventId: string | null;
-}
+};
 
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
@@ -40,15 +40,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    const eventId = captureException(error, {
-      level: 'error',
-      tags: {
-        component: 'ErrorBoundary',
-      },
-      extra: {
-        componentStack: errorInfo.componentStack,
-      },
-    });
+    const eventId = captureException(error);
 
     this.setState({
       errorInfo,
@@ -125,10 +117,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
 // Hook for functional components
 export function useErrorHandler() {
-  return (error: Error, errorInfo?: { componentStack?: string }) => {
-    captureException(error, {
-      level: 'error',
-      extra: errorInfo,
-    });
+  return (error: Error, _errorInfo?: { componentStack?: string }) => {
+    captureException(error);
   };
 }
