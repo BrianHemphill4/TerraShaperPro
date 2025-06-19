@@ -1,7 +1,7 @@
 'use client';
 
 import * as Sentry from '@sentry/nextjs';
-import { captureException } from '@terrashaper/sentry';
+import { captureException } from '@/sentry';
 import type { ReactNode } from 'react';
 import React, { Component } from 'react';
 

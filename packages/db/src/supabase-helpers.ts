@@ -107,10 +107,10 @@ export async function listFiles(
  * Helper to check if user has permission for an action
  */
 export async function checkPermission(
-  userId: string,
-  resource: 'project' | 'scene' | 'render' | 'template',
-  resourceId: string,
-  action: 'view' | 'create' | 'update' | 'delete'
+  _userId: string,
+  _resource: 'project' | 'scene' | 'render' | 'template',
+  _resourceId: string,
+  _action: 'view' | 'create' | 'update' | 'delete'
 ): Promise<boolean> {
   // This would typically call a database function or check RLS policies
   // For now, return true as a placeholder
