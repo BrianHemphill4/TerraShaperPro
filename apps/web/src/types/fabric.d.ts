@@ -2,7 +2,7 @@ import 'fabric';
 
 declare module 'fabric' {
   namespace fabric {
-    interface IEvent<E extends Event = Event> {
+    type IEvent<E extends Event = Event> = {
       e: E;
       target?: fabric.Object;
       subTargets?: fabric.Object[];
@@ -11,7 +11,7 @@ declare module 'fabric' {
       pointer?: fabric.Point;
       absolutePointer?: fabric.Point;
       transform?: fabric.Transform;
-    }
+    };
 
     type IObjectOptions = {
       id?: string;
