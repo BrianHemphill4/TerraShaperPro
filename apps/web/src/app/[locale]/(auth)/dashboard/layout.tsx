@@ -36,6 +36,7 @@ export default function DashboardLayout(props: { children: React.ReactNode }) {
               {
                 href: '/dashboard/organization-profile',
                 label: t('settings'),
+                'data-onboarding': 'settings-nav',
               },
               // PRO: Link to the /dashboard/billing page
             ]}

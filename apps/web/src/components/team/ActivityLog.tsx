@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { api } from '~/utils/trpc';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Badge } from '~/components/ui/badge';
-import { Skeleton } from '~/components/ui/skeleton';
+import { api } from '@/lib/api';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { formatDistanceToNow } from 'date-fns';
 import { 
   UserPlus, 

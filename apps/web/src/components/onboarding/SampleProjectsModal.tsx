@@ -1,0 +1,22 @@
+'use client';
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { SampleProjectsGallery } from './SampleProjectsGallery';
+
+interface SampleProjectsModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export function SampleProjectsModal({ open, onOpenChange }: SampleProjectsModalProps) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Choose a Template</DialogTitle>
+        </DialogHeader>
+        <SampleProjectsGallery />
+      </DialogContent>
+    </Dialog>
+  );
+}

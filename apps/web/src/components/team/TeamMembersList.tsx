@@ -1,17 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { api } from '~/utils/trpc';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Badge } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
+import { api } from '@/lib/api';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu';
-import { Skeleton } from '~/components/ui/skeleton';
+} from '@/components/ui/dropdown-menu';
+import { Skeleton } from '@/components/ui/skeleton';
 import { MoreVertical, Shield, UserX, Mail } from 'lucide-react';
 import type { User, UserRole } from '@terrashaper/shared';
 

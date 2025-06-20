@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { api } from '~/utils/trpc';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '~/components/ui/card';
-import { Button } from '~/components/ui/button';
-import { Badge } from '~/components/ui/badge';
-import { Skeleton } from '~/components/ui/skeleton';
+import { api } from '@/lib/api';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Check, X } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import type { SubscriptionPlan } from '@terrashaper/shared';

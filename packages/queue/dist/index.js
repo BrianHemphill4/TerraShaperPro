@@ -74,12 +74,26 @@ module.exports = __toCommonJS(index_exports);
 var import_bullmq = require("bullmq");
 
 // src/config.ts
-var redisConnection = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: parseInt(process.env.REDIS_PORT || "6379"),
-  password: process.env.REDIS_PASSWORD,
-  maxRetriesPerRequest: null
-};
+function getRedisConnection() {
+  const redisHost = process.env.REDIS_HOST;
+  if (redisHost && redisHost.startsWith("https://")) {
+    const url = new URL(redisHost);
+    return {
+      host: url.hostname,
+      port: parseInt(process.env.REDIS_PORT || "6379"),
+      password: process.env.REDIS_PASSWORD,
+      tls: {},
+      maxRetriesPerRequest: null
+    };
+  }
+  return {
+    host: redisHost || "localhost",
+    port: parseInt(process.env.REDIS_PORT || "6379"),
+    password: process.env.REDIS_PASSWORD,
+    maxRetriesPerRequest: null
+  };
+}
+var redisConnection = getRedisConnection();
 var defaultQueueOptions = {
   connection: redisConnection,
   defaultJobOptions: {

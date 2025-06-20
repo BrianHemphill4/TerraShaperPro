@@ -8,7 +8,7 @@ const sendDefaults = {
 };
 
 // FIXME: Add your production URL
-const productionURL = 'https://react-saas.com';
+const productionURL = 'http://localhost:3000';
 
 const emailChannel = new EmailAlertChannel('email-channel-1', {
   // FIXME: add your own email address, Checkly will send you an email notification if a check fails
@@ -18,8 +18,8 @@ const emailChannel = new EmailAlertChannel('email-channel-1', {
 
 export const config = defineConfig({
   // FIXME: Add your own project name, logical ID, and repository URL
-  projectName: 'SaaS Boilerplate',
-  logicalId: 'saas-boilerplate',
+  projectName: 'TerraShaper Pro',
+  logicalId: 'terrashaper-pro',
   repoUrl: 'https://github.com/ixartz/Next-js-Boilerplate',
   checks: {
     locations: ['us-east-1', 'eu-west-1'],

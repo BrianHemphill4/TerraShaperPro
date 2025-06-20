@@ -93,7 +93,7 @@ exports.clientPortalRouter = (0, trpc_1.router)({
                 message: 'Failed to fetch access links',
             });
         }
-        return links.map(link => ({
+        return links.map((link) => ({
             ...link,
             shareUrl: `${process.env.NEXT_PUBLIC_APP_URL}/client/${link.token}`,
         }));

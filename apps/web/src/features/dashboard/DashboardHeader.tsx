@@ -21,6 +21,7 @@ export const DashboardHeader = (props: {
   menu: {
     href: string;
     label: string;
+    'data-onboarding'?: string;
   }[];
 }) => {
   const locale = useLocale();
@@ -63,7 +64,7 @@ export const DashboardHeader = (props: {
         <nav className="ml-3 max-lg:hidden">
           <ul className="flex flex-row items-center gap-x-3 text-lg font-medium [&_a:hover]:opacity-100 [&_a]:opacity-75">
             {props.menu.map(item => (
-              <li key={item.href}>
+              <li key={item.href} data-onboarding={item['data-onboarding']}>
                 <ActiveLink href={item.href}>{item.label}</ActiveLink>
               </li>
             ))}

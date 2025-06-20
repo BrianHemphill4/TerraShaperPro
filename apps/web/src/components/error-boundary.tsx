@@ -1,10 +1,16 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
+// import * as Sentry from '@sentry/nextjs';
 import type { ReactNode } from 'react';
 import React, { Component } from 'react';
 
-import { captureException } from '@/sentry';
+// import { captureException } from '@/sentry';
+
+// Temporary mock for Sentry
+const captureException = (error: Error) => {
+  console.error('Error captured:', error);
+  return Date.now().toString();
+};
 
 type Props = {
   children: ReactNode;
@@ -99,7 +105,9 @@ export class ErrorBoundary extends Component<Props, State> {
               <button
                 type="button"
                 onClick={() => {
-                  Sentry.showReportDialog({ eventId: this.state.eventId! });
+                  // Temporarily disabled Sentry report dialog
+                  // Sentry.showReportDialog({ eventId: this.state.eventId! });
+                  alert('Error reporting is temporarily disabled');
                 }}
                 className="w-full rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
               >

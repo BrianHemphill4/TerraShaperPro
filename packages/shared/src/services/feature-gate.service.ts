@@ -24,7 +24,7 @@ export class FeatureGateService {
     }
 
     if (typeof featureValue === 'string') {
-      return featureValue !== '' && featureValue.length > 0;
+      return featureValue.length > 0;
     }
 
     if (Array.isArray(featureValue)) {

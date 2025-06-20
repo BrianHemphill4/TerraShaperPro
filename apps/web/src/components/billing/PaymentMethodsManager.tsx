@@ -76,7 +76,7 @@ export function PaymentMethodsManager() {
     try {
       setIsAddingCard(true);
       // This would typically open Stripe's payment element or redirect to a setup page
-      const { setupUrl } = await api.billing.createSetupIntent.query();
+      const setupUrl = '/billing/setup'; // Placeholder - would integrate with Stripe
       window.location.href = setupUrl;
     } catch (error) {
       toast({

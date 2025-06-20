@@ -14,6 +14,8 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
         defaultOptions: {
           queries: {
             staleTime: 5 * 1000,
+            retry: false, // Disable retries to prevent hanging
+            refetchOnWindowFocus: false,
           },
         },
       })

@@ -1,11 +1,31 @@
 import { ConnectionOptions, QueueOptions } from 'bullmq';
 
-export const redisConnection: ConnectionOptions = {
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-  password: process.env.REDIS_PASSWORD,
-  maxRetriesPerRequest: null,
-};
+// Parse Upstash Redis URL if provided
+function getRedisConnection(): ConnectionOptions {
+  const redisHost = process.env.REDIS_HOST;
+  
+  // If REDIS_HOST is a URL (Upstash format)
+  if (redisHost && redisHost.startsWith('https://')) {
+    const url = new URL(redisHost);
+    return {
+      host: url.hostname,
+      port: parseInt(process.env.REDIS_PORT || '6379'),
+      password: process.env.REDIS_PASSWORD,
+      tls: {},
+      maxRetriesPerRequest: null,
+    };
+  }
+  
+  // Standard Redis connection
+  return {
+    host: redisHost || 'localhost',
+    port: parseInt(process.env.REDIS_PORT || '6379'),
+    password: process.env.REDIS_PASSWORD,
+    maxRetriesPerRequest: null,
+  };
+}
+
+export const redisConnection: ConnectionOptions = getRedisConnection();
 
 export const defaultQueueOptions: QueueOptions = {
   connection: redisConnection,

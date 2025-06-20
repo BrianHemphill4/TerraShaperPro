@@ -1,7 +1,7 @@
-import { TeamMembersList } from '~/components/team/TeamMembersList';
-import { InviteUserForm } from '~/components/team/InviteUserForm';
-import { ActivityLogComponent } from '~/components/team/ActivityLog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { TeamMembersList } from '@/components/team/TeamMembersList';
+import { InviteUserForm } from '@/components/team/InviteUserForm';
+import { ActivityLogComponent } from '@/components/team/ActivityLog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { auth } from '@clerk/nextjs';
 
 export default async function TeamSettingsPage() {

@@ -1,6 +1,6 @@
-import { BillingOverview } from '~/components/billing/BillingOverview';
-import { PricingPlans } from '~/components/billing/PricingPlans';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { BillingOverview } from '@/components/billing/BillingOverview';
+import { PricingPlans } from '@/components/billing/PricingPlans';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { auth } from '@clerk/nextjs';
 
 export default async function BillingSettingsPage() {
