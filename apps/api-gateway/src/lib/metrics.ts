@@ -69,16 +69,13 @@ export class ApiMetrics {
     // Add to buffer
     this.metricsBuffer.push(metric);
     
-    // Record in current transaction if available
-    const transaction = Sentry.getCurrentHub().getScope().getTransaction();
-    if (transaction) {
-      transaction.setMeasurement(metric.name, metric.value, metric.unit);
-      
-      if (metric.tags) {
-        Object.entries(metric.tags).forEach(([key, value]) => {
-          transaction.setTag(key, value);
+    // Add tags to current scope
+    if (metric.tags) {
+      Sentry.configureScope((scope) => {
+        Object.entries(metric.tags!).forEach(([key, value]) => {
+          scope.setTag(key, value);
         });
-      }
+      });
     }
     
     // Check budget
@@ -156,13 +153,20 @@ export class ApiMetrics {
     aggregated.forEach((data, name) => {
       const avg = data.sum / data.count;
       
-      Sentry.metrics.distribution(name, avg, {
-        unit: data.unit,
+      // Send custom event with metrics data
+      Sentry.captureEvent({
+        message: `Metrics: ${name}`,
+        level: 'info',
         tags: {
+          metric_name: name,
           ...data.tags,
-          count: data.count.toString(),
-          min: data.min.toString(),
-          max: data.max.toString(),
+        },
+        extra: {
+          avg,
+          count: data.count,
+          min: data.min,
+          max: data.max,
+          unit: data.unit,
         },
       });
     });

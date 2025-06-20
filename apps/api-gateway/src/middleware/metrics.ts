@@ -18,20 +18,10 @@ export const metricsMiddleware = async ({
   let success = true;
   let errorCode: string | undefined;
   
-  // Start Sentry transaction
-  const transaction = Sentry.startTransaction({
-    name: `trpc.${path}`,
-    op: `trpc.${type}`,
-    tags: {
-      'trpc.path': path,
-      'trpc.type': type,
-      'user.id': ctx.user?.id || 'anonymous',
-    },
-  });
-  
-  Sentry.getCurrentHub().configureScope(scope => {
-    scope.setSpan(transaction);
-  });
+  // Set Sentry tags for this operation
+  Sentry.setTag('trpc.path', path);
+  Sentry.setTag('trpc.type', type);
+  Sentry.setTag('user.id', ctx.session?.userId || 'anonymous');
   
   try {
     const result = await next();
@@ -48,12 +38,13 @@ export const metricsMiddleware = async ({
     // Record metrics
     apiMetrics.recordTrpcCall(path, duration, success, {
       type,
-      userId: ctx.user?.id || 'anonymous',
+      userId: ctx.session?.userId || 'anonymous',
       errorCode: errorCode || '',
     });
     
-    // Finish transaction
-    transaction.setStatus(success ? 'ok' : 'internal_error');
-    transaction.finish();
+    // Report performance metric
+    if (!success && errorCode) {
+      Sentry.setTag('error.code', errorCode);
+    }
   }
 };

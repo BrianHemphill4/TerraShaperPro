@@ -62,10 +62,8 @@ export class RateLimitMiddleware {
       // Build rate limit key
       const parts = ['ratelimit'];
       
-      if (ctx.user?.id) {
-        parts.push('user', ctx.user.id);
-      } else if (ctx.ip) {
-        parts.push('ip', ctx.ip);
+      if (ctx.session?.userId) {
+        parts.push('user', ctx.session.userId);
       } else {
         parts.push('anonymous');
       }

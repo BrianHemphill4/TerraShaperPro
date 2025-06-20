@@ -111,7 +111,7 @@ export const clientPortalRouter = router({
         });
       }
 
-      return links.map(link => ({
+      return links.map((link: any) => ({
         ...link,
         shareUrl: `${process.env.NEXT_PUBLIC_APP_URL}/client/${link.token}`,
       }));

@@ -78,7 +78,6 @@ export function applySecurityConfig(app: FastifyInstance): void {
   });
 
   // Implement request size limits
-  app.setMaxListeners(100);
   app.server.maxHeadersCount = 100;
   app.server.headersTimeout = 60000; // 60 seconds
   app.server.requestTimeout = 300000; // 5 minutes

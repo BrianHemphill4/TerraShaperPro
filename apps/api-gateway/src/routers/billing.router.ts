@@ -9,6 +9,7 @@ import {
   AddPaymentMethodSchema,
   hasPermission,
   ActivityActions,
+  UserRoleEnum,
   type UserRole,
 } from '@terrashaper/shared';
 import {
@@ -314,14 +315,14 @@ export const billingRouter = router({
       .eq('organization_id', ctx.session.organizationId)
       .order('created_at', { ascending: false });
 
-    return paymentMethods.map(pm => ({
+    return paymentMethods.map((pm: any) => ({
       id: pm.id,
       type: pm.type,
       brand: pm.card?.brand,
       last4: pm.card?.last4,
       expMonth: pm.card?.exp_month,
       expYear: pm.card?.exp_year,
-      isDefault: dbPaymentMethods?.find(db => db.stripe_payment_method_id === pm.id)?.is_default || false,
+      isDefault: dbPaymentMethods?.find((db: any) => db.stripe_payment_method_id === pm.id)?.is_default || false,
     }));
     }),
 
@@ -433,7 +434,7 @@ export const billingRouter = router({
       apiCalls: 0,
     };
 
-    usage?.forEach(record => {
+    usage?.forEach((record: any) => {
       switch (record.record_type) {
         case 'render':
           summary.renders += record.quantity;
@@ -572,7 +573,7 @@ export const billingRouter = router({
               .eq('record_type', 'render')
               .gte('created_at', startOfMonth.toISOString());
             
-            usage = data?.reduce((sum, record) => sum + record.quantity, 0) || 0;
+            usage = data?.reduce((sum: number, record: any) => sum + record.quantity, 0) || 0;
             break;
           }
           case 'storage_gb': {
