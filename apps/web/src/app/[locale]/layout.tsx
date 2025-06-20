@@ -1,4 +1,4 @@
-import '@/styles/global.css';
+import '../../styles/global.css';
 
 import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from 'next';
@@ -7,6 +7,7 @@ import { unstable_setRequestLocale } from 'next-intl/server';
 
 import { DemoBadge } from '@/components/DemoBadge';
 import { WebVitals } from '@/components/monitoring/WebVitals';
+import { Toaster } from '@/components/ui/toaster';
 import { TRPCProvider } from '@/providers/TRPCProvider';
 import { AllLocales } from '@/utils/AppConfig';
 
@@ -67,6 +68,7 @@ export default function RootLayout(props: {
               {props.children}
 
               <DemoBadge />
+              <Toaster />
             </TRPCProvider>
           </NextIntlClientProvider>
         </body>

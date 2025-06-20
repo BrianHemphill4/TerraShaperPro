@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require("dotenv/config");
 const cors_1 = __importDefault(require("@fastify/cors"));
 const rate_limit_1 = __importDefault(require("@fastify/rate-limit"));
 const fastify_1 = require("@trpc/server/adapters/fastify");

@@ -23,6 +23,7 @@ function createContext(_opts) {
             range: (_from, _to) => builder,
             single: () => Promise.resolve({ data: { id: 'mock-id', jobId: 'mock-job-id' }, error: null }),
             limit: (_count) => builder,
+            gt: (_column, _value) => builder,
             gte: (_column, _value) => builder,
             not: (_column, _operator, _value) => builder,
             is: (_column, _value) => builder,
@@ -43,9 +44,7 @@ function createContext(_opts) {
                 }),
                 error: null,
             }),
-            update: (data) => ({
-                eq: (_column, _value) => Promise.resolve({ data, error: null }),
-            }),
+            update: (_data) => createQueryBuilder(),
             delete: () => createQueryBuilder(),
             select: (_columns, _options) => createQueryBuilder(),
         }),

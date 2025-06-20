@@ -6,7 +6,7 @@ import {
 } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 
-import { AppConfig } from './utils/AppConfig';
+import { AppConfig, AllLocales } from './utils/AppConfig';
 
 // Helper function to get allowed origins
 function getAllowedOrigins(): string[] {
@@ -67,14 +67,19 @@ function applySecurityHeaders(response: NextResponse, request: NextRequest): Nex
   
   // Security headers for all routes
   response.headers.set('X-DNS-Prefetch-Control', 'on');
-  response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+  
+  // Only apply HSTS in production
+  if (process.env.NODE_ENV === 'production') {
+    response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+  }
+  
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('X-Frame-Options', 'SAMEORIGIN');
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('Referrer-Policy', 'origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   
-  // Content Security Policy
+  // Content Security Policy - exclude upgrade-insecure-requests in development
   const cspHeader = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.com https://*.clerk.accounts.dev https://challenges.cloudflare.com",
@@ -88,7 +93,7 @@ function applySecurityHeaders(response: NextResponse, request: NextRequest): Nex
     "form-action 'self'",
     "media-src 'self'",
     "object-src 'none'",
-    "upgrade-insecure-requests",
+    ...(process.env.NODE_ENV === 'production' ? ["upgrade-insecure-requests"] : []),
   ].join('; ');
   
   response.headers.set('Content-Security-Policy', cspHeader);

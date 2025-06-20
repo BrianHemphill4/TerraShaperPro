@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { api } from '~/utils/trpc';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Button } from '~/components/ui/button';
-import { Textarea } from '~/components/ui/textarea';
-import { Badge } from '~/components/ui/badge';
-import { Alert, AlertDescription } from '~/components/ui/alert';
+import { api } from '@/lib/api';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { formatDistanceToNow } from 'date-fns';
 import { CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react';
 import type { ProjectApproval, ApprovalStatus } from '@terrashaper/shared';

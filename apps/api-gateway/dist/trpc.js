@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.protectedProcedure = exports.publicProcedure = exports.router = void 0;
+exports.renderProcedure = exports.authProcedure = exports.protectedProcedure = exports.publicProcedure = exports.router = void 0;
 const server_1 = require("@trpc/server");
 const zod_1 = require("zod");
 const sentry_1 = require("./lib/sentry");
+const metrics_1 = require("./middleware/metrics");
+const rate_limit_1 = require("./middleware/rate-limit");
 const t = server_1.initTRPC.context().create({
     errorFormatter({ shape, error }) {
         return {
@@ -49,6 +51,26 @@ const authMiddleware = t.middleware(async ({ ctx, next }) => {
     }
     return next();
 });
+// Rate limiting middleware
+const publicRateLimitMiddleware = rate_limit_1.rateLimiter.middleware(rate_limit_1.rateLimits.public);
+const apiRateLimitMiddleware = rate_limit_1.rateLimiter.middleware(rate_limit_1.rateLimits.api);
 exports.router = t.router;
-exports.publicProcedure = t.procedure.use(sentryMiddleware);
-exports.protectedProcedure = t.procedure.use(sentryMiddleware).use(authMiddleware);
+exports.publicProcedure = t.procedure
+    .use(publicRateLimitMiddleware)
+    .use(metrics_1.metricsMiddleware)
+    .use(sentryMiddleware);
+exports.protectedProcedure = t.procedure
+    .use(apiRateLimitMiddleware)
+    .use(metrics_1.metricsMiddleware)
+    .use(sentryMiddleware)
+    .use(authMiddleware);
+// Specialized procedures with different rate limits
+exports.authProcedure = t.procedure
+    .use(rate_limit_1.rateLimiter.middleware(rate_limit_1.rateLimits.auth))
+    .use(metrics_1.metricsMiddleware)
+    .use(sentryMiddleware);
+exports.renderProcedure = t.procedure
+    .use(rate_limit_1.rateLimiter.middleware(rate_limit_1.rateLimits.render))
+    .use(metrics_1.metricsMiddleware)
+    .use(sentryMiddleware)
+    .use(authMiddleware);

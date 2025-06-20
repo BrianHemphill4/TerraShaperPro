@@ -1,4 +1,4 @@
-import { InvoiceList } from '~/components/billing/InvoiceList';
+import { InvoiceList } from '@/components/billing/InvoiceList';
 
 export default function InvoicesPage() {
   return (

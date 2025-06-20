@@ -255,14 +255,14 @@ exports.billingRouter = (0, trpc_1.router)({
             .select('*')
             .eq('organization_id', ctx.session.organizationId)
             .order('created_at', { ascending: false });
-        return paymentMethods.map(pm => ({
+        return paymentMethods.map((pm) => ({
             id: pm.id,
             type: pm.type,
             brand: pm.card?.brand,
             last4: pm.card?.last4,
             expMonth: pm.card?.exp_month,
             expYear: pm.card?.exp_year,
-            isDefault: dbPaymentMethods?.find(db => db.stripe_payment_method_id === pm.id)?.is_default || false,
+            isDefault: dbPaymentMethods?.find((db) => db.stripe_payment_method_id === pm.id)?.is_default || false,
         }));
     }),
     // Add payment method
@@ -355,7 +355,7 @@ exports.billingRouter = (0, trpc_1.router)({
             storage: 0,
             apiCalls: 0,
         };
-        usage?.forEach(record => {
+        usage?.forEach((record) => {
             switch (record.record_type) {
                 case 'render':
                     summary.renders += record.quantity;

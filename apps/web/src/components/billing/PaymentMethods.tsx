@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { api } from '~/utils/trpc';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Button } from '~/components/ui/button';
-import { Badge } from '~/components/ui/badge';
-import { Skeleton } from '~/components/ui/skeleton';
+import { api } from '@/lib/api';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { CreditCard, Plus, Star, Trash2 } from 'lucide-react';
 
 const cardBrandIcons: Record<string, string> = {

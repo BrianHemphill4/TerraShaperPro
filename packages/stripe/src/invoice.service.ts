@@ -144,7 +144,7 @@ export class InvoiceService {
     params: {
       subscriptionId?: string;
     } = {}
-  ): Promise<Stripe.Invoice | null> {
+  ): Promise<Stripe.UpcomingInvoice | null> {
     try {
       const invoice = await stripe.invoices.retrieveUpcoming({
         customer: customerId,

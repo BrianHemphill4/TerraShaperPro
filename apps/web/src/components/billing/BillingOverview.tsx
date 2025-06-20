@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { trpc } from '@/lib/trpc';
+import { api } from '@/lib/api';
 
 import { BillingAlerts } from './BillingAlerts';
 import { InvoiceHistory } from './InvoiceHistory';
@@ -12,8 +12,8 @@ import { SubscriptionManager } from './SubscriptionManager';
 import { UsageAnalytics } from './UsageAnalytics';
 
 export function BillingOverview() {
-  const { data: subscription, isLoading } = (trpc as any).billing.getSubscription.useQuery();
-  const { data: usage } = (trpc as any).billing.getCurrentUsage.useQuery();
+  const { data: subscription, isLoading } = api.billing.getSubscription.useQuery();
+  const { data: usage } = api.billing.getUsage.useQuery();
 
   if (isLoading) {
     return (

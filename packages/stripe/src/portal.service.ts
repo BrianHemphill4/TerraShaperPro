@@ -1,5 +1,6 @@
-import { stripe } from './stripe-client';
 import type { Stripe } from 'stripe';
+
+import { stripe } from './stripe-client';
 
 export class PortalService {
   /**
@@ -55,12 +56,16 @@ export class PortalService {
         enabled: boolean;
         default_allowed_updates?: Array<'price' | 'quantity' | 'promotion_code'>;
         proration_behavior?: 'create_prorations' | 'none' | 'always_invoice';
+        products?: Array<{
+          product: string;
+          prices: Array<string>;
+        }>;
       };
     };
   }): Promise<Stripe.BillingPortal.Configuration> {
     const configuration = await stripe.billingPortal.configurations.create({
       business_profile: params.businessProfile,
-      features: params.features || {
+      features: (params.features || {
         customer_update: {
           enabled: true,
           allowed_updates: ['email', 'address', 'phone', 'name'],
@@ -95,8 +100,9 @@ export class PortalService {
           enabled: true,
           default_allowed_updates: ['price'],
           proration_behavior: 'create_prorations',
+          products: [],
         },
-      },
+      }) as Stripe.BillingPortal.ConfigurationCreateParams['features'],
     });
 
     return configuration;

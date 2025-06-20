@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import AssetPalette from '@/components/canvas/AssetPalette';
 import DesignCanvas from '@/components/canvas/DesignCanvas';
 import { AlertModal, ConfirmModal } from '@/components/ui/modal';
+import { HelpCenter } from '@/components/onboarding/HelpCenter';
 import { trpc } from '@/lib/trpc';
 
 import styles from './design.module.css';
@@ -150,7 +151,26 @@ const DesignPage = () => {
   // Load design elements when canvas is ready
   useEffect(() => {
     if (canvas) {
-      loadDesign();
+      // Check for pending sample project
+      const pendingSampleProjectStr = localStorage.getItem('pendingSampleProject');
+      if (pendingSampleProjectStr) {
+        try {
+          const sampleProject = JSON.parse(pendingSampleProjectStr);
+          // Load the sample project data
+          canvas.loadFromJSON(sampleProject.canvasData, () => {
+            canvas.renderAll();
+            localStorage.removeItem('pendingSampleProject');
+            setAlertMessage(`Loaded sample project: ${sampleProject.name}`);
+            setAlertVariant('success');
+            setShowAlert(true);
+          });
+        } catch (error) {
+          console.error('Error loading sample project:', error);
+          localStorage.removeItem('pendingSampleProject');
+        }
+      } else {
+        loadDesign();
+      }
     }
   }, [canvas, projectId, loadDesign]);
 
@@ -301,6 +321,8 @@ const DesignPage = () => {
         message={confirmMessage}
         variant="danger"
       />
+
+      <HelpCenter />
     </div>
   );
 };

@@ -6,11 +6,11 @@ import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { trpc } from '@/lib/trpc';
+import { api } from '@/lib/api';
 
 export function OverageAlert() {
-  const { data: usage } = (trpc as any).billing.getCurrentUsage.useQuery();
-  const { data: subscription } = (trpc as any).billing.getSubscription.useQuery();
+  const { data: usage } = api.billing.getUsage.useQuery();
+  const { data: subscription } = api.billing.getSubscription.useQuery();
 
   if (!usage) return null;
 

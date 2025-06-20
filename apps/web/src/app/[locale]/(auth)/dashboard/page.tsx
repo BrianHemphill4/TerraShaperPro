@@ -8,7 +8,7 @@ const DashboardIndexPage = () => {
   const t = useTranslations('DashboardIndex');
 
   return (
-    <>
+    <div data-onboarding="dashboard-home">
       <TitleBar
         title={t('title_bar')}
         description={t('title_bar_description')}
@@ -56,7 +56,7 @@ const DashboardIndexPage = () => {
           </>
         )}
       />
-    </>
+    </div>
   );
 };
 

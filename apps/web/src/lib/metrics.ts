@@ -1,5 +1,12 @@
-import * as Sentry from '@sentry/nextjs';
+// import * as Sentry from '@sentry/nextjs';
 import { PerformanceMonitor } from './performance';
+
+// Mock Sentry functions when disabled
+const Sentry = {
+  captureMessage: () => {},
+  getActiveSpan: () => null,
+  startSpan: (options: any, callback: any) => callback({}),
+};
 
 export interface Metric {
   name: string;
@@ -61,14 +68,14 @@ export class MetricsService {
 
   recordMetric(metric: Metric): void {
     // Record in Sentry
-    const transaction = Sentry.getCurrentHub().getScope().getTransaction();
-    if (transaction) {
-      transaction.setMeasurement(metric.name, metric.value, metric.unit);
+    const span = Sentry.getActiveSpan();
+    if (span) {
+      span.setAttribute(metric.name, metric.value);
       
       // Add tags
       if (metric.tags) {
         Object.entries(metric.tags).forEach(([key, value]) => {
-          transaction.setTag(key, value);
+          span.setAttribute(key, value);
         });
       }
     }
@@ -201,18 +208,20 @@ export class MetricsService {
     return { metrics, violations };
   }
 
-  startTransaction(name: string, op: string = 'navigation'): Sentry.Transaction {
-    return Sentry.startTransaction({
+  startTransaction(name: string, op: string = 'navigation'): any {
+    return Sentry.startSpan({
       name,
       op,
-      tags: {
+      attributes: {
         source: 'custom',
       },
+    }, (span) => {
+      return span;
     });
   }
 
-  finishTransaction(transaction: Sentry.Transaction): void {
-    transaction.finish();
+  finishTransaction(transaction: any): void {
+    // Spans are automatically finished in the new API
   }
 }
 

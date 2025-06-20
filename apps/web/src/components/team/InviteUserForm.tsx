@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { api } from '~/utils/trpc';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
-import { Alert, AlertDescription } from '~/components/ui/alert';
+import { api } from '@/lib/api';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Mail, Send } from 'lucide-react';
 import type { UserRole } from '@terrashaper/shared';
 

@@ -20,6 +20,7 @@
     "@sentry/profiling-node": "^9.30.0",
     "@sentry/tracing": "^7.120.3",
     "@svgr/webpack": "^8.1.0",
+    "@trpc/server": "^11.4.2",
     "@types/cors": "^2.8.19",
     "clsx": "^2.1.1",
     "cors": "^2.8.5",
@@ -57,6 +58,7 @@
     "typescript": "^5.3.3"
   },
   "exports": {
+    ".": "./src/index.ts",
     "./providers": "./src/providers/index.ts",
     "./prompt-generation": "./src/prompt-generation/index.ts",
     "./quality": "./src/quality/index.ts",

@@ -1,7 +1,7 @@
 {
   "Index": {
-    "meta_title": "SaaS Template - The perfect SaaS template to build and scale your business with ease.",
-    "meta_description": "A free and open-source landing page template for your SaaS business, built with React, TypeScript, Shadcn UI, and Tailwind CSS."
+    "meta_title": "TerraShaper Pro - Professional terrain analysis and optimization platform.",
+    "meta_description": "Advanced terrain analysis and optimization platform built for professionals, featuring powerful analysis tools and real-time insights."
   },
   "Navbar": {
     "sign_in": "Sign In",
@@ -13,31 +13,31 @@
     "company": "Company"
   },
   "Hero": {
-    "follow_twitter": "Follow @Ixartz on Twitter",
-    "title": "The perfect <important>SaaS template</important> to build and scale your business with ease.",
-    "description": "A free and open-source landing page template for your SaaS business, built with React, TypeScript, Shadcn UI, and Tailwind CSS.",
+    "follow_twitter": "Follow @TerraShaper on Twitter",
+    "title": "Professional <important>terrain analysis</important> and optimization platform.",
+    "description": "Advanced terrain analysis and optimization platform built for professionals, featuring powerful analysis tools and real-time insights.",
     "primary_button": "Get Started",
-    "secondary_button": "Star on GitHub"
+    "secondary_button": "Learn More"
   },
   "Sponsors": {
     "title": "Sponsored by"
   },
   "Features": {
     "section_subtitle": "Features",
-    "section_title": "Unlock the Full Potential of the SaaS Template",
-    "section_description": "A free and open-source landing page template for your SaaS business, built with React, TypeScript, Shadcn UI, and Tailwind CSS.",
+    "section_title": "Unlock the Full Potential of TerraShaper Pro",
+    "section_description": "Advanced terrain analysis and optimization platform built for professionals, featuring powerful analysis tools and real-time insights.",
     "feature1_title": "Node.js",
     "feature2_title": "React",
     "feature3_title": "Tailwind CSS",
     "feature4_title": "TypeScript",
     "feature5_title": "Shadcn UI",
     "feature6_title": "ESLint",
-    "feature_description": "A free and open-source landing page template for your SaaS business, built with React, TypeScript, Shadcn UI, and Tailwind CSS."
+    "feature_description": "Advanced terrain analysis and optimization platform built for professionals, featuring powerful analysis tools and real-time insights."
   },
   "Pricing": {
     "section_subtitle": "Features",
-    "section_title": "Unlock the Full Potential of the SaaS Template",
-    "section_description": "A free and open-source landing page template for your SaaS business, built with React, TypeScript, Shadcn UI, and Tailwind CSS.",
+    "section_title": "Unlock the Full Potential of TerraShaper Pro",
+    "section_description": "Advanced terrain analysis and optimization platform built for professionals, featuring powerful analysis tools and real-time insights.",
     "button_text": "Get Started"
   },
   "PricingPlan": {
@@ -94,8 +94,8 @@
     "settings": "Settings"
   },
   "Dashboard": {
-    "meta_title": "SaaS Template Dashboard",
-    "meta_description": "A free and open-source landing page template for your SaaS business, built with Next.js, TypeScript, Shadcn UI, and Tailwind CSS."
+    "meta_title": "TerraShaper Pro Dashboard",
+    "meta_description": "Advanced terrain analysis and optimization platform built for professionals, featuring powerful analysis tools and real-time insights."
   },
   "DashboardIndex": {
     "title_bar": "Dashboard",

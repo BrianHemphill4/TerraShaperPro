@@ -1,4 +1,4 @@
-import { PaymentMethods } from '~/components/billing/PaymentMethods';
+import { PaymentMethods } from '@/components/billing/PaymentMethods';
 
 export default function PaymentMethodsPage() {
   return (
