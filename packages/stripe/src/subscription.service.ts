@@ -218,6 +218,6 @@ export class SubscriptionService {
       subscription_proration_behavior: 'create_prorations',
     });
 
-    return invoice;
+    return invoice as any;
   }
 }

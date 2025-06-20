@@ -1,169 +1,127 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
+import { AlertTriangle, CreditCard,Zap } from 'lucide-react';
+import Link from 'next/link';
+
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { AlertTriangle, TrendingUp, CreditCard, FileText } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { formatCurrency } from '@/lib/utils';
-
-interface OverageData {
-  charge_type: 'render' | 'storage' | 'team_seats';
-  quantity_used: number;
-  quantity_included: number;
-  overage_quantity: number;
-  unit_price: number;
-  total_amount: number;
-  percentage_used: number;
-}
+import { trpc } from '@/lib/trpc';
 
 export function OverageAlert() {
-  const router = useRouter();
-  const [overages, setOverages] = useState<OverageData[]>([]);
-  const [totalOverageAmount, setTotalOverageAmount] = useState(0);
+  const { data: usage } = (trpc as any).billing.getCurrentUsage.useQuery();
+  const { data: subscription } = (trpc as any).billing.getSubscription.useQuery();
 
-  const { data: overageData } = api.billing.getCurrentOverages.useQuery(undefined, {
-    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
-  });
+  if (!usage) return null;
 
-  useEffect(() => {
-    if (overageData) {
-      const activeOverages = overageData.filter(o => o.overage_quantity > 0);
-      setOverages(activeOverages);
-      setTotalOverageAmount(activeOverages.reduce((sum, o) => sum + o.total_amount, 0));
-    }
-  }, [overageData]);
+  const renderUsage = usage.renders?.used || 0;
+  const renderLimit = usage.renders?.limit || 0;
+  const storageUsage = usage.storage?.used || 0;
+  const storageLimit = usage.storage?.limit || 0;
 
-  const getOverageTypeDisplay = (type: string) => {
-    switch (type) {
-      case 'render':
-        return { label: 'Renders', unit: 'renders' };
-      case 'storage':
-        return { label: 'Storage', unit: 'GB' };
-      case 'team_seats':
-        return { label: 'Team Seats', unit: 'seats' };
-      default:
-        return { label: type, unit: '' };
-    }
-  };
+  const renderPercentage = renderLimit > 0 ? (renderUsage / renderLimit) * 100 : 0;
+  const storagePercentage = storageLimit > 0 ? (storageUsage / storageLimit) * 100 : 0;
 
-  if (overages.length === 0) {
+  const showRenderWarning = renderPercentage >= 80;
+  const showStorageWarning = storagePercentage >= 80;
+  const showRenderOverage = renderUsage > renderLimit && renderLimit > 0;
+  const showStorageOverage = storageUsage > storageLimit && storageLimit > 0;
+
+  if (!showRenderWarning && !showStorageWarning && !showRenderOverage && !showStorageOverage) {
     return null;
   }
 
   return (
-    <>
-      {/* Alert Banner */}
-      {totalOverageAmount > 0 && (
-        <Alert className="mb-4 border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950">
-          <AlertTriangle className="h-4 w-4 text-amber-600" />
-          <AlertTitle>Usage Overages Detected</AlertTitle>
+    <div className="space-y-4">
+      {/* Render Overage Alert */}
+      {showRenderOverage && (
+        <Alert variant="destructive">
+          <AlertTriangle className="size-4" />
+          <AlertTitle>Render Limit Exceeded</AlertTitle>
           <AlertDescription className="mt-2">
-            <p className="mb-2">
-              You've exceeded your plan limits this month. Additional charges of{' '}
-              <span className="font-semibold">{formatCurrency(totalOverageAmount)}</span> will apply.
+            <p className="mb-3">
+              You've used {renderUsage} renders this billing period, exceeding your plan limit of {renderLimit}.
+              Additional renders will be charged at ${subscription?.plan?.overageRates?.renders || 0.50} each.
             </p>
             <div className="flex gap-2">
-              <Button size="sm" onClick={() => router.push('/settings/billing')}>
-                Upgrade Plan
+              <Button size="sm" asChild>
+                <Link href="/billing?tab=subscription">Upgrade Plan</Link>
               </Button>
-              <Button size="sm" variant="outline" onClick={() => router.push('/settings/billing/usage')}>
-                View Details
+              <Button size="sm" variant="outline" asChild>
+                <Link href="/billing?tab=usage">View Usage</Link>
               </Button>
             </div>
           </AlertDescription>
         </Alert>
       )}
 
-      {/* Detailed Overage Card */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Current Overages</CardTitle>
-              <CardDescription>
-                Usage beyond your plan limits for the current billing period
-              </CardDescription>
+      {/* Storage Overage Alert */}
+      {showStorageOverage && (
+        <Alert variant="destructive">
+          <AlertTriangle className="size-4" />
+          <AlertTitle>Storage Limit Exceeded</AlertTitle>
+          <AlertDescription className="mt-2">
+            <p className="mb-3">
+              You're using {(storageUsage / 1024 / 1024 / 1024).toFixed(2)} GB of storage, 
+              exceeding your plan limit of {(storageLimit / 1024 / 1024 / 1024).toFixed(2)} GB.
+              Additional storage is charged at ${subscription?.plan?.overageRates?.storage || 0.10} per GB.
+            </p>
+            <div className="flex gap-2">
+              <Button size="sm" asChild>
+                <Link href="/billing?tab=subscription">Upgrade Plan</Link>
+              </Button>
+              <Button size="sm" variant="outline" asChild>
+                <Link href="/projects">Manage Projects</Link>
+              </Button>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">Estimated charges</p>
-              <p className="text-2xl font-bold">{formatCurrency(totalOverageAmount)}</p>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {overages.map((overage) => {
-            const display = getOverageTypeDisplay(overage.charge_type);
-            return (
-              <div key={overage.charge_type} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">{display.label}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {overage.quantity_used} / {overage.quantity_included} {display.unit}
-                  </span>
-                </div>
-                <Progress 
-                  value={Math.min(overage.percentage_used, 100)} 
-                  className={overage.percentage_used > 100 ? 'bg-amber-100' : ''}
-                />
-                {overage.overage_quantity > 0 && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-amber-600">
-                      +{overage.overage_quantity} {display.unit} over limit
-                    </span>
-                    <span className="font-medium">
-                      {formatCurrency(overage.total_amount)}
-                    </span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          </AlertDescription>
+        </Alert>
+      )}
 
-          <div className="pt-4 border-t space-y-2">
-            <div className="flex items-start gap-2 text-sm text-muted-foreground">
-              <CreditCard className="h-4 w-4 mt-0.5" />
-              <p>
-                Overage charges will be added to your next invoice at the end of the billing period.
-              </p>
+      {/* Render Warning Alert */}
+      {showRenderWarning && !showRenderOverage && (
+        <Alert>
+          <Zap className="size-4" />
+          <AlertTitle>Approaching Render Limit</AlertTitle>
+          <AlertDescription className="mt-2">
+            <p className="mb-3">
+              You've used {renderUsage} of your {renderLimit} monthly renders ({renderPercentage.toFixed(0)}%).
+            </p>
+            <Progress value={renderPercentage} className="mb-3" />
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" asChild>
+                <Link href="/billing?tab=subscription">View Plans</Link>
+              </Button>
+              <Button size="sm" variant="outline" asChild>
+                <Link href="/billing?tab=usage">View Usage</Link>
+              </Button>
             </div>
-            <div className="flex items-start gap-2 text-sm text-muted-foreground">
-              <TrendingUp className="h-4 w-4 mt-0.5" />
-              <p>
-                Consider upgrading your plan to avoid overage charges and get better rates.
-              </p>
-            </div>
-          </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
-          <div className="flex gap-2 pt-2">
-            <Button 
-              className="flex-1" 
-              variant="outline"
-              onClick={() => router.push('/settings/billing/invoices')}
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              View Invoices
-            </Button>
-            <Button 
-              className="flex-1"
-              onClick={() => router.push('/settings/billing')}
-            >
-              Upgrade Plan
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </>
+      {/* Storage Warning Alert */}
+      {showStorageWarning && !showStorageOverage && (
+        <Alert>
+          <CreditCard className="size-4" />
+          <AlertTitle>Approaching Storage Limit</AlertTitle>
+          <AlertDescription className="mt-2">
+            <p className="mb-3">
+              You're using {(storageUsage / 1024 / 1024 / 1024).toFixed(2)} GB of your{' '}
+              {(storageLimit / 1024 / 1024 / 1024).toFixed(2)} GB storage limit ({storagePercentage.toFixed(0)}%).
+            </p>
+            <Progress value={storagePercentage} className="mb-3" />
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" asChild>
+                <Link href="/billing?tab=subscription">View Plans</Link>
+              </Button>
+              <Button size="sm" variant="outline" asChild>
+                <Link href="/projects">Manage Projects</Link>
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+    </div>
   );
-}
-
-// Utility function - should be in lib/utils
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount);
 }

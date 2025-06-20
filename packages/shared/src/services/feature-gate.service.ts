@@ -24,7 +24,7 @@ export class FeatureGateService {
     }
 
     if (typeof featureValue === 'string') {
-      return featureValue !== 'none' && featureValue !== '';
+      return featureValue !== '' && featureValue.length > 0;
     }
 
     if (Array.isArray(featureValue)) {
@@ -61,7 +61,7 @@ export class FeatureGateService {
       };
     }
 
-    const limit = features[limitType] as number;
+    const limit = (features as any)[limitType] as number;
     const isUnlimited = limit === -1;
 
     return {
@@ -160,7 +160,7 @@ export class FeatureGateService {
    */
   static getExportFormats(tier: SubscriptionTier | null): string[] {
     const features = this.getFeaturesForTier(tier);
-    return features.exportFormats || ['png', 'jpg'];
+    return [...(features.exportFormats || ['png', 'jpg'])];
   }
 
   /**

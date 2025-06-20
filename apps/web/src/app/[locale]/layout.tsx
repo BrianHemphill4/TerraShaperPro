@@ -6,6 +6,7 @@ import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 
 import { DemoBadge } from '@/components/DemoBadge';
+import { WebVitals } from '@/components/monitoring/WebVitals';
 import { TRPCProvider } from '@/providers/TRPCProvider';
 import { AllLocales } from '@/utils/AppConfig';
 
@@ -62,6 +63,7 @@ export default function RootLayout(props: {
             messages={messages}
           >
             <TRPCProvider>
+              <WebVitals />
               {props.children}
 
               <DemoBadge />

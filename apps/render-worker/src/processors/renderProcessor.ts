@@ -22,6 +22,8 @@ import type { Job } from 'bullmq';
 import type { RenderJobData, RenderJobResult } from '../../../../packages/queue/src/types';
 import { getStorage } from '../lib/gcs';
 import { logger } from '../lib/logger';
+import { workerMetrics } from '../lib/metrics';
+import * as Sentry from '@sentry/node';
 
 const providerManager = new ProviderManager();
 const promptGenerator = new PromptGenerator();
@@ -76,6 +78,33 @@ async function initializeProviders() {
 export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJobResult> {
   const { renderId, projectId, prompt, settings, annotations, userId, organizationId } = job.data;
   const startTime = Date.now();
+  
+  // Start Sentry transaction
+  const transaction = Sentry.startTransaction({
+    name: 'render.process',
+    op: 'render',
+    tags: {
+      renderId,
+      projectId,
+      userId,
+      organizationId,
+      provider: settings.provider || 'auto',
+      resolution: settings.resolution,
+      quality: settings.quality?.toString() || 'high',
+    },
+  });
+  
+  Sentry.getCurrentHub().configureScope(scope => {
+    scope.setSpan(transaction);
+    scope.setContext('render', {
+      renderId,
+      projectId,
+      settings,
+    });
+  });
+  
+  // Record job start
+  workerMetrics.recordJobStart(renderId, 'render.generate');
 
   try {
     const supabase = createClient(
@@ -125,7 +154,9 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
       },
     };
 
+    const promptStartTime = Date.now();
     const generatedPrompt = promptGenerator.generatePrompt(promptContext);
+    transaction.setMeasurement('prompt.generation', Date.now() - promptStartTime, 'millisecond');
     await job.updateProgress(20);
 
     const [width, height] = settings.resolution.split('x').map(Number);
@@ -144,7 +175,9 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
     const provider = await providerManager.getProvider(providerType);
     await job.updateProgress(30);
 
+    const imageStartTime = Date.now();
     const result = await provider.generateImage(generatedPrompt.prompt, generationOptions);
+    transaction.setMeasurement('image.generation', Date.now() - imageStartTime, 'millisecond');
     await job.updateProgress(70);
 
     const qualityResult = await qualityChecker.checkQuality(result.imageBase64 || result.imageUrl, {
@@ -268,12 +301,33 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
     });
 
     await job.updateProgress(100);
+    
+    const processingTime = Date.now() - startTime;
+    
+    // Record successful job completion
+    workerMetrics.recordJobComplete({
+      jobId: renderId,
+      jobType: 'render.generate',
+      duration: processingTime,
+      success: true,
+      metadata: {
+        provider: providerType,
+        resolution: settings.resolution,
+        quality: settings.quality?.toString() || 'high',
+        imageSize: imageBuffer.length,
+        creditCost,
+      },
+    });
+    
+    // Finish transaction
+    transaction.setStatus('ok');
+    transaction.finish();
 
     return {
       renderId,
       imageUrl: publicUrl,
       thumbnailUrl,
-      processingTime: Date.now() - startTime,
+      processingTime,
       promptHash: generatedPrompt.hash,
       metadata: {
         width,
@@ -316,6 +370,24 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
     if (failureDetectionService) {
       await failureDetectionService.checkForFailurePatterns();
     }
+    
+    // Record failed job
+    workerMetrics.recordJobComplete({
+      jobId: renderId,
+      jobType: 'render.generate',
+      duration: Date.now() - startTime,
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      metadata: {
+        provider: settings.provider || 'unknown',
+        resolution: settings.resolution,
+        quality: settings.quality?.toString() || 'high',
+      },
+    });
+    
+    // Finish transaction with error
+    transaction.setStatus('internal_error');
+    transaction.finish();
 
     throw error;
   }

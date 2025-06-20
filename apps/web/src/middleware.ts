@@ -6,7 +6,7 @@ import {
 } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 
-import { AllLocales, AppConfig } from './utils/AppConfig';
+import { AppConfig } from './utils/AppConfig';
 
 // Helper function to get allowed origins
 function getAllowedOrigins(): string[] {
@@ -158,6 +158,17 @@ export default function middleware(
   return applySecurityHeaders(response, request);
 }
 
+
+
 export const config = {
-  matcher: ['/((?!.+\\.[\\w]+$|_next|monitoring).*)', '/', '/(api|trpc)(.*)'], // Also exclude tunnelRoute used in Sentry from the matcher
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 };

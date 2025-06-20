@@ -1,171 +1,127 @@
 'use client';
 
-import { api } from '~/utils/trpc';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '~/components/ui/card';
-import { Button } from '~/components/ui/button';
-import { Badge } from '~/components/ui/badge';
-import { Progress } from '~/components/ui/progress';
-import { Skeleton } from '~/components/ui/skeleton';
-import { format } from 'date-fns';
-import { 
-  CreditCard, 
-  Calendar, 
-  TrendingUp, 
-  AlertCircle,
-  ExternalLink
-} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { trpc } from '@/lib/trpc';
+
+import { BillingAlerts } from './BillingAlerts';
+import { InvoiceHistory } from './InvoiceHistory';
+import { PaymentMethodsManager } from './PaymentMethodsManager';
+import { SubscriptionManager } from './SubscriptionManager';
+import { UsageAnalytics } from './UsageAnalytics';
 
 export function BillingOverview() {
-  const { data: subscription, isLoading: subLoading } = api.billing.getCurrentSubscription.useQuery();
-  const { data: usage, isLoading: usageLoading } = api.billing.getUsageSummary.useQuery();
-  const createPortalMutation = api.billing.createPortalSession.useMutation();
+  const { data: subscription, isLoading } = (trpc as any).billing.getSubscription.useQuery();
+  const { data: usage } = (trpc as any).billing.getCurrentUsage.useQuery();
 
-  const handleManageSubscription = async () => {
-    const result = await createPortalMutation.mutateAsync({
-      returnUrl: window.location.href,
-    });
-
-    if (result.url) {
-      window.location.href = result.url;
-    }
-  };
-
-  if (subLoading || usageLoading) {
+  if (isLoading) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {[...Array(3)].map((_, i) => (
-          <Card key={i}>
-            <CardHeader>
-              <Skeleton className="h-6 w-32" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-24 w-full" />
-            </CardContent>
-          </Card>
-        ))}
+      <div className="container mx-auto space-y-6 py-6">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-24" />
+          ))}
+        </div>
+        <Skeleton className="h-96" />
       </div>
     );
   }
 
-  const renderUsagePercentage = usage ? (usage.usage.renders / usage.limits.renders) * 100 : 0;
-
   return (
-    <div className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Subscription Status */}
+    <div className="container mx-auto space-y-6 py-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Billing & Usage</h1>
+      </div>
+
+      <BillingAlerts />
+
+      {/* Quick Stats */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              Subscription Status
-              <CreditCard className="h-5 w-5 text-gray-400" />
-            </CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Current Plan</CardTitle>
           </CardHeader>
           <CardContent>
-            {subscription ? (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">Plan</span>
-                  <Badge>{subscription.items.data[0]?.price.nickname || 'Custom'}</Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">Status</span>
-                  <Badge
-                    variant={subscription.status === 'active' ? 'default' : 'destructive'}
-                  >
-                    {subscription.status}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">Next billing</span>
-                  <span className="text-sm font-medium">
-                    {format(new Date(subscription.current_period_end * 1000), 'MMM d, yyyy')}
-                  </span>
-                </div>
-                {subscription.cancel_at && (
-                  <div className="rounded-lg bg-yellow-50 p-3">
-                    <div className="flex items-center">
-                      <AlertCircle className="h-4 w-4 text-yellow-600" />
-                      <span className="ml-2 text-sm text-yellow-800">
-                        Cancels on {format(new Date(subscription.cancel_at * 1000), 'MMM d, yyyy')}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="text-center py-4">
-                <p className="text-gray-500 mb-4">No active subscription</p>
-                <Button size="sm">Choose a Plan</Button>
-              </div>
-            )}
+            <div className="text-2xl font-bold">{subscription?.plan?.name || 'Free'}</div>
+            <p className="text-muted-foreground text-xs">
+              {subscription?.status === 'active' ? 'Active' : 'Inactive'}
+            </p>
           </CardContent>
         </Card>
 
-        {/* Usage Summary */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              Usage This Month
-              <TrendingUp className="h-5 w-5 text-gray-400" />
-            </CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Renders Used</CardTitle>
           </CardHeader>
           <CardContent>
-            {usage && (
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-500">Renders</span>
-                    <span className="text-sm font-medium">
-                      {usage.usage.renders} / {usage.limits.renders}
-                    </span>
-                  </div>
-                  <Progress value={renderUsagePercentage} className="h-2" />
-                </div>
-                <div className="text-xs text-gray-500">
-                  Period: {format(new Date(usage.period.start), 'MMM d')} - {format(new Date(usage.period.end), 'MMM d')}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              Quick Actions
-              <Calendar className="h-5 w-5 text-gray-400" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <Button
-                className="w-full justify-between"
-                variant="outline"
-                onClick={handleManageSubscription}
-                disabled={createPortalMutation.isLoading}
-              >
-                Manage Subscription
-                <ExternalLink className="h-4 w-4" />
-              </Button>
-              <Button
-                className="w-full"
-                variant="outline"
-                onClick={() => window.location.href = '/settings/billing/invoices'}
-              >
-                View Invoices
-              </Button>
-              <Button
-                className="w-full"
-                variant="outline"
-                onClick={() => window.location.href = '/settings/billing/payment-methods'}
-              >
-                Payment Methods
-              </Button>
+            <div className="text-2xl font-bold">
+              {usage?.renders?.used || 0}
+              <span className="text-muted-foreground text-sm font-normal">
+                /{usage?.renders?.limit || '∞'}
+              </span>
             </div>
+            <p className="text-muted-foreground text-xs">This billing period</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Storage Used</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {((usage?.storage?.used || 0) / 1024 / 1024 / 1024).toFixed(1)} GB
+            </div>
+            <p className="text-muted-foreground text-xs">
+              of {((usage?.storage?.limit || 0) / 1024 / 1024 / 1024).toFixed(1)} GB
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Next Billing</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              ${subscription?.nextInvoice?.amount || 0}
+            </div>
+            <p className="text-muted-foreground text-xs">
+              {subscription?.nextInvoice?.date
+                ? new Date(subscription.nextInvoice.date).toLocaleDateString()
+                : 'N/A'}
+            </p>
           </CardContent>
         </Card>
       </div>
+
+      {/* Main Content Tabs */}
+      <Tabs defaultValue="usage" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="usage">Usage & Analytics</TabsTrigger>
+          <TabsTrigger value="subscription">Subscription</TabsTrigger>
+          <TabsTrigger value="invoices">Invoices</TabsTrigger>
+          <TabsTrigger value="payment">Payment Methods</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="usage" className="space-y-4">
+          <UsageAnalytics />
+        </TabsContent>
+
+        <TabsContent value="subscription" className="space-y-4">
+          <SubscriptionManager />
+        </TabsContent>
+
+        <TabsContent value="invoices" className="space-y-4">
+          <InvoiceHistory />
+        </TabsContent>
+
+        <TabsContent value="payment" className="space-y-4">
+          <PaymentMethodsManager />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

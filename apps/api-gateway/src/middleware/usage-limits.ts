@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
-import { Context } from '../trpc';
-import { FeatureGateService } from '@terrashaper/shared/services/feature-gate.service';
-import { SubscriptionTier } from '@terrashaper/shared/types/billing';
+import type { Context } from '../context';
+import { FeatureGateService } from '@terrashaper/shared';
+import type { SubscriptionTier } from '@terrashaper/shared';
 
 export interface UsageLimitOptions {
   limitType: 'maxProjects' | 'maxTeamMembers' | 'maxStorageGb' | 'maxRendersPerMonth';
