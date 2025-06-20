@@ -1,17 +1,25 @@
 'use client';
 
 import { fabric } from 'fabric';
+import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 import AssetPalette from '@/components/canvas/AssetPalette';
 import DesignCanvas from '@/components/canvas/DesignCanvas';
 import { AlertModal, ConfirmModal } from '@/components/ui/modal';
+import { trpc } from '@/lib/trpc';
 
 import styles from './design.module.css';
 
 const DesignPage = () => {
+  const params = useParams();
+  // Design route currently has no dynamic param; fall back to a temporary id
+  const projectId = (params as any)?.projectId ?? (params as any)?.id ?? 'local-design';
+
+  // tRPC mutation for autosaving versions
+  const createVersion = (trpc as any).project.createVersion.useMutation();
+
   const [elements, setElements] = useState<any[]>([]);
-  const [projectId, _setProjectId] = useState<string>('test-project-1'); // For demo purposes
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -203,6 +211,35 @@ const DesignPage = () => {
     });
     setShowConfirm(true);
   };
+
+  // -------------------------------------------------
+  // Auto-create a project version whenever elements
+  // array changes (or other meta in future). Debounced
+  // so rapid edits don't spam requests.
+  // -------------------------------------------------
+  useEffect(() => {
+    // Only autosave for valid UUID project IDs (backend constraint)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!projectId || !uuidRegex.test(projectId)) return;
+
+    // Debounce timer – 3 seconds after the last change
+    const timer = setTimeout(() => {
+      if (elements.length === 0) return;
+
+      const snapshot = {
+        elements,
+        // Extend with meta fields as needed
+      };
+
+      createVersion.mutate({
+        projectId,
+        snapshot,
+        comment: 'Auto-snapshot',
+      });
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [elements, projectId]);
 
   return (
     <div className={styles.container}>

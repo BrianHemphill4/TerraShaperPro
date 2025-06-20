@@ -1,9 +1,13 @@
 import { z } from 'zod';
 
+import { billingRouter } from './routers/billing.router';
+import { clientPortalRouter } from './routers/client-portal.router';
 import { creditRouter } from './routers/credit.router';
 import { plantRouter } from './routers/plant.router';
+import { projectRouter } from './routers/project.router';
 import { renderRouter } from './routers/render.router';
 import { storageRouter } from './routers/storage.router';
+import { teamRouter } from './routers/team.router';
 import { publicProcedure, router } from './trpc';
 
 const healthRouter = router({
@@ -16,6 +20,10 @@ export const appRouter = router({
   storage: storageRouter,
   credit: creditRouter,
   plant: plantRouter,
+  project: projectRouter,
+  team: teamRouter,
+  clientPortal: clientPortalRouter,
+  billing: billingRouter,
   hello: publicProcedure
     .input(
       z.object({
