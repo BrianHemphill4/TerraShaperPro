@@ -248,6 +248,25 @@ export async function processRenderJob(job: Job<RenderJobData>): Promise<RenderJ
       })
       .eq('id', renderId);
 
+    // Track usage for billing
+    const creditCost = getCreditCost(settings);
+    await supabase.from('usage_records').insert({
+      organization_id: organizationId,
+      record_type: 'render',
+      quantity: 1,
+      unit_amount: creditCost,
+      total_amount: creditCost,
+      description: `Render completed: ${settings.resolution} @ ${settings.quality || 'high'} quality`,
+      metadata: {
+        render_id: renderId,
+        project_id: projectId,
+        resolution: settings.resolution,
+        quality: settings.quality,
+        format: settings.format,
+        provider: settings.provider,
+      },
+    });
+
     await job.updateProgress(100);
 
     return {

@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
 import { protectedProcedure, router } from '../trpc';
+import { checkUsageLimit, trackUsage } from '../middleware/usage-limits';
 
 // const storageService = new StorageService();
 
@@ -43,6 +44,12 @@ export const renderRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Check monthly render limit
+      await checkUsageLimit(ctx, {
+        limitType: 'maxRendersPerMonth',
+        customMessage: 'You have reached your monthly render limit. Please upgrade your plan or wait until next month.',
+      });
+
       // Check rate limits
       const canSubmit = await canUserSubmitRender(
         ctx.session.userId,
