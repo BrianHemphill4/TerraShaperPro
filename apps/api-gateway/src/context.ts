@@ -16,6 +16,7 @@ export type SupabaseQueryBuilder = {
   range: (_from: number, _to: number) => SupabaseQueryBuilder;
   single: () => Promise<{ data?: any; error?: any }>;
   limit: (_count: number) => SupabaseQueryBuilder;
+  gt: (_column: string, _value: any) => SupabaseQueryBuilder;
   gte: (_column: string, _value: any) => SupabaseQueryBuilder;
   not: (_column: string, _operator: string, _value: any) => SupabaseQueryBuilder;
   is: (_column: string, _value: any) => SupabaseQueryBuilder;
@@ -29,9 +30,7 @@ export type SupabaseClient = {
       select: () => { single: () => Promise<{ data?: any; error?: any }> };
       error?: any;
     };
-    update: (data: any) => {
-      eq: (_column: string, _value: any) => Promise<{ data?: any; error?: any }>;
-    };
+    update: (data: any) => SupabaseQueryBuilder;
     delete: () => SupabaseQueryBuilder;
     select: (
       _columns?: string,
@@ -65,6 +64,7 @@ export function createContext(_opts: CreateFastifyContextOptions) {
       range: (_from: number, _to: number) => builder,
       single: () => Promise.resolve({ data: { id: 'mock-id', jobId: 'mock-job-id' }, error: null }),
       limit: (_count: number) => builder,
+      gt: (_column: string, _value: any) => builder,
       gte: (_column: string, _value: any) => builder,
       not: (_column: string, _operator: string, _value: any) => builder,
       is: (_column: string, _value: any) => builder,
@@ -86,9 +86,7 @@ export function createContext(_opts: CreateFastifyContextOptions) {
         }),
         error: null,
       }),
-      update: (data: any) => ({
-        eq: (_column: string, _value: any) => Promise.resolve({ data, error: null }),
-      }),
+      update: (_data: any) => createQueryBuilder(),
       delete: () => createQueryBuilder(),
       select: (_columns?: string, _options?: { count?: 'exact'; head?: boolean }) =>
         createQueryBuilder(),

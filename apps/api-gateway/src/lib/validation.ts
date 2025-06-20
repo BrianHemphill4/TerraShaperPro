@@ -1,4 +1,5 @@
 import { z } from 'zod';
+// @ts-ignore - isomorphic-dompurify doesn't have types
 import DOMPurify from 'isomorphic-dompurify';
 import { TRPCError } from '@trpc/server';
 
