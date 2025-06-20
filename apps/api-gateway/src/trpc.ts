@@ -3,6 +3,8 @@ import { ZodError } from 'zod';
 
 import type { Context } from './context';
 import { captureException } from './lib/sentry';
+import { metricsMiddleware } from './middleware/metrics';
+import { rateLimiter, rateLimits } from './middleware/rate-limit';
 
 const t = initTRPC.context<Context>().create({
   errorFormatter({ shape, error }) {
@@ -50,6 +52,29 @@ const authMiddleware = t.middleware(async ({ ctx, next }) => {
   return next();
 });
 
+// Rate limiting middleware
+const publicRateLimitMiddleware = rateLimiter.middleware(rateLimits.public);
+const apiRateLimitMiddleware = rateLimiter.middleware(rateLimits.api);
+
 export const router = t.router;
-export const publicProcedure = t.procedure.use(sentryMiddleware);
-export const protectedProcedure = t.procedure.use(sentryMiddleware).use(authMiddleware);
+export const publicProcedure = t.procedure
+  .use(publicRateLimitMiddleware)
+  .use(metricsMiddleware)
+  .use(sentryMiddleware);
+export const protectedProcedure = t.procedure
+  .use(apiRateLimitMiddleware)
+  .use(metricsMiddleware)
+  .use(sentryMiddleware)
+  .use(authMiddleware);
+
+// Specialized procedures with different rate limits
+export const authProcedure = t.procedure
+  .use(rateLimiter.middleware(rateLimits.auth))
+  .use(metricsMiddleware)
+  .use(sentryMiddleware);
+
+export const renderProcedure = t.procedure
+  .use(rateLimiter.middleware(rateLimits.render))
+  .use(metricsMiddleware)
+  .use(sentryMiddleware)
+  .use(authMiddleware);

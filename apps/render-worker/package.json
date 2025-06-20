@@ -19,6 +19,7 @@
     "@sentry/profiling-node": "^9.30.0",
     "@sentry/tracing": "^7.120.3",
     "@supabase/supabase-js": "^2.38.4",
+    "@svgr/webpack": "^8.1.0",
     "@terrashaper/ai-service": "1.0.0",
     "@terrashaper/queue": "1.0.0",
     "@terrashaper/storage": "1.0.0",

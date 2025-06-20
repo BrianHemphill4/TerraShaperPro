@@ -11,7 +11,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@terrashaper/shared": "workspace:*",
+    "@svgr/webpack": "^8.1.0",
+    "@terrashaper/shared": "*",
     "stripe": "^14.0.0"
   },
   "devDependencies": {

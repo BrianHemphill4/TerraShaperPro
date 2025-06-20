@@ -6,6 +6,7 @@ import type { RenderJobResult } from '../../../packages/queue/src/types';
 import { connection } from './config/redis';
 import { logger } from './lib/logger';
 import { captureException, initSentry } from './lib/sentry';
+import { workerMetrics } from './lib/metrics';
 import { startFailureMonitor } from './processors/failureMonitor';
 import { processRenderJob } from './processors/renderProcessor';
 
@@ -55,3 +56,18 @@ logger.info(`🚀 Render Worker started with concurrency: ${concurrency}`);
 
 // Start failure monitoring
 startFailureMonitor();
+
+// Start periodic queue metrics collection
+setInterval(async () => {
+  try {
+    const queueMetrics = await worker.getQueueMetrics();
+    workerMetrics.recordQueueMetrics(
+      'render',
+      queueMetrics.counts.active + queueMetrics.counts.waiting,
+      queueMetrics.counts.waiting,
+      queueMetrics.counts.active
+    );
+  } catch (error) {
+    logger.error('Failed to collect queue metrics', error);
+  }
+}, 30000); // Every 30 seconds

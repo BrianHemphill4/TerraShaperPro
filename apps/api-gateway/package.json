@@ -9,7 +9,11 @@
     "start": "node dist/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.22.0",
@@ -19,6 +23,7 @@
     "@sentry/node": "^9.30.0",
     "@sentry/profiling-node": "^9.30.0",
     "@sentry/tracing": "^7.120.3",
+    "@svgr/webpack": "^8.1.0",
     "@terrashaper/storage": "file:../../packages/storage",
     "@trpc/server": "^10.45.2",
     "@types/cors": "^2.8.19",

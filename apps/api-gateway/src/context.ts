@@ -8,6 +8,7 @@ export type Session = {
 
 export type SupabaseQueryBuilder = {
   eq: (_column: string, _value: any) => SupabaseQueryBuilder;
+  neq: (_column: string, _value: any) => SupabaseQueryBuilder;
   in: (_column: string, _values: any[]) => SupabaseQueryBuilder;
   contains: (_column: string, _value: any) => SupabaseQueryBuilder;
   textSearch: (_column: string, _query: string) => SupabaseQueryBuilder;
@@ -17,6 +18,8 @@ export type SupabaseQueryBuilder = {
   limit: (_count: number) => SupabaseQueryBuilder;
   gte: (_column: string, _value: any) => SupabaseQueryBuilder;
   not: (_column: string, _operator: string, _value: any) => SupabaseQueryBuilder;
+  is: (_column: string, _value: any) => SupabaseQueryBuilder;
+  select: (_columns?: string) => SupabaseQueryBuilder;
   then: (onfulfilled?: (value: any) => any) => Promise<any>;
 };
 
@@ -35,6 +38,7 @@ export type SupabaseClient = {
       _options?: { count?: 'exact'; head?: boolean }
     ) => SupabaseQueryBuilder;
   };
+  rpc: (_functionName: string, _params?: any) => Promise<{ data?: any; error?: any }>;
 };
 
 export function createContext(_opts: CreateFastifyContextOptions) {
@@ -53,6 +57,7 @@ export function createContext(_opts: CreateFastifyContextOptions) {
   const createQueryBuilder = (): SupabaseQueryBuilder => {
     const builder: SupabaseQueryBuilder = {
       eq: (_column: string, _value: any) => builder,
+      neq: (_column: string, _value: any) => builder,
       in: (_column: string, _values: any[]) => builder,
       contains: (_column: string, _value: any) => builder,
       textSearch: (_column: string, _query: string) => builder,
@@ -62,6 +67,8 @@ export function createContext(_opts: CreateFastifyContextOptions) {
       limit: (_count: number) => builder,
       gte: (_column: string, _value: any) => builder,
       not: (_column: string, _operator: string, _value: any) => builder,
+      is: (_column: string, _value: any) => builder,
+      select: (_columns?: string) => builder,
       then: (onfulfilled?: (value: any) => any) => {
         const result = { data: [{ id: 'mock-id' }], error: null, count: 1 };
         return Promise.resolve(onfulfilled ? onfulfilled(result) : result);
@@ -86,6 +93,7 @@ export function createContext(_opts: CreateFastifyContextOptions) {
       select: (_columns?: string, _options?: { count?: 'exact'; head?: boolean }) =>
         createQueryBuilder(),
     }),
+    rpc: (_functionName: string, _params?: any) => Promise.resolve({ data: {}, error: null }),
   };
 
   return {

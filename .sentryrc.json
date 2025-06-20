@@ -1,0 +1,214 @@
+{
+  "org": "terrashaper",
+  "project": "terrashaper-pro",
+  "alerts": [
+    {
+      "name": "High Error Rate",
+      "conditions": [
+        {
+          "id": "sentry.rules.conditions.event_frequency.EventFrequencyCondition",
+          "value": 10,
+          "interval": "5m"
+        }
+      ],
+      "actions": [
+        {
+          "id": "sentry.rules.actions.notify_event.NotifyEventAction",
+          "channel": "#alerts"
+        }
+      ],
+      "frequency": 30
+    },
+    {
+      "name": "Performance Budget Exceeded",
+      "conditions": [
+        {
+          "id": "sentry.rules.conditions.event_attribute.EventAttributeCondition",
+          "attribute": "message",
+          "match": "Performance budget exceeded"
+        }
+      ],
+      "actions": [
+        {
+          "id": "sentry.rules.actions.notify_event.NotifyEventAction",
+          "channel": "#performance"
+        }
+      ],
+      "frequency": 60
+    },
+    {
+      "name": "Critical API Errors",
+      "conditions": [
+        {
+          "id": "sentry.rules.conditions.tagged_event.TaggedEventCondition",
+          "key": "trpc.path",
+          "match": "*"
+        },
+        {
+          "id": "sentry.rules.conditions.event_frequency.EventFrequencyCondition",
+          "value": 5,
+          "interval": "1m"
+        }
+      ],
+      "actions": [
+        {
+          "id": "sentry.rules.actions.notify_event.NotifyEventAction",
+          "channel": "#critical"
+        }
+      ],
+      "frequency": 5
+    },
+    {
+      "name": "Render Job Failures",
+      "conditions": [
+        {
+          "id": "sentry.rules.conditions.event_attribute.EventAttributeCondition",
+          "attribute": "message",
+          "match": "Job failed: render"
+        },
+        {
+          "id": "sentry.rules.conditions.event_frequency.EventFrequencyCondition",
+          "value": 3,
+          "interval": "10m"
+        }
+      ],
+      "actions": [
+        {
+          "id": "sentry.rules.actions.notify_event.NotifyEventAction",
+          "channel": "#renders"
+        }
+      ],
+      "frequency": 30
+    },
+    {
+      "name": "Memory Leak Detection",
+      "conditions": [
+        {
+          "id": "sentry.rules.conditions.event_attribute.EventAttributeCondition",
+          "attribute": "measurement.memory.used",
+          "op": "gt",
+          "value": 500
+        }
+      ],
+      "actions": [
+        {
+          "id": "sentry.rules.actions.notify_event.NotifyEventAction",
+          "channel": "#infrastructure"
+        }
+      ],
+      "frequency": 30
+    },
+    {
+      "name": "Transaction Duration Alert",
+      "conditions": [
+        {
+          "id": "sentry.rules.conditions.event_attribute.EventAttributeCondition",
+          "attribute": "transaction.duration",
+          "op": "gt",
+          "value": 5000
+        }
+      ],
+      "actions": [
+        {
+          "id": "sentry.rules.actions.notify_event.NotifyEventAction",
+          "channel": "#performance"
+        }
+      ],
+      "frequency": 15
+    }
+  ],
+  "performanceAlerts": [
+    {
+      "name": "P95 Response Time",
+      "dataset": "transactions",
+      "query": "p95(transaction.duration):>1000",
+      "aggregate": "p95(transaction.duration)",
+      "timeWindow": 60,
+      "triggers": [
+        {
+          "label": "critical",
+          "alertThreshold": 1000,
+          "resolveThreshold": 800
+        }
+      ]
+    },
+    {
+      "name": "Apdex Score",
+      "dataset": "transactions",
+      "query": "apdex(300):<0.8",
+      "aggregate": "apdex(300)",
+      "timeWindow": 60,
+      "triggers": [
+        {
+          "label": "warning",
+          "alertThreshold": 0.8,
+          "resolveThreshold": 0.9
+        }
+      ]
+    },
+    {
+      "name": "Error Rate",
+      "dataset": "transactions",
+      "query": "failure_rate():>0.05",
+      "aggregate": "failure_rate()",
+      "timeWindow": 60,
+      "triggers": [
+        {
+          "label": "critical",
+          "alertThreshold": 0.05,
+          "resolveThreshold": 0.02
+        }
+      ]
+    },
+    {
+      "name": "Throughput Drop",
+      "dataset": "transactions",
+      "query": "count():<100",
+      "aggregate": "count()",
+      "timeWindow": 60,
+      "triggers": [
+        {
+          "label": "warning",
+          "alertThreshold": 100,
+          "resolveThreshold": 150
+        }
+      ]
+    }
+  ],
+  "issueAlerts": [
+    {
+      "name": "New Issue Detection",
+      "conditions": [
+        {
+          "id": "sentry.rules.conditions.first_seen_event.FirstSeenEventCondition"
+        }
+      ],
+      "filters": [
+        {
+          "id": "sentry.rules.filters.issue_occurrences.IssueOccurrencesFilter",
+          "value": 10
+        }
+      ],
+      "actions": [
+        {
+          "id": "sentry.rules.actions.notify_event.NotifyEventAction",
+          "channel": "#new-issues"
+        }
+      ]
+    },
+    {
+      "name": "Regression Alert",
+      "conditions": [
+        {
+          "id": "sentry.rules.conditions.regression_event.RegressionEventCondition"
+        }
+      ],
+      "actions": [
+        {
+          "id": "sentry.rules.actions.notify_event.NotifyEventAction",
+          "channel": "#regressions"
+        }
+      ]
+    }
+  ]
+}

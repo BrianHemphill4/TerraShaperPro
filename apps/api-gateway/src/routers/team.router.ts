@@ -88,7 +88,7 @@ export const teamRouter = router({
       // Create invitation
       const token = crypto.randomUUID(); // In production, use a more secure token
       const expiresAt = new Date();
-      expiresAt.setDays(expiresAt.getDate() + 7); // 7 days expiration
+      expiresAt.setDate(expiresAt.getDate() + 7); // 7 days expiration
 
       const { data: invitation, error } = await ctx.supabase
         .from('invitations')
