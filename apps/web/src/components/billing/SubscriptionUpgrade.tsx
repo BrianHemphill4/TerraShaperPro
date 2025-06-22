@@ -1,18 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { FeatureGateService } from '@terrashaper/shared/services/feature-gate.service';
+import type {SubscriptionTier } from '@terrashaper/shared/types/billing';
+import { PlanFeatures } from '@terrashaper/shared/types/billing';
+import { ArrowDown,ArrowUp, Check, Loader2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { api } from '@/lib/api';
+import { useState } from 'react';
+import { toast } from 'sonner';
+
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Check, X, Loader2, ArrowUp, ArrowDown } from 'lucide-react';
-import { toast } from 'sonner';
-import { FeatureGateService } from '@terrashaper/shared/services/feature-gate.service';
-import { SubscriptionTier, PlanFeatures } from '@terrashaper/shared/types/billing';
+import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
-interface SubscriptionUpgradeProps {
+type SubscriptionUpgradeProps = {
   currentTier: SubscriptionTier;
   targetTier?: SubscriptionTier;
   onSuccess?: () => void;
@@ -86,11 +88,11 @@ export function SubscriptionUpgrade({
       <div className="mt-6 space-y-4">
         {upgrades.length > 0 && (
           <div>
-            <h4 className="text-sm font-medium text-green-600 mb-2">Upgrades</h4>
+            <h4 className="mb-2 text-sm font-medium text-green-600">Upgrades</h4>
             <ul className="space-y-2">
               {upgrades.map((item, idx) => (
                 <li key={idx} className="flex items-center gap-2 text-sm">
-                  <ArrowUp className="h-4 w-4 text-green-600" />
+                  <ArrowUp className="size-4 text-green-600" />
                   <span className="capitalize">{item.feature.replace(/([A-Z])/g, ' $1').trim()}</span>
                   <span className="text-muted-foreground">
                     {formatFeatureValue(item.from)} → {formatFeatureValue(item.to)}
@@ -103,11 +105,11 @@ export function SubscriptionUpgrade({
 
         {downgrades.length > 0 && (
           <div>
-            <h4 className="text-sm font-medium text-amber-600 mb-2">Downgrades</h4>
+            <h4 className="mb-2 text-sm font-medium text-amber-600">Downgrades</h4>
             <ul className="space-y-2">
               {downgrades.map((item, idx) => (
                 <li key={idx} className="flex items-center gap-2 text-sm">
-                  <ArrowDown className="h-4 w-4 text-amber-600" />
+                  <ArrowDown className="size-4 text-amber-600" />
                   <span className="capitalize">{item.feature.replace(/([A-Z])/g, ' $1').trim()}</span>
                   <span className="text-muted-foreground">
                     {formatFeatureValue(item.from)} → {formatFeatureValue(item.to)}
@@ -130,7 +132,7 @@ export function SubscriptionUpgrade({
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {tiers.map((tier) => {
           const plan = plans?.find(p => p.tier === tier);
           const features = PlanFeatures[tier];
@@ -199,15 +201,15 @@ export function SubscriptionUpgrade({
                   </div>
                 </div>
 
-                <div className="border-t pt-4 space-y-2">
+                <div className="space-y-2 border-t pt-4">
                   {Object.entries(features).slice(0, 5).map(([key, value]) => {
                     const hasFeature = typeof value === 'boolean' ? value : true;
                     return (
                       <div key={key} className="flex items-center gap-2 text-sm">
                         {hasFeature ? (
-                          <Check className="h-4 w-4 text-green-600" />
+                          <Check className="size-4 text-green-600" />
                         ) : (
-                          <X className="h-4 w-4 text-muted-foreground" />
+                          <X className="size-4 text-muted-foreground" />
                         )}
                         <span className="capitalize">
                           {key.replace(/([A-Z])/g, ' $1').trim()}
@@ -266,7 +268,7 @@ export function SubscriptionUpgrade({
                   onClick={handleUpgrade}
                   disabled={isProcessing}
                 >
-                  {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isProcessing && <Loader2 className="mr-2 size-4 animate-spin" />}
                   Confirm {FeatureGateService.isUpgrade(currentTier, selectedTier) ? 'Upgrade' : 'Downgrade'}
                 </Button>
               </div>

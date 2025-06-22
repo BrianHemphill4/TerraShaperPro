@@ -8,14 +8,14 @@ const Sentry = {
   startSpan: (options: any, callback: any) => callback({}),
 };
 
-export interface Metric {
+export type Metric = {
   name: string;
   value: number;
   unit: string;
   tags?: Record<string, string>;
 }
 
-export interface PerformanceBudget {
+export type PerformanceBudget = {
   metric: string;
   budget: number;
   unit: string;

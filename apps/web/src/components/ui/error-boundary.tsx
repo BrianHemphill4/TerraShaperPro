@@ -1,23 +1,24 @@
 'use client';
 
+import { AlertTriangle, Home,RefreshCw } from 'lucide-react';
 import React from 'react';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
-interface ErrorBoundaryState {
+type ErrorBoundaryState = {
   hasError: boolean;
   error: Error | null;
   errorInfo: React.ErrorInfo | null;
 }
 
-interface ErrorBoundaryProps {
+type ErrorBoundaryProps = {
   children: React.ReactNode;
   fallback?: React.ComponentType<ErrorFallbackProps>;
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 
-interface ErrorFallbackProps {
+type ErrorFallbackProps = {
   error: Error;
   resetError: () => void;
 }
@@ -61,7 +62,7 @@ function DefaultErrorFallback({ error, resetError }: ErrorFallbackProps) {
       <Card className="w-full max-w-md">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-destructive" />
+            <AlertTriangle className="size-5 text-destructive" />
             <CardTitle>Something went wrong</CardTitle>
           </div>
           <CardDescription>
@@ -80,7 +81,7 @@ function DefaultErrorFallback({ error, resetError }: ErrorFallbackProps) {
         </CardContent>
         <CardFooter className="flex gap-2">
           <Button onClick={resetError} variant="default" size="sm">
-            <RefreshCw className="mr-2 h-4 w-4" />
+            <RefreshCw className="mr-2 size-4" />
             Try again
           </Button>
           <Button
@@ -88,7 +89,7 @@ function DefaultErrorFallback({ error, resetError }: ErrorFallbackProps) {
             variant="outline"
             size="sm"
           >
-            <Home className="mr-2 h-4 w-4" />
+            <Home className="mr-2 size-4" />
             Go home
           </Button>
         </CardFooter>
@@ -131,12 +132,12 @@ function PageErrorFallback({ error, resetError }: ErrorFallbackProps) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
       <div className="text-center">
-        <AlertTriangle className="mx-auto h-12 w-12 text-destructive" />
+        <AlertTriangle className="mx-auto size-12 text-destructive" />
         <h1 className="mt-4 text-2xl font-bold">Page Error</h1>
         <p className="mt-2 text-muted-foreground">
           This page encountered an error and cannot be displayed.
         </p>
-        <div className="mt-6 flex gap-4 justify-center">
+        <div className="mt-6 flex justify-center gap-4">
           <Button onClick={resetError}>Try Again</Button>
           <Button variant="outline" onClick={() => window.location.href = '/'}>
             Return Home

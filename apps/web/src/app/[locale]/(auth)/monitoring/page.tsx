@@ -1,4 +1,5 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+
 import { PerformanceDashboard } from '@/components/monitoring/PerformanceDashboard';
 
 export const metadata: Metadata = {

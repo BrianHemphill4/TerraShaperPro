@@ -1,17 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { api } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import type { ApprovalStatus,ProjectApproval } from '@terrashaper/shared';
 import { formatDistanceToNow } from 'date-fns';
-import { CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react';
-import type { ProjectApproval, ApprovalStatus } from '@terrashaper/shared';
+import { AlertCircle, CheckCircle, Clock,XCircle } from 'lucide-react';
+import { useState } from 'react';
 
-interface ApprovalPanelProps {
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { api } from '@/lib/api';
+
+type ApprovalPanelProps = {
   projectId: string;
   versionId?: string;
 }
@@ -84,7 +85,7 @@ export function ApprovalPanel({ projectId, versionId }: ApprovalPanelProps) {
                   const Icon = config.icon;
                   return (
                     <>
-                      <Icon className={`h-5 w-5 ${config.color} text-white rounded-full p-1`} />
+                      <Icon className={`size-5 ${config.color} rounded-full p-1 text-white`} />
                       <Badge className={config.color}>
                         {config.label}
                       </Badge>

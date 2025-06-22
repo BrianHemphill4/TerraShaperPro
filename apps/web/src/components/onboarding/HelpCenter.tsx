@@ -1,8 +1,11 @@
 'use client';
 
+import { ONBOARDING_FLOWS } from '@terrashaper/shared';
+import { HelpCircle, Play } from 'lucide-react';
 import { useState } from 'react';
-import { HelpCircle, BookOpen, Play, Settings, X } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import {
   Sheet,
   SheetContent,
@@ -11,13 +14,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useOnboardingStore } from '@/stores/onboarding';
+
 import { OnboardingProgress } from './OnboardingProgress';
 import { SampleProjectsGallery } from './SampleProjectsGallery';
-import { useOnboardingStore } from '@/stores/onboarding';
-import { ONBOARDING_FLOWS } from '@terrashaper/shared';
 
 export function HelpCenter() {
   const [open, setOpen] = useState(false);
@@ -29,13 +31,13 @@ export function HelpCenter() {
         <Button
           variant="ghost"
           size="icon"
-          className="fixed bottom-4 right-4 rounded-full shadow-lg bg-background hover:bg-accent z-50"
+          className="fixed bottom-4 right-4 z-50 rounded-full bg-background shadow-lg hover:bg-accent"
           aria-label="Open help center"
         >
-          <HelpCircle className="w-5 h-5" />
+          <HelpCircle className="size-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
+      <SheetContent className="w-full overflow-y-auto sm:max-w-2xl">
         <SheetHeader>
           <SheetTitle>Help & Learning Center</SheetTitle>
           <SheetDescription>
@@ -55,7 +57,7 @@ export function HelpCenter() {
             <OnboardingProgress />
             
             <div className="mt-6">
-              <h3 className="font-semibold mb-3">Quick Actions</h3>
+              <h3 className="mb-3 font-semibold">Quick Actions</h3>
               <div className="grid gap-2">
                 <Button
                   variant="outline"
@@ -65,7 +67,7 @@ export function HelpCenter() {
                     setOpen(false);
                   }}
                 >
-                  <Play className="w-4 h-4 mr-2" />
+                  <Play className="mr-2 size-4" />
                   Replay Canvas Tutorial
                 </Button>
                 <Button
@@ -76,7 +78,7 @@ export function HelpCenter() {
                     setOpen(false);
                   }}
                 >
-                  <Play className="w-4 h-4 mr-2" />
+                  <Play className="mr-2 size-4" />
                   Learn Drawing Tools
                 </Button>
               </div>
@@ -90,75 +92,75 @@ export function HelpCenter() {
           <TabsContent value="shortcuts" className="space-y-4">
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold mb-3">Tool Shortcuts</h3>
+                <h3 className="mb-3 font-semibold">Tool Shortcuts</h3>
                 <div className="grid gap-2 text-sm">
                   <div className="flex justify-between py-1">
                     <span>Select Tool</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">S</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">S</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Polygon Tool</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">P</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">P</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Area Tool</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">A</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">A</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Line Tool</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">L</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">L</kbd>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="font-semibold mb-3">Edit Shortcuts</h3>
+                <h3 className="mb-3 font-semibold">Edit Shortcuts</h3>
                 <div className="grid gap-2 text-sm">
                   <div className="flex justify-between py-1">
                     <span>Copy</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">⌘/Ctrl + C</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + C</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Paste</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">⌘/Ctrl + V</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + V</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Cut</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">⌘/Ctrl + X</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + X</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Select All</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">⌘/Ctrl + A</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + A</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Delete</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">Delete/Backspace</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">Delete/Backspace</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Undo</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">⌘/Ctrl + Z</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + Z</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Redo</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">⌘/Ctrl + Shift + Z</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + Shift + Z</kbd>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="font-semibold mb-3">Object Shortcuts</h3>
+                <h3 className="mb-3 font-semibold">Object Shortcuts</h3>
                 <div className="grid gap-2 text-sm">
                   <div className="flex justify-between py-1">
                     <span>Group</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">⌘/Ctrl + G</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + G</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Ungroup</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">⌘/Ctrl + U</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + U</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Cancel Operation</span>
-                    <kbd className="px-2 py-0.5 text-xs bg-muted rounded">Escape</kbd>
+                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">Escape</kbd>
                   </div>
                 </div>
               </div>

@@ -29,7 +29,7 @@ export default function ProjectsPage() {
   return (
     <div className="container mx-auto py-6">
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Projects</h1>
             <p className="text-muted-foreground">
@@ -37,7 +37,7 @@ export default function ProjectsPage() {
             </p>
           </div>
           <Button>
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="mr-2 size-4" />
             New Project
           </Button>
         </div>
@@ -46,9 +46,9 @@ export default function ProjectsPage() {
       </div>
 
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search projects..."
               value={searchQuery}
@@ -82,23 +82,23 @@ export default function ProjectsPage() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-64 bg-muted animate-pulse rounded-lg" />
+              <div key={i} className="h-64 animate-pulse rounded-lg bg-muted" />
             ))}
           </div>
         ) : data?.projects.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-4">
+          <div className="py-12 text-center">
+            <p className="mb-4 text-muted-foreground">
               No projects found. Create your first project to get started.
             </p>
             <Button>
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 size-4" />
               Create Project
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {data?.projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}

@@ -1,4 +1,7 @@
+import type { NextWebVitalsMetric } from 'next/app';
 import { unstable_cache } from 'next/cache';
+
+import { ApiMetrics } from './metrics';
 
 // Cache configuration
 export const CACHE_TAGS = {
@@ -353,4 +356,41 @@ export const registerServiceWorker = async () => {
   } catch (error) {
     console.error('Service Worker registration failed:', error);
   }
-}; 
+};
+
+function logPerformanceEvent(name: string, data?: Record<string, any>) {
+  ApiMetrics.getInstance().recordCustom(name, 1, 'count', data);
+}
+
+function logPerformanceError(error: Error, context?: Record<string, any>) {
+  ApiMetrics.getInstance().recordCustom('performance.error', 1, 'count', {
+    error: error.message,
+    ...context,
+  });
+}
+
+// Replace console.log statements with metric logging
+function reportWebVitals(metric: NextWebVitalsMetric) {
+  logPerformanceEvent(`web-vitals.${metric.name}`, {
+    value: metric.value,
+    id: metric.id,
+    label: metric.label || 'none',
+  });
+}
+
+function reportResourceTiming(entry: PerformanceResourceTiming) {
+  logPerformanceEvent('resource.timing', {
+    name: entry.name,
+    duration: entry.duration,
+    initiatorType: entry.initiatorType,
+    size: entry.transferSize?.toString() || '0',
+  });
+}
+
+function reportNavigationTiming(entry: PerformanceNavigationTiming) {
+  logPerformanceEvent('navigation.timing', {
+    type: entry.type,
+    duration: entry.duration,
+    redirectCount: entry.redirectCount?.toString() || '0',
+  });
+} 

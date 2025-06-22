@@ -1,9 +1,10 @@
 import { useUser } from '@clerk/nextjs';
-import { api } from '@/lib/api';
 import { FeatureGateService } from '@terrashaper/shared/services/feature-gate.service';
-import { SubscriptionTier, PlanFeatures } from '@terrashaper/shared/types/billing';
+import type { PlanFeatures,SubscriptionTier } from '@terrashaper/shared/types/billing';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+
+import { api } from '@/lib/api';
 
 export function useFeatureGate() {
   const { user } = useUser();

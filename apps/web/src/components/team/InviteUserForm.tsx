@@ -1,17 +1,18 @@
 'use client';
 
+import type { UserRole } from '@terrashaper/shared';
+import { Mail, Send } from 'lucide-react';
 import { useState } from 'react';
-import { api } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Mail, Send } from 'lucide-react';
-import type { UserRole } from '@terrashaper/shared';
+import { api } from '@/lib/api';
 
-interface InviteUserFormProps {
+type InviteUserFormProps = {
   onInviteSent?: () => void;
 }
 
@@ -45,7 +46,7 @@ export function InviteUserForm({ onInviteSent }: InviteUserFormProps) {
           <div className="space-y-2">
             <Label htmlFor="email">Email Address</Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Mail className="absolute left-3 top-3 size-4 text-gray-400" />
               <Input
                 id="email"
                 type="email"
@@ -94,7 +95,7 @@ export function InviteUserForm({ onInviteSent }: InviteUserFormProps) {
             className="w-full"
             disabled={inviteMutation.isLoading || !email}
           >
-            <Send className="mr-2 h-4 w-4" />
+            <Send className="mr-2 size-4" />
             {inviteMutation.isLoading ? 'Sending...' : 'Send Invitation'}
           </Button>
         </form>

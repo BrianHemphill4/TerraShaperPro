@@ -1,4 +1,4 @@
-export interface SampleProject {
+export type SampleProject = {
   id: string;
   name: string;
   description: string;

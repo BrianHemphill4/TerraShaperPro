@@ -82,3 +82,7 @@ export async function register() {
     });
   }
 }
+
+export function onError(error: Error, _hint: ErrorEvent | undefined) {
+  // ... existing code ...
+}

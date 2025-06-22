@@ -1,10 +1,13 @@
 'use client';
 
+import type { Invoice } from '@terrashaper/shared';
+import { format } from 'date-fns';
+import { Download, ExternalLink, FileText } from 'lucide-react';
 import { useState } from 'react';
-import { api } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
@@ -14,9 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { format } from 'date-fns';
-import { Download, ExternalLink, FileText } from 'lucide-react';
-import type { Invoice } from '@terrashaper/shared';
+import { api } from '@/lib/api';
 
 const statusColors: Record<string, string> = {
   paid: 'bg-green-500',
@@ -59,13 +60,13 @@ export function InvoiceList() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center">
-          <FileText className="mr-2 h-5 w-5" />
+          <FileText className="mr-2 size-5" />
           Invoices
         </CardTitle>
       </CardHeader>
       <CardContent>
         {invoices.length === 0 ? (
-          <div className="text-center py-8">
+          <div className="py-8 text-center">
             <p className="text-gray-500">No invoices yet</p>
           </div>
         ) : (
@@ -105,7 +106,7 @@ export function InvoiceList() {
                             variant="ghost"
                             onClick={() => window.open(invoice.stripe_hosted_invoice_url!, '_blank')}
                           >
-                            <ExternalLink className="h-4 w-4" />
+                            <ExternalLink className="size-4" />
                           </Button>
                         )}
                         {invoice.stripe_invoice_pdf && (
@@ -114,7 +115,7 @@ export function InvoiceList() {
                             variant="ghost"
                             onClick={() => window.open(invoice.stripe_invoice_pdf!, '_blank')}
                           >
-                            <Download className="h-4 w-4" />
+                            <Download className="size-4" />
                           </Button>
                         )}
                       </div>

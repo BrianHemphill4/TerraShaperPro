@@ -1,28 +1,29 @@
 'use client';
 
+import { Download,TrendingUp } from 'lucide-react';
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { 
-  AreaChart, 
   Area, 
-  BarChart, 
+  AreaChart, 
   Bar, 
-  LineChart, 
-  Line,
-  XAxis, 
-  YAxis, 
+  BarChart, 
   CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  PieChart,
+  Cell,
+  Line,
+  LineChart, 
   Pie,
-  Cell
+  PieChart,
+  ResponsiveContainer,
+  Tooltip, 
+  XAxis, 
+  YAxis
 } from 'recharts';
-import { Calendar, TrendingUp, Download } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { api } from '@/lib/api';
 import { formatBytes } from '@/lib/utils';
 
@@ -64,7 +65,7 @@ export function UsageAnalytics() {
             </SelectContent>
           </Select>
           <Button variant="outline" onClick={exportUsageReport}>
-            <Download className="h-4 w-4 mr-2" />
+            <Download className="mr-2 size-4" />
             Export Report
           </Button>
         </div>
@@ -160,7 +161,7 @@ export function UsageAnalytics() {
               {breakdown.teamMembers.slice(0, 5).map((member) => (
                 <div key={member.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
+                    <div className="flex size-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
                       {member.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <span className="text-sm">{member.name}</span>
@@ -200,7 +201,7 @@ export function UsageAnalytics() {
         <CardContent>
           <div className="space-y-4">
             <div>
-              <h4 className="text-sm font-medium mb-2">Hourly Distribution</h4>
+              <h4 className="mb-2 text-sm font-medium">Hourly Distribution</h4>
               <ResponsiveContainer width="100%" height={150}>
                 <BarChart data={analytics.hourlyDistribution}>
                   <XAxis dataKey="hour" />
@@ -211,7 +212,7 @@ export function UsageAnalytics() {
               </ResponsiveContainer>
             </div>
             
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+            <div className="grid grid-cols-2 gap-4 border-t pt-4">
               <div>
                 <p className="text-sm font-medium">Peak Usage Day</p>
                 <p className="text-2xl font-bold">{analytics.peakDay}</p>
@@ -235,7 +236,7 @@ export function UsageAnalytics() {
               <CardTitle>Usage Forecast</CardTitle>
               <CardDescription>Predicted usage for the current billing period</CardDescription>
             </div>
-            <TrendingUp className="h-5 w-5 text-muted-foreground" />
+            <TrendingUp className="size-5 text-muted-foreground" />
           </div>
         </CardHeader>
         <CardContent>
@@ -254,7 +255,7 @@ export function UsageAnalytics() {
               <div>
                 <p className="text-sm font-medium">Estimated Overages</p>
                 <p className="text-2xl font-bold text-yellow-600">${analytics.estimatedOverages}</p>
-                <p className="text-sm text-muted-foreground mt-1">if current pace continues</p>
+                <p className="mt-1 text-sm text-muted-foreground">if current pace continues</p>
               </div>
             </div>
           </div>

@@ -10,6 +10,7 @@ import {
   Users,
   XCircle
 } from 'lucide-react';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -171,7 +172,7 @@ export function RenderProgress({ renderId, onComplete, onError }: RenderProgress
         {(status === 'pending' || status === 'processing') && (
           <div className="space-y-2">
             <Progress value={progress} className="h-2" />
-            <div className="flex justify-between text-sm text-muted-foreground">
+            <div className="text-muted-foreground flex justify-between text-sm">
               <span>{progress}%</span>
               {estimatedTime && status === 'pending' && (
                 <span>~{formatTime(estimatedTime)} remaining</span>
@@ -248,10 +249,13 @@ export function RenderProgress({ renderId, onComplete, onError }: RenderProgress
         {/* Success State */}
         {status === 'completed' && renderStatus?.imageUrl && (
           <div className="space-y-4">
-            <img 
-              src={renderStatus.thumbnailUrl || renderStatus.imageUrl} 
+            <Image
+              src={renderStatus.imageUrl}
               alt="Rendered landscape"
-              className="w-full rounded-lg shadow-lg"
+              width={800}
+              height={600}
+              className="rounded-lg shadow-lg"
+              priority
             />
             <div className="flex space-x-2">
               <Button asChild className="flex-1">

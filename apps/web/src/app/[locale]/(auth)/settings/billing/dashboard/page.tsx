@@ -1,24 +1,24 @@
 'use client';
 
+import {
+  CreditCard, 
+  Download,
+  FileText, 
+  Settings,
+  TrendingUp
+} from 'lucide-react';
 import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+
+import { BillingAlerts } from '@/components/billing/BillingAlerts';
 import { BillingOverview } from '@/components/billing/BillingOverview';
-import { UsageAnalytics } from '@/components/billing/UsageAnalytics';
 import { InvoiceHistory } from '@/components/billing/InvoiceHistory';
+import { OverageAlert } from '@/components/billing/OverageAlert';
 import { PaymentMethodsManager } from '@/components/billing/PaymentMethodsManager';
 import { SubscriptionManager } from '@/components/billing/SubscriptionManager';
-import { BillingAlerts } from '@/components/billing/BillingAlerts';
-import { OverageAlert } from '@/components/billing/OverageAlert';
-import { 
-  CreditCard, 
-  FileText, 
-  TrendingUp, 
-  Settings,
-  Download,
-  AlertCircle
-} from 'lucide-react';
+import { UsageAnalytics } from '@/components/billing/UsageAnalytics';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { api } from '@/lib/api';
 
 export default function BillingDashboard() {
@@ -33,17 +33,17 @@ export default function BillingDashboard() {
   };
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <div className="container mx-auto space-y-6 py-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Billing Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground">
             Manage your subscription, usage, and billing information
           </p>
         </div>
         <Button onClick={handleExportBillingData} variant="outline">
-          <Download className="h-4 w-4 mr-2" />
+          <Download className="mr-2 size-4" />
           Export Data
         </Button>
       </div>
@@ -56,25 +56,25 @@ export default function BillingDashboard() {
 
       {/* Main Dashboard Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid grid-cols-5 w-full max-w-2xl">
+        <TabsList className="grid w-full max-w-2xl grid-cols-5">
           <TabsTrigger value="overview" className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
+            <TrendingUp className="size-4" />
             Overview
           </TabsTrigger>
           <TabsTrigger value="usage" className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
+            <TrendingUp className="size-4" />
             Usage
           </TabsTrigger>
           <TabsTrigger value="invoices" className="flex items-center gap-2">
-            <FileText className="h-4 w-4" />
+            <FileText className="size-4" />
             Invoices
           </TabsTrigger>
           <TabsTrigger value="payment" className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4" />
+            <CreditCard className="size-4" />
             Payment
           </TabsTrigger>
           <TabsTrigger value="plan" className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
+            <Settings className="size-4" />
             Plan
           </TabsTrigger>
         </TabsList>
@@ -83,7 +83,7 @@ export default function BillingDashboard() {
           <BillingOverview />
           
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium">Current Bill</CardTitle>
@@ -92,7 +92,7 @@ export default function BillingDashboard() {
                 <div className="text-2xl font-bold">
                   ${((subscription?.plan?.price_monthly || 0) + (usageSummary?.estimatedOverages || 0)).toFixed(2)}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="mt-1 text-xs text-muted-foreground">
                   Due on {new Date(subscription?.subscription?.currentPeriodEnd || '').toLocaleDateString()}
                 </p>
               </CardContent>
@@ -106,7 +106,7 @@ export default function BillingDashboard() {
                 <div className="text-2xl font-bold">
                   {usageSummary?.limits?.renders || 0}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="mt-1 text-xs text-muted-foreground">
                   Of {subscription?.plan?.render_credits_monthly || 0} monthly credits
                 </p>
               </CardContent>
@@ -120,7 +120,7 @@ export default function BillingDashboard() {
                 <div className="text-2xl font-bold">
                   {new Date(subscription?.subscription?.currentPeriodEnd || '').toLocaleDateString()}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="mt-1 text-xs text-muted-foreground">
                   {subscription?.subscription?.status === 'active' ? 'Auto-renewal' : 'Cancelled'}
                 </p>
               </CardContent>

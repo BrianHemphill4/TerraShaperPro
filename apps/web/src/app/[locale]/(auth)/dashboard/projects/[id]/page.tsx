@@ -30,7 +30,7 @@ export default function ProjectDetailPage() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold">{project.name}</h1>
         {project.description && (
-          <p className="text-muted-foreground mt-2 max-w-2xl">{project.description}</p>
+          <p className="mt-2 max-w-2xl text-muted-foreground">{project.description}</p>
         )}
       </div>
 

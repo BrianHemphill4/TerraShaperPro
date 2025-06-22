@@ -6,8 +6,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import AssetPalette from '@/components/canvas/AssetPalette';
 import DesignCanvas from '@/components/canvas/DesignCanvas';
-import { AlertModal, ConfirmModal } from '@/components/ui/modal';
 import { HelpCenter } from '@/components/onboarding/HelpCenter';
+import { AlertModal, ConfirmModal } from '@/components/ui/modal';
 import { trpc } from '@/lib/trpc';
 
 import styles from './design.module.css';

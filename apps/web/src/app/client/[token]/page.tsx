@@ -1,26 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { 
+  AlertCircle,
+  CheckCircle,
+  Eye,
+  MessageSquare, 
+  XCircle
+} from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { api } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { useState } from 'react';
+
+import DesignCanvas from '@/components/canvas/DesignCanvas';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import DesignCanvas from '@/components/canvas/DesignCanvas';
-import { formatDistanceToNow } from 'date-fns';
-import { 
-  MessageSquare, 
-  CheckCircle, 
-  XCircle, 
-  AlertCircle,
-  Eye,
-  Download
-} from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { api } from '@/lib/api';
 
 export default function ClientPortalPage() {
   const params = useParams();
@@ -77,7 +76,7 @@ export default function ClientPortalPage() {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+          <div className="mb-4 size-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
           <p>Loading project...</p>
         </div>
       </div>
@@ -88,7 +87,7 @@ export default function ClientPortalPage() {
     return (
       <div className="flex h-screen items-center justify-center">
         <Alert variant="destructive" className="max-w-md">
-          <AlertCircle className="h-4 w-4" />
+          <AlertCircle className="size-4" />
           <AlertDescription>
             {error.message || 'This link is invalid or has expired.'}
           </AlertDescription>
@@ -145,14 +144,14 @@ export default function ClientPortalPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto p-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold">{project?.name}</h1>
               <p className="text-gray-600">{project?.description}</p>
             </div>
             <Badge>
-              <Eye className="mr-1 h-3 w-3" />
+              <Eye className="mr-1 size-3" />
               View Only
             </Badge>
           </div>
@@ -174,7 +173,7 @@ export default function ClientPortalPage() {
                 <div className="h-[600px]">
                   <DesignCanvas
                     initialData={project?.canvas_data}
-                    readOnly={true}
+                    readOnly
                   />
                 </div>
               </CardContent>
@@ -196,7 +195,7 @@ export default function ClientPortalPage() {
                         onChange={(e) => setComment(e.target.value)}
                       />
                       <Button onClick={handleAddComment}>
-                        <MessageSquare className="h-4 w-4" />
+                        <MessageSquare className="size-4" />
                       </Button>
                     </div>
                     
@@ -234,7 +233,7 @@ export default function ClientPortalPage() {
                         className="flex-1"
                         variant="default"
                       >
-                        <CheckCircle className="mr-2 h-4 w-4" />
+                        <CheckCircle className="mr-2 size-4" />
                         Approve
                       </Button>
                       <Button
@@ -242,7 +241,7 @@ export default function ClientPortalPage() {
                         className="flex-1"
                         variant="outline"
                       >
-                        <AlertCircle className="mr-2 h-4 w-4" />
+                        <AlertCircle className="mr-2 size-4" />
                         Request Changes
                       </Button>
                       <Button
@@ -250,7 +249,7 @@ export default function ClientPortalPage() {
                         className="flex-1"
                         variant="destructive"
                       >
-                        <XCircle className="mr-2 h-4 w-4" />
+                        <XCircle className="mr-2 size-4" />
                         Reject
                       </Button>
                     </div>

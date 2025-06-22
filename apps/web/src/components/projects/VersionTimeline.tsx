@@ -87,7 +87,7 @@ export function VersionTimeline({ projectId }: VersionTimelineProps) {
             </div>
           </CardHeader>
           {version.comment && (
-            <CardContent className="text-muted-foreground text-sm">
+            <CardContent className="text-sm text-muted-foreground">
               {version.comment}
             </CardContent>
           )}

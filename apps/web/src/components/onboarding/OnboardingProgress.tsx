@@ -1,17 +1,18 @@
 'use client';
 
-import { useMemo } from 'react';
-import { CheckCircle2, Circle, Lock } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useOnboardingStore } from '@/stores/onboarding';
-import { onboardingFlows } from '@/lib/onboarding-flows';
 import { ONBOARDING_FLOWS, type OnboardingFlowId } from '@terrashaper/shared';
-import { cn } from '@/lib/utils';
+import { CheckCircle2, Circle, Lock } from 'lucide-react';
+import { useMemo } from 'react';
 
-interface FlowProgress {
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { onboardingFlows } from '@/lib/onboarding-flows';
+import { cn } from '@/lib/utils';
+import { useOnboardingStore } from '@/stores/onboarding';
+
+type FlowProgress = {
   flowId: OnboardingFlowId;
   name: string;
   description: string;
@@ -108,33 +109,33 @@ export function OnboardingProgress() {
               )}
             >
               {/* Status Icon */}
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 {flow.status === 'completed' ? (
-                  <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  <CheckCircle2 className="size-5 text-green-600 dark:text-green-400" />
                 ) : flow.status === 'locked' ? (
-                  <Lock className="w-5 h-5 text-muted-foreground" />
+                  <Lock className="size-5 text-muted-foreground" />
                 ) : (
-                  <Circle className="w-5 h-5 text-muted-foreground" />
+                  <Circle className="size-5 text-muted-foreground" />
                 )}
               </div>
 
               {/* Content */}
-              <div className="flex-1 min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <h4 className="font-medium truncate">{flow.name}</h4>
+                  <h4 className="truncate font-medium">{flow.name}</h4>
                   {flow.status === 'completed' && (
                     <Badge variant="secondary" className="text-xs">
                       Completed
                     </Badge>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground truncate">
+                <p className="truncate text-sm text-muted-foreground">
                   {flow.description}
                 </p>
               </div>
 
               {/* Action */}
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 {flow.status === 'completed' ? (
                   <Button
                     variant="ghost"
@@ -163,11 +164,11 @@ export function OnboardingProgress() {
 
         {/* Achievement Message */}
         {overallProgress === 100 && (
-          <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+          <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-950">
             <p className="text-sm font-medium text-green-800 dark:text-green-200">
               🎉 Congratulations! You've completed all tutorials!
             </p>
-            <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+            <p className="mt-1 text-sm text-green-700 dark:text-green-300">
               You're now ready to create amazing landscape designs.
             </p>
           </div>

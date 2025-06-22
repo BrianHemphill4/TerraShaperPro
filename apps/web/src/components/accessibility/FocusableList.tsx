@@ -1,10 +1,11 @@
 'use client';
 
 import { useRef } from 'react';
+
 import { useArrowKeyNavigation } from '@/hooks/use-focus-management';
 import { cn } from '@/lib/utils';
 
-interface FocusableListProps {
+type FocusableListProps = {
   children: React.ReactNode[];
   orientation?: 'horizontal' | 'vertical' | 'both';
   className?: string;

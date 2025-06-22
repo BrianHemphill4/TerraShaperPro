@@ -1,10 +1,11 @@
+import { auth } from '@clerk/nextjs';
+
 import { BillingOverview } from '@/components/billing/BillingOverview';
 import { PricingPlans } from '@/components/billing/PricingPlans';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { auth } from '@clerk/nextjs';
 
 export default async function BillingSettingsPage() {
-  const { userId } = auth();
+  const { _userId } = auth();
   
   // In a real app, you'd fetch the current subscription tier from the database
   const currentTier = 'free';

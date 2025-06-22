@@ -1,12 +1,13 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import * as animations from '@/lib/animations';
+import { AnimatePresence,motion } from 'framer-motion';
 
-interface AnimatedCardProps extends React.HTMLAttributes<HTMLDivElement> {
+import * as animations from '@/lib/animations';
+import { cn } from '@/lib/utils';
+
+type AnimatedCardProps = {
   children: React.ReactNode;
-}
+} & React.HTMLAttributes<HTMLDivElement>
 
 export function AnimatedCard({ children, className, ...props }: AnimatedCardProps) {
   return (
@@ -23,9 +24,9 @@ export function AnimatedCard({ children, className, ...props }: AnimatedCardProp
   );
 }
 
-interface AnimatedButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+type AnimatedButtonProps = {
   children: React.ReactNode;
-}
+} & React.ButtonHTMLAttributes<HTMLButtonElement>
 
 export function AnimatedButton({ children, className, ...props }: AnimatedButtonProps) {
   return (
@@ -40,7 +41,7 @@ export function AnimatedButton({ children, className, ...props }: AnimatedButton
   );
 }
 
-interface FadeInProps {
+type FadeInProps = {
   children: React.ReactNode;
   delay?: number;
   duration?: number;
@@ -60,7 +61,7 @@ export function FadeIn({ children, delay = 0, duration = 0.3, className }: FadeI
   );
 }
 
-interface StaggeredListProps {
+type StaggeredListProps = {
   children: React.ReactNode[];
   className?: string;
   itemClassName?: string;
@@ -87,7 +88,7 @@ export function StaggeredList({ children, className, itemClassName }: StaggeredL
   );
 }
 
-interface AnimatedPresenceWrapperProps {
+type AnimatedPresenceWrapperProps = {
   children: React.ReactNode;
   show: boolean;
   animation?: 'fade' | 'scale' | 'slideRight' | 'slideLeft';
@@ -121,7 +122,7 @@ export function AnimatedPresenceWrapper({
   );
 }
 
-interface PulsingDotProps {
+type PulsingDotProps = {
   className?: string;
   color?: string;
 }
@@ -146,7 +147,7 @@ export function PulsingDot({ className, color = 'bg-green-500' }: PulsingDotProp
   );
 }
 
-interface SuccessCheckmarkProps {
+type SuccessCheckmarkProps = {
   size?: number;
   className?: string;
 }
@@ -174,7 +175,7 @@ export function SuccessCheckmark({ size = 24, className }: SuccessCheckmarkProps
   );
 }
 
-interface ErrorShakeProps {
+type ErrorShakeProps = {
   children: React.ReactNode;
   shake: boolean;
   className?: string;

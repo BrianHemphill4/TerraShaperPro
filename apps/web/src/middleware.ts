@@ -6,7 +6,7 @@ import {
 } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 
-import { AppConfig, AllLocales } from './utils/AppConfig';
+import { AllLocales,AppConfig } from './utils/AppConfig';
 
 // Helper function to get allowed origins
 function getAllowedOrigins(): string[] {
