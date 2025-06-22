@@ -1,34 +1,35 @@
-import helmet from 'helmet';
+import helmet from '@fastify/helmet';
 import type { FastifyInstance } from 'fastify';
 
 // OWASP Security Headers Configuration
 export const securityHeaders = {
   // Prevent clickjacking attacks
   'X-Frame-Options': 'DENY',
-  
+
   // Prevent MIME type sniffing
   'X-Content-Type-Options': 'nosniff',
-  
+
   // Enable XSS filter
   'X-XSS-Protection': '1; mode=block',
-  
+
   // Control referrer information
   'Referrer-Policy': 'strict-origin-when-cross-origin',
-  
+
   // Restrict browser features
-  'Permissions-Policy': 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=()',
-  
+  'Permissions-Policy':
+    'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=()',
+
   // HSTS - Force HTTPS
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-  
+
   // Prevent DNS prefetching
   'X-DNS-Prefetch-Control': 'off',
-  
+
   // Disable client-side caching for sensitive data
   'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-  'Pragma': 'no-cache',
-  'Expires': '0',
-  
+  Pragma: 'no-cache',
+  Expires: '0',
+
   // Additional security headers
   'X-Permitted-Cross-Domain-Policies': 'none',
   'Expect-CT': 'max-age=86400, enforce',
@@ -52,11 +53,24 @@ export const cspConfig = {
 };
 
 // Apply security configuration to Fastify
-export function applySecurityConfig(app: FastifyInstance): void {
-  // Register helmet for security headers
-  app.register(helmet, {
+export async function configureSecurityMiddleware(app: FastifyInstance) {
+  await app.register(helmet, {
     contentSecurityPolicy: {
-      directives: cspConfig,
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+        fontSrc: ["'self'", 'https:', 'data:'],
+        connectSrc: ["'self'", 'https:'],
+        mediaSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        frameSrc: ["'self'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+        frameAncestors: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
     },
     hsts: {
       maxAge: 31536000,
@@ -71,7 +85,7 @@ export function applySecurityConfig(app: FastifyInstance): void {
     Object.entries(securityHeaders).forEach(([key, value]) => {
       reply.header(key, value);
     });
-    
+
     // Remove sensitive headers
     reply.removeHeader('X-Powered-By');
     reply.removeHeader('Server');
@@ -105,12 +119,12 @@ export const corsConfig = {
       'https://www.terrashaperpro.com',
       'https://app.terrashaperpro.com',
     ];
-    
+
     // Allow requests with no origin (like mobile apps)
     if (!origin) {
       return callback(null, true);
     }
-    
+
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
