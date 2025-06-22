@@ -1,12 +1,11 @@
-// import type { RenderJobResult } from '@terrashaper/queue';
+import type { RenderJobResult } from '@terrashaper/queue';
 import { createRenderWorker } from '@terrashaper/queue';
 import dotenv from 'dotenv';
 
-import type { RenderJobResult } from '../../../packages/queue/src/types';
 import { connection } from './config/redis';
 import { logger } from './lib/logger';
-import { captureException, initSentry } from './lib/sentry';
 import { workerMetrics } from './lib/metrics';
+import { captureException, initSentry } from './lib/sentry';
 import { startFailureMonitor } from './processors/failureMonitor';
 import { processRenderJob } from './processors/renderProcessor';
 
@@ -60,12 +59,18 @@ startFailureMonitor();
 // Start periodic queue metrics collection
 setInterval(async () => {
   try {
-    const queueMetrics = await worker.getQueueMetrics();
-    workerMetrics.recordQueueMetrics(
-      'render',
-      queueMetrics.counts.active + queueMetrics.counts.waiting,
-      queueMetrics.counts.waiting,
-      queueMetrics.counts.active
+    // Use the metrics function from the queue module instead of accessing worker.queue
+    const { getRenderQueue } = await import('@terrashaper/queue');
+    const queue = getRenderQueue(connection);
+    const waiting = await queue.getWaitingCount();
+    const active = await queue.getActiveCount();
+    const completed = await queue.getCompletedCount();
+    const failed = await queue.getFailedCount();
+
+    workerMetrics.recordQueueMetrics('render', waiting + active, waiting, active);
+
+    logger.debug(
+      `Queue metrics: waiting=${waiting}, active=${active}, completed=${completed}, failed=${failed}`
     );
   } catch (error) {
     logger.error('Failed to collect queue metrics', error);

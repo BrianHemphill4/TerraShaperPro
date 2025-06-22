@@ -1,13 +1,13 @@
 import * as Sentry from '@sentry/node';
 
-export interface JobMetrics {
+export type JobMetrics = {
   jobId: string;
   jobType: string;
   duration: number;
   success: boolean;
   error?: string;
   metadata?: Record<string, any>;
-}
+};
 
 export class WorkerMetrics {
   private static instance: WorkerMetrics;
@@ -40,21 +40,21 @@ export class WorkerMetrics {
   recordJobComplete(metrics: JobMetrics): void {
     // Add to buffer
     this.metricsBuffer.push(metrics);
-    
-    // Record in Sentry
-    const transaction = Sentry.getCurrentHub().getScope().getTransaction();
-    if (transaction) {
-      transaction.setMeasurement('job.duration', metrics.duration, 'millisecond');
-      transaction.setTag('job.type', metrics.jobType);
-      transaction.setTag('job.success', metrics.success.toString());
-      
+
+    // Record in Sentry with current span
+    Sentry.withScope((scope) => {
+      scope.setTag('job.type', metrics.jobType);
+      scope.setTag('job.success', metrics.success.toString());
+
       if (metrics.metadata) {
         Object.entries(metrics.metadata).forEach(([key, value]) => {
-          transaction.setData(key, value);
+          scope.setContext(key, value);
         });
       }
-    }
-    
+
+      Sentry.setMeasurement('job.duration', metrics.duration, 'millisecond');
+    });
+
     // Log job completion
     if (metrics.success) {
       Sentry.addBreadcrumb({
@@ -81,7 +81,7 @@ export class WorkerMetrics {
         },
       });
     }
-    
+
     // Check for performance issues
     this.checkPerformance(metrics);
   }
@@ -93,7 +93,7 @@ export class WorkerMetrics {
       'image.optimize': 5000, // 5 seconds
       'image.thumbnail': 2000, // 2 seconds
     };
-    
+
     const threshold = performanceThresholds[metrics.jobType];
     if (threshold && metrics.duration > threshold) {
       Sentry.captureMessage(`Job performance threshold exceeded: ${metrics.jobType}`, {
@@ -106,7 +106,7 @@ export class WorkerMetrics {
         extra: {
           jobId: metrics.jobId,
           exceeded: metrics.duration - threshold,
-          percentage: ((metrics.duration / threshold) * 100).toFixed(2) + '%',
+          percentage: `${((metrics.duration / threshold) * 100).toFixed(2)}%`,
           ...metrics.metadata,
         },
       });
@@ -114,66 +114,100 @@ export class WorkerMetrics {
   }
 
   recordQueueMetrics(queueName: string, size: number, waiting: number, active: number): void {
-    Sentry.metrics.gauge(`queue.${queueName}.size`, size);
-    Sentry.metrics.gauge(`queue.${queueName}.waiting`, waiting);
-    Sentry.metrics.gauge(`queue.${queueName}.active`, active);
+    // Record queue metrics as tags instead of deprecated metrics API
+    Sentry.withScope((scope) => {
+      scope.setTag(`queue.${queueName}.size`, size.toString());
+      scope.setTag(`queue.${queueName}.waiting`, waiting.toString());
+      scope.setTag(`queue.${queueName}.active`, active.toString());
+
+      Sentry.addBreadcrumb({
+        message: `Queue metrics recorded for ${queueName}`,
+        category: 'metrics',
+        level: 'debug',
+        data: { size, waiting, active },
+      });
+    });
   }
 
   recordMemoryUsage(): void {
     const usage = process.memoryUsage();
-    
-    Sentry.metrics.gauge('worker.memory.heapUsed', usage.heapUsed / 1048576, {
-      unit: 'megabyte',
-    });
-    
-    Sentry.metrics.gauge('worker.memory.heapTotal', usage.heapTotal / 1048576, {
-      unit: 'megabyte',
-    });
-    
-    Sentry.metrics.gauge('worker.memory.rss', usage.rss / 1048576, {
-      unit: 'megabyte',
-    });
-    
-    Sentry.metrics.gauge('worker.memory.external', usage.external / 1048576, {
-      unit: 'megabyte',
+
+    Sentry.withScope((scope) => {
+      scope.setContext('memory', {
+        heapUsed: Math.round(usage.heapUsed / 1048576),
+        heapTotal: Math.round(usage.heapTotal / 1048576),
+        rss: Math.round(usage.rss / 1048576),
+        external: Math.round(usage.external / 1048576),
+        unit: 'megabyte',
+      });
+
+      Sentry.addBreadcrumb({
+        message: 'Memory usage recorded',
+        category: 'performance',
+        level: 'debug',
+        data: {
+          heapUsedMB: Math.round(usage.heapUsed / 1048576),
+          heapTotalMB: Math.round(usage.heapTotal / 1048576),
+          rssMB: Math.round(usage.rss / 1048576),
+        },
+      });
     });
   }
 
   recordCpuUsage(): void {
     const usage = process.cpuUsage();
-    
-    Sentry.metrics.gauge('worker.cpu.user', usage.user / 1000, {
-      unit: 'millisecond',
-    });
-    
-    Sentry.metrics.gauge('worker.cpu.system', usage.system / 1000, {
-      unit: 'millisecond',
+
+    Sentry.withScope((scope) => {
+      scope.setContext('cpu', {
+        user: Math.round(usage.user / 1000),
+        system: Math.round(usage.system / 1000),
+        unit: 'millisecond',
+      });
+
+      Sentry.addBreadcrumb({
+        message: 'CPU usage recorded',
+        category: 'performance',
+        level: 'debug',
+        data: {
+          userMs: Math.round(usage.user / 1000),
+          systemMs: Math.round(usage.system / 1000),
+        },
+      });
     });
   }
 
   private flushMetrics(): void {
-    if (this.metricsBuffer.length === 0) return;
-    
+    if (this.metricsBuffer.length === 0) {
+      return;
+    }
+
     // Aggregate metrics by job type
-    const aggregated = new Map<string, {
-      count: number;
-      successCount: number;
-      totalDuration: number;
-      minDuration: number;
-      maxDuration: number;
-      errors: string[];
-    }>();
-    
-    this.metricsBuffer.forEach(metric => {
+    const aggregated = new Map<
+      string,
+      {
+        count: number;
+        successCount: number;
+        totalDuration: number;
+        minDuration: number;
+        maxDuration: number;
+        errors: string[];
+      }
+    >();
+
+    this.metricsBuffer.forEach((metric) => {
       const existing = aggregated.get(metric.jobType);
-      
+
       if (existing) {
         existing.count++;
-        if (metric.success) existing.successCount++;
+        if (metric.success) {
+          existing.successCount++;
+        }
         existing.totalDuration += metric.duration;
         existing.minDuration = Math.min(existing.minDuration, metric.duration);
         existing.maxDuration = Math.max(existing.maxDuration, metric.duration);
-        if (metric.error) existing.errors.push(metric.error);
+        if (metric.error) {
+          existing.errors.push(metric.error);
+        }
       } else {
         aggregated.set(metric.jobType, {
           count: 1,
@@ -185,28 +219,40 @@ export class WorkerMetrics {
         });
       }
     });
-    
-    // Send aggregated metrics
+
+    // Send aggregated metrics as context data
     aggregated.forEach((data, jobType) => {
       const avgDuration = data.totalDuration / data.count;
       const successRate = (data.successCount / data.count) * 100;
-      
-      Sentry.metrics.distribution(`job.${jobType}.duration`, avgDuration, {
-        unit: 'millisecond',
+
+      Sentry.withScope((scope) => {
+        scope.setContext(`job_metrics_${jobType}`, {
+          avgDuration,
+          successRate,
+          count: data.count,
+          successCount: data.successCount,
+          failureCount: data.count - data.successCount,
+          minDuration: data.minDuration,
+          maxDuration: data.maxDuration,
+          errors: data.errors,
+        });
+
+        Sentry.addBreadcrumb({
+          message: `Aggregated metrics for ${jobType}`,
+          category: 'metrics',
+          level: 'info',
+          data: {
+            avgDuration,
+            successRate: `${successRate.toFixed(2)}%`,
+            count: data.count,
+          },
+        });
       });
-      
-      Sentry.metrics.gauge(`job.${jobType}.successRate`, successRate, {
-        unit: 'percent',
-      });
-      
-      Sentry.metrics.increment(`job.${jobType}.count`, data.count);
-      Sentry.metrics.increment(`job.${jobType}.success`, data.successCount);
-      Sentry.metrics.increment(`job.${jobType}.failure`, data.count - data.successCount);
     });
-    
+
     // Clear buffer
     this.metricsBuffer = [];
-    
+
     // Also record system metrics
     this.recordMemoryUsage();
     this.recordCpuUsage();
