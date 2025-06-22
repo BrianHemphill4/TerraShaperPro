@@ -1,11 +1,19 @@
 'use client';
 
+import type {SubscriptionTier } from '@terrashaper/shared';
+import { FeatureGateService,PlanFeatures  } from '@terrashaper/shared';
+import { 
+  AlertTriangle,
+  ArrowUp,
+  Check, 
+  Zap
+} from 'lucide-react';
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -14,21 +22,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { 
-  Check, 
-  X, 
-  Zap, 
-  AlertTriangle,
-  CreditCard,
-  Calendar,
-  ArrowUp,
-  ArrowDown
-} from 'lucide-react';
-import { api } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { api } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
-import { SubscriptionTier, PlanFeatures } from '@terrashaper/shared';
-import { FeatureGateService } from '@terrashaper/shared';
 
 const planDetails = {
   starter: {
@@ -152,7 +148,7 @@ export function SubscriptionManager() {
         className={`relative ${isCurrentPlan ? 'border-primary shadow-lg' : ''}`}
       >
         {isCurrentPlan && (
-          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
             <Badge>Current Plan</Badge>
           </div>
         )}
@@ -165,7 +161,7 @@ export function SubscriptionManager() {
             </div>
             {isUpgrade && tier !== 'enterprise' && (
               <Badge variant="secondary" className="gap-1">
-                <ArrowUp className="h-3 w-3" />
+                <ArrowUp className="size-3" />
                 Upgrade
               </Badge>
             )}
@@ -187,28 +183,28 @@ export function SubscriptionManager() {
           <div className="space-y-3">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-500" />
+                <Check className="size-4 text-green-500" />
                 <span className="text-sm">
                   {features.maxProjects === -1 ? 'Unlimited' : features.maxProjects} projects
                 </span>
               </div>
               
               <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-500" />
+                <Check className="size-4 text-green-500" />
                 <span className="text-sm">
                   {features.maxTeamMembers === -1 ? 'Unlimited' : features.maxTeamMembers} team members
                 </span>
               </div>
               
               <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-500" />
+                <Check className="size-4 text-green-500" />
                 <span className="text-sm">
                   {features.maxRendersPerMonth === -1 ? 'Unlimited' : features.maxRendersPerMonth} renders/month
                 </span>
               </div>
               
               <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-500" />
+                <Check className="size-4 text-green-500" />
                 <span className="text-sm">
                   {features.maxStorageGb === -1 ? 'Unlimited' : `${features.maxStorageGb} GB`} storage
                 </span>
@@ -216,14 +212,14 @@ export function SubscriptionManager() {
               
               {features.apiAccess && (
                 <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-500" />
+                  <Check className="size-4 text-green-500" />
                   <span className="text-sm">API access</span>
                 </div>
               )}
               
               {features.customBranding && (
                 <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-500" />
+                  <Check className="size-4 text-green-500" />
                   <span className="text-sm">Custom branding</span>
                 </div>
               )}
@@ -294,12 +290,12 @@ export function SubscriptionManager() {
 
               {subscription.subscription.cancelAtPeriodEnd && (
                 <Alert>
-                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTriangle className="size-4" />
                   <AlertDescription>
                     Your subscription is set to cancel on {new Date(subscription.subscription.currentPeriodEnd).toLocaleDateString()}.
                     <Button
                       variant="link"
-                      className="ml-2 p-0 h-auto"
+                      className="ml-2 h-auto p-0"
                       onClick={handleReactivateSubscription}
                     >
                       Reactivate subscription
@@ -314,8 +310,8 @@ export function SubscriptionManager() {
 
       {/* Plan Comparison */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Available Plans</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <h3 className="mb-4 text-lg font-semibold">Available Plans</h3>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {(['starter', 'professional', 'growth', 'enterprise'] as SubscriptionTier[]).map(renderPlanCard)}
         </div>
       </div>
@@ -323,7 +319,7 @@ export function SubscriptionManager() {
       {/* Usage Warning */}
       {usage && (usage.overages.renders > 0 || usage.overages.storage > 0) && (
         <Alert>
-          <Zap className="h-4 w-4" />
+          <Zap className="size-4" />
           <AlertDescription>
             You have exceeded your plan limits. Consider upgrading to avoid overage charges.
           </AlertDescription>
@@ -340,7 +336,7 @@ export function SubscriptionManager() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="mb-4 text-sm text-muted-foreground">
               Your subscription will remain active until the end of your current billing period.
               You can reactivate anytime before then.
             </p>

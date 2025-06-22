@@ -1,10 +1,20 @@
 'use client';
 
+import { 
+  AlertCircle,
+  Building2,
+  Check,
+  CreditCard, 
+  Plus, 
+  Star,
+  Trash2
+} from 'lucide-react';
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Dialog,
   DialogContent,
@@ -13,17 +23,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { 
-  CreditCard, 
-  Plus, 
-  Trash2, 
-  Star,
-  AlertCircle,
-  Building2,
-  Check
-} from 'lucide-react';
-import { api } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { api } from '@/lib/api';
 
 export function PaymentMethodsManager() {
   const { toast } = useToast();
@@ -43,10 +44,10 @@ export function PaymentMethodsManager() {
         description: 'Your default payment method has been changed.',
       });
       refetch();
-    } catch (error) {
+    } catch (_error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update default payment method.',
+        title: 'Failed to set default payment method',
+        description: 'Please try again later',
         variant: 'destructive',
       });
     }
@@ -61,10 +62,10 @@ export function PaymentMethodsManager() {
         description: 'The payment method has been removed from your account.',
       });
       refetch();
-    } catch (error) {
+    } catch (_error) {
       toast({
-        title: 'Error',
-        description: 'Failed to remove payment method.',
+        title: 'Failed to remove payment method',
+        description: 'Please try again later',
         variant: 'destructive',
       });
     } finally {
@@ -90,7 +91,7 @@ export function PaymentMethodsManager() {
 
   const getCardIcon = (brand: string) => {
     // In a real app, you'd have specific icons for each card brand
-    return <CreditCard className="h-8 w-8" />;
+    return <CreditCard className="size-8" />;
   };
 
   return (
@@ -104,7 +105,7 @@ export function PaymentMethodsManager() {
           </p>
         </div>
         <Button onClick={handleAddPaymentMethod} disabled={isAddingCard}>
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="mr-2 size-4" />
           Add Payment Method
         </Button>
       </div>
@@ -112,7 +113,7 @@ export function PaymentMethodsManager() {
       {/* No Payment Methods Alert */}
       {paymentMethods?.length === 0 && (
         <Alert>
-          <AlertCircle className="h-4 w-4" />
+          <AlertCircle className="size-4" />
           <AlertDescription>
             You don't have any payment methods on file. Add one to ensure uninterrupted service.
           </AlertDescription>
@@ -126,7 +127,7 @@ export function PaymentMethodsManager() {
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
-                  <div className="p-2 bg-muted rounded-lg">
+                  <div className="bg-muted rounded-lg p-2">
                     {getCardIcon(method.card.brand)}
                   </div>
                   <div>
@@ -136,16 +137,16 @@ export function PaymentMethodsManager() {
                       </p>
                       {method.isDefault && (
                         <Badge variant="secondary" className="gap-1">
-                          <Star className="h-3 w-3" />
+                          <Star className="size-3" />
                           Default
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-muted-foreground mt-1 text-sm">
                       Expires {method.card.exp_month}/{method.card.exp_year}
                     </p>
                     {method.billing_details?.name && (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {method.billing_details.name}
                       </p>
                     )}
@@ -159,7 +160,7 @@ export function PaymentMethodsManager() {
                       size="sm"
                       onClick={() => handleSetDefault(method.id)}
                     >
-                      <Check className="h-4 w-4 mr-2" />
+                      <Check className="mr-2 size-4" />
                       Set as Default
                     </Button>
                   )}
@@ -171,7 +172,7 @@ export function PaymentMethodsManager() {
                         size="sm"
                         disabled={method.isDefault || deletingCardId === method.id}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="size-4" />
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
@@ -181,7 +182,7 @@ export function PaymentMethodsManager() {
                           Are you sure you want to remove this payment method? This action cannot be undone.
                         </DialogDescription>
                       </DialogHeader>
-                      <div className="flex justify-end gap-2 mt-4">
+                      <div className="mt-4 flex justify-end gap-2">
                         <Button variant="outline">Cancel</Button>
                         <Button
                           variant="destructive"
@@ -210,9 +211,9 @@ export function PaymentMethodsManager() {
         <CardContent>
           <div className="space-y-4">
             <div>
-              <p className="text-sm font-medium mb-2">Billing Address</p>
+              <p className="mb-2 text-sm font-medium">Billing Address</p>
               {paymentMethods?.[0]?.billing_details?.address ? (
-                <div className="text-sm text-muted-foreground">
+                <div className="text-muted-foreground text-sm">
                   <p>{paymentMethods[0].billing_details.address.line1}</p>
                   {paymentMethods[0].billing_details.address.line2 && (
                     <p>{paymentMethods[0].billing_details.address.line2}</p>
@@ -223,17 +224,17 @@ export function PaymentMethodsManager() {
                   <p>{paymentMethods[0].billing_details.address.country}</p>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">No billing address on file</p>
+                <p className="text-muted-foreground text-sm">No billing address on file</p>
               )}
             </div>
 
-            <div className="pt-4 border-t">
-              <p className="text-sm font-medium mb-2">Tax Information</p>
-              <p className="text-sm text-muted-foreground mb-4">
+            <div className="border-t pt-4">
+              <p className="mb-2 text-sm font-medium">Tax Information</p>
+              <p className="text-muted-foreground mb-4 text-sm">
                 Add your tax ID to ensure proper invoicing
               </p>
               <Button variant="outline" size="sm">
-                <Building2 className="h-4 w-4 mr-2" />
+                <Building2 className="mr-2 size-4" />
                 Add Tax ID
               </Button>
             </div>
@@ -245,9 +246,9 @@ export function PaymentMethodsManager() {
       <Card className="bg-muted/50">
         <CardContent className="p-4">
           <div className="flex gap-3">
-            <AlertCircle className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-            <div className="text-sm text-muted-foreground">
-              <p className="font-medium mb-1">Secure Payment Processing</p>
+            <AlertCircle className="text-muted-foreground mt-0.5 size-5 shrink-0" />
+            <div className="text-muted-foreground text-sm">
+              <p className="mb-1 font-medium">Secure Payment Processing</p>
               <p>
                 All payment information is securely processed and stored by Stripe. 
                 We never have access to your full card details.

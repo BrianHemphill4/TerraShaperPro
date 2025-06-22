@@ -1,18 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { api } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Check, X } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import type { SubscriptionPlan } from '@terrashaper/shared';
+import { Check, CheckCircle2,X } from 'lucide-react';
+import { useState } from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription,CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/api';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-interface PricingPlansProps {
+type PricingPlansProps = {
   currentTier?: string;
 }
 
@@ -119,51 +120,57 @@ export function PricingPlans({ currentTier }: PricingPlansProps) {
               <CardContent>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center">
-                    <Check className="mr-2 h-4 w-4 text-green-500" />
+                    <Check className="mr-2 size-4 text-green-500" />
                     {plan.render_credits_monthly} renders/month
                   </li>
                   <li className="flex items-center">
-                    <Check className="mr-2 h-4 w-4 text-green-500" />
+                    <Check className="mr-2 size-4 text-green-500" />
                     {plan.max_projects === -1 ? 'Unlimited' : plan.max_projects} projects
                   </li>
                   <li className="flex items-center">
-                    <Check className="mr-2 h-4 w-4 text-green-500" />
+                    <Check className="mr-2 size-4 text-green-500" />
                     {plan.max_team_members === -1 ? 'Unlimited' : plan.max_team_members} team members
                   </li>
                   <li className="flex items-center">
                     {features.watermark ? (
-                      <X className="mr-2 h-4 w-4 text-gray-400" />
+                      <X className="mr-2 size-4 text-gray-400" />
                     ) : (
-                      <Check className="mr-2 h-4 w-4 text-green-500" />
+                      <Check className="mr-2 size-4 text-green-500" />
                     )}
                     {features.watermark ? 'Watermarked exports' : 'No watermarks'}
                   </li>
                   <li className="flex items-center">
-                    <Check className="mr-2 h-4 w-4 text-green-500" />
+                    <Check className="mr-2 size-4 text-green-500" />
                     Export: {features.exportFormats?.join(', ')}
                   </li>
                   <li className="flex items-center">
-                    <Check className="mr-2 h-4 w-4 text-green-500" />
+                    <Check className="mr-2 size-4 text-green-500" />
                     {features.support} support
                   </li>
                   {features.customBranding && (
                     <li className="flex items-center">
-                      <Check className="mr-2 h-4 w-4 text-green-500" />
+                      <Check className="mr-2 size-4 text-green-500" />
                       Custom branding
                     </li>
                   )}
                   {features.apiAccess && (
                     <li className="flex items-center">
-                      <Check className="mr-2 h-4 w-4 text-green-500" />
+                      <Check className="mr-2 size-4 text-green-500" />
                       API access
                     </li>
                   )}
                   {features.sso && (
                     <li className="flex items-center">
-                      <Check className="mr-2 h-4 w-4 text-green-500" />
+                      <Check className="mr-2 size-4 text-green-500" />
                       SSO integration
                     </li>
                   )}
+                  {features.map((feature) => (
+                    <li key={`feature-${feature.name}`} className="flex items-center gap-2">
+                      <CheckCircle2 className="size-4 text-green-500" />
+                      {feature.name}
+                    </li>
+                  ))}
                 </ul>
 
                 <Button

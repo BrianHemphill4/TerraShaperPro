@@ -1,22 +1,23 @@
 'use client';
 
+import { Copy, Link, Mail } from 'lucide-react';
 import { useState } from 'react';
-import { api } from '@/lib/api';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/modal';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Copy, Link, Mail } from 'lucide-react';
+import { api } from '@/lib/api';
 
-interface ShareProjectDialogProps {
+type ShareProjectDialogProps = {
   projectId: string;
   projectName: string;
   open: boolean;
@@ -51,7 +52,7 @@ export function ShareProjectDialog({
       clientEmail: clientEmail || undefined,
       clientName: clientName || undefined,
       permissions,
-      expiresIn: expiresIn ? parseInt(expiresIn) : undefined,
+      expiresIn: expiresIn ? Number.parseInt(expiresIn) : undefined,
     });
   };
 
@@ -84,7 +85,7 @@ export function ShareProjectDialog({
             <div className="space-y-2">
               <Label htmlFor="clientEmail">Client Email (Optional)</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Mail className="absolute left-3 top-3 size-4 text-gray-400" />
                 <Input
                   id="clientEmail"
                   type="email"
@@ -165,7 +166,7 @@ export function ShareProjectDialog({
               className="w-full"
               disabled={createLinkMutation.isLoading}
             >
-              <Link className="mr-2 h-4 w-4" />
+              <Link className="mr-2 size-4" />
               {createLinkMutation.isLoading ? 'Creating...' : 'Create Share Link'}
             </Button>
           </div>
@@ -182,7 +183,7 @@ export function ShareProjectDialog({
               <div className="flex space-x-2">
                 <Input value={shareUrl} readOnly />
                 <Button onClick={handleCopyLink} size="sm">
-                  <Copy className="h-4 w-4" />
+                  <Copy className="size-4" />
                 </Button>
               </div>
             </div>

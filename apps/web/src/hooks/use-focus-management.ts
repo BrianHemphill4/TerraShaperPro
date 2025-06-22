@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-interface FocusTrapOptions {
+type FocusTrapOptions = {
   initialFocus?: HTMLElement | null;
   restoreFocus?: boolean;
   allowOutsideClick?: boolean;

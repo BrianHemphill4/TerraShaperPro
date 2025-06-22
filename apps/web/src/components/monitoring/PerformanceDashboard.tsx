@@ -1,14 +1,15 @@
 'use client';
 
+import {AlertTriangle, CheckCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { metrics } from '@/lib/metrics';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertTriangle, CheckCircle, TrendingUp, Activity } from 'lucide-react';
+import { metrics } from '@/lib/metrics';
 
-interface MetricStat {
+type MetricStat = {
   avg: number;
   min: number;
   max: number;
@@ -16,7 +17,7 @@ interface MetricStat {
   p99: number;
 }
 
-interface BudgetViolation {
+type BudgetViolation = {
   metric: string;
   budget: number;
   current: number;
@@ -77,13 +78,13 @@ export function PerformanceDashboard() {
         <h2 className="text-2xl font-bold">Performance Monitoring</h2>
         <div className="flex items-center gap-2">
           {healthStatus === 'healthy' && (
-            <CheckCircle className="h-5 w-5 text-green-500" />
+            <CheckCircle className="size-5 text-green-500" />
           )}
           {healthStatus === 'warning' && (
-            <AlertTriangle className="h-5 w-5 text-yellow-500" />
+            <AlertTriangle className="size-5 text-yellow-500" />
           )}
           {healthStatus === 'critical' && (
-            <AlertTriangle className="h-5 w-5 text-red-500" />
+            <AlertTriangle className="size-5 text-red-500" />
           )}
           <span className="text-sm font-medium">
             System {healthStatus.charAt(0).toUpperCase() + healthStatus.slice(1)}
@@ -93,7 +94,7 @@ export function PerformanceDashboard() {
 
       {performanceData.violations.length > 0 && (
         <Alert variant={healthStatus === 'critical' ? 'destructive' : 'default'}>
-          <AlertTriangle className="h-4 w-4" />
+          <AlertTriangle className="size-4" />
           <AlertTitle>Performance Budget Violations</AlertTitle>
           <AlertDescription>
             <ul className="mt-2 space-y-1">

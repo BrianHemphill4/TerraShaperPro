@@ -1,8 +1,8 @@
+import type { OnboardingFlow, OnboardingFlowId, OnboardingState, OnboardingStep } from '@terrashaper/shared';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { OnboardingState, OnboardingFlow, OnboardingFlowId, OnboardingStep } from '@terrashaper/shared';
 
-interface OnboardingStore extends OnboardingState {
+type OnboardingStore = {
   // Actions
   startFlow: (flowId: OnboardingFlowId) => void;
   nextStep: () => void;
@@ -17,7 +17,7 @@ interface OnboardingStore extends OnboardingState {
   getCurrentStep: () => OnboardingStep | null;
   isFlowCompleted: (flowId: OnboardingFlowId) => boolean;
   hasSeenAnyFlow: () => boolean;
-}
+} & OnboardingState
 
 // Import will be added after creating the flows
 let onboardingFlows: Record<OnboardingFlowId, OnboardingFlow> = {};

@@ -1,14 +1,15 @@
 'use client';
 
-import { ReactNode } from 'react';
-import { useFeatureGate } from '@/hooks/useFeatureGate';
-import { Button } from '@/components/ui/button';
+import type { PlanFeatures } from '@terrashaper/shared/types/billing';
 import { Lock } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { PlanFeatures } from '@terrashaper/shared/types/billing';
 import { useRouter } from 'next/navigation';
+import type { ReactNode } from 'react';
 
-interface FeatureGateProps {
+import { Button } from '@/components/ui/button';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
+import { cn } from '@/lib/utils';
+
+type FeatureGateProps = {
   feature: keyof typeof PlanFeatures.starter;
   children: ReactNode;
   fallback?: ReactNode;
@@ -40,11 +41,11 @@ export function FeatureGate({
 
   return (
     <div className={cn('relative', className)}>
-      <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg">
-        <div className="text-center p-6 max-w-sm">
-          <Lock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="font-semibold text-lg mb-2">Premium Feature</h3>
-          <p className="text-sm text-muted-foreground mb-4">
+      <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-sm">
+        <div className="max-w-sm p-6 text-center">
+          <Lock className="mx-auto mb-4 size-12 text-muted-foreground" />
+          <h3 className="mb-2 text-lg font-semibold">Premium Feature</h3>
+          <p className="mb-4 text-sm text-muted-foreground">
             This feature is not available on the {currentTier} plan. Upgrade to unlock it.
           </p>
           <Button onClick={() => router.push('/settings/billing')}>
@@ -52,12 +53,12 @@ export function FeatureGate({
           </Button>
         </div>
       </div>
-      <div className="opacity-30 pointer-events-none">{children}</div>
+      <div className="pointer-events-none opacity-30">{children}</div>
     </div>
   );
 }
 
-interface UsageLimitGateProps {
+type UsageLimitGateProps = {
   limitType: 'maxProjects' | 'maxTeamMembers' | 'maxStorageGb' | 'maxRendersPerMonth';
   currentUsage: number;
   children: ReactNode;
@@ -94,13 +95,13 @@ export function UsageLimitGate({
 
   return (
     <div className={cn('relative', className)}>
-      <div className="p-6 text-center border-2 border-dashed border-muted-foreground/20 rounded-lg">
-        <h3 className="font-semibold text-lg mb-2">Limit Reached</h3>
-        <p className="text-sm text-muted-foreground mb-4">
+      <div className="rounded-lg border-2 border-dashed border-muted-foreground/20 p-6 text-center">
+        <h3 className="mb-2 text-lg font-semibold">Limit Reached</h3>
+        <p className="mb-4 text-sm text-muted-foreground">
           You've reached your limit of {limitCheck.limit} {limitTypeDisplay[limitType]}.
           Upgrade your plan to continue.
         </p>
-        <div className="flex items-center justify-center gap-4 mb-4">
+        <div className="mb-4 flex items-center justify-center gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold">{limitCheck.usage}</div>
             <div className="text-xs text-muted-foreground">Current</div>
@@ -119,7 +120,7 @@ export function UsageLimitGate({
   );
 }
 
-interface FeatureBadgeProps {
+type FeatureBadgeProps = {
   feature: keyof typeof PlanFeatures.starter;
   className?: string;
 }
@@ -150,7 +151,7 @@ export function FeatureBadge({ feature, className }: FeatureBadgeProps) {
         className
       )}
     >
-      <Lock className="h-3 w-3" />
+      <Lock className="size-3" />
       {tierRequired}
     </span>
   );

@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import { InteractiveTutorial } from './InteractiveTutorial';
-import { useOnboardingStore, setOnboardingFlows } from '@/stores/onboarding';
-import { onboardingFlows } from '@/lib/onboarding-flows';
 import { ONBOARDING_FLOWS } from '@terrashaper/shared';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
+
+import { onboardingFlows } from '@/lib/onboarding-flows';
+import { setOnboardingFlows,useOnboardingStore } from '@/stores/onboarding';
+
+import { InteractiveTutorial } from './InteractiveTutorial';
 
 // Initialize flows
 setOnboardingFlows(onboardingFlows);

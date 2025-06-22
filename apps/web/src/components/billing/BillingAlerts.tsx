@@ -1,10 +1,11 @@
 'use client';
 
+import { AlertCircle, Calendar, CreditCard, Zap } from 'lucide-react';
+import Link from 'next/link';
+
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, CreditCard, Calendar, Zap } from 'lucide-react';
 import { api } from '@/lib/api';
-import Link from 'next/link';
 
 export function BillingAlerts() {
   const { data: alerts } = api.billing.getBillingAlerts.useQuery();
@@ -37,7 +38,7 @@ export function BillingAlerts() {
         
         return (
           <Alert key={alert.id} variant={getAlertVariant(alert.severity)}>
-            <Icon className="h-4 w-4" />
+            <Icon className="size-4" />
             <AlertTitle>{alert.title}</AlertTitle>
             <AlertDescription className="mt-2">
               <div className="flex items-start justify-between">

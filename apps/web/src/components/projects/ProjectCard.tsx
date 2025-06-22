@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-interface Project {
+type Project = {
   id: string;
   name: string;
   description?: string;
@@ -31,7 +31,7 @@ interface Project {
   renderCount: number;
 }
 
-interface ProjectCardProps {
+type ProjectCardProps = {
   project: Project;
 }
 
@@ -47,7 +47,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const status = statusConfig[project.status];
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+    <Card className="overflow-hidden transition-shadow hover:shadow-lg">
       <CardHeader className="p-0">
         <div className="relative h-48 bg-muted">
           {project.thumbnailUrl && !imageError ? (
@@ -59,34 +59,34 @@ export function ProjectCard({ project }: ProjectCardProps) {
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
+            <div className="flex h-full items-center justify-center text-muted-foreground">
               <div className="text-center">
-                <Calendar className="h-12 w-12 mx-auto mb-2" />
+                <Calendar className="mx-auto mb-2 size-12" />
                 <p className="text-sm">No preview available</p>
               </div>
             </div>
           )}
-          <div className="absolute top-2 right-2">
+          <div className="absolute right-2 top-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="secondary" size="icon" className="h-8 w-8">
-                  <MoreVertical className="h-4 w-4" />
+                <Button variant="secondary" size="icon" className="size-8">
+                  <MoreVertical className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Eye className="mr-2 h-4 w-4" />
+                  <Eye className="mr-2 size-4" />
                   View Project
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Edit className="mr-2 h-4 w-4" />
+                  <Edit className="mr-2 size-4" />
                   Edit Details
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-destructive">
-                  <Trash className="mr-2 h-4 w-4" />
+                  <Trash className="mr-2 size-4" />
                   Delete Project
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -96,8 +96,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
       </CardHeader>
       
       <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="font-semibold text-lg truncate flex-1">
+        <div className="mb-2 flex items-start justify-between">
+          <h3 className="flex-1 truncate text-lg font-semibold">
             <Link 
               href={`/dashboard/projects/${project.id}`}
               className="hover:underline"
@@ -111,13 +111,13 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </div>
         
         {project.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+          <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
             {project.description}
           </p>
         )}
 
         {project.clientName && (
-          <p className="text-sm text-muted-foreground mb-3">
+          <p className="mb-3 text-sm text-muted-foreground">
             Client: {project.clientName}
           </p>
         )}
@@ -130,7 +130,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
       <CardFooter className="p-4 pt-0">
         <div className="flex items-center text-sm text-muted-foreground">
-          <Clock className="mr-1 h-3 w-3" />
+          <Clock className="mr-1 size-3" />
           Updated {formatDistanceToNow(new Date(project.updatedAt), { addSuffix: true })}
         </div>
       </CardFooter>

@@ -1,7 +1,8 @@
 import { Loader2 } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 
-interface SpinnerProps {
+type SpinnerProps = {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
 }
@@ -20,7 +21,7 @@ export function Spinner({ className, size = 'md' }: SpinnerProps) {
   );
 }
 
-interface LoadingOverlayProps {
+type LoadingOverlayProps = {
   children?: React.ReactNode;
   className?: string;
 }
@@ -41,7 +42,7 @@ export function LoadingOverlay({ children, className }: LoadingOverlayProps) {
   );
 }
 
-interface PageLoaderProps {
+type PageLoaderProps = {
   text?: string;
 }
 
@@ -56,7 +57,7 @@ export function PageLoader({ text = 'Loading...' }: PageLoaderProps) {
   );
 }
 
-interface ButtonLoaderProps {
+type ButtonLoaderProps = {
   loading?: boolean;
   children: React.ReactNode;
   className?: string;
@@ -71,7 +72,7 @@ export function ButtonLoader({ loading, children, className }: ButtonLoaderProps
   );
 }
 
-interface InlineLoaderProps {
+type InlineLoaderProps = {
   loading?: boolean;
   children: React.ReactNode;
 }

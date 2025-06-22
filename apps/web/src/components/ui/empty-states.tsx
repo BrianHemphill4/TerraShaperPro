@@ -1,8 +1,20 @@
-import { LucideIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+// Specific empty state components
+import { 
+  FileText, 
+  FolderOpen, 
+  Inbox,
+  Layers,
+  MessageSquare,
+  Plant,
+  Search, 
+  Users, 
+} from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-interface EmptyStateProps {
+type EmptyStateProps = {
   icon: LucideIcon;
   title: string;
   description?: string;
@@ -26,12 +38,12 @@ export function EmptyState({
       'flex flex-col items-center justify-center p-8 text-center',
       className
     )}>
-      <div className="rounded-full bg-muted p-4 mb-4">
-        <Icon className="h-8 w-8 text-muted-foreground" />
+      <div className="mb-4 rounded-full bg-muted p-4">
+        <Icon className="size-8 text-muted-foreground" />
       </div>
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
+      <h3 className="mb-2 text-lg font-semibold">{title}</h3>
       {description && (
-        <p className="text-sm text-muted-foreground max-w-sm mb-6">
+        <p className="mb-6 max-w-sm text-sm text-muted-foreground">
           {description}
         </p>
       )}
@@ -47,18 +59,6 @@ export function EmptyState({
     </div>
   );
 }
-
-// Specific empty state components
-import { 
-  FolderOpen, 
-  Users, 
-  FileText, 
-  Search, 
-  Inbox,
-  Plant,
-  Layers,
-  MessageSquare,
-} from 'lucide-react';
 
 export function NoProjectsEmptyState({ onCreateProject }: { onCreateProject: () => void }) {
   return (
@@ -145,16 +145,16 @@ export function EmptyInbox() {
 
 export function EmptyCanvas({ onAddElement }: { onAddElement: () => void }) {
   return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <div className="text-center pointer-events-auto">
-        <div className="rounded-full bg-muted p-6 mb-4 mx-auto w-fit">
-          <FileText className="h-12 w-12 text-muted-foreground" />
+    <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+      <div className="pointer-events-auto text-center">
+        <div className="mx-auto mb-4 w-fit rounded-full bg-muted p-6">
+          <FileText className="size-12 text-muted-foreground" />
         </div>
-        <h3 className="text-xl font-semibold mb-2">Start designing</h3>
-        <p className="text-muted-foreground max-w-sm mb-6">
+        <h3 className="mb-2 text-xl font-semibold">Start designing</h3>
+        <p className="mb-6 max-w-sm text-muted-foreground">
           Add plants, draw garden beds, or import a base plan to begin.
         </p>
-        <div className="flex gap-2 justify-center">
+        <div className="flex justify-center gap-2">
           <Button onClick={onAddElement} size="sm">
             Add Element
           </Button>

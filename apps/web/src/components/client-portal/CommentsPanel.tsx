@@ -1,17 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { api } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { formatDistanceToNow } from 'date-fns';
-import { MessageSquare, Check, X, MapPin } from 'lucide-react';
 import type { ProjectComment } from '@terrashaper/shared';
+import { formatDistanceToNow } from 'date-fns';
+import { Check, MapPin,MessageSquare, X } from 'lucide-react';
+import { useState } from 'react';
 
-interface CommentsPanelProps {
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/api';
+
+type CommentsPanelProps = {
   projectId: string;
   canResolve?: boolean;
 }
@@ -102,7 +103,7 @@ export function CommentsPanel({ projectId, canResolve = true }: CommentsPanelPro
               onClick={handleAddComment}
               disabled={!newComment.trim() || createCommentMutation.isLoading}
             >
-              <MessageSquare className="h-4 w-4" />
+              <MessageSquare className="size-4" />
             </Button>
           </div>
 
@@ -132,7 +133,7 @@ export function CommentsPanel({ projectId, canResolve = true }: CommentsPanelPro
                       </span>
                       {comment.position && (
                         <Badge variant="outline" className="text-xs">
-                          <MapPin className="mr-1 h-3 w-3" />
+                          <MapPin className="mr-1 size-3" />
                           On canvas
                         </Badge>
                       )}
@@ -152,9 +153,9 @@ export function CommentsPanel({ projectId, canResolve = true }: CommentsPanelPro
                       onClick={() => handleResolveComment(comment.id, !comment.is_resolved)}
                     >
                       {comment.is_resolved ? (
-                        <X className="h-4 w-4" />
+                        <X className="size-4" />
                       ) : (
-                        <Check className="h-4 w-4" />
+                        <Check className="size-4" />
                       )}
                     </Button>
                   )}

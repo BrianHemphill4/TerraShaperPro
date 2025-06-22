@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Clock, Layers, Sparkles } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { sampleProjects, type SampleProject } from '@/lib/sample-projects';
+import { type SampleProject,sampleProjects } from '@/lib/sample-projects';
 import { cn } from '@/lib/utils';
 
 const difficultyColors = {
@@ -22,7 +23,7 @@ const categoryIcons = {
   xeriscape: '🌵',
 };
 
-interface SampleProjectCardProps {
+type SampleProjectCardProps = {
   project: SampleProject;
   onSelect: (project: SampleProject) => void;
 }
@@ -30,11 +31,11 @@ interface SampleProjectCardProps {
 function SampleProjectCard({ project, onSelect }: SampleProjectCardProps) {
   return (
     <Card 
-      className="cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02]"
+      className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg"
       onClick={() => onSelect(project)}
     >
       <CardHeader>
-        <div className="flex items-start justify-between mb-2">
+        <div className="mb-2 flex items-start justify-between">
           <span className="text-2xl">{categoryIcons[project.category]}</span>
           <Badge className={cn('ml-2', difficultyColors[project.difficulty])}>
             {project.difficulty}
@@ -46,11 +47,11 @@ function SampleProjectCard({ project, onSelect }: SampleProjectCardProps) {
       <CardContent>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
-            <Clock className="w-4 h-4" />
+            <Clock className="size-4" />
             <span>{project.estimatedTime}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Layers className="w-4 h-4" />
+            <Layers className="size-4" />
             <span>{project.features.length} features</span>
           </div>
         </div>
@@ -90,14 +91,14 @@ export function SampleProjectsGallery() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Start with a Sample Project</h2>
+        <h2 className="mb-2 text-2xl font-bold">Start with a Sample Project</h2>
         <p className="text-muted-foreground">
           Choose a template to learn the basics or get inspired for your own design
         </p>
       </div>
 
       <Tabs defaultValue="all" value={selectedCategory} onValueChange={(v) => setSelectedCategory(v as any)}>
-        <TabsList className="grid grid-cols-4 w-full max-w-md mx-auto">
+        <TabsList className="mx-auto grid w-full max-w-md grid-cols-4">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="residential">Residential</TabsTrigger>
           <TabsTrigger value="commercial">Commercial</TabsTrigger>
@@ -117,9 +118,9 @@ export function SampleProjectsGallery() {
         </TabsContent>
       </Tabs>
 
-      <div className="flex justify-center mt-8">
+      <div className="mt-8 flex justify-center">
         <Button variant="outline" onClick={() => router.push('/design')}>
-          <Sparkles className="w-4 h-4 mr-2" />
+          <Sparkles className="mr-2 size-4" />
           Start from Scratch
         </Button>
       </div>

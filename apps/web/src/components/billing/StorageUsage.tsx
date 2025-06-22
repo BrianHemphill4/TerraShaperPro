@@ -1,14 +1,15 @@
 'use client';
 
+import { AlertTriangle,Database, FileImage, HardDrive, Layout } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
+
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import { Database, HardDrive, FileImage, Layout, AlertTriangle } from 'lucide-react';
-import { formatBytes } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
 import { useFeatureGate } from '@/hooks/useFeatureGate';
+import { api } from '@/lib/api';
+import { formatBytes } from '@/lib/utils';
 
 export function StorageUsage() {
   const router = useRouter();
@@ -57,7 +58,7 @@ export function StorageUsage() {
           <CardDescription>Loading storage information...</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-20 bg-muted animate-pulse rounded" />
+          <div className="h-20 animate-pulse rounded bg-muted" />
         </CardContent>
       </Card>
     );
@@ -88,14 +89,14 @@ export function StorageUsage() {
             className={isOverLimit ? 'bg-destructive/20' : isNearLimit ? 'bg-amber-500/20' : ''}
           />
           {isNearLimit && !isOverLimit && (
-            <p className="text-sm text-amber-600 flex items-center gap-2 mt-2">
-              <AlertTriangle className="h-4 w-4" />
+            <p className="mt-2 flex items-center gap-2 text-sm text-amber-600">
+              <AlertTriangle className="size-4" />
               You're approaching your storage limit
             </p>
           )}
           {isOverLimit && (
-            <p className="text-sm text-destructive flex items-center gap-2 mt-2">
-              <AlertTriangle className="h-4 w-4" />
+            <p className="mt-2 flex items-center gap-2 text-sm text-destructive">
+              <AlertTriangle className="size-4" />
               Storage limit exceeded - uploads may be blocked
             </p>
           )}
@@ -109,7 +110,7 @@ export function StorageUsage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FileImage className="h-4 w-4 text-muted-foreground" />
+                  <FileImage className="size-4 text-muted-foreground" />
                   <span className="text-sm">Project Uploads</span>
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -119,7 +120,7 @@ export function StorageUsage() {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <HardDrive className="h-4 w-4 text-muted-foreground" />
+                  <HardDrive className="size-4 text-muted-foreground" />
                   <span className="text-sm">Renders</span>
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -129,7 +130,7 @@ export function StorageUsage() {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Layout className="h-4 w-4 text-muted-foreground" />
+                  <Layout className="size-4 text-muted-foreground" />
                   <span className="text-sm">Templates</span>
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -148,7 +149,7 @@ export function StorageUsage() {
               size="sm"
               onClick={getStorageBreakdown}
             >
-              <Database className="h-4 w-4 mr-2" />
+              <Database className="mr-2 size-4" />
               View Breakdown
             </Button>
           )}
@@ -164,7 +165,7 @@ export function StorageUsage() {
         </div>
 
         {/* Current Plan Info */}
-        <div className="pt-4 border-t">
+        <div className="border-t pt-4">
           <p className="text-xs text-muted-foreground">
             Your {currentTier} plan includes {storageData.limit === -1 ? 'unlimited' : `${storageData.limit} GB of`} storage.
             {storageData.limit !== -1 && ' Additional storage may incur extra charges.'}

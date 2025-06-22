@@ -1,4 +1,6 @@
-import { createHash, randomBytes } from 'crypto';
+import type { Buffer } from 'node:buffer';
+import { createHash, randomBytes } from 'node:crypto';
+
 import { z } from 'zod';
 
 // OWASP-compliant password policy
@@ -7,8 +9,8 @@ export const passwordSchema = z
   .min(12, 'Password must be at least 12 characters')
   .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
   .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-  .regex(/[0-9]/, 'Password must contain at least one number')
-  .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character');
+  .regex(/\d/, 'Password must contain at least one number')
+  .regex(/[^A-Z0-9]/i, 'Password must contain at least one special character');
 
 // Input validation schemas
 export const sanitizedStringSchema = z
@@ -17,7 +19,7 @@ export const sanitizedStringSchema = z
   .regex(/^[^<>'"&]*$/, 'Invalid characters detected');
 
 export const fileUploadSchema = z.object({
-  name: z.string().regex(/^[a-zA-Z0-9-_. ]+$/, 'Invalid filename'),
+  name: z.string().regex(/^[\w\-. ]+$/, 'Invalid filename'),
   type: z.enum([
     'image/jpeg',
     'image/png',
@@ -77,7 +79,7 @@ export function sanitizeUrl(url: string): string | null {
 }
 
 // Rate limiting helper
-interface RateLimitEntry {
+type RateLimitEntry = {
   count: number;
   resetTime: number;
 }

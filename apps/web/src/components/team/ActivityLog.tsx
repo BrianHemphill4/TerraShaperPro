@@ -1,21 +1,22 @@
 'use client';
 
-import { useState } from 'react';
-import { api } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
+import type { ActivityLog } from '@terrashaper/shared';
 import { formatDistanceToNow } from 'date-fns';
 import { 
-  UserPlus, 
-  UserMinus, 
-  Shield, 
+  Activity,
+  AlertCircle,
   FileText, 
   Palette, 
-  AlertCircle,
-  Activity
+  Shield, 
+  UserMinus, 
+  UserPlus
 } from 'lucide-react';
-import type { ActivityAction, ActivityLog } from '@terrashaper/shared';
+import { useState } from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/api';
 
 const actionIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   'user.invited': UserPlus,
@@ -68,7 +69,7 @@ export function ActivityLogComponent() {
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="flex items-start space-x-3">
-                <Skeleton className="h-8 w-8 rounded-full" />
+                <Skeleton className="size-8 rounded-full" />
                 <div className="flex-1 space-y-1">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-3 w-1/4" />
@@ -94,8 +95,8 @@ export function ActivityLogComponent() {
 
             return (
               <div key={log.id} className="flex items-start space-x-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
-                  <Icon className="h-4 w-4 text-gray-600" />
+                <div className="flex size-8 items-center justify-center rounded-full bg-gray-100">
+                  <Icon className="size-4 text-gray-600" />
                 </div>
                 <div className="flex-1 space-y-1">
                   <p className="text-sm">
@@ -122,14 +123,14 @@ export function ActivityLogComponent() {
         {data && data.total > pageSize && (
           <div className="mt-4 flex justify-center space-x-2">
             <button
-              className="px-3 py-1 text-sm border rounded"
+              className="rounded border px-3 py-1 text-sm"
               onClick={() => setPage(page - 1)}
               disabled={page === 0}
             >
               Previous
             </button>
             <button
-              className="px-3 py-1 text-sm border rounded"
+              className="rounded border px-3 py-1 text-sm"
               onClick={() => setPage(page + 1)}
               disabled={(page + 1) * pageSize >= data.total}
             >

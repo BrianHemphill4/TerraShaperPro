@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { api } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
 import { CreditCard, Plus, Star, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/api';
 
 const cardBrandIcons: Record<string, string> = {
   visa: '💳 Visa',
@@ -55,20 +56,20 @@ export function PaymentMethods() {
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span className="flex items-center">
-            <CreditCard className="mr-2 h-5 w-5" />
+            <CreditCard className="mr-2 size-5" />
             Payment Methods
           </span>
           <Button size="sm" onClick={handleAddPaymentMethod}>
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="mr-2 size-4" />
             Add Card
           </Button>
         </CardTitle>
       </CardHeader>
       <CardContent>
         {paymentMethods && paymentMethods.length === 0 ? (
-          <div className="text-center py-8">
-            <CreditCard className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <p className="text-gray-500 mb-4">No payment methods added yet</p>
+          <div className="py-8 text-center">
+            <CreditCard className="mx-auto mb-4 size-12 text-gray-400" />
+            <p className="mb-4 text-gray-500">No payment methods added yet</p>
             <Button onClick={handleAddPaymentMethod}>
               Add Payment Method
             </Button>
@@ -81,7 +82,7 @@ export function PaymentMethods() {
                 className="flex items-center justify-between rounded-lg border p-4"
               >
                 <div className="flex items-center space-x-4">
-                  <CreditCard className="h-8 w-8 text-gray-400" />
+                  <CreditCard className="size-8 text-gray-400" />
                   <div>
                     <p className="font-medium">
                       {cardBrandIcons[method.brand || ''] || method.brand} •••• {method.last4}
@@ -92,7 +93,7 @@ export function PaymentMethods() {
                   </div>
                   {method.isDefault && (
                     <Badge variant="secondary">
-                      <Star className="mr-1 h-3 w-3" />
+                      <Star className="mr-1 size-3" />
                       Default
                     </Badge>
                   )}
@@ -116,7 +117,7 @@ export function PaymentMethods() {
                       // Remove payment method
                     }}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="size-4" />
                   </Button>
                 </div>
               </div>

@@ -1,25 +1,24 @@
 'use client';
 
-import { useState } from 'react';
-import { api } from '@/lib/api';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { formatDistanceToNow } from 'date-fns';
 import { 
-  Users, 
-  UserPlus, 
   Crown, 
+  Mail,
+  MoreVertical,
   Shield, 
   User,
-  MoreVertical,
-  Mail,
+  UserPlus, 
+  Users, 
   X
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useFeatureGate } from '@/hooks/useFeatureGate';
-import { formatDistanceToNow } from 'date-fns';
+import { useState } from 'react';
+import { toast } from 'sonner';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,7 +26,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { toast } from 'sonner';
+import { Progress } from '@/components/ui/progress';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
+import { api } from '@/lib/api';
 
 export function TeamSeatsManagement() {
   const router = useRouter();
@@ -77,11 +78,11 @@ export function TeamSeatsManagement() {
   const getRoleIcon = (role: string) => {
     switch (role) {
       case 'owner':
-        return <Crown className="h-4 w-4" />;
+        return <Crown className="size-4" />;
       case 'admin':
-        return <Shield className="h-4 w-4" />;
+        return <Shield className="size-4" />;
       default:
-        return <User className="h-4 w-4" />;
+        return <User className="size-4" />;
     }
   };
 
@@ -104,7 +105,7 @@ export function TeamSeatsManagement() {
           <CardDescription>Loading team information...</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-40 bg-muted animate-pulse rounded" />
+          <div className="h-40 animate-pulse rounded bg-muted" />
         </CardContent>
       </Card>
     );
@@ -124,7 +125,7 @@ export function TeamSeatsManagement() {
             onClick={() => router.push('/settings/team/invite')}
             disabled={seatsAvailable <= 0}
           >
-            <UserPlus className="h-4 w-4 mr-2" />
+            <UserPlus className="mr-2 size-4" />
             Invite Member
           </Button>
         </div>
@@ -155,10 +156,10 @@ export function TeamSeatsManagement() {
             {members?.members.map((member) => (
               <div
                 key={member.id}
-                className="flex items-center justify-between p-3 rounded-lg border"
+                className="flex items-center justify-between rounded-lg border p-3"
               >
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="size-8">
                     <AvatarImage src={member.avatar_url || undefined} />
                     <AvatarFallback>
                       {member.full_name?.charAt(0) || member.email.charAt(0).toUpperCase()}
@@ -178,8 +179,8 @@ export function TeamSeatsManagement() {
                   {member.role !== 'owner' && (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreVertical className="h-4 w-4" />
+                        <Button variant="ghost" size="icon" className="size-8">
+                          <MoreVertical className="size-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
@@ -223,11 +224,11 @@ export function TeamSeatsManagement() {
               {invitations.invitations.map((invitation) => (
                 <div
                   key={invitation.id}
-                  className="flex items-center justify-between p-3 rounded-lg border border-dashed"
+                  className="flex items-center justify-between rounded-lg border border-dashed p-3"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex size-8 items-center justify-center rounded-full bg-muted">
+                      <Mail className="size-4 text-muted-foreground" />
                     </div>
                     <div>
                       <p className="text-sm font-medium">{invitation.email}</p>
@@ -251,14 +252,14 @@ export function TeamSeatsManagement() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8"
+                      className="size-8"
                       onClick={() => {
                         if (confirm('Cancel this invitation?')) {
                           cancelInvitation.mutate({ invitationId: invitation.id });
                         }
                       }}
                     >
-                      <X className="h-4 w-4" />
+                      <X className="size-4" />
                     </Button>
                   </div>
                 </div>
@@ -268,7 +269,7 @@ export function TeamSeatsManagement() {
         )}
 
         {/* Plan Info */}
-        <div className="pt-4 border-t">
+        <div className="border-t pt-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
               Your {currentTier} plan includes {seatLimit?.limit === -1 ? 'unlimited' : seatLimit?.limit} team seats.
@@ -279,7 +280,7 @@ export function TeamSeatsManagement() {
                 size="sm"
                 onClick={() => router.push('/settings/billing')}
               >
-                <Users className="h-4 w-4 mr-2" />
+                <Users className="mr-2 size-4" />
                 Add More Seats
               </Button>
             )}

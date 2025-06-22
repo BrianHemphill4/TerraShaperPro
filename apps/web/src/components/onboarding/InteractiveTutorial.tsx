@@ -1,13 +1,14 @@
 'use client';
 
+import { AnimatePresence,motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight,X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useOnboardingStore } from '@/stores/onboarding';
-import { cn } from '@/lib/utils';
 
-interface HighlightOverlayProps {
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useOnboardingStore } from '@/stores/onboarding';
+
+type HighlightOverlayProps = {
   target: string | null;
   padding?: number;
 }
@@ -54,8 +55,8 @@ function HighlightOverlay({ target, padding = 8 }: HighlightOverlayProps) {
   return (
     <>
       {/* Dark overlay with cutout */}
-      <div className="fixed inset-0 z-[9998] pointer-events-none">
-        <svg className="w-full h-full">
+      <div className="pointer-events-none fixed inset-0 z-[9998]">
+        <svg className="size-full">
           <defs>
             <mask id="highlight-mask">
               <rect x="0" y="0" width="100%" height="100%" fill="white" />
@@ -82,7 +83,7 @@ function HighlightOverlay({ target, padding = 8 }: HighlightOverlayProps) {
       
       {/* Highlight border */}
       <div
-        className="fixed z-[9999] pointer-events-none border-2 border-primary rounded-lg transition-all duration-300"
+        className="pointer-events-none fixed z-[9999] rounded-lg border-2 border-primary transition-all duration-300"
         style={{
           left: bounds.left - padding,
           top: bounds.top - padding,
@@ -94,7 +95,7 @@ function HighlightOverlay({ target, padding = 8 }: HighlightOverlayProps) {
   );
 }
 
-interface TooltipPosition {
+type TooltipPosition = {
   top?: number;
   bottom?: number;
   left?: number;
@@ -214,22 +215,22 @@ export function InteractiveTutorial() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          className="fixed z-[10000] bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 max-w-md"
+          className="fixed z-[10000] max-w-md rounded-lg bg-white p-6 shadow-2xl dark:bg-gray-800"
           style={tooltipPosition}
         >
           {/* Close button */}
           {step.canSkip && (
             <button
               onClick={skipFlow}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               aria-label="Skip tutorial"
             >
-              <X className="w-5 h-5" />
+              <X className="size-5" />
             </button>
           )}
 
           {/* Step indicator */}
-          <div className="flex items-center gap-1 mb-4">
+          <div className="mb-4 flex items-center gap-1">
             {flow.steps.map((_, index) => (
               <div
                 key={index}
@@ -246,8 +247,8 @@ export function InteractiveTutorial() {
           </div>
 
           {/* Content */}
-          <h3 className="text-lg font-semibold mb-2">{step.title}</h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
+          <h3 className="mb-2 text-lg font-semibold">{step.title}</h3>
+          <p className="mb-6 text-gray-600 dark:text-gray-300">
             {step.description}
           </p>
 
@@ -261,7 +262,7 @@ export function InteractiveTutorial() {
                   onClick={previousStep}
                   className="gap-1"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="size-4" />
                   Back
                 </Button>
               )}
@@ -293,7 +294,7 @@ export function InteractiveTutorial() {
                 className="gap-1"
               >
                 {step.action?.label || 'Next'}
-                {!isLastStep && <ChevronRight className="w-4 h-4" />}
+                {!isLastStep && <ChevronRight className="size-4" />}
               </Button>
             </div>
           </div>

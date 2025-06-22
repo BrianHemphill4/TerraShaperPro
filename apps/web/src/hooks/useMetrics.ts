@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { metrics } from '@/lib/metrics';
 import type { Transaction } from '@sentry/types';
+import { useCallback, useEffect, useRef } from 'react';
 
-export interface UseMetricsOptions {
+import { metrics } from '@/lib/metrics';
+
+export type UseMetricsOptions = {
   componentName?: string;
   trackRender?: boolean;
   trackInteractions?: boolean;
