@@ -87,6 +87,30 @@ npx ts-node scripts/import-plants.ts
 - Extracts dominant colors
 - Creates search indexes
 
+### `migrate-canvas-to-scenes.ts`
+Migrates existing projects from canvas-based design to photo annotation system.
+
+**Usage:**
+```bash
+# Preview the migration (dry run)
+npm run migrate:canvas-to-scenes
+
+# Execute the migration
+npm run migrate:canvas-to-scenes -- --execute
+
+# Show help
+npm run migrate:canvas-to-scenes -- --help
+```
+
+**Features:**
+- Idempotent operation (safe to run multiple times)
+- Dry-run mode for safe preview
+- Converts canvas objects to annotation masks
+- Creates default scenes for projects
+- Updates existing renders to reference scenes
+- Comprehensive error handling and reporting
+- Detailed migration statistics
+
 ## Monitoring & Alerts
 
 ### `setup-sentry-alerts.ts`
@@ -117,12 +141,21 @@ npx ts-node scripts/setup-sentry-alerts.ts
    npm run import-plants
    ```
 
-3. **When setting up monitoring:**
+3. **For canvas to scene migration:**
+   ```bash
+   # Preview changes first
+   npm run migrate:canvas-to-scenes
+   
+   # Execute migration if preview looks good
+   npm run migrate:canvas-to-scenes -- --execute
+   ```
+
+4. **When setting up monitoring:**
    ```bash
    npx ts-node scripts/setup-sentry-alerts.ts
    ```
 
-4. **For emergency rollbacks:**
+5. **For emergency rollbacks:**
    ```bash
    ./scripts/restore-backup.sh backups/latest --force
    ```
@@ -131,13 +164,14 @@ npx ts-node scripts/setup-sentry-alerts.ts
 
 ```
 scripts/
-├── README.md                  # This file
-├── backup-before-deploy.sh    # Pre-deployment backup
-├── restore-backup.sh          # Backup restoration
-├── import-plants.ts           # Plant database import
-├── setup-sentry-alerts.ts     # Monitoring setup
-├── vercel-build.sh           # Vercel build script
-└── vercel-ignore-build.sh    # Vercel build skip logic
+├── README.md                    # This file
+├── backup-before-deploy.sh      # Pre-deployment backup
+├── restore-backup.sh            # Backup restoration
+├── import-plants.ts             # Plant database import
+├── migrate-canvas-to-scenes.ts  # Canvas to scene migration
+├── setup-sentry-alerts.ts       # Monitoring setup
+├── vercel-build.sh             # Vercel build script
+└── vercel-ignore-build.sh      # Vercel build skip logic
 ```
 
 ## Environment Requirements

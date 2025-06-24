@@ -6,8 +6,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 import AssetPalette from '@/components/canvas/AssetPalette';
 import DesignCanvas from '@/components/canvas/DesignCanvas';
+import { AnnotationWorkspace } from '@/components/annotation/AnnotationWorkspace';
 import { HelpCenter } from '@/components/onboarding/HelpCenter';
 import { AlertModal, ConfirmModal } from '@/components/ui/modal';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { trpc } from '@/lib/trpc';
 
 import styles from './design.module.css';
@@ -16,6 +18,8 @@ const DesignPage = () => {
   const params = useParams();
   // Design route currently has no dynamic param; fall back to a temporary id
   const projectId = (params as any)?.projectId ?? (params as any)?.id ?? 'local-design';
+  
+  const { hasFeature } = useFeatureGate();
 
   // tRPC mutation for autosaving versions
   const createVersion = (trpc as any).project.createVersion.useMutation();
@@ -261,6 +265,26 @@ const DesignPage = () => {
     return () => clearTimeout(timer);
   }, [elements, projectId]);
 
+  // Check if new annotation system is enabled
+  const hasNewAnnotationSystem = hasFeature('newAnnotationSystem');
+
+  // If new annotation system is enabled, show the new interface
+  if (hasNewAnnotationSystem) {
+    return (
+      <div className="h-screen flex flex-col">
+        <AnnotationWorkspace projectId={projectId} />
+        <AlertModal
+          isOpen={showAlert}
+          onClose={() => setShowAlert(false)}
+          message={alertMessage}
+          variant={alertVariant}
+        />
+        <HelpCenter />
+      </div>
+    );
+  }
+
+  // Otherwise, show the legacy canvas design tool
   return (
     <div className={styles.container}>
       <div className={styles.header}>

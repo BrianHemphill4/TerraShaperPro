@@ -32,6 +32,7 @@
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
     "typecheck": "turbo run typecheck --filter=apps/* --filter=packages/*",
     "setup:alerts": "tsx scripts/setup-sentry-alerts.ts",
+    "migrate:canvas-to-scenes": "tsx scripts/migrate-canvas-to-scenes.ts",
     "docs:generate": "typedoc",
     "docs:serve": "npx http-server docs -p 8080"
   },

@@ -200,6 +200,7 @@ export const PlanFeatures = {
     advancedAnalytics: false,
     clientPortal: false,
     teamCollaboration: false,
+    newAnnotationSystem: false,
   },
   professional: {
     watermark: false,
@@ -219,6 +220,7 @@ export const PlanFeatures = {
     advancedAnalytics: false,
     clientPortal: true,
     teamCollaboration: true,
+    newAnnotationSystem: true,
   },
   growth: {
     watermark: false,
@@ -238,6 +240,7 @@ export const PlanFeatures = {
     advancedAnalytics: true,
     clientPortal: true,
     teamCollaboration: true,
+    newAnnotationSystem: true,
   },
   enterprise: {
     watermark: false,
@@ -261,6 +264,7 @@ export const PlanFeatures = {
     dedicatedAccountManager: true,
     sla: true,
     customIntegrations: true,
+    newAnnotationSystem: true,
   },
 } as const;
 
