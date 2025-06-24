@@ -10,7 +10,8 @@ export default defineConfig({
     include: [
       'src/**/*.test.{js,jsx,ts,tsx}',
       'apps/**/*.test.{js,jsx,ts,tsx}',
-      'packages/**/*.test.{js,jsx,ts,tsx}'
+      'packages/**/*.test.{js,jsx,ts,tsx}',
+      'scripts/**/*.test.{js,jsx,ts,tsx}'
     ],
     exclude: [
       'node_modules',
@@ -47,7 +48,8 @@ export default defineConfig({
       ['src/components/**/*.test.{ts,tsx}', 'jsdom'],
       ['apps/web/**/*.test.{ts,tsx}', 'jsdom'],
       ['apps/api-gateway/**/*.test.ts', 'node'],
-      ['packages/**/*.test.ts', 'node']
+      ['packages/**/*.test.ts', 'node'],
+      ['scripts/**/*.test.ts', 'node']
     ],
     setupFiles: ['./vitest-setup.ts'],
     env: loadEnv('', process.cwd(), ''),
