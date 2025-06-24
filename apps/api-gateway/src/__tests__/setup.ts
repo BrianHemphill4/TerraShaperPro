@@ -5,6 +5,8 @@ process.env.NODE_ENV = 'test';
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
 process.env.SUPABASE_URL = 'http://localhost:54321';
 process.env.SUPABASE_ANON_KEY = 'test-anon-key';
+process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://localhost:54321';
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 process.env.REDIS_URL = 'redis://localhost:6379';
 process.env.STRIPE_SECRET_KEY = 'sk_test_123';
 process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_123';
@@ -95,8 +97,8 @@ vi.mock('@terrashaper/queue', () => ({
 }));
 
 // Mock ioredis to prevent connection attempts
-vi.mock('ioredis', () => ({
-  default: vi.fn().mockImplementation(() => ({
+vi.mock('ioredis', () => {
+  const mockRedis = vi.fn().mockImplementation(() => ({
     connect: vi.fn(),
     disconnect: vi.fn(),
     on: vi.fn(),
@@ -109,8 +111,13 @@ vi.mock('ioredis', () => ({
     zadd: vi.fn().mockResolvedValue(1),
     expire: vi.fn().mockResolvedValue(1),
     del: vi.fn().mockResolvedValue(1),
-  })),
-}));
+  }));
+  
+  return {
+    default: mockRedis,
+    Redis: mockRedis,
+  };
+});
 
 // Mock storage
 vi.mock('@terrashaper/storage', () => ({
