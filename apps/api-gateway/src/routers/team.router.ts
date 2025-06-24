@@ -1,23 +1,25 @@
-import { protectedProcedure, router } from '../trpc';
-import { z } from 'zod';
-import { TRPCError } from '@trpc/server';
-import { 
-  CreateInvitationSchema, 
-  UpdateUserRoleSchema,
-  UserRoleEnum,
-  hasPermission,
+import {
   ActivityActions,
-  type UserRole
+  CreateInvitationSchema,
+  hasPermission,
+  UpdateUserRoleSchema,
+  type UserRole,
 } from '@terrashaper/shared';
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
+
 import { checkUsageLimit } from '../middleware/usage-limits';
+import { protectedProcedure, router } from '../trpc';
 
 export const teamRouter = router({
   // Get organization members
   listMembers: protectedProcedure
-    .input(z.object({
-      limit: z.number().min(1).max(100).default(20),
-      offset: z.number().min(0).default(0),
-    }))
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(20),
+        offset: z.number().min(0).default(0),
+      })
+    )
     .query(async ({ ctx, input }) => {
       const { data: members, error } = await ctx.supabase
         .from('users')
@@ -82,7 +84,8 @@ export const teamRouter = router({
       // Check team member limit before creating invitation
       await checkUsageLimit(ctx, {
         limitType: 'maxTeamMembers',
-        customMessage: 'You have reached your team member limit. Please upgrade your plan to invite more members.',
+        customMessage:
+          'You have reached your team member limit. Please upgrade your plan to invite more members.',
       });
 
       // Create invitation
@@ -127,10 +130,12 @@ export const teamRouter = router({
 
   // List pending invitations
   listInvitations: protectedProcedure
-    .input(z.object({
-      limit: z.number().min(1).max(100).default(20),
-      offset: z.number().min(0).default(0),
-    }))
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(20),
+        offset: z.number().min(0).default(0),
+      })
+    )
     .query(async ({ ctx, input }) => {
       // Check permission
       const { data: currentUser } = await ctx.supabase
@@ -260,10 +265,10 @@ export const teamRouter = router({
         action: ActivityActions.USER_ROLE_CHANGED,
         entity_type: 'user',
         entity_id: input.userId,
-        metadata: { 
-          oldRole: currentUser.role, 
+        metadata: {
+          oldRole: currentUser.role,
           newRole: input.role,
-          targetUserId: input.userId 
+          targetUserId: input.userId,
         },
       });
 
@@ -324,7 +329,7 @@ export const teamRouter = router({
         action: ActivityActions.USER_REMOVED,
         entity_type: 'user',
         entity_id: input.userId,
-        metadata: { 
+        metadata: {
           removedUser: userToRemove,
         },
       });
@@ -334,12 +339,14 @@ export const teamRouter = router({
 
   // Get activity logs
   getActivityLogs: protectedProcedure
-    .input(z.object({
-      limit: z.number().min(1).max(100).default(50),
-      offset: z.number().min(0).default(0),
-      action: z.string().optional(),
-      userId: z.string().uuid().optional(),
-    }))
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(50),
+        offset: z.number().min(0).default(0),
+        action: z.string().optional(),
+        userId: z.string().uuid().optional(),
+      })
+    )
     .query(async ({ ctx, input }) => {
       let query = ctx.supabase
         .from('activity_logs')
@@ -355,8 +362,7 @@ export const teamRouter = router({
         query = query.eq('user_id', input.userId);
       }
 
-      const { data: logs, error } = await query
-        .range(input.offset, input.offset + input.limit - 1);
+      const { data: logs, error } = await query.range(input.offset, input.offset + input.limit - 1);
 
       if (error) {
         throw new TRPCError({

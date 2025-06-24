@@ -1,29 +1,35 @@
 'use client';
 
-import { Download,TrendingUp } from 'lucide-react';
+import { Download, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
-import { 
-  Area, 
-  AreaChart, 
-  Bar, 
-  BarChart, 
-  CartesianGrid, 
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
   Cell,
   Line,
-  LineChart, 
+  LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
-  Tooltip, 
-  XAxis, 
-  YAxis
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { api } from '@/lib/api';
 import { formatBytes } from '@/lib/utils';
 
@@ -48,9 +54,7 @@ export function UsageAnalytics() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Usage Analytics</h2>
-          <p className="text-muted-foreground">
-            Monitor your resource consumption and trends
-          </p>
+          <p className="text-muted-foreground">Monitor your resource consumption and trends</p>
         </div>
         <div className="flex items-center gap-2">
           <Select value={timeRange} onValueChange={setTimeRange}>
@@ -107,14 +111,11 @@ export function UsageAnalytics() {
               <LineChart data={analytics.storageTrends}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
-                <YAxis tickFormatter={(value) => formatBytes(value * 1024 * 1024 * 1024).split(' ')[0]} />
-                <Tooltip formatter={(value: number) => formatBytes(value * 1024 * 1024 * 1024)} />
-                <Line
-                  type="monotone"
-                  dataKey="storage"
-                  stroke="#82ca9d"
-                  strokeWidth={2}
+                <YAxis
+                  tickFormatter={(value) => formatBytes(value * 1024 * 1024 * 1024).split(' ')[0]}
                 />
+                <Tooltip formatter={(value: number) => formatBytes(value * 1024 * 1024 * 1024)} />
+                <Line type="monotone" dataKey="storage" stroke="#82ca9d" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -161,8 +162,11 @@ export function UsageAnalytics() {
               {breakdown.teamMembers.slice(0, 5).map((member) => (
                 <div key={member.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="flex size-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
-                      {member.name.split(' ').map(n => n[0]).join('')}
+                    <div className="bg-muted flex size-8 items-center justify-center rounded-full text-sm font-medium">
+                      {member.name
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')}
                     </div>
                     <span className="text-sm">{member.name}</span>
                   </div>
@@ -211,17 +215,17 @@ export function UsageAnalytics() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4 border-t pt-4">
               <div>
                 <p className="text-sm font-medium">Peak Usage Day</p>
                 <p className="text-2xl font-bold">{analytics.peakDay}</p>
-                <p className="text-sm text-muted-foreground">{analytics.peakDayUsage} credits</p>
+                <p className="text-muted-foreground text-sm">{analytics.peakDayUsage} credits</p>
               </div>
               <div>
                 <p className="text-sm font-medium">Average Daily Usage</p>
                 <p className="text-2xl font-bold">{analytics.avgDailyUsage}</p>
-                <p className="text-sm text-muted-foreground">credits per day</p>
+                <p className="text-muted-foreground text-sm">credits per day</p>
               </div>
             </div>
           </div>
@@ -236,7 +240,7 @@ export function UsageAnalytics() {
               <CardTitle>Usage Forecast</CardTitle>
               <CardDescription>Predicted usage for the current billing period</CardDescription>
             </div>
-            <TrendingUp className="size-5 text-muted-foreground" />
+            <TrendingUp className="text-muted-foreground size-5" />
           </div>
         </CardHeader>
         <CardContent>
@@ -245,17 +249,25 @@ export function UsageAnalytics() {
               <div>
                 <p className="text-sm font-medium">Projected Renders</p>
                 <p className="text-2xl font-bold">{analytics.projectedRenders}</p>
-                <Progress value={(analytics.projectedRenders / analytics.renderLimit) * 100} className="mt-2" />
+                <Progress
+                  value={(analytics.projectedRenders / analytics.renderLimit) * 100}
+                  className="mt-2"
+                />
               </div>
               <div>
                 <p className="text-sm font-medium">Projected Storage</p>
-                <p className="text-2xl font-bold">{formatBytes(analytics.projectedStorage * 1024 * 1024 * 1024)}</p>
-                <Progress value={(analytics.projectedStorage / analytics.storageLimit) * 100} className="mt-2" />
+                <p className="text-2xl font-bold">
+                  {formatBytes(analytics.projectedStorage * 1024 * 1024 * 1024)}
+                </p>
+                <Progress
+                  value={(analytics.projectedStorage / analytics.storageLimit) * 100}
+                  className="mt-2"
+                />
               </div>
               <div>
                 <p className="text-sm font-medium">Estimated Overages</p>
                 <p className="text-2xl font-bold text-yellow-600">${analytics.estimatedOverages}</p>
-                <p className="mt-1 text-sm text-muted-foreground">if current pace continues</p>
+                <p className="text-muted-foreground mt-1 text-sm">if current pace continues</p>
               </div>
             </div>
           </div>

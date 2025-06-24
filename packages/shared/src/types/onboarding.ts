@@ -54,4 +54,4 @@ export const ONBOARDING_FLOWS = {
   EXPORT_AND_SHARE: 'export-and-share',
 } as const;
 
-export type OnboardingFlowId = typeof ONBOARDING_FLOWS[keyof typeof ONBOARDING_FLOWS];
+export type OnboardingFlowId = (typeof ONBOARDING_FLOWS)[keyof typeof ONBOARDING_FLOWS];

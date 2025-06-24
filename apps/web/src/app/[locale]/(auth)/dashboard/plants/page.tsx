@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { PlantGrid } from '@/components/plants/PlantGrid';
 import { PlantSearch } from '@/components/plants/PlantSearch';
 import { Button } from '@/components/ui/button';
+import { browserLogger } from '@/lib/logger';
 import { trpc } from '@/lib/trpc';
 
 export default function PlantsPage() {
@@ -19,7 +20,7 @@ export default function PlantsPage() {
   });
 
   const handleLoadMore = () => {
-    setPage(prev => prev + 1);
+    setPage((prev) => prev + 1);
   };
 
   return (
@@ -32,28 +33,20 @@ export default function PlantsPage() {
       </div>
 
       <div className="space-y-6">
-        <PlantSearch 
-          onFiltersChange={setFilters}
-          showFavoritesFilter
-        />
+        <PlantSearch onFiltersChange={setFilters} showFavoritesFilter />
 
         <PlantGrid
           plants={data?.plants || []}
           isLoading={isLoading}
           onPlantSelect={(plant) => {
             // TODO: Open plant details modal
-            // eslint-disable-next-line no-console
-            console.log('Selected plant:', plant);
+            browserLogger.debug('Selected plant', { plantId: plant.id, plantName: plant.name });
           }}
         />
 
         {data?.hasMore && (
           <div className="text-center">
-            <Button
-              onClick={handleLoadMore}
-              disabled={isFetching}
-              variant="outline"
-            >
+            <Button onClick={handleLoadMore} disabled={isFetching} variant="outline">
               {isFetching ? 'Loading...' : 'Load More'}
             </Button>
           </div>

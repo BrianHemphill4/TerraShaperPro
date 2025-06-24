@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, CreditCard,Zap } from 'lucide-react';
+import { AlertTriangle, CreditCard, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -40,8 +40,9 @@ export function OverageAlert() {
           <AlertTitle>Render Limit Exceeded</AlertTitle>
           <AlertDescription className="mt-2">
             <p className="mb-3">
-              You've used {renderUsage} renders this billing period, exceeding your plan limit of {renderLimit}.
-              Additional renders will be charged at ${subscription?.plan?.overageRates?.renders || 0.50} each.
+              You've used {renderUsage} renders this billing period, exceeding your plan limit of{' '}
+              {renderLimit}. Additional renders will be charged at $
+              {subscription?.plan?.overageRates?.renders || 0.5} each.
             </p>
             <div className="flex gap-2">
               <Button size="sm" asChild>
@@ -62,9 +63,9 @@ export function OverageAlert() {
           <AlertTitle>Storage Limit Exceeded</AlertTitle>
           <AlertDescription className="mt-2">
             <p className="mb-3">
-              You're using {(storageUsage / 1024 / 1024 / 1024).toFixed(2)} GB of storage, 
-              exceeding your plan limit of {(storageLimit / 1024 / 1024 / 1024).toFixed(2)} GB.
-              Additional storage is charged at ${subscription?.plan?.overageRates?.storage || 0.10} per GB.
+              You're using {(storageUsage / 1024 / 1024 / 1024).toFixed(2)} GB of storage, exceeding
+              your plan limit of {(storageLimit / 1024 / 1024 / 1024).toFixed(2)} GB. Additional
+              storage is charged at ${subscription?.plan?.overageRates?.storage || 0.1} per GB.
             </p>
             <div className="flex gap-2">
               <Button size="sm" asChild>
@@ -85,7 +86,8 @@ export function OverageAlert() {
           <AlertTitle>Approaching Render Limit</AlertTitle>
           <AlertDescription className="mt-2">
             <p className="mb-3">
-              You've used {renderUsage} of your {renderLimit} monthly renders ({renderPercentage.toFixed(0)}%).
+              You've used {renderUsage} of your {renderLimit} monthly renders (
+              {renderPercentage.toFixed(0)}%).
             </p>
             <Progress value={renderPercentage} className="mb-3" />
             <div className="flex gap-2">
@@ -108,7 +110,8 @@ export function OverageAlert() {
           <AlertDescription className="mt-2">
             <p className="mb-3">
               You're using {(storageUsage / 1024 / 1024 / 1024).toFixed(2)} GB of your{' '}
-              {(storageLimit / 1024 / 1024 / 1024).toFixed(2)} GB storage limit ({storagePercentage.toFixed(0)}%).
+              {(storageLimit / 1024 / 1024 / 1024).toFixed(2)} GB storage limit (
+              {storagePercentage.toFixed(0)}%).
             </p>
             <Progress value={storagePercentage} className="mb-3" />
             <div className="flex gap-2">

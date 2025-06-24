@@ -9,13 +9,7 @@ export class ImageProcessor {
     buffer: Buffer,
     options: ImageOptimizationOptions = {}
   ): Promise<{ buffer: Buffer; contentType: string; size: number }> {
-    const {
-      width,
-      height,
-      quality = 80,
-      format = 'webp',
-      thumbnail = false,
-    } = options;
+    const { width, height, quality = 80, format = 'webp', thumbnail = false } = options;
 
     let processor = sharp(buffer);
 
@@ -49,7 +43,7 @@ export class ImageProcessor {
     }
 
     const optimizedBuffer = await processor.toBuffer();
-    
+
     return {
       buffer: optimizedBuffer,
       contentType: `image/${format}`,

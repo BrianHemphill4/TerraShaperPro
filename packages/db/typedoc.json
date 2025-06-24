@@ -1,0 +1,55 @@
+{
+  "entryPoints": [
+    "src/index.ts"
+  ],
+  "out": "../../docs/api/db",
+  "theme": "default",
+  "name": "Database Package API",
+  "includeVersion": true,
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "excludeInternal": true,
+  "readme": "README.md",
+  "sort": ["source-order"],
+  "kindSortOrder": [
+    "Document",
+    "Project", 
+    "Module",
+    "Namespace",
+    "Enum",
+    "EnumMember",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Constructor",
+    "Property",
+    "Variable",
+    "Function",
+    "Accessor",
+    "Method",
+    "Parameter",
+    "TypeParameter",
+    "TypeLiteral",
+    "CallSignature",
+    "ConstructorSignature",
+    "IndexSignature",
+    "GetSignature",
+    "SetSignature"
+  ],
+  "categorizeByGroup": true,
+  "categoryOrder": [
+    "Schema",
+    "Types",
+    "Utilities",
+    "Configuration",
+    "*"
+  ],
+  "gitRevision": "main",
+  "searchInComments": true,
+  "validation": {
+    "invalidLink": true,
+    "notExported": false
+  },
+  "skipErrorChecking": true
+}

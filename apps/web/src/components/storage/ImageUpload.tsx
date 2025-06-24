@@ -32,90 +32,98 @@ export function ImageUpload({
   const [error, setError] = useState<string | null>(null);
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
 
-  const uploadFile = useCallback(async (file: File) => {
-    try {
-      setStatus('uploading');
-      setProgress(0);
-      setError(null);
+  const uploadFile = useCallback(
+    async (file: File) => {
+      try {
+        setStatus('uploading');
+        setProgress(0);
+        setError(null);
 
-      // Validate file size
-      if (file.size > maxSizeMB * 1024 * 1024) {
-        throw new Error(`File size must be less than ${maxSizeMB}MB`);
-      }
-
-      // Generate unique filename
-      const fileExtension = file.name.split('.').pop() || 'jpg';
-      const fileName = `uploads/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExtension}`;
-
-      // Get signed upload URL from your API
-      const uploadResponse = await fetch('/api/trpc/storage.generateUploadUrl', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fileName,
-          contentType: file.type,
-          bucketType,
-        }),
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error('Failed to get upload URL');
-      }
-
-      const { uploadUrl, publicUrl } = await uploadResponse.json();
-
-      // Upload directly to Google Cloud Storage
-      const uploadRequest = new XMLHttpRequest();
-      
-      uploadRequest.upload.addEventListener('progress', (event) => {
-        if (event.lengthComputable) {
-          const progressPercent = Math.round((event.loaded / event.total) * 100);
-          setProgress(progressPercent);
+        // Validate file size
+        if (file.size > maxSizeMB * 1024 * 1024) {
+          throw new Error(`File size must be less than ${maxSizeMB}MB`);
         }
-      });
 
-      uploadRequest.addEventListener('load', () => {
-        if (uploadRequest.status === 200) {
-          setStatus('success');
-          setUploadedUrl(publicUrl);
-          onUploadComplete?.(publicUrl, fileName);
-        } else {
-          throw new Error(`Upload failed with status ${uploadRequest.status}`);
+        // Generate unique filename
+        const fileExtension = file.name.split('.').pop() || 'jpg';
+        const fileName = `uploads/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExtension}`;
+
+        // Get signed upload URL from your API
+        const uploadResponse = await fetch('/api/trpc/storage.generateUploadUrl', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fileName,
+            contentType: file.type,
+            bucketType,
+          }),
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to get upload URL');
         }
-      });
 
-      uploadRequest.addEventListener('error', () => {
-        throw new Error('Upload failed');
-      });
+        const { uploadUrl, publicUrl } = await uploadResponse.json();
 
-      uploadRequest.open('PUT', uploadUrl);
-      uploadRequest.setRequestHeader('Content-Type', file.type);
-      uploadRequest.send(file);
+        // Upload directly to Google Cloud Storage
+        const uploadRequest = new XMLHttpRequest();
 
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Upload failed';
-      setError(errorMessage);
-      setStatus('error');
-      onUploadError?.(errorMessage);
-    }
-  }, [bucketType, maxSizeMB, onUploadComplete, onUploadError]);
+        uploadRequest.upload.addEventListener('progress', (event) => {
+          if (event.lengthComputable) {
+            const progressPercent = Math.round((event.loaded / event.total) * 100);
+            setProgress(progressPercent);
+          }
+        });
 
-  const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      uploadFile(file);
-    }
-  }, [uploadFile]);
+        uploadRequest.addEventListener('load', () => {
+          if (uploadRequest.status === 200) {
+            setStatus('success');
+            setUploadedUrl(publicUrl);
+            onUploadComplete?.(publicUrl, fileName);
+          } else {
+            throw new Error(`Upload failed with status ${uploadRequest.status}`);
+          }
+        });
 
-  const handleDrop = useCallback((event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    const file = event.dataTransfer.files?.[0];
-    if (file) {
-      uploadFile(file);
-    }
-  }, [uploadFile]);
+        uploadRequest.addEventListener('error', () => {
+          throw new Error('Upload failed');
+        });
+
+        uploadRequest.open('PUT', uploadUrl);
+        uploadRequest.setRequestHeader('Content-Type', file.type);
+        uploadRequest.send(file);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Upload failed';
+        setError(errorMessage);
+        setStatus('error');
+        onUploadError?.(errorMessage);
+      }
+    },
+    [bucketType, maxSizeMB, onUploadComplete, onUploadError]
+  );
+
+  const handleFileSelect = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        uploadFile(file);
+      }
+    },
+    [uploadFile]
+  );
+
+  const handleDrop = useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      const file = event.dataTransfer.files?.[0];
+      if (file) {
+        uploadFile(file);
+      }
+    },
+    [uploadFile]
+  );
 
   const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -134,11 +142,7 @@ export function ImageUpload({
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        className={`
-          rounded-lg border-2 border-dashed p-8 text-center transition-colors
-          ${status === 'uploading' ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}
-          ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
-        `}
+        className={`rounded-lg border-2 border-dashed p-8 text-center transition-colors ${status === 'uploading' ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'} ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} `}
       >
         {status === 'idle' && (
           <>
@@ -152,12 +156,8 @@ export function ImageUpload({
             />
             <label htmlFor="file-upload" className="cursor-pointer" aria-label="Upload image file">
               <div className="space-y-2">
-                <div className="text-gray-600">
-                  Drag and drop an image here, or click to select
-                </div>
-                <div className="text-sm text-gray-400">
-                  Max size: {maxSizeMB}MB
-                </div>
+                <div className="text-gray-600">Drag and drop an image here, or click to select</div>
+                <div className="text-sm text-gray-400">Max size: {maxSizeMB}MB</div>
               </div>
             </label>
           </>
@@ -174,17 +174,8 @@ export function ImageUpload({
         {status === 'success' && uploadedUrl && (
           <div className="space-y-2">
             <div className="text-green-600">✓ Upload successful!</div>
-            <img 
-              src={uploadedUrl} 
-              alt="Uploaded" 
-              className="mx-auto max-h-32 max-w-full rounded"
-            />
-            <Button 
-              type="button" 
-              onClick={resetUpload}
-              variant="outline"
-              size="sm"
-            >
+            <img src={uploadedUrl} alt="Uploaded" className="mx-auto max-h-32 max-w-full rounded" />
+            <Button type="button" onClick={resetUpload} variant="outline" size="sm">
               Upload Another
             </Button>
           </div>
@@ -193,12 +184,7 @@ export function ImageUpload({
         {status === 'error' && (
           <div className="space-y-2">
             <div className="text-red-600">✗ Upload failed</div>
-            <Button 
-              type="button"
-              onClick={resetUpload}
-              variant="outline"
-              size="sm"
-            >
+            <Button type="button" onClick={resetUpload} variant="outline" size="sm">
               Try Again
             </Button>
           </div>

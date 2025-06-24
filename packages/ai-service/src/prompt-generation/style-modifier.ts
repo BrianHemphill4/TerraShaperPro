@@ -30,120 +30,107 @@ export class StyleModifier {
 
   private initializeModifiers(): void {
     this.styleModifiers = new Map([
-      ['modern', [
-        'clean lines',
-        'contemporary design',
-        'minimalist aesthetic',
-        'geometric shapes',
-        'sophisticated palette',
-      ]],
-      ['traditional', [
-        'classic design elements',
-        'timeless appeal',
-        'formal arrangement',
-        'symmetrical layout',
-        'established style',
-      ]],
-      ['rustic', [
-        'natural materials',
-        'weathered textures',
-        'organic forms',
-        'countryside charm',
-        'informal arrangement',
-      ]],
-      ['tropical', [
-        'lush vegetation',
-        'exotic plants',
-        'vibrant colors',
-        'layered canopy',
-        'paradise atmosphere',
-      ]],
-      ['mediterranean', [
-        'warm earth tones',
-        'drought-tolerant plants',
-        'terracotta elements',
-        'gravel pathways',
-        'sun-drenched atmosphere',
-      ]],
-      ['zen', [
-        'peaceful composition',
-        'balanced elements',
-        'contemplative spaces',
-        'natural harmony',
-        'subtle beauty',
-      ]],
+      [
+        'modern',
+        [
+          'clean lines',
+          'contemporary design',
+          'minimalist aesthetic',
+          'geometric shapes',
+          'sophisticated palette',
+        ],
+      ],
+      [
+        'traditional',
+        [
+          'classic design elements',
+          'timeless appeal',
+          'formal arrangement',
+          'symmetrical layout',
+          'established style',
+        ],
+      ],
+      [
+        'rustic',
+        [
+          'natural materials',
+          'weathered textures',
+          'organic forms',
+          'countryside charm',
+          'informal arrangement',
+        ],
+      ],
+      [
+        'tropical',
+        [
+          'lush vegetation',
+          'exotic plants',
+          'vibrant colors',
+          'layered canopy',
+          'paradise atmosphere',
+        ],
+      ],
+      [
+        'mediterranean',
+        [
+          'warm earth tones',
+          'drought-tolerant plants',
+          'terracotta elements',
+          'gravel pathways',
+          'sun-drenched atmosphere',
+        ],
+      ],
+      [
+        'zen',
+        [
+          'peaceful composition',
+          'balanced elements',
+          'contemplative spaces',
+          'natural harmony',
+          'subtle beauty',
+        ],
+      ],
     ]);
 
     this.moodModifiers = new Map([
-      ['serene', [
-        'peaceful atmosphere',
-        'calming presence',
-        'tranquil setting',
-        'gentle transitions',
-      ]],
-      ['vibrant', [
-        'energetic composition',
-        'dynamic elements',
-        'bold contrasts',
-        'lively atmosphere',
-      ]],
-      ['romantic', [
-        'soft lighting',
-        'dreamy atmosphere',
-        'intimate spaces',
-        'enchanting details',
-      ]],
-      ['dramatic', [
-        'strong contrasts',
-        'bold statements',
-        'striking features',
-        'theatrical lighting',
-      ]],
-      ['welcoming', [
-        'inviting spaces',
-        'warm atmosphere',
-        'comfortable settings',
-        'friendly approach',
-      ]],
+      [
+        'serene',
+        ['peaceful atmosphere', 'calming presence', 'tranquil setting', 'gentle transitions'],
+      ],
+      [
+        'vibrant',
+        ['energetic composition', 'dynamic elements', 'bold contrasts', 'lively atmosphere'],
+      ],
+      ['romantic', ['soft lighting', 'dreamy atmosphere', 'intimate spaces', 'enchanting details']],
+      [
+        'dramatic',
+        ['strong contrasts', 'bold statements', 'striking features', 'theatrical lighting'],
+      ],
+      [
+        'welcoming',
+        ['inviting spaces', 'warm atmosphere', 'comfortable settings', 'friendly approach'],
+      ],
     ]);
 
     this.colorSchemeModifiers = new Map([
-      ['monochromatic', [
-        'single color palette',
-        'tonal variations',
-        'subtle gradations',
-        'unified scheme',
-      ]],
-      ['complementary', [
-        'contrasting colors',
-        'vibrant combinations',
-        'balanced opposites',
-        'dynamic palette',
-      ]],
-      ['analogous', [
-        'harmonious colors',
-        'flowing transitions',
-        'natural progression',
-        'cohesive palette',
-      ]],
-      ['warm', [
-        'warm color tones',
-        'reds oranges yellows',
-        'inviting warmth',
-        'sunset colors',
-      ]],
-      ['cool', [
-        'cool color tones',
-        'blues greens purples',
-        'refreshing palette',
-        'calming colors',
-      ]],
-      ['neutral', [
-        'neutral tones',
-        'earthy colors',
-        'natural palette',
-        'understated elegance',
-      ]],
+      [
+        'monochromatic',
+        ['single color palette', 'tonal variations', 'subtle gradations', 'unified scheme'],
+      ],
+      [
+        'complementary',
+        ['contrasting colors', 'vibrant combinations', 'balanced opposites', 'dynamic palette'],
+      ],
+      [
+        'analogous',
+        ['harmonious colors', 'flowing transitions', 'natural progression', 'cohesive palette'],
+      ],
+      ['warm', ['warm color tones', 'reds oranges yellows', 'inviting warmth', 'sunset colors']],
+      [
+        'cool',
+        ['cool color tones', 'blues greens purples', 'refreshing palette', 'calming colors'],
+      ],
+      ['neutral', ['neutral tones', 'earthy colors', 'natural palette', 'understated elegance']],
     ]);
   }
 

@@ -8,19 +8,19 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
+    "build": "turbo run build --filter=apps/* --filter=packages/*",
     "clean": "rimraf .next out coverage",
     "commit": "cz",
-    "dev": "turbo run dev --parallel",
+    "dev": "turbo run dev --parallel --filter=apps/* --filter=packages/*",
     "db:generate": "turbo run db:generate",
     "db:migrate": "turbo run db:migrate",
     "db:studio": "turbo run db:studio",
-    "lint": "turbo run lint",
+    "lint": "turbo run lint --filter=apps/* --filter=packages/*",
     "lint:fix": "turbo run lint:fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "prepare": "husky",
-    "test": "turbo run test",
+    "test": "turbo run test --filter=apps/* --filter=packages/*",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:unit:coverage": "vitest run --coverage",
@@ -30,8 +30,10 @@
     "test:e2e:headed": "turbo run test:e2e -- --headed",
     "test:integration": "vitest run apps/api-gateway/src/__tests__/integration",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
-    "typecheck": "turbo run typecheck",
-    "setup:alerts": "tsx scripts/setup-sentry-alerts.ts"
+    "typecheck": "turbo run typecheck --filter=apps/* --filter=packages/*",
+    "setup:alerts": "tsx scripts/setup-sentry-alerts.ts",
+    "docs:generate": "typedoc",
+    "docs:serve": "npx http-server docs -p 8080"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.27.3",
@@ -60,6 +62,7 @@
     "semantic-release": "^24.1.2",
     "supertest": "^7.0.0",
     "turbo": "^2.0.9",
+    "typedoc": "^0.25.13",
     "typescript": "^5.6.3"
   },
   "config": {

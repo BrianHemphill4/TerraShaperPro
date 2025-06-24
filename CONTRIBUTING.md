@@ -13,9 +13,11 @@ cd terrashaper-pro
 # Install dependencies
 npm install
 
-# Set up environment (see HOW_TO_RUN.md for details)
-cp apps/web/.env.example apps/web/.env.local
-# Configure your environment variables...
+# Copy environment files
+cp .env.example .env
+cp apps/web/.env.example apps/web/.env
+cp apps/api-gateway/.env.example apps/api-gateway/.env
+cp apps/render-worker/.env.example apps/render-worker/.env
 
 # Start development servers
 npm run dev
@@ -42,9 +44,11 @@ git push origin feature/your-feature-name
 ## Code Style & Standards
 
 ### TypeScript Guidelines
-- **Strict TypeScript**: No `any` types except for third-party integrations
-- **Explicit return types**: All functions must have return type annotations
-- **Interface over type**: Use `interface` for object shapes, `type` for unions/primitives
+- **Language**: TypeScript (Node 20) for all new code
+- **Style**: Prettier defaults with 2-space indentation, single quotes, semicolons
+- **Features**: Use ES2022 features; avoid experimental proposals
+- **Types**: Explicit return types for all functions; no `any` except in third-party typings
+- **Validation**: Validate external input; never trust user-supplied paths or keys
 
 ```typescript
 // ✅ Good
@@ -65,19 +69,19 @@ function createUser(data: any) {
 ```
 
 ### Code Formatting
-- **Prettier**: Automatic formatting with 2-space indentation
-- **ESLint**: Airbnb configuration with custom rules
+- **Prettier**: Automatic formatting with 2-space indentation, single quotes, semicolons
+- **ESLint**: Custom configuration with TypeScript rules
 - **Import sorting**: Use `simple-import-sort` for consistent imports
 
 ```typescript
 // ✅ Good import order
-import React from 'react';
-import { NextPage } from 'next';
+import React from 'react'
+import { NextPage } from 'next'
 
-import { Button } from '@/components/ui/button';
-import { api } from '@/lib/trpc';
+import { Button } from '@/components/ui/button'
+import { api } from '@/lib/trpc'
 
-import type { ProjectData } from './types';
+import type { ProjectData } from './types'
 ```
 
 ### Naming Conventions
@@ -311,12 +315,15 @@ Brief description of what this PR does.
 3. **Testing**: Reviewers may test your changes locally
 4. **Documentation**: Ensure docs are updated for new features
 
-## Development Environment
+## Local Development Setup
+
+### Prerequisites
+- **Node.js**: Version 20.x (use nvm or asdf)
+- **npm**: Latest stable version
+- **Docker**: For Redis and local services
+- **Git**: For version control
 
 ### Required Tools
-- **Node.js**: v20+ (use nvm for version management)
-- **npm**: v10+ (comes with Node.js)
-- **Git**: For version control
 - **VS Code**: Recommended editor with extensions:
   - TypeScript and JavaScript Language Features
   - ESLint
@@ -370,8 +377,9 @@ Add to your workspace settings:
 ## Security Guidelines
 
 ### Authentication
-- **Never commit** API keys, secrets, or credentials
-- **Use environment variables** for all sensitive configuration
+- **Never store secrets** in source or config files
+- **Redact or hash** sample credentials in examples
+- **Assume least privilege** for all CLI instructions (--read-only, etc.)
 - **Validate all inputs** at API boundaries
 - **Implement proper authorization** checks
 

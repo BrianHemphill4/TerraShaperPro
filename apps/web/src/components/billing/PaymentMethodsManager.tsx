@@ -1,21 +1,13 @@
 'use client';
 
-import { 
-  AlertCircle,
-  Building2,
-  Check,
-  CreditCard, 
-  Plus, 
-  Star,
-  Trash2
-} from 'lucide-react';
+import { AlertCircle, Building2, Check, CreditCard, Plus, Star, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -23,14 +15,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@terrashaper/hooks/use-toast';
 import { api } from '@/lib/api';
 
 export function PaymentMethodsManager() {
   const { toast } = useToast();
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [deletingCardId, setDeletingCardId] = useState<string | null>(null);
-  
+
   const { data: paymentMethods, refetch } = api.billing.getPaymentMethods.useQuery();
   const setDefaultMutation = api.billing.setDefaultPaymentMethod.useMutation();
   const deletePaymentMethodMutation = api.billing.deletePaymentMethod.useMutation();
@@ -127,9 +119,7 @@ export function PaymentMethodsManager() {
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
-                  <div className="bg-muted rounded-lg p-2">
-                    {getCardIcon(method.card.brand)}
-                  </div>
+                  <div className="bg-muted rounded-lg p-2">{getCardIcon(method.card.brand)}</div>
                   <div>
                     <div className="flex items-center gap-2">
                       <p className="font-medium capitalize">
@@ -146,25 +136,19 @@ export function PaymentMethodsManager() {
                       Expires {method.card.exp_month}/{method.card.exp_year}
                     </p>
                     {method.billing_details?.name && (
-                      <p className="text-muted-foreground text-sm">
-                        {method.billing_details.name}
-                      </p>
+                      <p className="text-muted-foreground text-sm">{method.billing_details.name}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   {!method.isDefault && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleSetDefault(method.id)}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => handleSetDefault(method.id)}>
                       <Check className="mr-2 size-4" />
                       Set as Default
                     </Button>
                   )}
-                  
+
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -179,7 +163,8 @@ export function PaymentMethodsManager() {
                       <DialogHeader>
                         <DialogTitle>Remove Payment Method</DialogTitle>
                         <DialogDescription>
-                          Are you sure you want to remove this payment method? This action cannot be undone.
+                          Are you sure you want to remove this payment method? This action cannot be
+                          undone.
                         </DialogDescription>
                       </DialogHeader>
                       <div className="mt-4 flex justify-end gap-2">
@@ -204,9 +189,7 @@ export function PaymentMethodsManager() {
       <Card>
         <CardHeader>
           <CardTitle>Billing Information</CardTitle>
-          <CardDescription>
-            Your billing address and tax information
-          </CardDescription>
+          <CardDescription>Your billing address and tax information</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -219,7 +202,9 @@ export function PaymentMethodsManager() {
                     <p>{paymentMethods[0].billing_details.address.line2}</p>
                   )}
                   <p>
-                    {paymentMethods[0].billing_details.address.city}, {paymentMethods[0].billing_details.address.state} {paymentMethods[0].billing_details.address.postal_code}
+                    {paymentMethods[0].billing_details.address.city},{' '}
+                    {paymentMethods[0].billing_details.address.state}{' '}
+                    {paymentMethods[0].billing_details.address.postal_code}
                   </p>
                   <p>{paymentMethods[0].billing_details.address.country}</p>
                 </div>
@@ -250,8 +235,8 @@ export function PaymentMethodsManager() {
             <div className="text-muted-foreground text-sm">
               <p className="mb-1 font-medium">Secure Payment Processing</p>
               <p>
-                All payment information is securely processed and stored by Stripe. 
-                We never have access to your full card details.
+                All payment information is securely processed and stored by Stripe. We never have
+                access to your full card details.
               </p>
             </div>
           </div>

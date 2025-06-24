@@ -13,7 +13,7 @@ describe('CenteredFooter', () => {
           <CenteredFooter logo={null} name="" iconList={null} legalLinks={null}>
             Random children
           </CenteredFooter>
-        </NextIntlClientProvider>,
+        </NextIntlClientProvider>
       );
 
       const copyright = screen.getByText(/© Copyright/);

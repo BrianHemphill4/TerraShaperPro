@@ -1,7 +1,8 @@
-import { TRPCError } from '@trpc/server';
 import * as Sentry from '@sentry/node';
-import { apiMetrics } from '../lib/metrics';
+import { TRPCError } from '@trpc/server';
+
 import type { Context } from '../context';
+import { apiMetrics } from '../lib/metrics';
 
 export const metricsMiddleware = async ({
   ctx,
@@ -17,12 +18,12 @@ export const metricsMiddleware = async ({
   const start = performance.now();
   let success = true;
   let errorCode: string | undefined;
-  
+
   // Set Sentry tags for this operation
   Sentry.setTag('trpc.path', path);
   Sentry.setTag('trpc.type', type);
   Sentry.setTag('user.id', ctx.session?.userId || 'anonymous');
-  
+
   try {
     const result = await next();
     return result;
@@ -34,14 +35,14 @@ export const metricsMiddleware = async ({
     throw error;
   } finally {
     const duration = performance.now() - start;
-    
+
     // Record metrics
     apiMetrics.recordTrpcCall(path, duration, success, {
       type,
       userId: ctx.session?.userId || 'anonymous',
       errorCode: errorCode || '',
     });
-    
+
     // Report performance metric
     if (!success && errorCode) {
       Sentry.setTag('error.code', errorCode);

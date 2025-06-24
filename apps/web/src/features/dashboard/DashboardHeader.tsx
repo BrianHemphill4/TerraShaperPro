@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { Logo } from '@/templates/Logo';
-import { getI18nPath } from '@/utils/Helpers';
+import { getI18nPath } from '@/utils/helpers';
 
 export const DashboardHeader = (props: {
   menu: {
@@ -34,7 +34,7 @@ export const DashboardHeader = (props: {
         </Link>
 
         <svg
-          className="size-8 stroke-muted-foreground max-sm:hidden"
+          className="stroke-muted-foreground size-8 max-sm:hidden"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           fill="none"
@@ -47,10 +47,7 @@ export const DashboardHeader = (props: {
 
         <OrganizationSwitcher
           organizationProfileMode="navigation"
-          organizationProfileUrl={getI18nPath(
-            '/dashboard/organization-profile',
-            locale,
-          )}
+          organizationProfileUrl={getI18nPath('/dashboard/organization-profile', locale)}
           afterCreateOrganizationUrl="/dashboard"
           hidePersonal
           skipInvitationScreen
@@ -63,7 +60,7 @@ export const DashboardHeader = (props: {
 
         <nav className="ml-3 max-lg:hidden">
           <ul className="flex flex-row items-center gap-x-3 text-lg font-medium [&_a:hover]:opacity-100 [&_a]:opacity-75">
-            {props.menu.map(item => (
+            {props.menu.map((item) => (
               <li key={item.href} data-onboarding={item['data-onboarding']}>
                 <ActiveLink href={item.href}>{item.label}</ActiveLink>
               </li>
@@ -81,7 +78,7 @@ export const DashboardHeader = (props: {
                   <ToggleMenuButton />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {props.menu.map(item => (
+                  {props.menu.map((item) => (
                     <DropdownMenuItem key={item.href} asChild>
                       <Link href={item.href}>{item.label}</Link>
                     </DropdownMenuItem>

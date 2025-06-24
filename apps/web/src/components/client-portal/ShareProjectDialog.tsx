@@ -22,7 +22,7 @@ type ShareProjectDialogProps = {
   projectName: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
+};
 
 export function ShareProjectDialog({
   projectId,
@@ -155,9 +155,7 @@ export function ShareProjectDialog({
 
             {createLinkMutation.error && (
               <Alert variant="destructive">
-                <AlertDescription>
-                  {createLinkMutation.error.message}
-                </AlertDescription>
+                <AlertDescription>{createLinkMutation.error.message}</AlertDescription>
               </Alert>
             )}
 

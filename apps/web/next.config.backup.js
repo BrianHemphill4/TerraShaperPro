@@ -5,12 +5,12 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   transpilePackages: ['@terrashaper/db', '@terrashaper/queue', '@terrashaper/ai-service'],
-  
+
   experimental: {
     serverActions: true,
     serverComponentsExternalPackages: ['@node-rs/argon2', '@node-rs/bcrypt'],
   },
-  
+
   images: {
     domains: [
       'localhost',
@@ -24,12 +24,12 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
-  
+
   // Optimize for Vercel
   compress: true,
   poweredByHeader: false,
   generateEtags: true,
-  
+
   async headers() {
     return [
       {
@@ -67,7 +67,7 @@ const nextConfig = {
       },
     ];
   },
-  
+
   async rewrites() {
     return [
       {
@@ -85,16 +85,16 @@ const sentryWebpackPluginOptions = {
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
   authToken: process.env.SENTRY_AUTH_TOKEN,
-  
+
   // Suppresses source map uploading logs during build
   silent: true,
-  
+
   // Upload source maps in production
   hideSourceMaps: true,
-  
+
   // Tree shake Sentry code in production
   disableLogger: true,
-  
+
   // Automatically release
   automaticVercelMonitors: true,
 };

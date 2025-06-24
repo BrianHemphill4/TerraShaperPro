@@ -1,9 +1,9 @@
+import { ActivityActions } from '@terrashaper/shared';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
+import { checkUsageLimit } from '../middleware/usage-limits';
 import { protectedProcedure, router } from '../trpc';
-import { checkUsageLimit, trackUsage } from '../middleware/usage-limits';
-import { ActivityActions } from '@terrashaper/shared';
 
 export const projectRouter = router({
   list: protectedProcedure
@@ -124,7 +124,8 @@ export const projectRouter = router({
       // Check project limit before creating
       await checkUsageLimit(ctx, {
         limitType: 'maxProjects',
-        customMessage: 'You have reached your project limit. Please upgrade your plan to create more projects.',
+        customMessage:
+          'You have reached your project limit. Please upgrade your plan to create more projects.',
       });
 
       const { data: project, error } = await ctx.supabase
@@ -356,9 +357,12 @@ export const projectRouter = router({
         .eq('id', version.project_id);
 
       if (updateError) {
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to restore version' });
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to restore version',
+        });
       }
 
       return { restored: true };
     }),
-}); 
+});

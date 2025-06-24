@@ -2,14 +2,14 @@
 
 import type { ActivityLog } from '@terrashaper/shared';
 import { formatDistanceToNow } from 'date-fns';
-import { 
+import {
   Activity,
   AlertCircle,
-  FileText, 
-  Palette, 
-  Shield, 
-  UserMinus, 
-  UserPlus
+  FileText,
+  Palette,
+  Shield,
+  UserMinus,
+  UserPlus,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -105,10 +105,19 @@ export function ActivityLogComponent() {
                     </span>{' '}
                     {actionLabel}
                     {log.metadata?.email && (
-                      <> <span className="font-medium">{log.metadata.email}</span></>
+                      <>
+                        {' '}
+                        <span className="font-medium">{log.metadata.email}</span>
+                      </>
                     )}
                     {log.metadata?.newRole && (
-                      <> to <Badge variant="outline" className="ml-1">{log.metadata.newRole}</Badge></>
+                      <>
+                        {' '}
+                        to{' '}
+                        <Badge variant="outline" className="ml-1">
+                          {log.metadata.newRole}
+                        </Badge>
+                      </>
                     )}
                   </p>
                   <p className="text-xs text-gray-500">

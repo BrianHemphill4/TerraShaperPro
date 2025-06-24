@@ -18,11 +18,11 @@ export const CenteredFooter = (props: {
         {props.children}
       </ul>
 
-      <ul className="mt-4 flex flex-row gap-x-5 text-muted-foreground [&_svg:hover]:text-primary [&_svg:hover]:opacity-100 [&_svg]:size-5 [&_svg]:fill-current [&_svg]:opacity-60">
+      <ul className="text-muted-foreground [&_svg:hover]:text-primary mt-4 flex flex-row gap-x-5 [&_svg:hover]:opacity-100 [&_svg]:size-5 [&_svg]:fill-current [&_svg]:opacity-60">
         {props.iconList}
       </ul>
 
-      <div className="mt-6 flex w-full items-center justify-between gap-y-2 border-t pt-3 text-sm text-muted-foreground max-md:flex-col">
+      <div className="text-muted-foreground mt-6 flex w-full items-center justify-between gap-y-2 border-t pt-3 text-sm max-md:flex-col">
         <div>
           {`© Copyright ${new Date().getFullYear()} ${props.name}. `}
           {t.rich('designed_by', {

@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { onboardingFlows } from '@/lib/onboarding-flows';
+import { onboardingFlows } from '@/lib/onboardingFlows';
 import { cn } from '@/lib/utils';
 import { useOnboardingStore } from '@/stores/onboarding';
 
@@ -18,7 +18,7 @@ type FlowProgress = {
   description: string;
   status: 'completed' | 'available' | 'locked';
   prerequisite?: OnboardingFlowId;
-}
+};
 
 const flowOrder: OnboardingFlowId[] = [
   ONBOARDING_FLOWS.INITIAL_SETUP,
@@ -40,15 +40,16 @@ const flowPrerequisites: Partial<Record<OnboardingFlowId, OnboardingFlowId>> = {
 };
 
 export function OnboardingProgress() {
-  const { completedFlows, skippedFlows, isFlowCompleted, startFlow, resetFlow } = useOnboardingStore();
+  const { completedFlows, skippedFlows, isFlowCompleted, startFlow, resetFlow } =
+    useOnboardingStore();
 
   const flowProgress = useMemo<FlowProgress[]>(() => {
     return flowOrder.map((flowId) => {
       const flow = onboardingFlows[flowId];
       const prerequisite = flowPrerequisites[flowId];
-      
+
       let status: FlowProgress['status'] = 'available';
-      
+
       if (completedFlows.includes(flowId)) {
         status = 'completed';
       } else if (prerequisite && !isFlowCompleted(prerequisite)) {
@@ -83,9 +84,7 @@ export function OnboardingProgress() {
     <Card>
       <CardHeader>
         <CardTitle>Your Learning Progress</CardTitle>
-        <CardDescription>
-          Complete these tutorials to master TerraShaperPro
-        </CardDescription>
+        <CardDescription>Complete these tutorials to master TerraShaperPro</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Overall Progress */}
@@ -103,7 +102,7 @@ export function OnboardingProgress() {
             <div
               key={flow.flowId}
               className={cn(
-                'flex items-center gap-3 p-3 rounded-lg border transition-colors',
+                'flex items-center gap-3 rounded-lg border p-3 transition-colors',
                 flow.status === 'completed' && 'bg-muted/50',
                 flow.status === 'locked' && 'opacity-60'
               )}
@@ -113,9 +112,9 @@ export function OnboardingProgress() {
                 {flow.status === 'completed' ? (
                   <CheckCircle2 className="size-5 text-green-600 dark:text-green-400" />
                 ) : flow.status === 'locked' ? (
-                  <Lock className="size-5 text-muted-foreground" />
+                  <Lock className="text-muted-foreground size-5" />
                 ) : (
-                  <Circle className="size-5 text-muted-foreground" />
+                  <Circle className="text-muted-foreground size-5" />
                 )}
               </div>
 
@@ -129,27 +128,17 @@ export function OnboardingProgress() {
                     </Badge>
                   )}
                 </div>
-                <p className="truncate text-sm text-muted-foreground">
-                  {flow.description}
-                </p>
+                <p className="text-muted-foreground truncate text-sm">{flow.description}</p>
               </div>
 
               {/* Action */}
               <div className="shrink-0">
                 {flow.status === 'completed' ? (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleResetFlow(flow.flowId)}
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => handleResetFlow(flow.flowId)}>
                     Replay
                   </Button>
                 ) : flow.status === 'available' ? (
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={() => handleStartFlow(flow.flowId)}
-                  >
+                  <Button variant="default" size="sm" onClick={() => handleStartFlow(flow.flowId)}>
                     Start
                   </Button>
                 ) : (

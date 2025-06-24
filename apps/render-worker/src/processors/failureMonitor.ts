@@ -6,10 +6,7 @@ import { captureException } from '../lib/sentry';
 const MONITOR_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
 export function startFailureMonitor() {
-  const failureDetectionService = new FailureDetectionService(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
+  const failureDetectionService = new FailureDetectionService();
 
   // Set up alert handler
   failureDetectionService.onAlert(async (alert) => {
@@ -23,18 +20,23 @@ export function startFailureMonitor() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             text: `🚨 Render Service Alert (${alert.severity})`,
-            attachments: [{
-              color: alert.severity === 'critical'
-                ? 'danger'
-                : alert.severity === 'high' ? 'warning' : 'info',
-              fields: [
-                { title: 'Type', value: alert.type, short: true },
-                { title: 'Severity', value: alert.severity, short: true },
-                { title: 'Message', value: alert.message },
-                { title: 'Details', value: JSON.stringify(alert.details, null, 2) },
-              ],
-              timestamp: new Date(alert.createdAt).toISOString(),
-            }],
+            attachments: [
+              {
+                color:
+                  alert.severity === 'critical'
+                    ? 'danger'
+                    : alert.severity === 'high'
+                      ? 'warning'
+                      : 'info',
+                fields: [
+                  { title: 'Type', value: alert.type, short: true },
+                  { title: 'Severity', value: alert.severity, short: true },
+                  { title: 'Message', value: alert.message },
+                  { title: 'Details', value: JSON.stringify(alert.details, null, 2) },
+                ],
+                timestamp: new Date(alert.createdAt).toISOString(),
+              },
+            ],
           }),
         });
       } catch (err) {

@@ -7,7 +7,13 @@ import { ProjectCard } from '@/components/projects/ProjectCard';
 import { ProjectStats } from '@/components/projects/ProjectStats';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { trpc } from '@/lib/trpc';
 
 type SortOption = 'recent' | 'name' | 'status';
@@ -32,9 +38,7 @@ export default function ProjectsPage() {
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Projects</h1>
-            <p className="text-muted-foreground">
-              Manage your landscape design projects
-            </p>
+            <p className="text-muted-foreground">Manage your landscape design projects</p>
           </div>
           <Button>
             <Plus className="mr-2 size-4" />
@@ -48,7 +52,7 @@ export default function ProjectsPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
             <Input
               placeholder="Search projects..."
               value={searchQuery}
@@ -56,7 +60,7 @@ export default function ProjectsPage() {
               className="pl-10"
             />
           </div>
-          
+
           <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Sort by" />
@@ -68,7 +72,10 @@ export default function ProjectsPage() {
             </SelectContent>
           </Select>
 
-          <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as FilterStatus)}>
+          <Select
+            value={filterStatus}
+            onValueChange={(value) => setFilterStatus(value as FilterStatus)}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
@@ -84,12 +91,12 @@ export default function ProjectsPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-64 animate-pulse rounded-lg bg-muted" />
+              <div key={i} className="bg-muted h-64 animate-pulse rounded-lg" />
             ))}
           </div>
         ) : data?.projects.length === 0 ? (
           <div className="py-12 text-center">
-            <p className="mb-4 text-muted-foreground">
+            <p className="text-muted-foreground mb-4">
               No projects found. Create your first project to get started.
             </p>
             <Button>
@@ -99,9 +106,7 @@ export default function ProjectsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {data?.projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
+            {data?.projects.map((project) => <ProjectCard key={project.id} project={project} />)}
           </div>
         )}
       </div>

@@ -33,12 +33,12 @@ type PlantFilters = {
   droughtTolerant?: boolean;
   tags?: string[];
   favoritesOnly?: boolean;
-}
+};
 
 type PlantSearchProps = {
   onFiltersChange: (filters: PlantFilters) => void;
   showFavoritesFilter?: boolean;
-}
+};
 
 export function PlantSearch({ onFiltersChange, showFavoritesFilter = true }: PlantSearchProps) {
   const [filters, setFilters] = useState<PlantFilters>({});
@@ -46,10 +46,7 @@ export function PlantSearch({ onFiltersChange, showFavoritesFilter = true }: Pla
 
   const { data: categories } = trpc.plant.categories.useQuery();
 
-  const updateFilter = <K extends keyof PlantFilters>(
-    key: K,
-    value: PlantFilters[K]
-  ) => {
+  const updateFilter = <K extends keyof PlantFilters>(key: K, value: PlantFilters[K]) => {
     const newFilters = { ...filters, [key]: value };
     if (value === undefined || (Array.isArray(value) && value.length === 0)) {
       delete newFilters[key];
@@ -70,7 +67,7 @@ export function PlantSearch({ onFiltersChange, showFavoritesFilter = true }: Pla
     const currentValues = (filters[key] as string[]) || [];
     const newValues = checked
       ? [...currentValues, value]
-      : currentValues.filter(v => v !== value);
+      : currentValues.filter((v) => v !== value);
     updateFilter(key, newValues as PlantFilters[K]);
   };
 
@@ -81,7 +78,7 @@ export function PlantSearch({ onFiltersChange, showFavoritesFilter = true }: Pla
   };
 
   const activeFilterCount = Object.keys(filters).filter(
-    key => filters[key as keyof PlantFilters] !== undefined
+    (key) => filters[key as keyof PlantFilters] !== undefined
   ).length;
 
   return (
@@ -89,7 +86,7 @@ export function PlantSearch({ onFiltersChange, showFavoritesFilter = true }: Pla
       {/* Search Bar */}
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
           <Input
             placeholder="Search plants by name..."
             value={searchInput}
@@ -114,9 +111,7 @@ export function PlantSearch({ onFiltersChange, showFavoritesFilter = true }: Pla
             <div className="flex items-center gap-2">
               <Filter className="size-4" />
               Filters
-              {activeFilterCount > 0 && (
-                <Badge variant="secondary">{activeFilterCount}</Badge>
-              )}
+              {activeFilterCount > 0 && <Badge variant="secondary">{activeFilterCount}</Badge>}
             </div>
           </AccordionTrigger>
           <AccordionContent>

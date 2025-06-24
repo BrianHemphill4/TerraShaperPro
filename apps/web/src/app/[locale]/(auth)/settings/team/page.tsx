@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default async function TeamSettingsPage() {
   const { userId } = auth();
-  
+
   // In a real app, you'd fetch the current user's role from the database
   // For now, we'll assume they're an admin
   const currentUserRole = 'admin';
@@ -24,10 +24,7 @@ export default async function TeamSettingsPage() {
         </TabsList>
 
         <TabsContent value="members">
-          <TeamMembersList 
-            currentUserId={userId || ''} 
-            currentUserRole={currentUserRole}
-          />
+          <TeamMembersList currentUserId={userId || ''} currentUserRole={currentUserRole} />
         </TabsContent>
 
         <TabsContent value="invite">

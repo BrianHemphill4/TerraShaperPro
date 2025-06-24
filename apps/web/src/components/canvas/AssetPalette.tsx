@@ -15,7 +15,7 @@ type Plant = {
   mature_height_ft_max: number | null;
   mature_spread_ft_min: number | null;
   mature_spread_ft_max: number | null;
-}
+};
 
 const AssetPalette = () => {
   const [plants, setPlants] = useState<Plant[]>([]);
@@ -35,9 +35,10 @@ const AssetPalette = () => {
         // Parse commonNames if it's a string
         const parsedPlants = plantsData.map((plant: any) => ({
           ...plant,
-          commonNames: typeof plant.commonNames === 'string' 
-            ? JSON.parse(plant.commonNames) 
-            : plant.commonNames || []
+          commonNames:
+            typeof plant.commonNames === 'string'
+              ? JSON.parse(plant.commonNames)
+              : plant.commonNames || [],
         }));
         setPlants(parsedPlants);
       } catch (err) {
@@ -59,7 +60,7 @@ const AssetPalette = () => {
       category: plant.category,
       plantType: plant.plantType,
       defaultWidth: plant.mature_spread_ft_max || 50,
-      defaultHeight: plant.mature_spread_ft_max || 50
+      defaultHeight: plant.mature_spread_ft_max || 50,
     };
     e.dataTransfer.setData('plant', JSON.stringify(plantData));
     e.dataTransfer.effectAllowed = 'copy';
@@ -74,14 +75,17 @@ const AssetPalette = () => {
   }
 
   // Group plants by category
-  const groupedPlants = plants.reduce((acc, plant) => {
-    const category = plant.category || 'Uncategorized';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(plant);
-    return acc;
-  }, {} as Record<string, Plant[]>);
+  const groupedPlants = plants.reduce(
+    (acc, plant) => {
+      const category = plant.category || 'Uncategorized';
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(plant);
+      return acc;
+    },
+    {} as Record<string, Plant[]>
+  );
 
   return (
     <div className={styles.palette}>
@@ -111,7 +115,9 @@ const AssetPalette = () => {
                       />
                     ) : (
                       <div className={styles.plantPlaceholder}>
-                        <span>{plant.commonNames?.[0]?.charAt(0) || plant.scientificName.charAt(0)}</span>
+                        <span>
+                          {plant.commonNames?.[0]?.charAt(0) || plant.scientificName.charAt(0)}
+                        </span>
                       </div>
                     )}
                     <span className={styles.plantName}>

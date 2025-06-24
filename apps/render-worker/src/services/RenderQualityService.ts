@@ -12,10 +12,10 @@ export class RenderQualityService {
   private reviewQueueService: ReviewQueueService;
   private failureDetectionService: FailureDetectionService;
 
-  constructor(supabaseUrl: string, supabaseKey: string) {
+  constructor() {
     this.qualityChecker = new QualityChecker();
-    this.reviewQueueService = new ReviewQueueService(supabaseUrl, supabaseKey);
-    this.failureDetectionService = new FailureDetectionService(supabaseUrl, supabaseKey);
+    this.reviewQueueService = new ReviewQueueService();
+    this.failureDetectionService = new FailureDetectionService();
   }
 
   /**

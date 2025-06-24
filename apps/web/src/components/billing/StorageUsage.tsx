@@ -1,13 +1,13 @@
 'use client';
 
-import { AlertTriangle,Database, FileImage, HardDrive, Layout } from 'lucide-react';
+import { AlertTriangle, Database, FileImage, HardDrive, Layout } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { useFeatureGate } from '@/hooks/useFeatureGate';
+import { useFeatureGate } from '@terrashaper/hooks/useFeatureGate';
 import { api } from '@/lib/api';
 import { formatBytes } from '@/lib/utils';
 
@@ -40,7 +40,7 @@ export function StorageUsage() {
   const getStorageBreakdown = async () => {
     // This would need an API endpoint to get detailed breakdown
     // For now, using mock data
-    setStorageData(prev => ({
+    setStorageData((prev) => ({
       ...prev!,
       breakdown: {
         project_uploads: { bytes: prev!.current * 0.4 * 1024 * 1024 * 1024, count: 150 },
@@ -58,7 +58,7 @@ export function StorageUsage() {
           <CardDescription>Loading storage information...</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-20 animate-pulse rounded bg-muted" />
+          <div className="bg-muted h-20 animate-pulse rounded" />
         </CardContent>
       </Card>
     );
@@ -81,11 +81,12 @@ export function StorageUsage() {
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium">Total Storage Used</span>
             <span className="text-muted-foreground">
-              {storageData.current.toFixed(2)} GB / {storageData.limit === -1 ? 'Unlimited' : `${storageData.limit} GB`}
+              {storageData.current.toFixed(2)} GB /{' '}
+              {storageData.limit === -1 ? 'Unlimited' : `${storageData.limit} GB`}
             </span>
           </div>
-          <Progress 
-            value={storageData.limit === -1 ? 0 : storageData.percentage} 
+          <Progress
+            value={storageData.limit === -1 ? 0 : storageData.percentage}
             className={isOverLimit ? 'bg-destructive/20' : isNearLimit ? 'bg-amber-500/20' : ''}
           />
           {isNearLimit && !isOverLimit && (
@@ -95,7 +96,7 @@ export function StorageUsage() {
             </p>
           )}
           {isOverLimit && (
-            <p className="mt-2 flex items-center gap-2 text-sm text-destructive">
+            <p className="text-destructive mt-2 flex items-center gap-2 text-sm">
               <AlertTriangle className="size-4" />
               Storage limit exceeded - uploads may be blocked
             </p>
@@ -106,35 +107,38 @@ export function StorageUsage() {
         {storageData.breakdown && (
           <div className="space-y-4">
             <h4 className="text-sm font-medium">Storage Breakdown</h4>
-            
+
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FileImage className="size-4 text-muted-foreground" />
+                  <FileImage className="text-muted-foreground size-4" />
                   <span className="text-sm">Project Uploads</span>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {formatBytes(storageData.breakdown.project_uploads.bytes)} ({storageData.breakdown.project_uploads.count} files)
+                <div className="text-muted-foreground text-sm">
+                  {formatBytes(storageData.breakdown.project_uploads.bytes)} (
+                  {storageData.breakdown.project_uploads.count} files)
                 </div>
               </div>
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <HardDrive className="size-4 text-muted-foreground" />
+                  <HardDrive className="text-muted-foreground size-4" />
                   <span className="text-sm">Renders</span>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {formatBytes(storageData.breakdown.renders.bytes)} ({storageData.breakdown.renders.count} files)
+                <div className="text-muted-foreground text-sm">
+                  {formatBytes(storageData.breakdown.renders.bytes)} (
+                  {storageData.breakdown.renders.count} files)
                 </div>
               </div>
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Layout className="size-4 text-muted-foreground" />
+                  <Layout className="text-muted-foreground size-4" />
                   <span className="text-sm">Templates</span>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {formatBytes(storageData.breakdown.templates.bytes)} ({storageData.breakdown.templates.count} files)
+                <div className="text-muted-foreground text-sm">
+                  {formatBytes(storageData.breakdown.templates.bytes)} (
+                  {storageData.breakdown.templates.count} files)
                 </div>
               </div>
             </div>
@@ -144,21 +148,14 @@ export function StorageUsage() {
         {/* Actions */}
         <div className="flex gap-2">
           {!storageData.breakdown && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={getStorageBreakdown}
-            >
+            <Button variant="outline" size="sm" onClick={getStorageBreakdown}>
               <Database className="mr-2 size-4" />
               View Breakdown
             </Button>
           )}
-          
+
           {(isNearLimit || isOverLimit) && (
-            <Button
-              size="sm"
-              onClick={() => router.push('/settings/billing')}
-            >
+            <Button size="sm" onClick={() => router.push('/settings/billing')}>
               Upgrade Storage
             </Button>
           )}
@@ -166,8 +163,9 @@ export function StorageUsage() {
 
         {/* Current Plan Info */}
         <div className="border-t pt-4">
-          <p className="text-xs text-muted-foreground">
-            Your {currentTier} plan includes {storageData.limit === -1 ? 'unlimited' : `${storageData.limit} GB of`} storage.
+          <p className="text-muted-foreground text-xs">
+            Your {currentTier} plan includes{' '}
+            {storageData.limit === -1 ? 'unlimited' : `${storageData.limit} GB of`} storage.
             {storageData.limit !== -1 && ' Additional storage may incur extra charges.'}
           </p>
         </div>
@@ -175,4 +173,3 @@ export function StorageUsage() {
     </Card>
   );
 }
-

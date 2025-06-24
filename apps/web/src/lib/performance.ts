@@ -1,6 +1,7 @@
 import type { NextWebVitalsMetric } from 'next/app';
 import { unstable_cache } from 'next/cache';
 
+import { browserLogger } from './logger';
 import { ApiMetrics } from './metrics';
 
 // Cache configuration
@@ -108,12 +109,7 @@ if (typeof window !== 'undefined') {
 }
 
 // Image optimization utilities
-export const getOptimizedImageUrl = (
-  src: string,
-  width: number,
-  height?: number,
-  quality = 75
-) => {
+export const getOptimizedImageUrl = (src: string, width: number, height?: number, quality = 75) => {
   const params = new URLSearchParams({
     url: src,
     w: width.toString(),
@@ -180,7 +176,7 @@ export class PerformanceMonitor {
     const start = performance.now();
     const result = fn();
     const end = performance.now();
-    
+
     this.recordMetric(name, end - start);
     return result;
   }
@@ -190,7 +186,7 @@ export class PerformanceMonitor {
     const start = performance.now();
     const result = await fn();
     const end = performance.now();
-    
+
     this.recordMetric(name, end - start);
     return result;
   }
@@ -200,10 +196,10 @@ export class PerformanceMonitor {
     if (!this.metrics.has(name)) {
       this.metrics.set(name, []);
     }
-    
+
     const values = this.metrics.get(name)!;
     values.push(value);
-    
+
     // Keep only last 100 measurements
     if (values.length > 100) {
       values.shift();
@@ -252,32 +248,38 @@ export const performanceMonitor = PerformanceMonitor.getInstance();
 export const analyzeBundle = () => {
   if (typeof window === 'undefined') return;
 
-  // Log bundle information
-  console.group('Bundle Analysis');
-  
   // Check for large dependencies
   const scripts = Array.from(document.querySelectorAll('script[src]'));
   const stylesheets = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
-  
-  console.log('Script files:', scripts.length);
-  console.log('Stylesheet files:', stylesheets.length);
-  
+
+  browserLogger.info('Bundle Analysis', {
+    scripts: scripts.length,
+    stylesheets: stylesheets.length,
+  });
+
   // Performance navigation timing
   if ('performance' in window && 'navigation' in performance) {
     const nav = performance.navigation;
-    console.log('Navigation type:', nav.type);
-    console.log('Redirect count:', nav.redirectCount);
+    browserLogger.info('Navigation metrics', {
+      type: nav.type,
+      redirectCount: nav.redirectCount,
+    });
   }
-  
+
   // Performance timing
   if ('performance' in window && 'timing' in performance) {
     const timing = performance.timing;
-    console.log('Page load time:', timing.loadEventEnd - timing.navigationStart, 'ms');
-    console.log('DOM content loaded:', timing.domContentLoadedEventEnd - timing.navigationStart, 'ms');
-    console.log('First paint:', timing.responseStart - timing.navigationStart, 'ms');
+    const pageLoadTime = timing.loadEventEnd - timing.navigationStart;
+    const domContentLoaded = timing.domContentLoadedEventEnd - timing.navigationStart;
+    const firstPaint = timing.responseStart - timing.navigationStart;
+
+    browserLogger.info('Performance timing', {
+      pageLoadTime,
+      domContentLoaded,
+      firstPaint,
+      unit: 'ms',
+    });
   }
-  
-  console.groupEnd();
 };
 
 // Lazy loading intersection observer
@@ -303,7 +305,7 @@ export const debounce = <T extends (...args: any[]) => any>(
   wait: number
 ): ((...args: Parameters<T>) => void) => {
   let timeout: NodeJS.Timeout;
-  
+
   return (...args: Parameters<T>) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), wait);
@@ -316,7 +318,7 @@ export const throttle = <T extends (...args: any[]) => any>(
   limit: number
 ): ((...args: Parameters<T>) => void) => {
   let inThrottle: boolean;
-  
+
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
       func(...args);
@@ -351,10 +353,13 @@ export const registerServiceWorker = async () => {
 
   try {
     const registration = await navigator.serviceWorker.register('/sw.js');
-    console.log('Service Worker registered:', registration);
+    browserLogger.info('Service Worker registered', {
+      scope: registration.scope,
+      active: registration.active?.state,
+    });
     return registration;
   } catch (error) {
-    console.error('Service Worker registration failed:', error);
+    browserLogger.error('Service Worker registration failed', error);
   }
 };
 
@@ -393,4 +398,4 @@ function reportNavigationTiming(entry: PerformanceNavigationTiming) {
     duration: entry.duration,
     redirectCount: entry.redirectCount?.toString() || '0',
   });
-} 
+}

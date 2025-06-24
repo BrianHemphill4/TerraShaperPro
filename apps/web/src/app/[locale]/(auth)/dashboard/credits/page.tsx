@@ -16,11 +16,9 @@ export default function CreditsPage() {
     <div className="container mx-auto py-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Credits & Usage</h1>
-        <p className="text-muted-foreground">
-          Monitor your credit balance and usage history
-        </p>
+        <p className="text-muted-foreground">Monitor your credit balance and usage history</p>
       </div>
-      
+
       <CreditUsageDashboard />
     </div>
   );

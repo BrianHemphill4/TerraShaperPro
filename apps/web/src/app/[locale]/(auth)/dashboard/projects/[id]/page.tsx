@@ -11,9 +11,12 @@ export default function ProjectDetailPage() {
   const params = useParams();
   const projectId = Array.isArray(params?.id) ? params.id[0] : (params as any)?.id;
 
-  const { data: project, isLoading } = (trpc as any).project.get.useQuery({ id: projectId }, {
-    enabled: !!projectId,
-  });
+  const { data: project, isLoading } = (trpc as any).project.get.useQuery(
+    { id: projectId },
+    {
+      enabled: !!projectId,
+    }
+  );
 
   if (isLoading || !project) {
     return (
@@ -30,7 +33,7 @@ export default function ProjectDetailPage() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold">{project.name}</h1>
         {project.description && (
-          <p className="mt-2 max-w-2xl text-muted-foreground">{project.description}</p>
+          <p className="text-muted-foreground mt-2 max-w-2xl">{project.description}</p>
         )}
       </div>
 
@@ -49,4 +52,4 @@ export default function ProjectDetailPage() {
       </Tabs>
     </div>
   );
-} 
+}

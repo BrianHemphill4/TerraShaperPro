@@ -14,7 +14,7 @@ export type RenderRequest = {
     style: 'realistic' | 'artistic' | 'architectural' | 'photographic';
   };
   metadata?: Record<string, any>;
-}
+};
 
 export type RenderResponse = {
   id: string;
@@ -31,4 +31,4 @@ export type RenderResponse = {
   };
   progress?: number;
   estimatedTimeRemaining?: number;
-}
+};

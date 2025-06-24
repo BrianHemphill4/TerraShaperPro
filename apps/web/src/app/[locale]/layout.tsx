@@ -9,7 +9,7 @@ import { DemoBadge } from '@/components/DemoBadge';
 import { WebVitals } from '@/components/monitoring/WebVitals';
 import { Toaster } from '@/components/ui/toaster';
 import { TRPCProvider } from '@/providers/TRPCProvider';
-import { AllLocales } from '@/utils/AppConfig';
+import { AllLocales } from '@/utils/appConfig';
 
 export const metadata: Metadata = {
   icons: [
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 };
 
 export function generateStaticParams() {
-  return AllLocales.map(locale => ({ locale }));
+  return AllLocales.map((locale) => ({ locale }));
 }
 
 export default function RootLayout(props: {
@@ -59,10 +59,7 @@ export default function RootLayout(props: {
       <html lang={props.params.locale} suppressHydrationWarning>
         <body className="bg-background text-foreground antialiased" suppressHydrationWarning>
           {/* PRO: Dark mode support for Shadcn UI */}
-          <NextIntlClientProvider
-            locale={props.params.locale}
-            messages={messages}
-          >
+          <NextIntlClientProvider locale={props.params.locale} messages={messages}>
             <TRPCProvider>
               <WebVitals />
               {props.children}

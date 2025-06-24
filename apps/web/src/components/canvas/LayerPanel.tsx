@@ -37,11 +37,11 @@ const LayerPanel = ({ canvas }: LayerPanelProps) => {
 
     const updateLayers = () => {
       const objects = canvas.getObjects().filter((obj) => (obj as any).evented !== false);
-      
+
       setLayers((prevLayers) => {
         const newLayers = [...prevLayers];
         const defaultLayer = newLayers.find((l) => l.id === 'default');
-        
+
         if (defaultLayer) {
           // Assign objects without a layer to default layer
           objects.forEach((obj) => {
@@ -49,13 +49,13 @@ const LayerPanel = ({ canvas }: LayerPanelProps) => {
               (obj as any).layerId = 'default';
             }
           });
-          
+
           // Update layer objects
           newLayers.forEach((layer) => {
             layer.objects = objects.filter((obj) => (obj as any).layerId === layer.id);
           });
         }
-        
+
         return newLayers;
       });
     };
@@ -81,126 +81,141 @@ const LayerPanel = ({ canvas }: LayerPanelProps) => {
       locked: false,
       objects: [],
     };
-    
+
     setLayers([...layers, newLayer]);
     setActiveLayerId(newLayer.id);
   }, [layers]);
 
-  const deleteLayer = useCallback((layerId: string) => {
-    if (layerId === 'default' || layers.length === 1) return;
-    
-    const layerToDelete = layers.find((l) => l.id === layerId);
-    if (!layerToDelete || !canvas) return;
-    
-    // Move objects to default layer
-    layerToDelete.objects.forEach((obj) => {
-      (obj as any).layerId = 'default';
-    });
-    
-    setLayers(layers.filter((l) => l.id !== layerId));
-    
-    if (activeLayerId === layerId) {
-      setActiveLayerId('default');
-    }
-    
-    canvas.renderAll();
-  }, [layers, activeLayerId, canvas]);
+  const deleteLayer = useCallback(
+    (layerId: string) => {
+      if (layerId === 'default' || layers.length === 1) return;
 
-  const toggleVisibility = useCallback((layerId: string) => {
-    if (!canvas) return;
-    
-    setLayers((prevLayers) => {
-      const newLayers = prevLayers.map((layer) => {
-        if (layer.id === layerId) {
-          const newVisibility = !layer.visible;
-          
-          // Update fabric objects visibility
-          layer.objects.forEach((obj) => {
-            obj.set('visible', newVisibility);
-          });
-          
-          return { ...layer, visible: newVisibility };
-        }
-        return layer;
+      const layerToDelete = layers.find((l) => l.id === layerId);
+      if (!layerToDelete || !canvas) return;
+
+      // Move objects to default layer
+      layerToDelete.objects.forEach((obj) => {
+        (obj as any).layerId = 'default';
       });
-      
-      canvas.renderAll();
-      return newLayers;
-    });
-  }, [canvas]);
 
-  const toggleLock = useCallback((layerId: string) => {
-    if (!canvas) return;
-    
-    setLayers((prevLayers) => {
-      const newLayers = prevLayers.map((layer) => {
-        if (layer.id === layerId) {
-          const newLocked = !layer.locked;
-          
-          // Update fabric objects selectability
-          layer.objects.forEach((obj) => {
-            obj.set({
-              selectable: !newLocked,
-              evented: !newLocked,
+      setLayers(layers.filter((l) => l.id !== layerId));
+
+      if (activeLayerId === layerId) {
+        setActiveLayerId('default');
+      }
+
+      canvas.renderAll();
+    },
+    [layers, activeLayerId, canvas]
+  );
+
+  const toggleVisibility = useCallback(
+    (layerId: string) => {
+      if (!canvas) return;
+
+      setLayers((prevLayers) => {
+        const newLayers = prevLayers.map((layer) => {
+          if (layer.id === layerId) {
+            const newVisibility = !layer.visible;
+
+            // Update fabric objects visibility
+            layer.objects.forEach((obj) => {
+              obj.set('visible', newVisibility);
             });
-          });
-          
-          return { ...layer, locked: newLocked };
-        }
-        return layer;
-      });
-      
-      canvas.renderAll();
-      return newLayers;
-    });
-  }, [canvas]);
 
-  const moveLayer = useCallback((layerId: string, direction: 'up' | 'down') => {
-    const index = layers.findIndex((l) => l.id === layerId);
-    if (index === -1) return;
-    
-    const newIndex = direction === 'up' ? index - 1 : index + 1;
-    if (newIndex < 0 || newIndex >= layers.length) return;
-    
-    const newLayers = [...layers];
-    [newLayers[index], newLayers[newIndex]] = [newLayers[newIndex], newLayers[index]];
-    
-    // Reorder objects on canvas
-    if (canvas) {
-      const _allObjects = canvas.getObjects().filter((obj) => (obj as any).evented !== false);
-      
-      // Clear canvas (except grid)
-      canvas.getObjects().forEach((obj) => {
-        if ((obj as any).evented !== false) {
-          canvas.remove(obj);
-        }
-      });
-      
-      // Add objects back in layer order
-      newLayers.forEach((layer) => {
-        layer.objects.forEach((obj) => {
-          canvas.add(obj);
+            return { ...layer, visible: newVisibility };
+          }
+          return layer;
         });
-      });
-      
-      canvas.renderAll();
-    }
-    
-    setLayers(newLayers);
-  }, [layers, canvas]);
 
-  const selectLayer = useCallback((layerId: string) => {
-    setActiveLayerId(layerId);
-    
-    // When selecting a layer, assign new objects to that layer
-    if (canvas) {
-      canvas.on('object:added', (e) => {
-        if (!(e.target as any).layerId) {
-          (e.target as any).layerId = layerId;
-        }
+        canvas.renderAll();
+        return newLayers;
       });
-    }
-  }, [canvas]);
+    },
+    [canvas]
+  );
+
+  const toggleLock = useCallback(
+    (layerId: string) => {
+      if (!canvas) return;
+
+      setLayers((prevLayers) => {
+        const newLayers = prevLayers.map((layer) => {
+          if (layer.id === layerId) {
+            const newLocked = !layer.locked;
+
+            // Update fabric objects selectability
+            layer.objects.forEach((obj) => {
+              obj.set({
+                selectable: !newLocked,
+                evented: !newLocked,
+              });
+            });
+
+            return { ...layer, locked: newLocked };
+          }
+          return layer;
+        });
+
+        canvas.renderAll();
+        return newLayers;
+      });
+    },
+    [canvas]
+  );
+
+  const moveLayer = useCallback(
+    (layerId: string, direction: 'up' | 'down') => {
+      const index = layers.findIndex((l) => l.id === layerId);
+      if (index === -1) return;
+
+      const newIndex = direction === 'up' ? index - 1 : index + 1;
+      if (newIndex < 0 || newIndex >= layers.length) return;
+
+      const newLayers = [...layers];
+      [newLayers[index], newLayers[newIndex]] = [newLayers[newIndex], newLayers[index]];
+
+      // Reorder objects on canvas
+      if (canvas) {
+        const _allObjects = canvas.getObjects().filter((obj) => (obj as any).evented !== false);
+
+        // Clear canvas (except grid)
+        canvas.getObjects().forEach((obj) => {
+          if ((obj as any).evented !== false) {
+            canvas.remove(obj);
+          }
+        });
+
+        // Add objects back in layer order
+        newLayers.forEach((layer) => {
+          layer.objects.forEach((obj) => {
+            canvas.add(obj);
+          });
+        });
+
+        canvas.renderAll();
+      }
+
+      setLayers(newLayers);
+    },
+    [layers, canvas]
+  );
+
+  const selectLayer = useCallback(
+    (layerId: string) => {
+      setActiveLayerId(layerId);
+
+      // When selecting a layer, assign new objects to that layer
+      if (canvas) {
+        canvas.on('object:added', (e) => {
+          if (!(e.target as any).layerId) {
+            (e.target as any).layerId = layerId;
+          }
+        });
+      }
+    },
+    [canvas]
+  );
 
   const startEditingName = useCallback((layerId: string, currentName: string) => {
     setEditingLayerId(layerId);
@@ -212,13 +227,13 @@ const LayerPanel = ({ canvas }: LayerPanelProps) => {
       setEditingLayerId(null);
       return;
     }
-    
+
     setLayers((prevLayers) =>
       prevLayers.map((layer) =>
         layer.id === editingLayerId ? { ...layer, name: editingName.trim() } : layer
       )
     );
-    
+
     setEditingLayerId(null);
   }, [editingLayerId, editingName]);
 
@@ -238,7 +253,7 @@ const LayerPanel = ({ canvas }: LayerPanelProps) => {
           </svg>
         </button>
       </div>
-      
+
       <div className={styles.layerList}>
         {[...layers].reverse().map((layer, index) => (
           <div
@@ -269,12 +284,25 @@ const LayerPanel = ({ canvas }: LayerPanelProps) => {
                 </svg>
               ) : (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  <line x1="1" y1="1" x2="23" y2="23" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <line
+                    x1="1"
+                    y1="1"
+                    x2="23"
+                    y2="23"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               )}
             </button>
-            
+
             <button
               type="button"
               className={styles.lockButton}
@@ -296,7 +324,7 @@ const LayerPanel = ({ canvas }: LayerPanelProps) => {
                 </svg>
               )}
             </button>
-            
+
             <div className={styles.layerName}>
               {editingLayerId === layer.id ? (
                 <input
@@ -327,7 +355,7 @@ const LayerPanel = ({ canvas }: LayerPanelProps) => {
               )}
               <span className={styles.objectCount}>({layer.objects.length})</span>
             </div>
-            
+
             <div className={styles.layerActions}>
               <button
                 type="button"
@@ -340,10 +368,15 @@ const LayerPanel = ({ canvas }: LayerPanelProps) => {
                 title="Move layer up"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <polyline points="18 15 12 9 6 15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <polyline
+                    points="18 15 12 9 6 15"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </button>
-              
+
               <button
                 type="button"
                 className={styles.moveButton}
@@ -355,10 +388,15 @@ const LayerPanel = ({ canvas }: LayerPanelProps) => {
                 title="Move layer down"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <polyline
+                    points="6 9 12 15 18 9"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </button>
-              
+
               {layer.id !== 'default' && (
                 <button
                   type="button"

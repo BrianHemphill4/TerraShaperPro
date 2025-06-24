@@ -28,10 +28,10 @@ export class RenderStorageService extends StorageService {
     metadata: any;
   }> {
     const fileName = `renders/${renderId}`;
-    
+
     // Get image metadata
     const imageMetadata = await ImageProcessor.getImageMetadata(imageBuffer);
-    
+
     // Create optimized WebP version
     const webpOptimized = await ImageProcessor.optimizeImage(imageBuffer, {
       format: 'webp',
@@ -39,10 +39,10 @@ export class RenderStorageService extends StorageService {
       width: Math.min(imageMetadata.width || 2048, 2048),
       height: Math.min(imageMetadata.height || 2048, 2048),
     });
-    
+
     // Create thumbnail
     const thumbnailBuffer = await ImageProcessor.createThumbnail(imageBuffer);
-    
+
     // Upload all versions
     const [original, webp, thumbnail] = await Promise.all([
       // Original (high quality)
@@ -60,7 +60,7 @@ export class RenderStorageService extends StorageService {
           provider: metadata.provider,
         },
       }),
-      
+
       // Optimized WebP (primary display)
       this.uploadFile({
         bucket: 'renders',
@@ -76,7 +76,7 @@ export class RenderStorageService extends StorageService {
           provider: metadata.provider,
         },
       }),
-      
+
       // Thumbnail
       this.uploadFile({
         bucket: 'renders',
@@ -151,7 +151,7 @@ export class RenderStorageService extends StorageService {
   } | null> {
     try {
       const fileName = `renders/${renderId}`;
-      
+
       // Check if main WebP exists
       const webpExists = await this.fileExists('renders', `${fileName}.webp`);
       if (!webpExists) {
@@ -160,7 +160,7 @@ export class RenderStorageService extends StorageService {
 
       // Get public URLs
       const bucketName = process.env.GCS_RENDERS_BUCKET!;
-      
+
       const urls = {
         webp: this.getPublicUrl(bucketName, `${fileName}.webp`),
         thumbnail: this.getPublicUrl(bucketName, `${fileName}_thumb.webp`),
@@ -185,7 +185,7 @@ export class RenderStorageService extends StorageService {
             `${fileName}_metadata.json`,
             new Date(Date.now() + 5 * 60 * 1000) // 5 minutes
           );
-          
+
           const response = await fetch(metadataUrl);
           if (response.ok) {
             metadata = await response.json();
@@ -207,7 +207,7 @@ export class RenderStorageService extends StorageService {
    */
   async deleteRender(renderId: string): Promise<void> {
     const fileName = `renders/${renderId}`;
-    
+
     // List all possible files for this render
     const possibleFiles = [
       `${fileName}.webp`,
@@ -245,7 +245,7 @@ export class RenderStorageService extends StorageService {
   }> {
     const fileName = `renders/${renderId}`;
     const possibleExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff'];
-    
+
     for (const ext of possibleExtensions) {
       const testFileName = `${fileName}_original.${ext}`;
       const exists = await this.fileExists('renders', testFileName);
@@ -253,7 +253,7 @@ export class RenderStorageService extends StorageService {
         return { exists: true, fileName: testFileName };
       }
     }
-    
+
     return { exists: false, fileName: '' };
   }
 
@@ -270,7 +270,7 @@ export class RenderStorageService extends StorageService {
   }> {
     const fileName = `renders/${renderId}`;
     const expires = new Date(Date.now() + expiresInHours * 60 * 60 * 1000);
-    
+
     const urls: any = {};
 
     // Generate signed URLs for private access
@@ -282,7 +282,11 @@ export class RenderStorageService extends StorageService {
 
       const thumbExists = await this.fileExists('renders', `${fileName}_thumb.webp`);
       if (thumbExists) {
-        urls.thumbnail = await this.generateDownloadUrl('renders', `${fileName}_thumb.webp`, expires);
+        urls.thumbnail = await this.generateDownloadUrl(
+          'renders',
+          `${fileName}_thumb.webp`,
+          expires
+        );
       }
 
       const originalFile = await this.checkOriginalFile(renderId);

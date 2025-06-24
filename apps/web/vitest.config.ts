@@ -14,8 +14,8 @@ export default defineConfig({
       '.next',
       'coverage',
       '**/*.e2e.{js,jsx,ts,tsx}',
-      '**/*.spec.{js,jsx,ts,tsx}'
+      '**/*.spec.{js,jsx,ts,tsx}',
     ],
     setupFiles: ['../../vitest-setup.ts'],
   },
-}); 
+});

@@ -1,0 +1,65 @@
+{
+  "entryPoints": [
+    "packages/shared/src/index.ts"
+  ],
+  "out": "docs/api",
+  "theme": "default",
+  "name": "TerraShaper Pro API Documentation",
+  "includeVersion": true,
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "excludeInternal": true,
+  "readme": "none",
+  "sort": ["source-order"],
+  "kindSortOrder": [
+    "Document",
+    "Project",
+    "Module",
+    "Namespace",
+    "Enum",
+    "EnumMember",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Constructor",
+    "Property",
+    "Variable",
+    "Function",
+    "Accessor",
+    "Method",
+    "Parameter",
+    "TypeParameter",
+    "TypeLiteral",
+    "CallSignature",
+    "ConstructorSignature",
+    "IndexSignature",
+    "GetSignature",
+    "SetSignature"
+  ],
+  "categorizeByGroup": false,
+  "categoryOrder": [
+    "Database",
+    "AI Services", 
+    "Storage",
+    "Queue",
+    "Payments",
+    "Shared Utilities",
+    "Business Logic",
+    "*"
+  ],
+  "plugin": ["typedoc-plugin-markdown"],
+  "gitRevision": "main",
+  "sourceLinkTemplate": "https://github.com/yourusername/terrashaper-pro/blob/{gitRevision}/{path}#L{line}",
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  },
+  "searchInComments": true,
+  "validation": {
+    "invalidLink": true,
+    "notExported": false
+  },
+  "skipErrorChecking": true,
+  "tsconfig": "typedoc.tsconfig.json"
+}

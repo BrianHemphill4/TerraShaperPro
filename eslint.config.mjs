@@ -1,12 +1,12 @@
 import antfu from '@antfu/eslint-config';
 import nextPlugin from '@next/eslint-plugin-next';
+import eslintConfigPrettier from 'eslint-config-prettier';
 import jestDom from 'eslint-plugin-jest-dom';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import playwright from 'eslint-plugin-playwright';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import tailwind from 'eslint-plugin-tailwindcss';
 import testingLibrary from 'eslint-plugin-testing-library';
-import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default antfu({
   react: true,
@@ -26,9 +26,12 @@ export default antfu({
   ignores: [
     'migrations/**/*',
     'next-env.d.ts',
+    'node_modules',
+    'dist',
+    'out',
   ],
 }, ...tailwind.configs['flat/recommended'], jsxA11y.flatConfigs.recommended, {
-  files: ['apps/web/**/*'],
+  files: ['apps/*/**/*', 'packages/*/**/*'],
   plugins: {
     '@next/next': nextPlugin,
   },

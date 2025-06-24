@@ -20,13 +20,7 @@ export const sanitizedStringSchema = z
 
 export const fileUploadSchema = z.object({
   name: z.string().regex(/^[\w\-. ]+$/, 'Invalid filename'),
-  type: z.enum([
-    'image/jpeg',
-    'image/png',
-    'image/webp',
-    'image/svg+xml',
-    'application/pdf',
-  ]),
+  type: z.enum(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'application/pdf']),
   size: z.number().max(10 * 1024 * 1024, 'File size must be less than 10MB'),
 });
 
@@ -63,15 +57,15 @@ export function sanitizeUrl(url: string): string | null {
   try {
     const parsed = new URL(url);
     const allowedProtocols = ['http:', 'https:'];
-    
+
     if (!allowedProtocols.includes(parsed.protocol)) {
       return null;
     }
-    
+
     // Remove any potential XSS vectors from URL
     parsed.search = parsed.search.replace(/[<>'"]/g, '');
     parsed.hash = parsed.hash.replace(/[<>'"]/g, '');
-    
+
     return parsed.toString();
   } catch {
     return null;
@@ -82,20 +76,20 @@ export function sanitizeUrl(url: string): string | null {
 type RateLimitEntry = {
   count: number;
   resetTime: number;
-}
+};
 
 class RateLimiter {
   private limits: Map<string, RateLimitEntry> = new Map();
-  
+
   constructor(
     private maxRequests: number,
     private windowMs: number
   ) {}
-  
+
   isAllowed(identifier: string): boolean {
     const now = Date.now();
     const entry = this.limits.get(identifier);
-    
+
     if (!entry || now > entry.resetTime) {
       this.limits.set(identifier, {
         count: 1,
@@ -103,19 +97,19 @@ class RateLimiter {
       });
       return true;
     }
-    
+
     if (entry.count >= this.maxRequests) {
       return false;
     }
-    
+
     entry.count++;
     return true;
   }
-  
+
   reset(identifier: string): void {
     this.limits.delete(identifier);
   }
-  
+
   cleanup(): void {
     const now = Date.now();
     for (const [key, entry] of this.limits.entries()) {
@@ -151,20 +145,20 @@ export function getSecurityHeaders(): Record<string, string> {
 }
 
 // Validate file type by magic bytes
-export async function validateFileType(
-  buffer: Buffer,
-  expectedType: string
-): Promise<boolean> {
+export async function validateFileType(buffer: Buffer, expectedType: string): Promise<boolean> {
   const magicBytes: Record<string, number[][]> = {
-    'image/jpeg': [[0xFF, 0xD8, 0xFF]],
-    'image/png': [[0x89, 0x50, 0x4E, 0x47]],
-    'image/webp': [[0x52, 0x49, 0x46, 0x46], [0x57, 0x45, 0x42, 0x50]],
+    'image/jpeg': [[0xff, 0xd8, 0xff]],
+    'image/png': [[0x89, 0x50, 0x4e, 0x47]],
+    'image/webp': [
+      [0x52, 0x49, 0x46, 0x46],
+      [0x57, 0x45, 0x42, 0x50],
+    ],
     'application/pdf': [[0x25, 0x50, 0x44, 0x46]],
   };
-  
+
   const signatures = magicBytes[expectedType];
   if (!signatures) return false;
-  
+
   return signatures.every((signature, index) => {
     if (index === 0) {
       return signature.every((byte, i) => buffer[i] === byte);
@@ -183,11 +177,11 @@ export function generateSecureToken(length: number = 32): string {
 // Time-constant string comparison to prevent timing attacks
 export function secureCompare(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
-  
+
   let result = 0;
   for (let i = 0; i < a.length; i++) {
     result |= a.charCodeAt(i) ^ b.charCodeAt(i);
   }
-  
+
   return result === 0;
 }

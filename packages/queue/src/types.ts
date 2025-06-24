@@ -1,3 +1,7 @@
+/**
+ * Data structure for render job queue entries.
+ * Contains all information needed to process an AI image generation request.
+ */
 export interface RenderJobData {
   renderId: string;
   projectId: string;
@@ -23,6 +27,10 @@ export interface RenderJobData {
   };
 }
 
+/**
+ * Result structure returned from completed render jobs.
+ * Contains the generated images and processing metadata.
+ */
 export interface RenderJobResult {
   renderId: string;
   imageUrl: string;
@@ -37,6 +45,10 @@ export interface RenderJobResult {
   };
 }
 
+/**
+ * Data structure for notification job queue entries.
+ * Handles various types of user notifications and alerts.
+ */
 export interface NotificationJobData {
   type: 'email' | 'in-app' | 'push';
   userId: string;
@@ -45,4 +57,8 @@ export interface NotificationJobData {
   priority?: 'high' | 'normal' | 'low';
 }
 
+/**
+ * Union type representing all possible job statuses in the queue system.
+ * Covers the complete lifecycle of queued jobs.
+ */
 export type JobStatus = 'waiting' | 'active' | 'completed' | 'failed' | 'delayed' | 'paused';

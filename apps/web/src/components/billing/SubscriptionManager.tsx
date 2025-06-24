@@ -1,13 +1,9 @@
 'use client';
 
-import type {SubscriptionTier } from '@terrashaper/shared';
-import { FeatureGateService,PlanFeatures  } from '@terrashaper/shared';
-import { 
-  AlertTriangle,
-  ArrowUp,
-  Check, 
-  Zap
-} from 'lucide-react';
+import { useToast } from '@terrashaper/hooks';
+import type { SubscriptionTier } from '@terrashaper/shared';
+import { FeatureGateService, PlanFeatures } from '@terrashaper/shared';
+import { AlertTriangle, ArrowUp, Check, Zap } from 'lucide-react';
 import { useState } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -22,7 +18,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
 
@@ -72,16 +67,16 @@ export function SubscriptionManager() {
 
     try {
       setIsProcessing(true);
-      await updateSubscriptionMutation.mutateAsync({ 
+      await updateSubscriptionMutation.mutateAsync({
         tier: selectedPlan,
-        immediate: !FeatureGateService.isUpgrade(currentTier as SubscriptionTier, selectedPlan)
+        immediate: !FeatureGateService.isUpgrade(currentTier as SubscriptionTier, selectedPlan),
       });
-      
+
       toast({
         title: 'Subscription updated',
         description: `You've been ${FeatureGateService.isUpgrade(currentTier as SubscriptionTier, selectedPlan) ? 'upgraded' : 'downgraded'} to the ${planDetails[selectedPlan].name} plan.`,
       });
-      
+
       refetch();
       setShowConfirmDialog(false);
     } catch (error) {
@@ -97,16 +92,16 @@ export function SubscriptionManager() {
 
   const handleCancelSubscription = async () => {
     try {
-      await cancelSubscriptionMutation.mutateAsync({ 
+      await cancelSubscriptionMutation.mutateAsync({
         cancelAtPeriodEnd: true,
-        reason: 'User requested cancellation'
+        reason: 'User requested cancellation',
       });
-      
+
       toast({
         title: 'Subscription cancelled',
         description: 'Your subscription will remain active until the end of the billing period.',
       });
-      
+
       refetch();
     } catch (error) {
       toast({
@@ -120,12 +115,12 @@ export function SubscriptionManager() {
   const handleReactivateSubscription = async () => {
     try {
       await reactivateSubscriptionMutation.mutateAsync();
-      
+
       toast({
         title: 'Subscription reactivated',
         description: 'Your subscription has been reactivated.',
       });
-      
+
       refetch();
     } catch (error) {
       toast({
@@ -141,18 +136,15 @@ export function SubscriptionManager() {
     const features = PlanFeatures[tier];
     const isCurrentPlan = currentTier === tier;
     const isUpgrade = FeatureGateService.isUpgrade(currentTier as SubscriptionTier, tier);
-    
+
     return (
-      <Card 
-        key={tier}
-        className={`relative ${isCurrentPlan ? 'border-primary shadow-lg' : ''}`}
-      >
+      <Card key={tier} className={`relative ${isCurrentPlan ? 'border-primary shadow-lg' : ''}`}>
         {isCurrentPlan && (
           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
             <Badge>Current Plan</Badge>
           </div>
         )}
-        
+
         <CardHeader>
           <div className="flex items-start justify-between">
             <div>
@@ -166,19 +158,19 @@ export function SubscriptionManager() {
               </Badge>
             )}
           </div>
-          
+
           <div className="mt-4">
             {tier === 'enterprise' ? (
               <p className="text-3xl font-bold">Contact Sales</p>
             ) : (
               <p className="text-3xl font-bold">
                 {formatCurrency(plan.price)}
-                <span className="text-base font-normal text-muted-foreground">/month</span>
+                <span className="text-muted-foreground text-base font-normal">/month</span>
               </p>
             )}
           </div>
         </CardHeader>
-        
+
         <CardContent>
           <div className="space-y-3">
             <div className="space-y-2">
@@ -188,35 +180,38 @@ export function SubscriptionManager() {
                   {features.maxProjects === -1 ? 'Unlimited' : features.maxProjects} projects
                 </span>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <Check className="size-4 text-green-500" />
                 <span className="text-sm">
-                  {features.maxTeamMembers === -1 ? 'Unlimited' : features.maxTeamMembers} team members
+                  {features.maxTeamMembers === -1 ? 'Unlimited' : features.maxTeamMembers} team
+                  members
                 </span>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <Check className="size-4 text-green-500" />
                 <span className="text-sm">
-                  {features.maxRendersPerMonth === -1 ? 'Unlimited' : features.maxRendersPerMonth} renders/month
+                  {features.maxRendersPerMonth === -1 ? 'Unlimited' : features.maxRendersPerMonth}{' '}
+                  renders/month
                 </span>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <Check className="size-4 text-green-500" />
                 <span className="text-sm">
-                  {features.maxStorageGb === -1 ? 'Unlimited' : `${features.maxStorageGb} GB`} storage
+                  {features.maxStorageGb === -1 ? 'Unlimited' : `${features.maxStorageGb} GB`}{' '}
+                  storage
                 </span>
               </div>
-              
+
               {features.apiAccess && (
                 <div className="flex items-center gap-2">
                   <Check className="size-4 text-green-500" />
                   <span className="text-sm">API access</span>
                 </div>
               )}
-              
+
               {features.customBranding && (
                 <div className="flex items-center gap-2">
                   <Check className="size-4 text-green-500" />
@@ -225,7 +220,7 @@ export function SubscriptionManager() {
               )}
             </div>
           </div>
-          
+
           <div className="mt-6">
             {tier === 'enterprise' ? (
               <Button className="w-full" variant="outline">
@@ -236,8 +231,8 @@ export function SubscriptionManager() {
                 Current Plan
               </Button>
             ) : (
-              <Button 
-                className="w-full" 
+              <Button
+                className="w-full"
                 onClick={() => {
                   setSelectedPlan(tier);
                   setShowConfirmDialog(true);
@@ -261,11 +256,11 @@ export function SubscriptionManager() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Current Subscription</CardTitle>
-                <CardDescription>
-                  Manage your subscription and billing preferences
-                </CardDescription>
+                <CardDescription>Manage your subscription and billing preferences</CardDescription>
               </div>
-              <Badge variant={subscription.subscription.status === 'active' ? 'default' : 'secondary'}>
+              <Badge
+                variant={subscription.subscription.status === 'active' ? 'default' : 'secondary'}
+              >
                 {subscription.subscription.status}
               </Badge>
             </div>
@@ -275,14 +270,14 @@ export function SubscriptionManager() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm font-medium">Current Period</p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(subscription.subscription.currentPeriodStart).toLocaleDateString()} - 
+                  <p className="text-muted-foreground text-sm">
+                    {new Date(subscription.subscription.currentPeriodStart).toLocaleDateString()} -
                     {new Date(subscription.subscription.currentPeriodEnd).toLocaleDateString()}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm font-medium">Next Billing Date</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {new Date(subscription.subscription.currentPeriodEnd).toLocaleDateString()}
                   </p>
                 </div>
@@ -292,7 +287,8 @@ export function SubscriptionManager() {
                 <Alert>
                   <AlertTriangle className="size-4" />
                   <AlertDescription>
-                    Your subscription is set to cancel on {new Date(subscription.subscription.currentPeriodEnd).toLocaleDateString()}.
+                    Your subscription is set to cancel on{' '}
+                    {new Date(subscription.subscription.currentPeriodEnd).toLocaleDateString()}.
                     <Button
                       variant="link"
                       className="ml-2 h-auto p-0"
@@ -312,7 +308,9 @@ export function SubscriptionManager() {
       <div>
         <h3 className="mb-4 text-lg font-semibold">Available Plans</h3>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {(['starter', 'professional', 'growth', 'enterprise'] as SubscriptionTier[]).map(renderPlanCard)}
+          {(['starter', 'professional', 'growth', 'enterprise'] as SubscriptionTier[]).map(
+            renderPlanCard
+          )}
         </div>
       </div>
 
@@ -327,25 +325,27 @@ export function SubscriptionManager() {
       )}
 
       {/* Cancel Subscription */}
-      {subscription && subscription.subscription.status === 'active' && !subscription.subscription.cancelAtPeriodEnd && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Cancel Subscription</CardTitle>
-            <CardDescription>
-              Cancel your subscription at the end of the billing period
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4 text-sm text-muted-foreground">
-              Your subscription will remain active until the end of your current billing period.
-              You can reactivate anytime before then.
-            </p>
-            <Button variant="destructive" onClick={handleCancelSubscription}>
-              Cancel Subscription
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+      {subscription &&
+        subscription.subscription.status === 'active' &&
+        !subscription.subscription.cancelAtPeriodEnd && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Cancel Subscription</CardTitle>
+              <CardDescription>
+                Cancel your subscription at the end of the billing period
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4 text-sm">
+                Your subscription will remain active until the end of your current billing period.
+                You can reactivate anytime before then.
+              </p>
+              <Button variant="destructive" onClick={handleCancelSubscription}>
+                Cancel Subscription
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
       {/* Confirmation Dialog */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
@@ -353,10 +353,10 @@ export function SubscriptionManager() {
           <DialogHeader>
             <DialogTitle>Confirm Plan Change</DialogTitle>
             <DialogDescription>
-              {selectedPlan && FeatureGateService.isUpgrade(currentTier as SubscriptionTier, selectedPlan)
+              {selectedPlan &&
+              FeatureGateService.isUpgrade(currentTier as SubscriptionTier, selectedPlan)
                 ? `You're upgrading to the ${planDetails[selectedPlan].name} plan. You'll be charged the prorated difference immediately.`
-                : `You're downgrading to the ${selectedPlan && planDetails[selectedPlan].name} plan. The change will take effect at the end of your current billing period.`
-              }
+                : `You're downgrading to the ${selectedPlan && planDetails[selectedPlan].name} plan. The change will take effect at the end of your current billing period.`}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

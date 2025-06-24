@@ -1,19 +1,22 @@
 import fs from 'fs';
 import path from 'path';
 import { parse } from 'csv-parse';
-import { db, plants } from '@terrasherper/db';
+import { db, plants } from '@terrashaper/db';
+import { createServiceLogger } from '@terrashaper/shared';
+
+const logger = createServiceLogger('plant-ingestion');
 
 const csvFilePath = path.resolve(__dirname, '../../../../Assets/Plant DB 400.csv');
 const imageBaseUrl = '/assets/plant-images/'; // Assuming images will be served from here
 
 async function processCSV() {
   const records = [];
-  const parser = fs
-    .createReadStream(csvFilePath)
-    .pipe(parse({
+  const parser = fs.createReadStream(csvFilePath).pipe(
+    parse({
       columns: true,
-      skip_empty_lines: true
-    }));
+      skip_empty_lines: true,
+    })
+  );
 
   for await (const record of parser) {
     records.push(record);
@@ -22,14 +25,14 @@ async function processCSV() {
 }
 
 async function ingestPlants() {
-  console.log('Starting plant ingestion...');
+  logger.info('Starting plant ingestion');
   const plantRecords = await processCSV();
   let ingestedCount = 0;
 
   for (const record of plantRecords) {
     const scientificName = record['Species Name'];
     if (!scientificName) {
-      console.warn('Skipping record with no species name:', record);
+      logger.warn('Skipping record with no species name', { record });
       continue;
     }
 
@@ -37,7 +40,9 @@ async function ingestPlants() {
       scientificName: scientificName,
       commonNames: record['Common Name'] ? [record['Common Name']] : [],
       sunRequirements: record['Sun Preference (Full Sun or Partial Sun, Full Shade)'],
-      droughtTolerant: record['Drought Resistant (1-5)'] ? parseInt(record['Drought Resistant (1-5)'], 10) > 3 : false,
+      droughtTolerant: record['Drought Resistant (1-5)']
+        ? parseInt(record['Drought Resistant (1-5)'], 10) > 3
+        : false,
       imageUrl: record['Underscore'] ? `${imageBaseUrl}${record['Underscore']}.jpg` : null,
       description: `A ${record['Plant Type'] || 'plant'}.`,
     };
@@ -46,15 +51,18 @@ async function ingestPlants() {
       await db.insert(plants).values(newPlant).onConflictDoNothing();
       ingestedCount++;
     } catch (error) {
-      console.error(`Failed to ingest plant: ${scientificName}`, error);
+      logger.error('Failed to ingest plant', error as Error, { scientificName });
     }
   }
 
-  console.log(`Ingestion complete. Processed ${plantRecords.length} records.`);
-  console.log(`Successfully ingested ${ingestedCount} new plants.`);
+  logger.info('Ingestion complete', {
+    totalRecords: plantRecords.length,
+    ingestedCount,
+    skippedCount: plantRecords.length - ingestedCount,
+  });
 }
 
-ingestPlants().catch(error => {
-  console.error('An error occurred during plant ingestion:', error);
+ingestPlants().catch((error) => {
+  logger.fatal('An error occurred during plant ingestion', error as Error);
   process.exit(1);
-}); 
+});

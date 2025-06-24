@@ -61,7 +61,7 @@ describe('Project Router Integration Tests', () => {
 
       // Since we can't easily test the actual tRPC router in isolation,
       // we'll test the logic that would be in the router
-      const result = mockProjects.filter(project => {
+      const result = mockProjects.filter((project) => {
         if (input.filterStatus === 'all') return true;
         return project.status === input.filterStatus;
       });
@@ -85,9 +85,7 @@ describe('Project Router Integration Tests', () => {
         offset: 0,
       };
 
-      const result = mockProjects.filter(project => 
-        project.status === input.filterStatus
-      );
+      const result = mockProjects.filter((project) => project.status === input.filterStatus);
 
       expect(result).toHaveLength(1);
       expect(result[0].status).toBe('active');
@@ -107,7 +105,7 @@ describe('Project Router Integration Tests', () => {
         offset: 0,
       };
 
-      const result = mockProjects.filter(project => 
+      const result = mockProjects.filter((project) =>
         project.name.toLowerCase().includes(input.search.toLowerCase())
       );
 
@@ -131,7 +129,7 @@ describe('Project Router Integration Tests', () => {
       });
 
       const input = { id: 'test-id' };
-      
+
       // Validate UUID format
       const uuidSchema = z.string().uuid();
 
@@ -139,13 +137,17 @@ describe('Project Router Integration Tests', () => {
     });
 
     it('should handle project not found', async () => {
-      mockSupabase.from().select().eq().single.mockResolvedValue({
-        data: null,
-        error: { message: 'Not found' },
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .single.mockResolvedValue({
+          data: null,
+          error: { message: 'Not found' },
+        });
 
       const _input = { id: 'non-existent-id' };
-      
+
       // This would throw a TRPCError in the actual implementation
       const error = new TRPCError({ code: 'NOT_FOUND', message: 'Project not found' });
 
@@ -183,19 +185,19 @@ describe('Project Router Integration Tests', () => {
   describe('project.listVersions', () => {
     it('should return paginated project versions', async () => {
       const mockVersions = [
-        { 
-          id: 'v1', 
-          project_id: 'project-1', 
-          snapshot: { elements: [] }, 
+        {
+          id: 'v1',
+          project_id: 'project-1',
+          snapshot: { elements: [] },
           created_at: new Date(),
-          comment: 'Initial version' 
+          comment: 'Initial version',
         },
-        { 
-          id: 'v2', 
-          project_id: 'project-1', 
-          snapshot: { elements: [{ type: 'rect' }] }, 
+        {
+          id: 'v2',
+          project_id: 'project-1',
+          snapshot: { elements: [{ type: 'rect' }] },
           created_at: new Date(),
-          comment: 'Added rectangle' 
+          comment: 'Added rectangle',
         },
       ];
 
@@ -249,16 +251,20 @@ describe('Project Router Integration Tests', () => {
     });
 
     it('should handle version creation errors', async () => {
-      mockSupabase.from().insert().select().single.mockResolvedValue({
-        data: null,
-        error: { message: 'Insert failed' },
+      mockSupabase
+        .from()
+        .insert()
+        .select()
+        .single.mockResolvedValue({
+          data: null,
+          error: { message: 'Insert failed' },
+        });
+
+      const error = new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to create version',
       });
 
-      const error = new TRPCError({ 
-        code: 'INTERNAL_SERVER_ERROR', 
-        message: 'Failed to create version' 
-      });
-      
       expect(error.code).toBe('INTERNAL_SERVER_ERROR');
     });
   });
@@ -266,13 +272,13 @@ describe('Project Router Integration Tests', () => {
   describe('project.getVersionDiff', () => {
     it('should return diff between two versions', async () => {
       const mockVersions = [
-        { 
-          id: 'v1', 
-          snapshot: { elements: [] }
+        {
+          id: 'v1',
+          snapshot: { elements: [] },
         },
-        { 
-          id: 'v2', 
-          snapshot: { elements: [{ type: 'rect' }] }
+        {
+          id: 'v2',
+          snapshot: { elements: [{ type: 'rect' }] },
         },
       ];
 
@@ -295,7 +301,7 @@ describe('Project Router Integration Tests', () => {
       // Simple diff logic test
       const snapshotA = mockVersions[0].snapshot;
       const snapshotB = mockVersions[1].snapshot;
-      
+
       expect(snapshotA.elements).toHaveLength(0);
       expect(snapshotB.elements).toHaveLength(1);
     });
@@ -314,10 +320,15 @@ describe('Project Router Integration Tests', () => {
         error: null,
       });
 
-      mockSupabase.from().update().eq().select().single.mockResolvedValue({
-        data: { id: 'project-1', elements: mockVersion.snapshot.elements },
-        error: null,
-      });
+      mockSupabase
+        .from()
+        .update()
+        .eq()
+        .select()
+        .single.mockResolvedValue({
+          data: { id: 'project-1', elements: mockVersion.snapshot.elements },
+          error: null,
+        });
 
       const input = {
         projectId: 'project-1',
@@ -361,4 +372,4 @@ describe('Project Router Integration Tests', () => {
       expect(error.code).toBe('UNAUTHORIZED');
     });
   });
-}); 
+});

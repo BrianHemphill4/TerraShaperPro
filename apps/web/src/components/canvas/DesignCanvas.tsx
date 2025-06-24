@@ -54,10 +54,11 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
   const [selectedMaterial, setSelectedMaterial] = useState<string>('grass');
   const [clipboard, setClipboard] = useState<fabric.Object | null>(null);
   const [showExportPanel, setShowExportPanel] = useState(false);
-  
+
   // Initialize undo/redo system
   const undoRedo = useUndoRedo(canvas, {
-    excludeFromHistory: (obj) => (obj as any).evented === false || (obj as any).isMeasurement === true,
+    excludeFromHistory: (obj) =>
+      (obj as any).evented === false || (obj as any).isMeasurement === true,
   });
 
   const notifyElementsChange = useCallback(() => {
@@ -236,18 +237,29 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
       const pointer = canvas.getPointer(e.e);
       const point = { x: pointer.x, y: pointer.y };
 
-      if (drawingMode === 'polygon' || drawingMode === 'polyline' || drawingMode === 'area' || drawingMode === 'line') {
+      if (
+        drawingMode === 'polygon' ||
+        drawingMode === 'polyline' ||
+        drawingMode === 'area' ||
+        drawingMode === 'line'
+      ) {
         if (!isDrawing) {
           setIsDrawing(true);
           setCurrentPoints([point]);
 
-          const fillColor = drawingMode === 'polygon' ? 'rgba(16, 185, 129, 0.3)' : 
-                          drawingMode === 'area' ? getMaterialFill(selectedMaterial) : 
-                          'transparent';
-          const strokeColor = drawingMode === 'area' ? getMaterialStroke(selectedMaterial) : 
-                            drawingMode === 'line' ? '#374151' : 
-                            '#10b981';
-          
+          const fillColor =
+            drawingMode === 'polygon'
+              ? 'rgba(16, 185, 129, 0.3)'
+              : drawingMode === 'area'
+                ? getMaterialFill(selectedMaterial)
+                : 'transparent';
+          const strokeColor =
+            drawingMode === 'area'
+              ? getMaterialStroke(selectedMaterial)
+              : drawingMode === 'line'
+                ? '#374151'
+                : '#10b981';
+
           const line = new fabric.Polyline([point], {
             fill: fillColor,
             stroke: strokeColor,
@@ -291,20 +303,20 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
               id: `${drawingMode}-${Date.now()}`,
             } as any)
           : drawingMode === 'area'
-          ? new fabric.Polygon(currentPoints, {
-              fill: getMaterialFill(selectedMaterial),
-              stroke: getMaterialStroke(selectedMaterial),
-              strokeWidth: 2,
-              id: `area-${Date.now()}`,
-              material: selectedMaterial,
-            } as any)
-          : new fabric.Polyline(currentPoints, {
-              fill: 'transparent',
-              stroke: drawingMode === 'line' ? '#374151' : '#10b981',
-              strokeWidth: drawingMode === 'line' ? 3 : 2,
-              id: `${drawingMode}-${Date.now()}`,
-              material: drawingMode === 'line' ? 'edging' : undefined,
-            } as any);
+            ? new fabric.Polygon(currentPoints, {
+                fill: getMaterialFill(selectedMaterial),
+                stroke: getMaterialStroke(selectedMaterial),
+                strokeWidth: 2,
+                id: `area-${Date.now()}`,
+                material: selectedMaterial,
+              } as any)
+            : new fabric.Polyline(currentPoints, {
+                fill: 'transparent',
+                stroke: drawingMode === 'line' ? '#374151' : '#10b981',
+                strokeWidth: drawingMode === 'line' ? 3 : 2,
+                id: `${drawingMode}-${Date.now()}`,
+                material: drawingMode === 'line' ? 'edging' : undefined,
+              } as any);
 
       canvas.add(shape);
       canvas.setActiveObject(shape);
@@ -326,19 +338,30 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
       canvas.off('mouse:move', handleMouseMove);
       canvas.off('mouse:dblclick', handleMouseDblClick);
     };
-  }, [canvas, drawingMode, isDrawing, currentPoints, tempLine, notifyElementsChange, selectedMaterial]);
+  }, [
+    canvas,
+    drawingMode,
+    isDrawing,
+    currentPoints,
+    tempLine,
+    notifyElementsChange,
+    selectedMaterial,
+  ]);
 
-  const handleModeChange = useCallback((mode: DrawingMode) => {
-    setDrawingMode(mode);
+  const handleModeChange = useCallback(
+    (mode: DrawingMode) => {
+      setDrawingMode(mode);
 
-    // Cancel any ongoing drawing
-    if (isDrawing && tempLine && canvas) {
-      canvas.remove(tempLine);
-      setIsDrawing(false);
-      setCurrentPoints([]);
-      setTempLine(null);
-    }
-  }, [isDrawing, tempLine, canvas]);
+      // Cancel any ongoing drawing
+      if (isDrawing && tempLine && canvas) {
+        canvas.remove(tempLine);
+        setIsDrawing(false);
+        setCurrentPoints([]);
+        setTempLine(null);
+      }
+    },
+    [isDrawing, tempLine, canvas]
+  );
 
   const handleDelete = useCallback(() => {
     if (!canvas) return;
@@ -361,7 +384,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
     if (!canvas) return;
     const activeObject = canvas.getActiveObject();
     if (!activeObject || activeObject.type !== 'activeSelection') return;
-    
+
     const activeSelection = activeObject as fabric.ActiveSelection;
     const group = activeSelection.toGroup();
     (group as any).id = `group-${Date.now()}`;
@@ -373,19 +396,19 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
     if (!canvas) return;
     const activeObject = canvas.getActiveObject();
     if (!activeObject || activeObject.type !== 'group') return;
-    
+
     const items = (activeObject as fabric.Group).getObjects();
     (activeObject as fabric.Group).destroy();
     canvas.remove(activeObject);
-    
+
     const newSelection = new fabric.ActiveSelection(items, {
       canvas,
     });
-    
+
     items.forEach((item) => {
       canvas.add(item);
     });
-    
+
     canvas.setActiveObject(newSelection);
     canvas.requestRenderAll();
     notifyElementsChange();
@@ -395,7 +418,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
     if (!canvas) return;
     const activeObject = canvas.getActiveObject();
     if (!activeObject) return;
-    
+
     activeObject.clone((cloned: fabric.Object) => {
       setClipboard(cloned);
     });
@@ -403,17 +426,17 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
 
   const handlePaste = useCallback(() => {
     if (!canvas || !clipboard) return;
-    
+
     clipboard.clone((clonedObj: fabric.Object) => {
       canvas.discardActiveObject();
-      
+
       clonedObj.set({
         left: (clonedObj.left || 0) + 20,
         top: (clonedObj.top || 0) + 20,
         evented: true,
         id: `${(clonedObj as any).id || 'object'}-copy-${Date.now()}`,
       } as any);
-      
+
       if (clonedObj.type === 'activeSelection') {
         // Handle pasting multiple objects
         (clonedObj as fabric.ActiveSelection).forEachObject((obj) => {
@@ -423,7 +446,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
       } else {
         canvas.add(clonedObj);
       }
-      
+
       canvas.setActiveObject(clonedObj);
       canvas.requestRenderAll();
       notifyElementsChange();
@@ -434,15 +457,15 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!canvas) return;
-      
+
       // Prevent shortcuts when typing in input fields
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
-      
+
       const key = e.key.toLowerCase();
       const ctrl = e.ctrlKey || e.metaKey;
-      
+
       if (ctrl && key === 'c') {
         e.preventDefault();
         handleCopy();
@@ -490,13 +513,22 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
         handleModeChange('line');
       }
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
-    
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [canvas, drawingMode, handleCopy, handlePaste, handleDelete, handleGroup, handleUngroup, handleModeChange]);
+  }, [
+    canvas,
+    drawingMode,
+    handleCopy,
+    handlePaste,
+    handleDelete,
+    handleGroup,
+    handleUngroup,
+    handleModeChange,
+  ]);
 
   return (
     <div className={styles.container} ref={containerRef}>
@@ -580,14 +612,7 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
           title="Draw Line (edging)"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <line
-              x1="5"
-              y1="12"
-              x2="19"
-              y2="12"
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
+            <line x1="5" y1="12" x2="19" y2="12" strokeWidth="3" strokeLinecap="round" />
           </svg>
         </button>
         <div className={styles.separator}></div>
@@ -636,7 +661,10 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
           title="Paste (Ctrl+V)"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" strokeWidth="2" />
+            <path
+              d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
+              strokeWidth="2"
+            />
             <rect x="8" y="2" width="8" height="4" rx="1" ry="1" strokeWidth="2" />
           </svg>
         </button>
@@ -678,9 +706,27 @@ const DesignCanvas = ({ onReady, onElementsChange }: DesignCanvasProps) => {
           title="Export"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <polyline points="7 10 12 15 17 10" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <line x1="12" y1="15" x2="12" y2="3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <polyline
+              points="7 10 12 15 17 10"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <line
+              x1="12"
+              y1="15"
+              x2="12"
+              y2="3"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
       </div>

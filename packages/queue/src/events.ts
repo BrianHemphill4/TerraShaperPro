@@ -19,9 +19,9 @@ class QueueEventEmitter extends EventEmitter {
 
   initialize() {
     if (this.initialized) return;
-    
+
     this.queueEvents = getRenderQueueEvents();
-    
+
     // Set up queue event listeners
     this.queueEvents.on('progress', (data) => {
       this.emit('progress', {

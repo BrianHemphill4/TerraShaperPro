@@ -2,7 +2,7 @@
 
 import type { ProjectComment } from '@terrashaper/shared';
 import { formatDistanceToNow } from 'date-fns';
-import { Check, MapPin,MessageSquare, X } from 'lucide-react';
+import { Check, MapPin, MessageSquare, X } from 'lucide-react';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -15,13 +15,17 @@ import { api } from '@/lib/api';
 type CommentsPanelProps = {
   projectId: string;
   canResolve?: boolean;
-}
+};
 
 export function CommentsPanel({ projectId, canResolve = true }: CommentsPanelProps) {
   const [newComment, setNewComment] = useState('');
   const [includeResolved, setIncludeResolved] = useState(false);
 
-  const { data: comments, isLoading, refetch } = api.clientPortal.listComments.useQuery({
+  const {
+    data: comments,
+    isLoading,
+    refetch,
+  } = api.clientPortal.listComments.useQuery({
     projectId,
     includeResolved,
   });
@@ -80,11 +84,7 @@ export function CommentsPanel({ projectId, canResolve = true }: CommentsPanelPro
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Comments & Feedback</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIncludeResolved(!includeResolved)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => setIncludeResolved(!includeResolved)}>
             {includeResolved ? 'Hide' : 'Show'} Resolved
           </Button>
         </CardTitle>
@@ -109,73 +109,75 @@ export function CommentsPanel({ projectId, canResolve = true }: CommentsPanelPro
 
           {/* Comments list */}
           <div className="space-y-4">
-            {comments?.map((comment: ProjectComment & { 
-              author?: { email: string; full_name?: string },
-              replies: ProjectComment[]
-            }) => (
-              <div
-                key={comment.id}
-                className={`rounded-lg border p-4 ${
-                  comment.is_resolved ? 'bg-gray-50' : ''
-                }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2">
-                      <p className="font-medium">
-                        {comment.author?.full_name || 
-                         comment.author?.email || 
-                         comment.author_name || 
-                         comment.author_email}
-                      </p>
-                      <span className="text-xs text-gray-500">
-                        {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
-                      </span>
-                      {comment.position && (
-                        <Badge variant="outline" className="text-xs">
-                          <MapPin className="mr-1 size-3" />
-                          On canvas
-                        </Badge>
-                      )}
-                      {comment.is_resolved && (
-                        <Badge variant="secondary" className="text-xs">
-                          Resolved
-                        </Badge>
-                      )}
+            {comments?.map(
+              (
+                comment: ProjectComment & {
+                  author?: { email: string; full_name?: string };
+                  replies: ProjectComment[];
+                }
+              ) => (
+                <div
+                  key={comment.id}
+                  className={`rounded-lg border p-4 ${comment.is_resolved ? 'bg-gray-50' : ''}`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2">
+                        <p className="font-medium">
+                          {comment.author?.full_name ||
+                            comment.author?.email ||
+                            comment.author_name ||
+                            comment.author_email}
+                        </p>
+                        <span className="text-xs text-gray-500">
+                          {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                        </span>
+                        {comment.position && (
+                          <Badge variant="outline" className="text-xs">
+                            <MapPin className="mr-1 size-3" />
+                            On canvas
+                          </Badge>
+                        )}
+                        {comment.is_resolved && (
+                          <Badge variant="secondary" className="text-xs">
+                            Resolved
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="mt-2 text-sm">{comment.content}</p>
                     </div>
-                    <p className="mt-2 text-sm">{comment.content}</p>
+
+                    {canResolve && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleResolveComment(comment.id, !comment.is_resolved)}
+                      >
+                        {comment.is_resolved ? (
+                          <X className="size-4" />
+                        ) : (
+                          <Check className="size-4" />
+                        )}
+                      </Button>
+                    )}
                   </div>
 
-                  {canResolve && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleResolveComment(comment.id, !comment.is_resolved)}
-                    >
-                      {comment.is_resolved ? (
-                        <X className="size-4" />
-                      ) : (
-                        <Check className="size-4" />
-                      )}
-                    </Button>
+                  {/* Replies */}
+                  {comment.replies && comment.replies.length > 0 && (
+                    <div className="ml-6 mt-4 space-y-2">
+                      {comment.replies.map((reply: ProjectComment) => (
+                        <div key={reply.id} className="rounded border-l-2 pl-3">
+                          <p className="text-sm font-medium">
+                            {reply.author_name || reply.author_email}
+                          </p>
+                          <p className="text-sm text-gray-600">{reply.content}</p>
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
-
-                {/* Replies */}
-                {comment.replies && comment.replies.length > 0 && (
-                  <div className="ml-6 mt-4 space-y-2">
-                    {comment.replies.map((reply: ProjectComment) => (
-                      <div key={reply.id} className="rounded border-l-2 pl-3">
-                        <p className="text-sm font-medium">
-                          {reply.author_name || reply.author_email}
-                        </p>
-                        <p className="text-sm text-gray-600">{reply.content}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+              )
+            )}
           </div>
         </div>
       </CardContent>

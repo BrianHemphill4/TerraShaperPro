@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "strict": false,
+    "declaration": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "paths": {
+      "@terrashaper/shared": ["./packages/shared/src/index.ts"],
+      "@terrashaper/db": ["./packages/db/src/index.ts"],
+      "@terrashaper/storage": ["./packages/storage/src/index.ts"],
+      "@terrashaper/queue": ["./packages/queue/src/index.ts"],
+      "@terrashaper/stripe": ["./packages/stripe/src/index.ts"],
+      "@terrashaper/ai-service": ["./packages/ai-service/src/index.ts"],
+      "@terrashaper/services": ["./packages/services/src/index.ts"],
+      "@terrashaper/hooks": ["./packages/hooks/src/index.ts"],
+      "@terrashaper/ui": ["./packages/ui/src/index.ts"]
+    }
+  },
+  "include": [
+    "packages/*/src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "apps/**/*"
+  ]
+}

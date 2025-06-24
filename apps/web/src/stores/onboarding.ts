@@ -1,4 +1,9 @@
-import type { OnboardingFlow, OnboardingFlowId, OnboardingState, OnboardingStep } from '@terrashaper/shared';
+import type {
+  OnboardingFlow,
+  OnboardingFlowId,
+  OnboardingState,
+  OnboardingStep,
+} from '@terrashaper/shared';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -11,13 +16,13 @@ type OnboardingStore = {
   completeFlow: () => void;
   resetFlow: (flowId: OnboardingFlowId) => void;
   updatePreferences: (preferences: Partial<OnboardingState['preferences']>) => void;
-  
+
   // Getters
   getCurrentFlow: () => OnboardingFlow | null;
   getCurrentStep: () => OnboardingStep | null;
   isFlowCompleted: (flowId: OnboardingFlowId) => boolean;
   hasSeenAnyFlow: () => boolean;
-} & OnboardingState
+} & OnboardingState;
 
 // Import will be added after creating the flows
 let onboardingFlows: Record<OnboardingFlowId, OnboardingFlow> = {};

@@ -69,10 +69,10 @@ export class SecurityService {
 }
 
 // Re-export all security modules for convenient access
-export * from './auth-config';
+export * from './authConfig';
 export * from './cors';
 export * from './encryption';
-export * from './file-validation';
+export * from './fileValidation';
 export * from './headers';
 
 // Legacy exports for backward compatibility

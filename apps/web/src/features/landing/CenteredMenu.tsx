@@ -3,8 +3,8 @@
 import Link from 'next/link';
 
 import { ToggleMenuButton } from '@/components/ToggleMenuButton';
-import { useMenu } from '@/hooks/UseMenu';
-import { cn } from '@/utils/Helpers';
+import { useMenu } from '@terrashaper/hooks/UseMenu';
+import { cn } from '@/utils/helpers';
 
 export const CenteredMenu = (props: {
   logo: React.ReactNode;
@@ -31,12 +31,7 @@ export const CenteredMenu = (props: {
         </ul>
       </nav>
 
-      <div
-        className={cn(
-          'rounded-b max-lg:border-t max-lg:border-border',
-          navClass,
-        )}
-      >
+      <div className={cn('max-lg:border-border rounded-b max-lg:border-t', navClass)}>
         <ul className="flex flex-row items-center gap-x-1.5 text-lg font-medium [&_li[data-fade]:hover]:opacity-100 [&_li[data-fade]]:opacity-60">
           {props.rightMenu}
         </ul>

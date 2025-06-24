@@ -24,7 +24,11 @@ type MaterialSelectorProps = {
   visible: boolean;
 };
 
-const MaterialSelector = ({ selectedMaterial, onMaterialChange, visible }: MaterialSelectorProps) => {
+const MaterialSelector = ({
+  selectedMaterial,
+  onMaterialChange,
+  visible,
+}: MaterialSelectorProps) => {
   if (!visible) return null;
 
   return (
@@ -39,10 +43,7 @@ const MaterialSelector = ({ selectedMaterial, onMaterialChange, visible }: Mater
             onClick={() => onMaterialChange(material.id)}
             title={material.name}
           >
-            <div 
-              className={styles.colorSwatch} 
-              style={{ backgroundColor: material.color }}
-            />
+            <div className={styles.colorSwatch} style={{ backgroundColor: material.color }} />
             <span className={styles.materialName}>{material.name}</span>
           </button>
         ))}

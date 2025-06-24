@@ -1,8 +1,8 @@
 'use client';
 
+import { useArrowKeyNavigation } from '@terrashaper/hooks';
 import { useRef } from 'react';
 
-import { useArrowKeyNavigation } from '@/hooks/use-focus-management';
 import { cn } from '@/lib/utils';
 
 type FocusableListProps = {
@@ -10,7 +10,7 @@ type FocusableListProps = {
   orientation?: 'horizontal' | 'vertical' | 'both';
   className?: string;
   onSelect?: (index: number) => void;
-}
+};
 
 export function FocusableList({
   children,
@@ -28,10 +28,7 @@ export function FocusableList({
   return (
     <div
       role="list"
-      className={cn(
-        orientation === 'horizontal' ? 'flex flex-row' : 'flex flex-col',
-        className
-      )}
+      className={cn(orientation === 'horizontal' ? 'flex flex-row' : 'flex flex-col', className)}
     >
       {children.map((child, index) => (
         <div
@@ -42,8 +39,8 @@ export function FocusableList({
           }}
           tabIndex={focusedIndex === index ? 0 : -1}
           className={cn(
-            'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-            focusedIndex === index && 'ring-2 ring-ring ring-offset-2'
+            'focus:ring-ring focus:outline-none focus:ring-2 focus:ring-offset-2',
+            focusedIndex === index && 'ring-ring ring-2 ring-offset-2'
           )}
         >
           {child}

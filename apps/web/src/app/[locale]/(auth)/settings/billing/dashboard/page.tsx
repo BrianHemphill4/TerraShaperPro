@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  CreditCard, 
-  Download,
-  FileText, 
-  Settings,
-  TrendingUp
-} from 'lucide-react';
+import { CreditCard, Download, FileText, Settings, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 
 import { BillingAlerts } from '@/components/billing/BillingAlerts';
@@ -38,7 +32,7 @@ export default function BillingDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Billing Dashboard</h1>
-          <p className="mt-1 text-muted-foreground">
+          <p className="text-muted-foreground mt-1">
             Manage your subscription, usage, and billing information
           </p>
         </div>
@@ -50,7 +44,7 @@ export default function BillingDashboard() {
 
       {/* Overage Alerts */}
       <OverageAlert />
-      
+
       {/* Billing Alerts */}
       <BillingAlerts />
 
@@ -81,7 +75,7 @@ export default function BillingDashboard() {
 
         <TabsContent value="overview" className="space-y-6">
           <BillingOverview />
-          
+
           {/* Quick Stats */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <Card>
@@ -90,10 +84,17 @@ export default function BillingDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  ${((subscription?.plan?.price_monthly || 0) + (usageSummary?.estimatedOverages || 0)).toFixed(2)}
+                  $
+                  {(
+                    (subscription?.plan?.price_monthly || 0) +
+                    (usageSummary?.estimatedOverages || 0)
+                  ).toFixed(2)}
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Due on {new Date(subscription?.subscription?.currentPeriodEnd || '').toLocaleDateString()}
+                <p className="text-muted-foreground mt-1 text-xs">
+                  Due on{' '}
+                  {new Date(
+                    subscription?.subscription?.currentPeriodEnd || ''
+                  ).toLocaleDateString()}
                 </p>
               </CardContent>
             </Card>
@@ -103,10 +104,8 @@ export default function BillingDashboard() {
                 <CardTitle className="text-sm font-medium">Credits Remaining</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {usageSummary?.limits?.renders || 0}
-                </div>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <div className="text-2xl font-bold">{usageSummary?.limits?.renders || 0}</div>
+                <p className="text-muted-foreground mt-1 text-xs">
                   Of {subscription?.plan?.render_credits_monthly || 0} monthly credits
                 </p>
               </CardContent>
@@ -118,9 +117,11 @@ export default function BillingDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {new Date(subscription?.subscription?.currentPeriodEnd || '').toLocaleDateString()}
+                  {new Date(
+                    subscription?.subscription?.currentPeriodEnd || ''
+                  ).toLocaleDateString()}
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="text-muted-foreground mt-1 text-xs">
                   {subscription?.subscription?.status === 'active' ? 'Auto-renewal' : 'Cancelled'}
                 </p>
               </CardContent>

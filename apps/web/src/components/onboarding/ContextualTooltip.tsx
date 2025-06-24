@@ -3,12 +3,7 @@
 import { HelpCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { useOnboardingStore } from '@/stores/onboarding';
 
@@ -20,7 +15,7 @@ type ContextualTooltipProps = {
   children?: React.ReactNode;
   showIcon?: boolean;
   className?: string;
-}
+};
 
 export function ContextualTooltip({
   content,
@@ -48,7 +43,7 @@ export function ContextualTooltip({
         <TooltipTrigger asChild>
           {children || (
             <span className={cn('inline-flex items-center', className)}>
-              <HelpCircle className="size-4 cursor-help text-muted-foreground transition-colors hover:text-foreground" />
+              <HelpCircle className="text-muted-foreground hover:text-foreground size-4 cursor-help transition-colors" />
             </span>
           )}
         </TooltipTrigger>
@@ -63,7 +58,7 @@ export function ContextualTooltip({
 type TooltipWrapperProps = {
   tooltips: Record<string, string>;
   children: React.ReactNode;
-}
+};
 
 export function TooltipWrapper({ tooltips, children }: TooltipWrapperProps) {
   useEffect(() => {

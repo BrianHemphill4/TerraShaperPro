@@ -4,16 +4,13 @@ import {
   getQueueEventEmitter,
   getQueueMetrics,
 } from '@terrashaper/queue';
-// import { StorageService } from '@terrashaper/storage';
 import { TRPCError } from '@trpc/server';
 import { observable } from '@trpc/server/observable';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
+import { checkUsageLimit } from '../middleware/usage-limits';
 import { protectedProcedure, router } from '../trpc';
-import { checkUsageLimit, trackUsage } from '../middleware/usage-limits';
-
-// const storageService = new StorageService();
 
 const renderSettingsSchema = z.object({
   provider: z.enum(['google-imagen', 'openai-gpt-image']),
@@ -47,7 +44,8 @@ export const renderRouter = router({
       // Check monthly render limit
       await checkUsageLimit(ctx, {
         limitType: 'maxRendersPerMonth',
-        customMessage: 'You have reached your monthly render limit. Please upgrade your plan or wait until next month.',
+        customMessage:
+          'You have reached your monthly render limit. Please upgrade your plan or wait until next month.',
       });
 
       // Check rate limits

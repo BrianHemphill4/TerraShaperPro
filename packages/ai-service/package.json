@@ -10,7 +10,9 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "typecheck": "tsc --noEmit",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "docs:generate": "typedoc",
+    "docs:serve": "npx http-server ../../docs/api/ai-service -p 8082"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.22.0",

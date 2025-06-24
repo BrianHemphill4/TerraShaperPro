@@ -2,17 +2,14 @@ import { UserProfile } from '@clerk/nextjs';
 import { useTranslations } from 'next-intl';
 
 import { TitleBar } from '@/features/dashboard/TitleBar';
-import { getI18nPath } from '@/utils/Helpers';
+import { getI18nPath } from '@/utils/helpers';
 
 const UserProfilePage = (props: { params: { locale: string } }) => {
   const t = useTranslations('UserProfile');
 
   return (
     <>
-      <TitleBar
-        title={t('title_bar')}
-        description={t('title_bar_description')}
-      />
+      <TitleBar title={t('title_bar')} description={t('title_bar_description')} />
 
       <UserProfile
         routing="path"

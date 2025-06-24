@@ -1,4 +1,4 @@
-import type { AppRouter } from '@terrasherper/api-gateway';
+import type { AppRouter } from '@terrashaper/api-gateway';
 import { httpBatchLink } from '@trpc/client';
 import { createTRPCReact } from '@trpc/react-query';
 

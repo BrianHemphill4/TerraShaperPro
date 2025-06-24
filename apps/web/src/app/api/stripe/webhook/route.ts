@@ -1,16 +1,13 @@
-import { createClient } from '@supabase/supabase-js';
+import { createAdminClient } from '@terrashaper/db';
 import { WebhookService } from '@terrashaper/stripe';
 import { headers } from 'next/headers';
-import type { NextRequest} from 'next/server';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-const webhookService = new WebhookService();
+import { logger } from '@/lib/logger';
 
-// Initialize Supabase client with service role key for webhook operations
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const webhookService = new WebhookService();
+const supabase = createAdminClient();
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -46,7 +43,7 @@ export async function POST(request: NextRequest) {
           user_id: userId,
           action: 'org.subscription_changed',
           entity_type: 'subscription',
-          metadata: { 
+          metadata: {
             action: 'checkout_completed',
             subscriptionId: session.subscription,
           },
@@ -81,7 +78,9 @@ export async function POST(request: NextRequest) {
               stripe_subscription_id: subscription.id,
               stripe_subscription_status: subscription.status,
               subscription_tier: plan?.tier || 'free',
-              stripe_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+              stripe_current_period_end: new Date(
+                subscription.current_period_end * 1000
+              ).toISOString(),
             })
             .eq('id', org.id);
 
@@ -153,8 +152,12 @@ export async function POST(request: NextRequest) {
             amount_paid: invoice.amount_paid / 100,
             currency: invoice.currency,
             paid_at: new Date(invoice.status_transitions.paid_at * 1000).toISOString(),
-            period_start: invoice.period_start ? new Date(invoice.period_start * 1000).toISOString() : null,
-            period_end: invoice.period_end ? new Date(invoice.period_end * 1000).toISOString() : null,
+            period_start: invoice.period_start
+              ? new Date(invoice.period_start * 1000).toISOString()
+              : null,
+            period_end: invoice.period_end
+              ? new Date(invoice.period_end * 1000).toISOString()
+              : null,
             stripe_hosted_invoice_url: invoice.hosted_invoice_url,
             stripe_invoice_pdf: invoice.invoice_pdf,
           });
@@ -265,15 +268,12 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        logger.warn('Unhandled Stripe webhook event', { eventType: event.type });
     }
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('Webhook error:', error);
-    return NextResponse.json(
-      { error: 'Webhook handler failed' },
-      { status: 400 }
-    );
+    logger.error('Stripe webhook error', error);
+    return NextResponse.json({ error: 'Webhook handler failed' }, { status: 400 });
   }
 }

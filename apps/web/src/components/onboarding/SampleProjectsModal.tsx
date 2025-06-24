@@ -7,7 +7,7 @@ import { SampleProjectsGallery } from './SampleProjectsGallery';
 type SampleProjectsModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
+};
 
 export function SampleProjectsModal({ open, onOpenChange }: SampleProjectsModalProps) {
   return (

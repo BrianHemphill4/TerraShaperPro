@@ -5,7 +5,9 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: '../../../.env' });
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  console.warn('STRIPE_SECRET_KEY is not set in environment variables. Using dummy key for development.');
+  console.warn(
+    'STRIPE_SECRET_KEY is not set in environment variables. Using dummy key for development.'
+  );
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy', {

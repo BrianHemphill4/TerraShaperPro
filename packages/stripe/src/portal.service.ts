@@ -44,8 +44,14 @@ export class PortalService {
         cancellation_reason?: {
           enabled: boolean;
           options: Array<
-            'too_expensive' | 'missing_features' | 'switched_service' | 
-            'unused' | 'customer_service' | 'too_complex' | 'low_quality' | 'other'
+            | 'too_expensive'
+            | 'missing_features'
+            | 'switched_service'
+            | 'unused'
+            | 'customer_service'
+            | 'too_complex'
+            | 'low_quality'
+            | 'other'
           >;
         };
       };
@@ -115,10 +121,7 @@ export class PortalService {
     configurationId: string,
     params: Partial<Stripe.BillingPortal.ConfigurationUpdateParams>
   ): Promise<Stripe.BillingPortal.Configuration> {
-    const configuration = await stripe.billingPortal.configurations.update(
-      configurationId,
-      params
-    );
+    const configuration = await stripe.billingPortal.configurations.update(configurationId, params);
 
     return configuration;
   }
@@ -126,10 +129,12 @@ export class PortalService {
   /**
    * List portal configurations
    */
-  async listPortalConfigurations(params: {
-    limit?: number;
-    active?: boolean;
-  } = {}): Promise<Stripe.BillingPortal.Configuration[]> {
+  async listPortalConfigurations(
+    params: {
+      limit?: number;
+      active?: boolean;
+    } = {}
+  ): Promise<Stripe.BillingPortal.Configuration[]> {
     const configurations = await stripe.billingPortal.configurations.list({
       limit: params.limit || 10,
       active: params.active,

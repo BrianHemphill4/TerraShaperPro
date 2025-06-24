@@ -1,16 +1,7 @@
 'use client';
 
 import { formatDistanceToNow } from 'date-fns';
-import { 
-  Crown, 
-  Mail,
-  MoreVertical,
-  Shield, 
-  User,
-  UserPlus, 
-  Users, 
-  X
-} from 'lucide-react';
+import { Crown, Mail, MoreVertical, Shield, User, UserPlus, Users, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -27,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
-import { useFeatureGate } from '@/hooks/useFeatureGate';
+import { useFeatureGate } from '@terrashaper/hooks/useFeatureGate';
 import { api } from '@/lib/api';
 
 export function TeamSeatsManagement() {
@@ -105,7 +96,7 @@ export function TeamSeatsManagement() {
           <CardDescription>Loading team information...</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-40 animate-pulse rounded bg-muted" />
+          <div className="bg-muted h-40 animate-pulse rounded" />
         </CardContent>
       </Card>
     );
@@ -117,9 +108,7 @@ export function TeamSeatsManagement() {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle>Team Seats</CardTitle>
-            <CardDescription>
-              Manage your team members and seat allocation
-            </CardDescription>
+            <CardDescription>Manage your team members and seat allocation</CardDescription>
           </div>
           <Button
             onClick={() => router.push('/settings/team/invite')}
@@ -139,9 +128,7 @@ export function TeamSeatsManagement() {
               {totalSeatsUsed} / {seatLimit?.limit === -1 ? 'Unlimited' : seatLimit?.limit || 0}
             </span>
           </div>
-          {seatLimit?.limit !== -1 && (
-            <Progress value={percentageUsed} />
-          )}
+          {seatLimit?.limit !== -1 && <Progress value={percentageUsed} />}
           {seatsAvailable <= 0 && seatLimit?.limit !== -1 && (
             <p className="text-sm text-amber-600">
               No seats available. Remove members or upgrade your plan to add more.
@@ -167,7 +154,7 @@ export function TeamSeatsManagement() {
                   </Avatar>
                   <div>
                     <p className="text-sm font-medium">{member.full_name || member.email}</p>
-                    <p className="text-xs text-muted-foreground">{member.email}</p>
+                    <p className="text-muted-foreground text-xs">{member.email}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -175,7 +162,7 @@ export function TeamSeatsManagement() {
                     {getRoleIcon(member.role)}
                     <span className="ml-1 capitalize">{member.role}</span>
                   </Badge>
-                  
+
                   {member.role !== 'owner' && (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -227,13 +214,14 @@ export function TeamSeatsManagement() {
                   className="flex items-center justify-between rounded-lg border border-dashed p-3"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex size-8 items-center justify-center rounded-full bg-muted">
-                      <Mail className="size-4 text-muted-foreground" />
+                    <div className="bg-muted flex size-8 items-center justify-center rounded-full">
+                      <Mail className="text-muted-foreground size-4" />
                     </div>
                     <div>
                       <p className="text-sm font-medium">{invitation.email}</p>
-                      <p className="text-xs text-muted-foreground">
-                        Invited {formatDistanceToNow(new Date(invitation.created_at), { addSuffix: true })}
+                      <p className="text-muted-foreground text-xs">
+                        Invited{' '}
+                        {formatDistanceToNow(new Date(invitation.created_at), { addSuffix: true })}
                       </p>
                     </div>
                   </div>
@@ -271,15 +259,12 @@ export function TeamSeatsManagement() {
         {/* Plan Info */}
         <div className="border-t pt-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Your {currentTier} plan includes {seatLimit?.limit === -1 ? 'unlimited' : seatLimit?.limit} team seats.
+            <p className="text-muted-foreground text-sm">
+              Your {currentTier} plan includes{' '}
+              {seatLimit?.limit === -1 ? 'unlimited' : seatLimit?.limit} team seats.
             </p>
             {seatLimit?.limit !== -1 && seatsAvailable <= 2 && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push('/settings/billing')}
-              >
+              <Button variant="outline" size="sm" onClick={() => router.push('/settings/billing')}>
                 <Users className="mr-2 size-4" />
                 Add More Seats
               </Button>

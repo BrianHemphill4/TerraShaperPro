@@ -43,4 +43,4 @@ export type PromptGenerationContext = {
     climate?: string;
     propertyType?: string;
   };
-}
+};

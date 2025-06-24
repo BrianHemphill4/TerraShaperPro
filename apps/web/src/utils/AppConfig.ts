@@ -16,7 +16,7 @@ export const AppConfig = {
   localePrefix,
 };
 
-export const AllLocales = AppConfig.locales.map(locale => locale.id);
+export const AllLocales = AppConfig.locales.map((locale) => locale.id);
 
 export const PLAN_ID = {
   FREE: 'free',

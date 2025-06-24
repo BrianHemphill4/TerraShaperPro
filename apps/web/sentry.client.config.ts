@@ -5,9 +5,6 @@
 // Temporarily disabled Sentry to fix module errors
 // TODO: Re-enable when OpenTelemetry issues are resolved
 
-// import * as Sentry from '@sentry/nextjs';
-// import * as Spotlight from '@spotlightjs/spotlight';
-
 // Sentry.init({
 //   // Sentry DSN
 //   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,

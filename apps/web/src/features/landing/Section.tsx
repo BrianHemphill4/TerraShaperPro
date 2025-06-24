@@ -1,4 +1,4 @@
-import { cn } from '@/utils/Helpers';
+import { cn } from '@/utils/helpers';
 
 export const Section = (props: {
   children: React.ReactNode;
@@ -16,14 +16,10 @@ export const Section = (props: {
           </div>
         )}
 
-        {props.title && (
-          <div className="mt-1 text-3xl font-bold">{props.title}</div>
-        )}
+        {props.title && <div className="mt-1 text-3xl font-bold">{props.title}</div>}
 
         {props.description && (
-          <div className="mt-2 text-lg text-muted-foreground">
-            {props.description}
-          </div>
+          <div className="text-muted-foreground mt-2 text-lg">{props.description}</div>
         )}
       </div>
     )}

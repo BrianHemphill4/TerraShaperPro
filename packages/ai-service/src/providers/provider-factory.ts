@@ -11,7 +11,7 @@ export class ProviderFactory {
 
   static createProvider(type: RenderProvider): AIProvider {
     const ProviderClass = this.providers.get(type);
-    
+
     if (!ProviderClass) {
       throw new Error(`Unknown provider type: ${type}`);
     }
@@ -20,7 +20,7 @@ export class ProviderFactory {
   }
 
   static async createAndInitialize(
-    type: RenderProvider, 
+    type: RenderProvider,
     config: ProviderConfig
   ): Promise<AIProvider> {
     const provider = this.createProvider(type);
@@ -32,10 +32,7 @@ export class ProviderFactory {
     return Array.from(this.providers.keys());
   }
 
-  static registerProvider(
-    type: RenderProvider, 
-    providerClass: new () => AIProvider
-  ): void {
+  static registerProvider(type: RenderProvider, providerClass: new () => AIProvider): void {
     this.providers.set(type, providerClass);
   }
 }

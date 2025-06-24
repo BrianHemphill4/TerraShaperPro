@@ -9,12 +9,18 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { api } from '@/lib/api';
 
 type InviteUserFormProps = {
   onInviteSent?: () => void;
-}
+};
 
 export function InviteUserForm({ onInviteSent }: InviteUserFormProps) {
   const [email, setEmail] = useState('');
@@ -76,25 +82,20 @@ export function InviteUserForm({ onInviteSent }: InviteUserFormProps) {
 
           {inviteMutation.error && (
             <Alert variant="destructive">
-              <AlertDescription>
-                {inviteMutation.error.message}
-              </AlertDescription>
+              <AlertDescription>{inviteMutation.error.message}</AlertDescription>
             </Alert>
           )}
 
           {showSuccess && (
             <Alert>
               <AlertDescription>
-                Invitation sent successfully! The user will receive an email to join your organization.
+                Invitation sent successfully! The user will receive an email to join your
+                organization.
               </AlertDescription>
             </Alert>
           )}
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={inviteMutation.isLoading || !email}
-          >
+          <Button type="submit" className="w-full" disabled={inviteMutation.isLoading || !email}>
             <Send className="mr-2 size-4" />
             {inviteMutation.isLoading ? 'Sending...' : 'Send Invitation'}
           </Button>

@@ -5,8 +5,8 @@ import { ONBOARDING_FLOWS } from '@terrashaper/shared';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { onboardingFlows } from '@/lib/onboarding-flows';
-import { setOnboardingFlows,useOnboardingStore } from '@/stores/onboarding';
+import { onboardingFlows } from '@/lib/onboardingFlows';
+import { setOnboardingFlows, useOnboardingStore } from '@/stores/onboarding';
 
 import { InteractiveTutorial } from './InteractiveTutorial';
 
@@ -16,12 +16,7 @@ setOnboardingFlows(onboardingFlows);
 export function OnboardingProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, isLoaded } = useUser();
-  const { 
-    startFlow, 
-    hasSeenAnyFlow, 
-    isFlowCompleted,
-    currentFlowId 
-  } = useOnboardingStore();
+  const { startFlow, hasSeenAnyFlow, isFlowCompleted, currentFlowId } = useOnboardingStore();
 
   useEffect(() => {
     if (!isLoaded || !user || currentFlowId) return;
@@ -33,7 +28,7 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
         startFlow(ONBOARDING_FLOWS.INITIAL_SETUP);
       }, 500);
     }
-    
+
     // Check for specific page tutorials
     if (pathname.includes('/design') && !isFlowCompleted(ONBOARDING_FLOWS.DESIGN_CANVAS_INTRO)) {
       // Only start if user has completed initial setup

@@ -87,21 +87,21 @@ export const ActivityActions = {
   USER_JOINED: 'user.joined',
   USER_ROLE_CHANGED: 'user.role_changed',
   USER_REMOVED: 'user.removed',
-  
+
   // Project actions
   PROJECT_CREATED: 'project.created',
   PROJECT_UPDATED: 'project.updated',
   PROJECT_DELETED: 'project.deleted',
   PROJECT_SHARED: 'project.shared',
-  
+
   // Render actions
   RENDER_STARTED: 'render.started',
   RENDER_COMPLETED: 'render.completed',
   RENDER_FAILED: 'render.failed',
-  
+
   // Organization actions
   ORG_SETTINGS_UPDATED: 'org.settings_updated',
   ORG_SUBSCRIPTION_CHANGED: 'org.subscription_changed',
 } as const;
 
-export type ActivityAction = typeof ActivityActions[keyof typeof ActivityActions];
+export type ActivityAction = (typeof ActivityActions)[keyof typeof ActivityActions];

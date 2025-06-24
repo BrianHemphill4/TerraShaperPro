@@ -4,10 +4,13 @@ export class FeatureGateService {
   /**
    * Check if a feature is available for a given subscription tier
    */
-  static hasFeature(tier: SubscriptionTier | null, featureName: keyof typeof PlanFeatures.starter): boolean {
+  static hasFeature(
+    tier: SubscriptionTier | null,
+    featureName: keyof typeof PlanFeatures.starter
+  ): boolean {
     const currentTier = tier || 'starter';
     const features = PlanFeatures[currentTier];
-    
+
     if (!features) {
       return false;
     }
@@ -50,7 +53,7 @@ export class FeatureGateService {
   } {
     const currentTier = tier || 'starter';
     const features = PlanFeatures[currentTier];
-    
+
     if (!features) {
       return {
         limit: 0,
@@ -182,15 +185,17 @@ export class FeatureGateService {
   /**
    * Check if a feature requires a specific minimum tier
    */
-  static getMinimumTierForFeature(featureName: keyof typeof PlanFeatures.starter): SubscriptionTier | null {
+  static getMinimumTierForFeature(
+    featureName: keyof typeof PlanFeatures.starter
+  ): SubscriptionTier | null {
     const tiers: SubscriptionTier[] = ['starter', 'professional', 'growth', 'enterprise'];
-    
+
     for (const tier of tiers) {
       if (this.hasFeature(tier, featureName)) {
         return tier;
       }
     }
-    
+
     return null;
   }
 }

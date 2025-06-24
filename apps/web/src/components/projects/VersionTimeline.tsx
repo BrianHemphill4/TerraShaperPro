@@ -11,12 +11,17 @@ import { trpc } from '@/lib/trpc';
 
 type VersionTimelineProps = {
   projectId: string;
-}
+};
 
 export function VersionTimeline({ projectId }: VersionTimelineProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  const { data, isLoading, refetch, fetchNextPage: _fetchNextPage } = (trpc as any).project.listVersions.useInfiniteQuery(
+  const {
+    data,
+    isLoading,
+    refetch,
+    fetchNextPage: _fetchNextPage,
+  } = (trpc as any).project.listVersions.useInfiniteQuery(
     {
       projectId,
       limit: 20,
@@ -70,11 +75,7 @@ export function VersionTimeline({ projectId }: VersionTimelineProps) {
               {formatDistanceToNow(new Date(version.created_at), { addSuffix: true })}
             </CardTitle>
             <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => toggleSelect(version.id)}
-              >
+              <Button size="sm" variant="outline" onClick={() => toggleSelect(version.id)}>
                 {selectedIds.includes(version.id) ? 'Unselect' : 'Select'}
               </Button>
               <Button
@@ -87,9 +88,7 @@ export function VersionTimeline({ projectId }: VersionTimelineProps) {
             </div>
           </CardHeader>
           {version.comment && (
-            <CardContent className="text-sm text-muted-foreground">
-              {version.comment}
-            </CardContent>
+            <CardContent className="text-muted-foreground text-sm">{version.comment}</CardContent>
           )}
         </Card>
       ))}
@@ -106,4 +105,4 @@ export function VersionTimeline({ projectId }: VersionTimelineProps) {
       )}
     </div>
   );
-} 
+}

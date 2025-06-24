@@ -1,9 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import type { 
-  PromptGenerationContext, 
-  PromptTemplate
-} from '../types/prompt.types';
+import type { PromptGenerationContext, PromptTemplate } from '../types/prompt.types';
 import { AnnotationConverter } from './annotation-converter';
 import { PromptTemplateManager } from './prompt-template';
 import { QualityModifier } from './quality-modifier';
@@ -18,7 +15,7 @@ export type GeneratedPrompt = {
     modifiers: string[];
     timestamp: Date;
   };
-}
+};
 
 export class PromptGenerator {
   private templateManager: PromptTemplateManager;
@@ -37,30 +34,29 @@ export class PromptGenerator {
 
   generatePrompt(context: PromptGenerationContext): GeneratedPrompt {
     const cacheKey = this.generateCacheKey(context);
-    
+
     const cached = this.promptCache.get(cacheKey);
     if (cached) {
       return cached;
     }
 
-    const enrichedAnnotations = context.annotations.map(annotation => 
+    const enrichedAnnotations = context.annotations.map((annotation) =>
       this.annotationConverter.enrichAnnotationWithPlantInfo(annotation)
     );
 
-    const annotationDescription = this.annotationConverter.convertAnnotationsToDescription(
-      enrichedAnnotations
-    );
+    const annotationDescription =
+      this.annotationConverter.convertAnnotationsToDescription(enrichedAnnotations);
 
     const template = this.resolveTemplate(context);
-    
+
     let prompt = this.buildBasePrompt(template, annotationDescription);
-    
+
     prompt = this.applyStyleModifiers(prompt, context);
-    
+
     prompt = this.applyQualityModifiers(prompt, template);
-    
+
     prompt = this.applyEnvironmentalFactors(prompt, context);
-    
+
     prompt = this.finalizePrompt(prompt);
 
     const hash = this.hashPrompt(prompt);
@@ -83,7 +79,7 @@ export class PromptGenerator {
 
   private generateCacheKey(context: PromptGenerationContext): string {
     const key = {
-      annotations: context.annotations.map(a => ({
+      annotations: context.annotations.map((a) => ({
         id: a.id,
         type: a.type,
         name: a.name,
@@ -99,17 +95,14 @@ export class PromptGenerator {
 
   private resolveTemplate(context: PromptGenerationContext): PromptTemplate {
     const style = context.userPreferences?.style || 'landscape';
-    const baseTemplate = this.templateManager.getTemplate(style) || 
-                        this.templateManager.getTemplate('landscape')!;
+    const baseTemplate =
+      this.templateManager.getTemplate(style) || this.templateManager.getTemplate('landscape')!;
 
     return this.templateManager.mergeTemplates(baseTemplate, context.template);
   }
 
   private buildBasePrompt(template: PromptTemplate, annotationDescription: string): string {
-    const parts = [
-      template.base,
-      annotationDescription,
-    ];
+    const parts = [template.base, annotationDescription];
 
     if (template.style) {
       parts.push(`rendered in ${template.style}`);

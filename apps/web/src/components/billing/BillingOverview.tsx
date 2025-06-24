@@ -45,7 +45,7 @@ export function BillingOverview() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{subscription?.plan?.name || 'Free'}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {subscription?.status === 'active' ? 'Active' : 'Inactive'}
             </p>
           </CardContent>
@@ -58,11 +58,11 @@ export function BillingOverview() {
           <CardContent>
             <div className="text-2xl font-bold">
               {usage?.renders?.used || 0}
-              <span className="text-sm font-normal text-muted-foreground">
+              <span className="text-muted-foreground text-sm font-normal">
                 /{usage?.renders?.limit || '∞'}
               </span>
             </div>
-            <p className="text-xs text-muted-foreground">This billing period</p>
+            <p className="text-muted-foreground text-xs">This billing period</p>
           </CardContent>
         </Card>
 
@@ -74,7 +74,7 @@ export function BillingOverview() {
             <div className="text-2xl font-bold">
               {((usage?.storage?.used || 0) / 1024 / 1024 / 1024).toFixed(1)} GB
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               of {((usage?.storage?.limit || 0) / 1024 / 1024 / 1024).toFixed(1)} GB
             </p>
           </CardContent>
@@ -85,10 +85,8 @@ export function BillingOverview() {
             <CardTitle className="text-sm font-medium">Next Billing</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              ${subscription?.nextInvoice?.amount || 0}
-            </div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">${subscription?.nextInvoice?.amount || 0}</div>
+            <p className="text-muted-foreground text-xs">
               {subscription?.nextInvoice?.date
                 ? new Date(subscription.nextInvoice.date).toLocaleDateString()
                 : 'N/A'}

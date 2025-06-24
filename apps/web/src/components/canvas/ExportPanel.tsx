@@ -3,6 +3,8 @@
 import type { fabric } from 'fabric';
 import { useCallback, useState } from 'react';
 
+import { toast } from '@terrashaper/hooks/use-toast';
+
 import styles from './ExportPanel.module.css';
 
 type ExportPanelProps = {
@@ -36,61 +38,64 @@ const ExportPanel = ({ canvas, projectName = 'landscape-design' }: ExportPanelPr
     document.body.removeChild(link);
   }, []);
 
-  const exportImage = useCallback(async (format: 'png' | 'jpg') => {
-    if (!canvas) return;
-    
-    setIsExporting(true);
-    
-    try {
-      const settings = qualitySettings[exportQuality];
-      
-      // Hide elements based on settings
-      const objectsToHide: fabric.Object[] = [];
-      
-      canvas.getObjects().forEach((obj) => {
-        if (!includeGrid && (obj as any).evented === false && obj.type === 'line') {
-          objectsToHide.push(obj);
-          obj.set('visible', false);
-        }
-        if (!includeMeasurements && (obj as any).isMeasurement) {
-          objectsToHide.push(obj);
-          obj.set('visible', false);
-        }
-      });
-      
-      canvas.renderAll();
-      
-      // Export with quality settings
-      const dataUrl = canvas.toDataURL({
-        format,
-        quality: settings.quality,
-        multiplier: settings.multiplier,
-      });
-      
-      // Restore hidden objects
-      objectsToHide.forEach((obj) => {
-        obj.set('visible', true);
-      });
-      canvas.renderAll();
-      
-      // Download the file
-      const timestamp = new Date().toISOString().split('T')[0];
-      const filename = `${projectName}-${timestamp}.${format}`;
-      downloadFile(dataUrl, filename);
-    } finally {
-      setIsExporting(false);
-    }
-  }, [canvas, exportQuality, includeGrid, includeMeasurements, projectName, downloadFile]);
+  const exportImage = useCallback(
+    async (format: 'png' | 'jpg') => {
+      if (!canvas) return;
+
+      setIsExporting(true);
+
+      try {
+        const settings = qualitySettings[exportQuality];
+
+        // Hide elements based on settings
+        const objectsToHide: fabric.Object[] = [];
+
+        canvas.getObjects().forEach((obj) => {
+          if (!includeGrid && (obj as any).evented === false && obj.type === 'line') {
+            objectsToHide.push(obj);
+            obj.set('visible', false);
+          }
+          if (!includeMeasurements && (obj as any).isMeasurement) {
+            objectsToHide.push(obj);
+            obj.set('visible', false);
+          }
+        });
+
+        canvas.renderAll();
+
+        // Export with quality settings
+        const dataUrl = canvas.toDataURL({
+          format,
+          quality: settings.quality,
+          multiplier: settings.multiplier,
+        });
+
+        // Restore hidden objects
+        objectsToHide.forEach((obj) => {
+          obj.set('visible', true);
+        });
+        canvas.renderAll();
+
+        // Download the file
+        const timestamp = new Date().toISOString().split('T')[0];
+        const filename = `${projectName}-${timestamp}.${format}`;
+        downloadFile(dataUrl, filename);
+      } finally {
+        setIsExporting(false);
+      }
+    },
+    [canvas, exportQuality, includeGrid, includeMeasurements, projectName, downloadFile]
+  );
 
   const exportSVG = useCallback(() => {
     if (!canvas) return;
-    
+
     setIsExporting(true);
-    
+
     try {
       // Hide elements based on settings
       const objectsToHide: fabric.Object[] = [];
-      
+
       canvas.getObjects().forEach((obj) => {
         if (!includeGrid && (obj as any).evented === false && obj.type === 'line') {
           objectsToHide.push(obj);
@@ -101,25 +106,25 @@ const ExportPanel = ({ canvas, projectName = 'landscape-design' }: ExportPanelPr
           obj.set('visible', false);
         }
       });
-      
+
       canvas.renderAll();
-      
+
       // Export SVG
       const svg = canvas.toSVG();
       const blob = new Blob([svg], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
-      
+
       // Restore hidden objects
       objectsToHide.forEach((obj) => {
         obj.set('visible', true);
       });
       canvas.renderAll();
-      
+
       // Download the file
       const timestamp = new Date().toISOString().split('T')[0];
       const filename = `${projectName}-${timestamp}.svg`;
       downloadFile(url, filename);
-      
+
       URL.revokeObjectURL(url);
     } finally {
       setIsExporting(false);
@@ -128,18 +133,21 @@ const ExportPanel = ({ canvas, projectName = 'landscape-design' }: ExportPanelPr
 
   const exportPDF = useCallback(() => {
     if (!canvas) return;
-    
+
     setIsExporting(true);
-    
+
     try {
       // Create a new window for printing
       const printWindow = window.open('', '_blank');
       if (!printWindow) {
-        // eslint-disable-next-line no-alert
-        window.alert('Please allow popups to export as PDF');
+        toast({
+          title: 'Export Failed',
+          description: 'Please allow popups to export as PDF',
+          variant: 'destructive',
+        });
         return;
       }
-      
+
       // Get high-quality image data
       const settings = qualitySettings.print;
       const dataUrl = canvas.toDataURL({
@@ -147,7 +155,7 @@ const ExportPanel = ({ canvas, projectName = 'landscape-design' }: ExportPanelPr
         quality: settings.quality,
         multiplier: settings.multiplier,
       });
-      
+
       // Create print-friendly HTML
       const html = `
         <!DOCTYPE html>
@@ -192,7 +200,7 @@ const ExportPanel = ({ canvas, projectName = 'landscape-design' }: ExportPanelPr
         </body>
         </html>
       `;
-      
+
       printWindow.document.write(html);
       printWindow.document.close();
     } finally {
@@ -219,25 +227,36 @@ const ExportPanel = ({ canvas, projectName = 'landscape-design' }: ExportPanelPr
 
   const shareProject = useCallback(() => {
     if (!canvas) return;
-    
+
     // Generate a shareable link (this would typically involve saving to a server)
     const projectData = canvas.toJSON(['id', 'layerId', 'material', 'plantId', 'plantName']);
     const encodedData = btoa(JSON.stringify(projectData));
-    
+
     // Create a shareable URL (in production, this would be a proper URL)
     const shareUrl = `${window.location.origin}/shared/${encodedData.slice(0, 20)}`;
-    
+
     // Copy to clipboard
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      // TODO: Replace with proper notification system
-      // For now, we'll silently succeed
-    });
+    navigator.clipboard
+      .writeText(shareUrl)
+      .then(() => {
+        toast({
+          title: 'Link Copied',
+          description: 'Project share link copied to clipboard',
+        });
+      })
+      .catch(() => {
+        toast({
+          title: 'Copy Failed',
+          description: 'Failed to copy link to clipboard',
+          variant: 'destructive',
+        });
+      });
   }, [canvas]);
 
   return (
     <div className={styles.exportPanel}>
       <h3>Export Options</h3>
-      
+
       <div className={styles.section}>
         <div className={styles.sectionLabel}>Format</div>
         <div className={styles.formatOptions}>
@@ -271,7 +290,7 @@ const ExportPanel = ({ canvas, projectName = 'landscape-design' }: ExportPanelPr
           </button>
         </div>
       </div>
-      
+
       {(exportFormat === 'png' || exportFormat === 'jpg') && (
         <div className={styles.section}>
           <label htmlFor="export-quality">Quality</label>
@@ -288,7 +307,7 @@ const ExportPanel = ({ canvas, projectName = 'landscape-design' }: ExportPanelPr
           </select>
         </div>
       )}
-      
+
       <div className={styles.section}>
         <div className={styles.sectionLabel}>Include</div>
         <div className={styles.checkboxes}>
@@ -310,7 +329,7 @@ const ExportPanel = ({ canvas, projectName = 'landscape-design' }: ExportPanelPr
           </label>
         </div>
       </div>
-      
+
       <div className={styles.actions}>
         <button
           type="button"
@@ -320,7 +339,7 @@ const ExportPanel = ({ canvas, projectName = 'landscape-design' }: ExportPanelPr
         >
           {isExporting ? 'Exporting...' : 'Export'}
         </button>
-        
+
         <button
           type="button"
           className={styles.shareButton}
@@ -328,9 +347,27 @@ const ExportPanel = ({ canvas, projectName = 'landscape-design' }: ExportPanelPr
           title="Share project"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <polyline points="16 6 12 2 8 6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <line x1="12" y1="2" x2="12" y2="15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <polyline
+              points="16 6 12 2 8 6"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <line
+              x1="12"
+              y1="2"
+              x2="12"
+              y2="15"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
           Share
         </button>

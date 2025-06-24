@@ -1,14 +1,13 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { createClient } from '@supabase/supabase-js';
+import { createWorkerClient, type SupabaseClientType } from '@terrashaper/db';
 
 /**
  * Service responsible for credit management and billing operations
  */
 export class CreditService {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClientType;
 
-  constructor(supabaseUrl: string, supabaseKey: string) {
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+  constructor() {
+    this.supabase = createWorkerClient();
   }
 
   /**

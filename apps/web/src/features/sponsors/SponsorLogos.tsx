@@ -26,11 +26,7 @@ export const SponsorLogos = () => (
       />
     </a>
 
-    <a
-      href="https://l.crowdin.com/next-js"
-      target="_blank"
-      rel="noopener"
-    >
+    <a href="https://l.crowdin.com/next-js" target="_blank" rel="noopener">
       <Image
         src="/assets/images/crowdin-dark.png"
         alt="Crowdin logo dark"
@@ -68,11 +64,7 @@ export const SponsorLogos = () => (
       />
     </a>
 
-    <a
-      href="https://launch.arcjet.com/Q6eLbRE"
-      target="_blank"
-      rel="noopener"
-    >
+    <a href="https://launch.arcjet.com/Q6eLbRE" target="_blank" rel="noopener">
       <Image
         src="/assets/images/arcjet-light.svg"
         alt="Arcjet logo dark"
@@ -89,11 +81,7 @@ export const SponsorLogos = () => (
       />
     </a>
 
-    <a
-      href="https://nextjs-boilerplate.com/pro-saas-starter-kit"
-      target="_blank"
-      rel="noopener"
-    >
+    <a href="https://nextjs-boilerplate.com/pro-saas-starter-kit" target="_blank" rel="noopener">
       <Image
         src="/assets/images/nextjs-boilerplate-saas.png"
         alt="Nextjs SaaS Boilerplate"

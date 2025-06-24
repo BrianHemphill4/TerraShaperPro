@@ -1,13 +1,12 @@
 import * as Sentry from '@sentry/node';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { createClient } from '@supabase/supabase-js';
+import { createWorkerClient, type SupabaseClientType } from '@terrashaper/db';
 
 export type FailurePattern = {
   type: 'timeout' | 'quality' | 'api_error' | 'invalid_prompt' | 'resource_limit';
   count: number;
   timeframe: number; // minutes
   threshold: number;
-}
+};
 
 export type FailureAlert = {
   id: string;
@@ -19,43 +18,55 @@ export type FailureAlert = {
   acknowledged: boolean;
   acknowledgedBy?: string;
   acknowledgedAt?: Date;
-}
+};
 
 export class FailureDetectionService {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClientType;
   private patterns: Map<string, FailurePattern>;
   private alertCallbacks: Array<(alert: FailureAlert) => void>;
 
-  constructor(supabaseUrl: string, supabaseKey: string) {
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+  constructor() {
+    this.supabase = createWorkerClient();
     this.alertCallbacks = [];
-    
+
     // Define failure patterns to monitor
     this.patterns = new Map([
-      ['high_failure_rate', {
-        type: 'quality',
-        count: 5,
-        timeframe: 10,
-        threshold: 0.5, // 50% failure rate
-      }],
-      ['repeated_timeouts', {
-        type: 'timeout',
-        count: 3,
-        timeframe: 5,
-        threshold: 1,
-      }],
-      ['api_errors', {
-        type: 'api_error',
-        count: 10,
-        timeframe: 15,
-        threshold: 1,
-      }],
-      ['quality_degradation', {
-        type: 'quality',
-        count: 10,
-        timeframe: 30,
-        threshold: 0.6, // avg quality score below 0.6
-      }],
+      [
+        'high_failure_rate',
+        {
+          type: 'quality',
+          count: 5,
+          timeframe: 10,
+          threshold: 0.5, // 50% failure rate
+        },
+      ],
+      [
+        'repeated_timeouts',
+        {
+          type: 'timeout',
+          count: 3,
+          timeframe: 5,
+          threshold: 1,
+        },
+      ],
+      [
+        'api_errors',
+        {
+          type: 'api_error',
+          count: 10,
+          timeframe: 15,
+          threshold: 1,
+        },
+      ],
+      [
+        'quality_degradation',
+        {
+          type: 'quality',
+          count: 10,
+          timeframe: 30,
+          threshold: 0.6, // avg quality score below 0.6
+        },
+      ],
     ]);
   }
 
@@ -92,10 +103,10 @@ export class FailureDetectionService {
 
     switch (pattern.type) {
       case 'quality': {
-        const qualityIssues = renders.filter(r => 
-          r.status === 'failed' && r.error?.includes('Quality')
+        const qualityIssues = renders.filter(
+          (r) => r.status === 'failed' && r.error?.includes('Quality')
         );
-        
+
         if (patternName === 'high_failure_rate') {
           const failureRate = qualityIssues.length / renders.length;
           if (failureRate >= pattern.threshold && qualityIssues.length >= pattern.count) {
@@ -115,10 +126,11 @@ export class FailureDetectionService {
             };
           }
         } else if (patternName === 'quality_degradation') {
-          const avgScore = renders
-            .filter(r => r.metadata?.quality)
-            .reduce((sum, r) => sum + (r.metadata.quality || 0), 0) / renders.length;
-          
+          const avgScore =
+            renders
+              .filter((r) => r.metadata?.quality)
+              .reduce((sum, r) => sum + (r.metadata.quality || 0), 0) / renders.length;
+
           if (avgScore < pattern.threshold && renders.length >= pattern.count) {
             return {
               id: crypto.randomUUID(),
@@ -140,10 +152,10 @@ export class FailureDetectionService {
       }
 
       case 'timeout': {
-        const timeouts = renders.filter(r => 
-          r.status === 'failed' && r.error?.includes('timeout')
+        const timeouts = renders.filter(
+          (r) => r.status === 'failed' && r.error?.includes('timeout')
         );
-        
+
         if (timeouts.length >= pattern.count) {
           return {
             id: crypto.randomUUID(),
@@ -152,7 +164,7 @@ export class FailureDetectionService {
             message: `${timeouts.length} render timeouts in last ${pattern.timeframe} minutes`,
             details: {
               timeoutCount: timeouts.length,
-              affectedRenders: timeouts.map(r => r.id),
+              affectedRenders: timeouts.map((r) => r.id),
               pattern: patternName,
             },
             createdAt: new Date(),
@@ -163,14 +175,14 @@ export class FailureDetectionService {
       }
 
       case 'api_error': {
-        const apiErrors = renders.filter(r => 
-          r.status === 'failed' && (
-            r.error?.includes('API') || 
-            r.error?.includes('provider') ||
-            r.error?.includes('rate limit')
-          )
+        const apiErrors = renders.filter(
+          (r) =>
+            r.status === 'failed' &&
+            (r.error?.includes('API') ||
+              r.error?.includes('provider') ||
+              r.error?.includes('rate limit'))
         );
-        
+
         if (apiErrors.length >= pattern.count) {
           const errorTypes = this.categorizeApiErrors(apiErrors);
           return {
@@ -181,7 +193,7 @@ export class FailureDetectionService {
             details: {
               errorCount: apiErrors.length,
               errorTypes,
-              affectedProviders: [...new Set(apiErrors.map(r => r.settings?.provider))],
+              affectedProviders: [...new Set(apiErrors.map((r) => r.settings?.provider))],
               pattern: patternName,
             },
             createdAt: new Date(),
@@ -197,8 +209,8 @@ export class FailureDetectionService {
 
   private categorizeApiErrors(renders: any[]): Record<string, number> {
     const categories: Record<string, number> = {};
-    
-    renders.forEach(render => {
+
+    renders.forEach((render) => {
       const error = render.error || '';
       if (error.includes('rate limit')) {
         categories.rate_limit = (categories.rate_limit || 0) + 1;
@@ -216,9 +228,7 @@ export class FailureDetectionService {
 
   private async createAlert(alert: FailureAlert): Promise<void> {
     // Store alert in database
-    const { error } = await this.supabase
-      .from('failure_alerts')
-      .insert(alert);
+    const { error } = await this.supabase.from('failure_alerts').insert(alert);
 
     if (error) {
       console.error('Failed to create alert:', error);
@@ -235,7 +245,7 @@ export class FailureDetectionService {
     });
 
     // Trigger callbacks (for real-time notifications)
-    this.alertCallbacks.forEach(callback => {
+    this.alertCallbacks.forEach((callback) => {
       try {
         callback(alert);
       } catch (err) {
@@ -323,7 +333,7 @@ export class FailureDetectionService {
         .gte('createdAt', hourAgo.toISOString());
 
       const failureRate = recentRenders
-        ? recentRenders.filter(r => r.status === 'failed').length / recentRenders.length
+        ? recentRenders.filter((r) => r.status === 'failed').length / recentRenders.length
         : 0;
 
       const activeAlerts = await this.getActiveAlerts();

@@ -1,8 +1,8 @@
 'use client';
 
-import type { ApprovalStatus,ProjectApproval } from '@terrashaper/shared';
+import type { ApprovalStatus, ProjectApproval } from '@terrashaper/shared';
 import { formatDistanceToNow } from 'date-fns';
-import { AlertCircle, CheckCircle, Clock,XCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, Clock, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -15,13 +15,16 @@ import { api } from '@/lib/api';
 type ApprovalPanelProps = {
   projectId: string;
   versionId?: string;
-}
+};
 
-const statusConfig: Record<ApprovalStatus, {
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  color: string;
-}> = {
+const statusConfig: Record<
+  ApprovalStatus,
+  {
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    color: string;
+  }
+> = {
   pending: {
     label: 'Pending',
     icon: Clock,
@@ -86,9 +89,7 @@ export function ApprovalPanel({ projectId, versionId }: ApprovalPanelProps) {
                   return (
                     <>
                       <Icon className={`size-5 ${config.color} rounded-full p-1 text-white`} />
-                      <Badge className={config.color}>
-                        {config.label}
-                      </Badge>
+                      <Badge className={config.color}>{config.label}</Badge>
                     </>
                   );
                 })()}
@@ -143,23 +144,28 @@ export function ApprovalPanel({ projectId, versionId }: ApprovalPanelProps) {
           <div className="mt-6 space-y-2">
             <h4 className="text-sm font-medium">Approval History</h4>
             <div className="space-y-2">
-              {approvals.slice(1).map((approval: ProjectApproval & {
-                requested_by_user?: { email: string; full_name?: string }
-              }) => (
-                <div key={approval.id} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center space-x-2">
-                    <Badge variant="outline" className="text-xs">
-                      {statusConfig[approval.status].label}
-                    </Badge>
-                    <span className="text-gray-500">
-                      by {approval.requested_by_user?.full_name || approval.requested_by_user?.email}
+              {approvals.slice(1).map(
+                (
+                  approval: ProjectApproval & {
+                    requested_by_user?: { email: string; full_name?: string };
+                  }
+                ) => (
+                  <div key={approval.id} className="flex items-center justify-between text-sm">
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="outline" className="text-xs">
+                        {statusConfig[approval.status].label}
+                      </Badge>
+                      <span className="text-gray-500">
+                        by{' '}
+                        {approval.requested_by_user?.full_name || approval.requested_by_user?.email}
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-400">
+                      {formatDistanceToNow(new Date(approval.created_at), { addSuffix: true })}
                     </span>
                   </div>
-                  <span className="text-xs text-gray-400">
-                    {formatDistanceToNow(new Date(approval.created_at), { addSuffix: true })}
-                  </span>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
         )}

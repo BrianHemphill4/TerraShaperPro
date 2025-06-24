@@ -17,10 +17,12 @@ export class PaymentService {
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: 'subscription',
       payment_method_types: ['card'],
-      line_items: [{
-        price: params.priceId,
-        quantity: 1,
-      }],
+      line_items: [
+        {
+          price: params.priceId,
+          quantity: 1,
+        },
+      ],
       success_url: params.successUrl,
       cancel_url: params.cancelUrl,
       metadata: params.metadata,

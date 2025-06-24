@@ -1,8 +1,21 @@
 import { z } from 'zod';
 
+/**
+ * Enum schema for subscription tiers available in the application.
+ * Defines the hierarchy of subscription plans from starter to enterprise.
+ */
 export const SubscriptionTierEnum = z.enum(['starter', 'professional', 'growth', 'enterprise']);
+
+/**
+ * Type definition for subscription tiers.
+ * Represents the different levels of service offering.
+ */
 export type SubscriptionTier = z.infer<typeof SubscriptionTierEnum>;
 
+/**
+ * Enum schema for subscription status values.
+ * Covers all possible states a subscription can be in.
+ */
 export const SubscriptionStatusEnum = z.enum([
   'active',
   'canceled',
@@ -12,14 +25,41 @@ export const SubscriptionStatusEnum = z.enum([
   'trialing',
   'unpaid',
 ]);
+
+/**
+ * Type definition for subscription status.
+ * Indicates the current state of a user's subscription.
+ */
 export type SubscriptionStatus = z.infer<typeof SubscriptionStatusEnum>;
 
+/**
+ * Enum schema for payment status values.
+ * Represents the outcome of payment processing attempts.
+ */
 export const PaymentStatusEnum = z.enum(['succeeded', 'failed', 'pending', 'refunded']);
+
+/**
+ * Type definition for payment status.
+ * Indicates the result of a payment transaction.
+ */
 export type PaymentStatus = z.infer<typeof PaymentStatusEnum>;
 
+/**
+ * Enum schema for invoice status values.
+ * Tracks the lifecycle state of billing invoices.
+ */
 export const InvoiceStatusEnum = z.enum(['draft', 'open', 'paid', 'void', 'uncollectible']);
+
+/**
+ * Type definition for invoice status.
+ * Represents the current state of a billing invoice.
+ */
 export type InvoiceStatus = z.infer<typeof InvoiceStatusEnum>;
 
+/**
+ * Zod schema for subscription plan data.
+ * Defines the structure of a subscription plan with pricing and features.
+ */
 export const SubscriptionPlanSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),

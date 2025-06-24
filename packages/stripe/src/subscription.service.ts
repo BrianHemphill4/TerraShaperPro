@@ -50,7 +50,7 @@ export class SubscriptionService {
     }
   ): Promise<Stripe.Subscription> {
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    
+
     const updateParams: Stripe.SubscriptionUpdateParams = {
       metadata: params.metadata,
       proration_behavior: params.prorationBehavior || 'create_prorations',
@@ -58,11 +58,13 @@ export class SubscriptionService {
 
     // If changing price, we need to update the subscription items
     if (params.priceId && subscription.items.data.length > 0) {
-      updateParams.items = [{
-        id: subscription.items.data[0].id,
-        price: params.priceId,
-        quantity: params.quantity,
-      }];
+      updateParams.items = [
+        {
+          id: subscription.items.data[0].id,
+          price: params.priceId,
+          quantity: params.quantity,
+        },
+      ];
     }
 
     const updated = await stripe.subscriptions.update(subscriptionId, updateParams);
@@ -204,12 +206,14 @@ export class SubscriptionService {
     }
   ): Promise<Stripe.Invoice> {
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    
-    const items = [{
-      id: subscription.items.data[0].id,
-      price: params.priceId,
-      quantity: params.quantity || 1,
-    }];
+
+    const items = [
+      {
+        id: subscription.items.data[0].id,
+        price: params.priceId,
+        quantity: params.quantity || 1,
+      },
+    ];
 
     const invoice = await stripe.invoices.retrieveUpcoming({
       customer: subscription.customer as string,

@@ -1,18 +1,15 @@
-import { createClient } from '@supabase/supabase-js';
+import { createAdminClient } from '@terrashaper/db';
 import { parse } from 'csv-parse';
 import { promises as fs } from 'fs';
 import path from 'path';
 import sharp from 'sharp';
-import { getStorage } from '@google-cloud/storage';
+import { Storage } from '@google-cloud/storage';
 import * as dotenv from 'dotenv';
 
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabase = createAdminClient();
 
 const storage = new Storage({
   projectId: process.env.GCS_PROJECT_ID,

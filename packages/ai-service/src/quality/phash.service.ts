@@ -1,4 +1,3 @@
-
 import { Buffer } from 'node:buffer';
 import { promisify } from 'node:util';
 
@@ -16,13 +15,17 @@ export class PerceptualHashService {
 
   async generateHash(imageData: Buffer | string): Promise<string> {
     const data = typeof imageData === 'string' ? Buffer.from(imageData, 'base64') : imageData;
-    
+
     // Use image-hash library for better perceptual hashing
-    const hash = await getImageHash({
-      data,
-      ext: 'png'
-    }, 16, true) as string;
-    
+    const hash = (await getImageHash(
+      {
+        data,
+        ext: 'png',
+      },
+      16,
+      true
+    )) as string;
+
     return hash;
   }
 
@@ -39,7 +42,7 @@ export class PerceptualHashService {
     }
 
     // Calculate similarity as percentage
-    const similarity = 1 - (distance / (hash1.length * 4)); // 4 bits per hex char
+    const similarity = 1 - distance / (hash1.length * 4); // 4 bits per hex char
     return similarity;
   }
 
@@ -55,38 +58,39 @@ export class PerceptualHashService {
       .greyscale()
       .raw()
       .toBuffer();
-    
+
     return resized;
   }
 
   private discreteCosineTransform(matrix: number[][]): number[][] {
     const size = matrix.length;
     const dct: number[][] = [];
-    
+
     for (let v = 0; v < 8; v++) {
       dct[v] = [];
       for (let u = 0; u < 8; u++) {
         let sum = 0;
         for (let y = 0; y < size; y++) {
           for (let x = 0; x < size; x++) {
-            sum += matrix[y][x] * 
-                   Math.cos(((2 * x + 1) * u * Math.PI) / (2 * size)) *
-                   Math.cos(((2 * y + 1) * v * Math.PI) / (2 * size));
+            sum +=
+              matrix[y][x] *
+              Math.cos(((2 * x + 1) * u * Math.PI) / (2 * size)) *
+              Math.cos(((2 * y + 1) * v * Math.PI) / (2 * size));
           }
         }
-        
+
         const cu = u === 0 ? 1 / Math.sqrt(2) : 1;
         const cv = v === 0 ? 1 / Math.sqrt(2) : 1;
         dct[v][u] = (2 / size) * cu * cv * sum;
       }
     }
-    
+
     return dct;
   }
 
   private calculateHash(dct: number[][]): string {
     const values: number[] = [];
-    
+
     for (let y = 0; y < 8; y++) {
       for (let x = 0; x < 8; x++) {
         if (x !== 0 || y !== 0) {
@@ -94,9 +98,9 @@ export class PerceptualHashService {
         }
       }
     }
-    
+
     const median = this.calculateMedian(values);
-    
+
     let hash = '';
     for (let y = 0; y < 8; y++) {
       for (let x = 0; x < 8; x++) {
@@ -105,7 +109,7 @@ export class PerceptualHashService {
         }
       }
     }
-    
+
     const hexHash = Number.parseInt(hash, 2).toString(16).padStart(16, '0');
     return hexHash;
   }
@@ -113,11 +117,11 @@ export class PerceptualHashService {
   private calculateMedian(values: number[]): number {
     const sorted = [...values].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
-    
+
     if (sorted.length % 2 === 0) {
       return (sorted[mid - 1] + sorted[mid]) / 2;
     }
-    
+
     return sorted[mid];
   }
 

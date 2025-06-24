@@ -11,7 +11,7 @@ export const defaultPromptTemplates: Record<string, PromptTemplate> = {
     weather: 'clear sky',
     cameraAngle: 'elevated perspective at 45 degrees',
   },
-  
+
   modern: {
     base: 'A modern contemporary landscape design with',
     style: 'sleek minimalist landscape architecture',
@@ -22,7 +22,7 @@ export const defaultPromptTemplates: Record<string, PromptTemplate> = {
     weather: 'clear conditions',
     cameraAngle: 'wide angle architectural view',
   },
-  
+
   traditional: {
     base: 'A traditional garden landscape featuring',
     style: 'classic English garden style',
@@ -33,7 +33,7 @@ export const defaultPromptTemplates: Record<string, PromptTemplate> = {
     weather: 'partly cloudy',
     cameraAngle: 'garden perspective view',
   },
-  
+
   xeriscape: {
     base: 'A water-wise xeriscape design featuring',
     style: 'drought-tolerant landscape design',
@@ -44,7 +44,7 @@ export const defaultPromptTemplates: Record<string, PromptTemplate> = {
     weather: 'sunny and dry',
     cameraAngle: 'showcase view of the design',
   },
-  
+
   japanese: {
     base: 'A serene Japanese-inspired garden with',
     style: 'zen garden aesthetic, minimalist design',

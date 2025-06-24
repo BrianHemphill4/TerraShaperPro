@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { type SampleProject,sampleProjects } from '@/lib/sample-projects';
+import { type SampleProject, sampleProjects } from '@/lib/sampleProjects';
 import { cn } from '@/lib/utils';
 
 const difficultyColors = {
@@ -26,11 +26,11 @@ const categoryIcons = {
 type SampleProjectCardProps = {
   project: SampleProject;
   onSelect: (project: SampleProject) => void;
-}
+};
 
 function SampleProjectCard({ project, onSelect }: SampleProjectCardProps) {
   return (
-    <Card 
+    <Card
       className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg"
       onClick={() => onSelect(project)}
     >
@@ -45,7 +45,7 @@ function SampleProjectCard({ project, onSelect }: SampleProjectCardProps) {
         <CardDescription>{project.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex items-center gap-4 text-sm">
           <div className="flex items-center gap-1">
             <Clock className="size-4" />
             <span>{project.estimatedTime}</span>
@@ -74,16 +74,19 @@ function SampleProjectCard({ project, onSelect }: SampleProjectCardProps) {
 
 export function SampleProjectsGallery() {
   const router = useRouter();
-  const [selectedCategory, setSelectedCategory] = useState<'all' | SampleProject['category']>('all');
+  const [selectedCategory, setSelectedCategory] = useState<'all' | SampleProject['category']>(
+    'all'
+  );
 
-  const filteredProjects = selectedCategory === 'all' 
-    ? sampleProjects 
-    : sampleProjects.filter(p => p.category === selectedCategory);
+  const filteredProjects =
+    selectedCategory === 'all'
+      ? sampleProjects
+      : sampleProjects.filter((p) => p.category === selectedCategory);
 
   const handleSelectProject = async (project: SampleProject) => {
     // Store the selected project in localStorage
     localStorage.setItem('pendingSampleProject', JSON.stringify(project));
-    
+
     // Navigate to the design page
     router.push('/design');
   };
@@ -97,7 +100,11 @@ export function SampleProjectsGallery() {
         </p>
       </div>
 
-      <Tabs defaultValue="all" value={selectedCategory} onValueChange={(v) => setSelectedCategory(v as any)}>
+      <Tabs
+        defaultValue="all"
+        value={selectedCategory}
+        onValueChange={(v) => setSelectedCategory(v as any)}
+      >
         <TabsList className="mx-auto grid w-full max-w-md grid-cols-4">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="residential">Residential</TabsTrigger>

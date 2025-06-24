@@ -1,9 +1,9 @@
 'use client';
 
 import { FeatureGateService } from '@terrashaper/shared/services/feature-gate.service';
-import type {SubscriptionTier } from '@terrashaper/shared/types/billing';
+import type { SubscriptionTier } from '@terrashaper/shared/types/billing';
 import { PlanFeatures } from '@terrashaper/shared/types/billing';
-import { ArrowDown,ArrowUp, Check, Loader2, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, Check, Loader2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -18,7 +18,7 @@ type SubscriptionUpgradeProps = {
   currentTier: SubscriptionTier;
   targetTier?: SubscriptionTier;
   onSuccess?: () => void;
-}
+};
 
 export function SubscriptionUpgrade({
   currentTier,
@@ -41,7 +41,7 @@ export function SubscriptionUpgrade({
     setIsProcessing(true);
 
     try {
-      const selectedPlan = plans?.find(p => p.tier === selectedTier);
+      const selectedPlan = plans?.find((p) => p.tier === selectedTier);
       if (!selectedPlan) {
         throw new Error('Selected plan not found');
       }
@@ -81,8 +81,8 @@ export function SubscriptionUpgrade({
     if (!selectedTier || selectedTier === currentTier) return null;
 
     const comparison = FeatureGateService.compareFeatures(currentTier, selectedTier);
-    const upgrades = comparison.filter(c => c.isUpgrade);
-    const downgrades = comparison.filter(c => !c.isUpgrade && c.from !== c.to);
+    const upgrades = comparison.filter((c) => c.isUpgrade);
+    const downgrades = comparison.filter((c) => !c.isUpgrade && c.from !== c.to);
 
     return (
       <div className="mt-6 space-y-4">
@@ -93,7 +93,9 @@ export function SubscriptionUpgrade({
               {upgrades.map((item, idx) => (
                 <li key={idx} className="flex items-center gap-2 text-sm">
                   <ArrowUp className="size-4 text-green-600" />
-                  <span className="capitalize">{item.feature.replace(/([A-Z])/g, ' $1').trim()}</span>
+                  <span className="capitalize">
+                    {item.feature.replace(/([A-Z])/g, ' $1').trim()}
+                  </span>
                   <span className="text-muted-foreground">
                     {formatFeatureValue(item.from)} → {formatFeatureValue(item.to)}
                   </span>
@@ -110,7 +112,9 @@ export function SubscriptionUpgrade({
               {downgrades.map((item, idx) => (
                 <li key={idx} className="flex items-center gap-2 text-sm">
                   <ArrowDown className="size-4 text-amber-600" />
-                  <span className="capitalize">{item.feature.replace(/([A-Z])/g, ' $1').trim()}</span>
+                  <span className="capitalize">
+                    {item.feature.replace(/([A-Z])/g, ' $1').trim()}
+                  </span>
                   <span className="text-muted-foreground">
                     {formatFeatureValue(item.from)} → {formatFeatureValue(item.to)}
                   </span>
@@ -134,7 +138,7 @@ export function SubscriptionUpgrade({
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {tiers.map((tier) => {
-          const plan = plans?.find(p => p.tier === tier);
+          const plan = plans?.find((p) => p.tier === tier);
           const features = PlanFeatures[tier];
           const isCurrentPlan = tier === currentTier;
           const isSelected = tier === selectedTier;
@@ -146,17 +150,15 @@ export function SubscriptionUpgrade({
               className={cn(
                 'relative cursor-pointer transition-all',
                 isCurrentPlan && 'border-primary',
-                isSelected && 'ring-2 ring-primary',
+                isSelected && 'ring-primary ring-2',
                 tier === 'enterprise' && 'md:col-span-2 lg:col-span-1'
               )}
               onClick={() => !isCurrentPlan && setSelectedTier(tier)}
             >
               {isCurrentPlan && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  Current Plan
-                </Badge>
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">Current Plan</Badge>
               )}
-              
+
               <CardHeader>
                 <CardTitle className="capitalize">{tier}</CardTitle>
                 <CardDescription>
@@ -165,15 +167,16 @@ export function SubscriptionUpgrade({
                   {tier === 'growth' && 'Scale your operations'}
                   {tier === 'enterprise' && 'Custom solutions'}
                 </CardDescription>
-                
+
                 <div className="mt-4">
                   <div className="text-3xl font-bold">
                     ${plan?.price_monthly || 0}
-                    <span className="text-lg font-normal text-muted-foreground">/month</span>
+                    <span className="text-muted-foreground text-lg font-normal">/month</span>
                   </div>
                   {plan?.price_yearly && (
-                    <div className="text-sm text-muted-foreground">
-                      or ${plan.price_yearly}/year (save {Math.round((1 - plan.price_yearly / (plan.price_monthly * 12)) * 100)}%)
+                    <div className="text-muted-foreground text-sm">
+                      or ${plan.price_yearly}/year (save{' '}
+                      {Math.round((1 - plan.price_yearly / (plan.price_monthly * 12)) * 100)}%)
                     </div>
                   )}
                 </div>
@@ -184,7 +187,9 @@ export function SubscriptionUpgrade({
                   <div className="flex items-center justify-between text-sm">
                     <span>Render Credits</span>
                     <span className="font-medium">
-                      {plan?.render_credits_monthly === -1 ? 'Unlimited' : plan?.render_credits_monthly || 0}
+                      {plan?.render_credits_monthly === -1
+                        ? 'Unlimited'
+                        : plan?.render_credits_monthly || 0}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
@@ -202,29 +207,27 @@ export function SubscriptionUpgrade({
                 </div>
 
                 <div className="space-y-2 border-t pt-4">
-                  {Object.entries(features).slice(0, 5).map(([key, value]) => {
-                    const hasFeature = typeof value === 'boolean' ? value : true;
-                    return (
-                      <div key={key} className="flex items-center gap-2 text-sm">
-                        {hasFeature ? (
-                          <Check className="size-4 text-green-600" />
-                        ) : (
-                          <X className="size-4 text-muted-foreground" />
-                        )}
-                        <span className="capitalize">
-                          {key.replace(/([A-Z])/g, ' $1').trim()}
-                        </span>
-                      </div>
-                    );
-                  })}
+                  {Object.entries(features)
+                    .slice(0, 5)
+                    .map(([key, value]) => {
+                      const hasFeature = typeof value === 'boolean' ? value : true;
+                      return (
+                        <div key={key} className="flex items-center gap-2 text-sm">
+                          {hasFeature ? (
+                            <Check className="size-4 text-green-600" />
+                          ) : (
+                            <X className="text-muted-foreground size-4" />
+                          )}
+                          <span className="capitalize">
+                            {key.replace(/([A-Z])/g, ' $1').trim()}
+                          </span>
+                        </div>
+                      );
+                    })}
                 </div>
 
                 {!isCurrentPlan && (
-                  <Button
-                    className="w-full"
-                    variant={isSelected ? 'default' : 'outline'}
-                    size="sm"
-                  >
+                  <Button className="w-full" variant={isSelected ? 'default' : 'outline'} size="sm">
                     {isUpgrade ? 'Upgrade' : 'Downgrade'} to {tier}
                   </Button>
                 )}
@@ -238,24 +241,23 @@ export function SubscriptionUpgrade({
         <Card>
           <CardHeader>
             <CardTitle>
-              {FeatureGateService.isUpgrade(currentTier, selectedTier) ? 'Upgrade' : 'Downgrade'} Summary
+              {FeatureGateService.isUpgrade(currentTier, selectedTier) ? 'Upgrade' : 'Downgrade'}{' '}
+              Summary
             </CardTitle>
-            <CardDescription>
-              Review the changes to your subscription
-            </CardDescription>
+            <CardDescription>Review the changes to your subscription</CardDescription>
           </CardHeader>
           <CardContent>
             {renderFeatureComparison()}
 
             <div className="mt-6 flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {FeatureGateService.isUpgrade(currentTier, selectedTier)
                     ? 'You will be charged a prorated amount for the remainder of your billing period.'
                     : 'Your downgrade will take effect at the end of your current billing period.'}
                 </p>
               </div>
-              
+
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -264,12 +266,12 @@ export function SubscriptionUpgrade({
                 >
                   Cancel
                 </Button>
-                <Button
-                  onClick={handleUpgrade}
-                  disabled={isProcessing}
-                >
+                <Button onClick={handleUpgrade} disabled={isProcessing}>
                   {isProcessing && <Loader2 className="mr-2 size-4 animate-spin" />}
-                  Confirm {FeatureGateService.isUpgrade(currentTier, selectedTier) ? 'Upgrade' : 'Downgrade'}
+                  Confirm{' '}
+                  {FeatureGateService.isUpgrade(currentTier, selectedTier)
+                    ? 'Upgrade'
+                    : 'Downgrade'}
                 </Button>
               </div>
             </div>

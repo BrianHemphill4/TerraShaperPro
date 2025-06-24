@@ -1,9 +1,61 @@
-## [1.7.6](https://github.com/ixartz/SaaS-Boilerplate/compare/v1.7.5...v1.7.6) (2025-05-01)
+# Changelog
 
+All notable changes to TerraShaper Pro will be documented in this file.
 
-### Bug Fixes
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-* update clerk to the latest version and update middlware to use await with auth ([2287192](https://github.com/ixartz/SaaS-Boilerplate/commit/2287192ddcf5b27a1f43ac2b7a992e065b990627))
+## [1.7.6] - 2025-06-24
+
+### Added
+- TypeDoc configuration for API documentation generation
+- Comprehensive documentation structure in docs/api directory
+- API documentation setup for packages: db, ai-service, shared, storage, queue, stripe, services, hooks, ui
+- Dedicated TypeScript configuration for documentation generation
+
+### Changed
+- Enhanced security configuration with modular structure in api-gateway
+- Refactored render-worker into specialized services for better maintainability
+- Improved clean phase processing with specialized components
+- Decomposed renderProcessor into focused service modules
+
+### Fixed
+- Resolved linting issues across codebase
+- Improved error handling in render processing pipeline
+- Enhanced type safety in security modules
+
+### Refactored
+#### API Gateway Security Improvements
+- **Modularized security configuration** (`apps/api-gateway/src/lib/security/`)
+  - Split monolithic `security-config.ts` into focused modules
+  - Created `authConfig.ts` for authentication settings
+  - Added `fileValidation.ts` for upload security validation
+  - Improved separation of concerns in security layer
+  - Enhanced maintainability and testability
+
+#### Render Worker Service Decomposition  
+- **Decomposed renderProcessor** into specialized services (`apps/render-worker/src/services/`)
+  - Created `RenderCoordinator` for orchestration and workflow management
+  - Added `RenderQualityService` for quality control and validation
+  - Implemented `CreditService` for usage tracking and billing integration
+  - Enhanced `failureMonitor` with dedicated monitoring capabilities
+  - Improved error handling and recovery mechanisms
+
+### Documentation
+- Added comprehensive architecture documentation
+- Created developer onboarding guide (DEV_GUIDE.md)
+- Documented refactoring patterns and architectural decisions
+- Established automated API documentation generation workflow
+
+### Infrastructure
+- Implemented automated UI testing infrastructure with Playwright
+- Enhanced monitoring and observability capabilities
+- Improved development workflow documentation
+- Added TypeDoc integration for continuous documentation updates
+
+---
+
+## Previous Versions (Legacy SaaS Boilerplate)
 
 ## [1.7.5](https://github.com/ixartz/SaaS-Boilerplate/compare/v1.7.4...v1.7.5) (2025-05-01)
 

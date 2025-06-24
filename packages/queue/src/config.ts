@@ -3,7 +3,7 @@ import { ConnectionOptions, QueueOptions } from 'bullmq';
 // Parse Upstash Redis URL if provided
 function getRedisConnection(): ConnectionOptions {
   const redisHost = process.env.REDIS_HOST;
-  
+
   // If REDIS_HOST is a URL (Upstash format)
   if (redisHost && redisHost.startsWith('https://')) {
     const url = new URL(redisHost);
@@ -15,7 +15,7 @@ function getRedisConnection(): ConnectionOptions {
       maxRetriesPerRequest: null,
     };
   }
-  
+
   // Standard Redis connection
   return {
     host: redisHost || 'localhost',

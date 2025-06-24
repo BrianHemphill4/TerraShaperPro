@@ -19,7 +19,7 @@ export class UploadUtils {
     expiresAt: Date;
   }> {
     const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000);
-    
+
     const uploadUrl = await this.storageService.generateUploadUrl(
       bucketType,
       fileName,
@@ -27,9 +27,8 @@ export class UploadUtils {
       expiresAt
     );
 
-    const bucketName = bucketType === 'renders' 
-      ? process.env.GCS_RENDERS_BUCKET!
-      : process.env.GCS_ASSETS_BUCKET!;
+    const bucketName =
+      bucketType === 'renders' ? process.env.GCS_RENDERS_BUCKET! : process.env.GCS_ASSETS_BUCKET!;
 
     const publicUrl = this.storageService.getPublicUrl(bucketName, fileName);
 
@@ -67,10 +66,7 @@ export class UploadUtils {
   /**
    * Generate file name for user upload
    */
-  static generateUserUploadFileName(
-    userId: string,
-    originalFileName: string
-  ): string {
+  static generateUserUploadFileName(userId: string, originalFileName: string): string {
     const extension = originalFileName.split('.').pop() || 'jpg';
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 8);
@@ -80,17 +76,14 @@ export class UploadUtils {
   /**
    * Validate file type for uploads
    */
-  static validateImageFile(contentType: string, _maxSizeMB = 10): {
+  static validateImageFile(
+    contentType: string,
+    _maxSizeMB = 10
+  ): {
     valid: boolean;
     error?: string;
   } {
-    const allowedTypes = [
-      'image/jpeg',
-      'image/jpg', 
-      'image/png',
-      'image/webp',
-      'image/gif',
-    ];
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
 
     if (!allowedTypes.includes(contentType.toLowerCase())) {
       return {

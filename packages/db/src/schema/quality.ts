@@ -1,15 +1,35 @@
-import { pgTable, text, varchar, timestamp, uuid, decimal, jsonb, boolean, pgEnum, integer } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  text,
+  varchar,
+  timestamp,
+  uuid,
+  decimal,
+  jsonb,
+  boolean,
+  pgEnum,
+  integer,
+} from 'drizzle-orm/pg-core';
 import { renders, projects } from './core';
 import { users } from './auth';
 
-export const qualityStatusEnum = pgEnum('quality_status', ['pending', 'approved', 'rejected', 'auto_approved']);
+export const qualityStatusEnum = pgEnum('quality_status', [
+  'pending',
+  'approved',
+  'rejected',
+  'auto_approved',
+]);
 export const alertSeverityEnum = pgEnum('alert_severity', ['low', 'medium', 'high', 'critical']);
 
 // Quality reviews table
 export const qualityReviews = pgTable('quality_reviews', {
   id: uuid('id').defaultRandom().primaryKey(),
-  renderId: uuid('render_id').references(() => renders.id, { onDelete: 'cascade' }).notNull(),
-  projectId: uuid('project_id').references(() => projects.id, { onDelete: 'cascade' }).notNull(),
+  renderId: uuid('render_id')
+    .references(() => renders.id, { onDelete: 'cascade' })
+    .notNull(),
+  projectId: uuid('project_id')
+    .references(() => projects.id, { onDelete: 'cascade' })
+    .notNull(),
   imageUrl: text('image_url').notNull(),
   thumbnailUrl: text('thumbnail_url').notNull(),
   qualityScore: decimal('quality_score', { precision: 3, scale: 2 }).notNull(),
@@ -51,7 +71,10 @@ export const qualityMetrics = pgTable('quality_metrics', {
 // Perceptual hash index for duplicate detection
 export const perceptualHashes = pgTable('perceptual_hashes', {
   id: uuid('id').defaultRandom().primaryKey(),
-  renderId: uuid('render_id').references(() => renders.id, { onDelete: 'cascade' }).notNull().unique(),
+  renderId: uuid('render_id')
+    .references(() => renders.id, { onDelete: 'cascade' })
+    .notNull()
+    .unique(),
   hash: varchar('hash', { length: 64 }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });

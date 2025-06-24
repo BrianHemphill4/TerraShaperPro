@@ -15,7 +15,7 @@ export const Navbar = () => {
     <Section className="px-3 py-6">
       <CenteredMenu
         logo={<Logo />}
-        rightMenu={(
+        rightMenu={
           <>
             {/* PRO: Dark mode toggle button */}
             <li data-fade>
@@ -30,7 +30,7 @@ export const Navbar = () => {
               </Link>
             </li>
           </>
-        )}
+        }
       >
         <li>
           <Link href="/sign-up">{t('product')}</Link>

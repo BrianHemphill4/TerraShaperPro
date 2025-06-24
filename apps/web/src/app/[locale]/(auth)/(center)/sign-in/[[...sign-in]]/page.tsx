@@ -1,7 +1,7 @@
 import { SignIn } from '@clerk/nextjs';
 import { getTranslations } from 'next-intl/server';
 
-import { getI18nPath } from '@/utils/Helpers';
+import { getI18nPath } from '@/utils/helpers';
 
 export async function generateMetadata(props: { params: { locale: string } }) {
   const t = await getTranslations({

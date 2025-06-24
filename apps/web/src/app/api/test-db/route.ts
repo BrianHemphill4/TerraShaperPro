@@ -1,4 +1,4 @@
-import { db, plants } from '@terrasherper/db';
+import { db, plants } from '@terrashaper/db';
 import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';

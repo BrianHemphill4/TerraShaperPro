@@ -1,6 +1,4 @@
 import * as Sentry from '@sentry/node';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { createClient } from '@supabase/supabase-js';
 import type {
   Annotation,
   ImageGenerationOptions,
@@ -8,6 +6,7 @@ import type {
   ProviderConfig,
 } from '@terrashaper/ai-service';
 import { PromptGenerator, ProviderManager, RenderProvider } from '@terrashaper/ai-service';
+import { createWorkerClient, type SupabaseClientType } from '@terrashaper/db';
 import type { RenderJobData, RenderJobResult } from '@terrashaper/queue';
 import type { Job } from 'bullmq';
 
@@ -27,20 +26,17 @@ export class RenderCoordinator {
   private creditService: CreditService;
   private storageService: RenderStorageService;
   private qualityService: RenderQualityService;
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClientType;
   private initialized = false;
 
   constructor() {
     this.providerManager = new ProviderManager();
     this.promptGenerator = new PromptGenerator();
 
-    const supabaseUrl = process.env.SUPABASE_URL!;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-    this.creditService = new CreditService(supabaseUrl, supabaseKey);
+    this.creditService = new CreditService();
     this.storageService = new RenderStorageService(getStorage(), process.env.GCS_BUCKET_NAME!);
-    this.qualityService = new RenderQualityService(supabaseUrl, supabaseKey);
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+    this.qualityService = new RenderQualityService();
+    this.supabase = createWorkerClient();
   }
 
   /**

@@ -19,7 +19,7 @@ const PropertyPanel = ({ canvas }: PropertyPanelProps) => {
     const handleSelection = () => {
       const active = canvas.getActiveObject();
       setSelectedObject(active);
-      
+
       if (active) {
         setProperties({
           type: active.type,
@@ -61,7 +61,7 @@ const PropertyPanel = ({ canvas }: PropertyPanelProps) => {
     if (!selectedObject || !canvas) return;
 
     const updates: any = { [key]: value };
-    
+
     if (key === 'opacity') {
       updates.opacity = Number.parseFloat(value);
     } else if (key === 'strokeWidth') {
@@ -72,7 +72,7 @@ const PropertyPanel = ({ canvas }: PropertyPanelProps) => {
 
     selectedObject.set(updates);
     canvas.renderAll();
-    
+
     setProperties({ ...properties, [key]: value });
   };
 
@@ -88,23 +88,29 @@ const PropertyPanel = ({ canvas }: PropertyPanelProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>Properties</div>
-      
+
       <div className={styles.section}>
         <div className={styles.sectionTitle}>General</div>
         <div className={styles.property}>
           <label htmlFor="prop-type">Type</label>
-          <span id="prop-type" className={styles.value}>{properties.type}</span>
+          <span id="prop-type" className={styles.value}>
+            {properties.type}
+          </span>
         </div>
         {properties.plantName && (
           <div className={styles.property}>
             <label htmlFor="prop-plant">Plant</label>
-            <span id="prop-plant" className={styles.value}>{properties.plantName}</span>
+            <span id="prop-plant" className={styles.value}>
+              {properties.plantName}
+            </span>
           </div>
         )}
         {properties.material && (
           <div className={styles.property}>
             <label htmlFor="prop-material">Material</label>
-            <span id="prop-material" className={styles.value}>{properties.material}</span>
+            <span id="prop-material" className={styles.value}>
+              {properties.material}
+            </span>
           </div>
         )}
       </div>

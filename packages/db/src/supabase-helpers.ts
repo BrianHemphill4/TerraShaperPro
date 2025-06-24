@@ -13,20 +13,16 @@ export async function uploadFile(
     upsert?: boolean;
   }
 ): Promise<{ data?: { path: string; url: string }; error?: Error }> {
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .upload(path, file, {
-      contentType: options?.contentType,
-      upsert: options?.upsert || false,
-    });
+  const { data, error } = await supabase.storage.from(bucket).upload(path, file, {
+    contentType: options?.contentType,
+    upsert: options?.upsert || false,
+  });
 
   if (error) {
     return { error: new Error(error.message) };
   }
 
-  const { data: urlData } = supabase.storage
-    .from(bucket)
-    .getPublicUrl(path);
+  const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
 
   return {
     data: {
@@ -44,9 +40,7 @@ export async function getSignedUrl(
   path: string,
   expiresIn = 3600
 ): Promise<{ data?: string; error?: Error }> {
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .createSignedUrl(path, expiresIn);
+  const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, expiresIn);
 
   if (error) {
     return { error: new Error(error.message) };
@@ -58,13 +52,8 @@ export async function getSignedUrl(
 /**
  * Delete a file from Supabase Storage
  */
-export async function deleteFile(
-  bucket: string,
-  paths: string[]
-): Promise<{ error?: Error }> {
-  const { error } = await supabase.storage
-    .from(bucket)
-    .remove(paths);
+export async function deleteFile(bucket: string, paths: string[]): Promise<{ error?: Error }> {
+  const { error } = await supabase.storage.from(bucket).remove(paths);
 
   if (error) {
     return { error: new Error(error.message) };
@@ -88,13 +77,11 @@ export async function listFiles(
     };
   }
 ): Promise<{ data?: any[]; error?: Error }> {
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .list(folder, {
-      limit: options?.limit || 100,
-      offset: options?.offset || 0,
-      sortBy: options?.sortBy,
-    });
+  const { data, error } = await supabase.storage.from(bucket).list(folder, {
+    limit: options?.limit || 100,
+    offset: options?.offset || 0,
+    sortBy: options?.sortBy,
+  });
 
   if (error) {
     return { error: new Error(error.message) };
@@ -124,29 +111,27 @@ export async function getOrganizationStorageUsage(
   organizationId: string
 ): Promise<{ data?: { totalBytes: number; fileCount: number }; error?: Error }> {
   const adminClient = createAdminClient();
-  
+
   let totalBytes = 0;
   let fileCount = 0;
-  
+
   const buckets = ['project-uploads', 'renders', 'templates'];
-  
+
   for (const bucket of buckets) {
-    const { data, error } = await adminClient.storage
-      .from(bucket)
-      .list(organizationId, {
-        limit: 1000,
-      });
-      
+    const { data, error } = await adminClient.storage.from(bucket).list(organizationId, {
+      limit: 1000,
+    });
+
     if (error) {
       return { error: new Error(error.message) };
     }
-    
+
     if (data) {
       fileCount += data.length;
       totalBytes += data.reduce((sum, file) => sum + (file.metadata?.size || 0), 0);
     }
   }
-  
+
   return {
     data: {
       totalBytes,
@@ -168,15 +153,11 @@ export async function createProject(
     metadata?: any;
   }
 ): Promise<{ data?: any; error?: Error }> {
-  const { data, error } = await client
-    .from('projects')
-    .insert(project)
-    .select()
-    .single();
-    
+  const { data, error } = await client.from('projects').insert(project).select().single();
+
   if (error) {
     return { error: new Error(error.message) };
   }
-  
+
   return { data };
 }

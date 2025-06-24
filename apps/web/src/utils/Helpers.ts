@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-import { AppConfig } from './AppConfig';
+import { AppConfig } from './appConfig';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -14,10 +14,7 @@ export const getBaseUrl = () => {
     return process.env.NEXT_PUBLIC_APP_URL;
   }
 
-  if (
-    process.env.VERCEL_ENV === 'production'
-    && process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ) {
+  if (process.env.VERCEL_ENV === 'production' && process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   }
 

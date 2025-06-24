@@ -9,7 +9,7 @@ import { api } from '@/lib/api';
 
 export function BillingAlerts() {
   const { data: alerts } = api.billing.getBillingAlerts.useQuery();
-  
+
   if (!alerts || alerts.length === 0) {
     return null;
   }
@@ -35,7 +35,7 @@ export function BillingAlerts() {
     <div className="space-y-3">
       {alerts.map((alert) => {
         const Icon = getAlertIcon(alert.type);
-        
+
         return (
           <Alert key={alert.id} variant={getAlertVariant(alert.severity)}>
             <Icon className="size-4" />

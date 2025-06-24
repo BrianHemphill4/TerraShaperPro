@@ -31,7 +31,7 @@ export function HelpCenter() {
         <Button
           variant="ghost"
           size="icon"
-          className="fixed bottom-4 right-4 z-50 rounded-full bg-background shadow-lg hover:bg-accent"
+          className="bg-background hover:bg-accent fixed bottom-4 right-4 z-50 rounded-full shadow-lg"
           aria-label="Open help center"
         >
           <HelpCircle className="size-5" />
@@ -40,9 +40,7 @@ export function HelpCenter() {
       <SheetContent className="w-full overflow-y-auto sm:max-w-2xl">
         <SheetHeader>
           <SheetTitle>Help & Learning Center</SheetTitle>
-          <SheetDescription>
-            Get help, learn new features, and improve your skills
-          </SheetDescription>
+          <SheetDescription>Get help, learn new features, and improve your skills</SheetDescription>
         </SheetHeader>
 
         <Tabs defaultValue="tutorials" className="mt-6">
@@ -55,7 +53,7 @@ export function HelpCenter() {
 
           <TabsContent value="tutorials" className="space-y-4">
             <OnboardingProgress />
-            
+
             <div className="mt-6">
               <h3 className="mb-3 font-semibold">Quick Actions</h3>
               <div className="grid gap-2">
@@ -96,19 +94,19 @@ export function HelpCenter() {
                 <div className="grid gap-2 text-sm">
                   <div className="flex justify-between py-1">
                     <span>Select Tool</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">S</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">S</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Polygon Tool</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">P</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">P</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Area Tool</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">A</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">A</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Line Tool</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">L</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">L</kbd>
                   </div>
                 </div>
               </div>
@@ -118,31 +116,31 @@ export function HelpCenter() {
                 <div className="grid gap-2 text-sm">
                   <div className="flex justify-between py-1">
                     <span>Copy</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + C</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">⌘/Ctrl + C</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Paste</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + V</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">⌘/Ctrl + V</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Cut</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + X</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">⌘/Ctrl + X</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Select All</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + A</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">⌘/Ctrl + A</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Delete</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">Delete/Backspace</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">Delete/Backspace</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Undo</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + Z</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">⌘/Ctrl + Z</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Redo</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + Shift + Z</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">⌘/Ctrl + Shift + Z</kbd>
                   </div>
                 </div>
               </div>
@@ -152,15 +150,15 @@ export function HelpCenter() {
                 <div className="grid gap-2 text-sm">
                   <div className="flex justify-between py-1">
                     <span>Group</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + G</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">⌘/Ctrl + G</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Ungroup</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">⌘/Ctrl + U</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">⌘/Ctrl + U</kbd>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Cancel Operation</span>
-                    <kbd className="rounded bg-muted px-2 py-0.5 text-xs">Escape</kbd>
+                    <kbd className="bg-muted rounded px-2 py-0.5 text-xs">Escape</kbd>
                   </div>
                 </div>
               </div>
@@ -172,30 +170,28 @@ export function HelpCenter() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label htmlFor="show-tooltips">Show Tooltips</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Display helpful tooltips when hovering over interface elements
                   </p>
                 </div>
                 <Switch
                   id="show-tooltips"
                   checked={preferences.showTooltips}
-                  onCheckedChange={(checked) => 
-                    updatePreferences({ showTooltips: checked })
-                  }
+                  onCheckedChange={(checked) => updatePreferences({ showTooltips: checked })}
                 />
               </div>
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label htmlFor="show-shortcuts">Show Keyboard Shortcuts</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Display keyboard shortcuts in tooltips and menus
                   </p>
                 </div>
                 <Switch
                   id="show-shortcuts"
                   checked={preferences.showKeyboardShortcuts}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked) =>
                     updatePreferences({ showKeyboardShortcuts: checked })
                   }
                 />

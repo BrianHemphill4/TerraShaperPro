@@ -37,7 +37,7 @@ const UndoRedoControls = ({
           />
         </svg>
       </button>
-      
+
       <button
         type="button"
         className={styles.controlButton}
@@ -54,7 +54,7 @@ const UndoRedoControls = ({
           />
         </svg>
       </button>
-      
+
       {historySize !== undefined && currentIndex !== undefined && (
         <span className={styles.historyInfo}>
           {currentIndex + 1} / {historySize}

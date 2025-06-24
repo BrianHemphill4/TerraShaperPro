@@ -5,7 +5,7 @@ type PlantInfo = {
   commonName: string;
   description: string;
   visualCharacteristics: string;
-}
+};
 
 export class AnnotationConverter {
   private plantDatabase: Map<string, PlantInfo>;
@@ -43,13 +43,16 @@ export class AnnotationConverter {
   }
 
   private groupAnnotationsByType(annotations: Annotation[]): Record<string, Annotation[]> {
-    return annotations.reduce((acc, annotation) => {
-      if (!acc[annotation.type]) {
-        acc[annotation.type] = [];
-      }
-      acc[annotation.type].push(annotation);
-      return acc;
-    }, {} as Record<string, Annotation[]>);
+    return annotations.reduce(
+      (acc, annotation) => {
+        if (!acc[annotation.type]) {
+          acc[annotation.type] = [];
+        }
+        acc[annotation.type].push(annotation);
+        return acc;
+      },
+      {} as Record<string, Annotation[]>
+    );
   }
 
   private describePlants(plants: Annotation[]): string {
@@ -57,7 +60,7 @@ export class AnnotationConverter {
     const descriptions: string[] = [];
 
     for (const [area, plantsInArea] of Object.entries(plantGroups)) {
-      const plantNames = plantsInArea.map(p => {
+      const plantNames = plantsInArea.map((p) => {
         const info = this.plantDatabase.get(p.name);
         return info ? `${info.commonName} (${info.visualCharacteristics})` : p.name;
       });
@@ -75,7 +78,7 @@ export class AnnotationConverter {
       background: [],
     };
 
-    plants.forEach(plant => {
+    plants.forEach((plant) => {
       const relativeY = plant.position.y;
       if (relativeY > 0.7) {
         areas.foreground.push(plant);
@@ -90,7 +93,7 @@ export class AnnotationConverter {
   }
 
   private describeHardscape(hardscapes: Annotation[]): string {
-    const elements = hardscapes.map(h => {
+    const elements = hardscapes.map((h) => {
       const material = h.attributes?.material || 'natural stone';
       const pattern = h.attributes?.pattern || 'irregular';
       return `${h.name} made of ${material} in ${pattern} pattern`;
@@ -100,7 +103,7 @@ export class AnnotationConverter {
   }
 
   private describeFeatures(features: Annotation[]): string {
-    const elements = features.map(f => {
+    const elements = features.map((f) => {
       const style = f.attributes?.style || 'contemporary';
       return `${style} ${f.name}`;
     });
@@ -109,7 +112,7 @@ export class AnnotationConverter {
   }
 
   private describeLighting(lighting: Annotation[]): string {
-    const types = lighting.map(l => {
+    const types = lighting.map((l) => {
       const type = l.attributes?.type || 'accent';
       const placement = l.attributes?.placement || 'strategic';
       return `${type} lighting with ${placement} placement`;
@@ -119,7 +122,7 @@ export class AnnotationConverter {
   }
 
   private describeWater(water: Annotation[]): string {
-    const features = water.map(w => {
+    const features = water.map((w) => {
       const style = w.attributes?.style || 'natural';
       const flow = w.attributes?.flow || 'gentle';
       return `${style} ${w.name} with ${flow} water movement`;
@@ -162,7 +165,7 @@ export class AnnotationConverter {
       },
     ];
 
-    plants.forEach(plant => {
+    plants.forEach((plant) => {
       this.plantDatabase.set(plant.commonName, plant);
       this.plantDatabase.set(plant.scientificName, plant);
     });

@@ -1,5 +1,4 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { createClient } from '@supabase/supabase-js';
+import { createWorkerClient, type SupabaseClientType } from '@terrashaper/db';
 
 export type QualityReview = {
   id: string;
@@ -21,20 +20,20 @@ export type QualityReview = {
     perceptualHash: string;
     renderSettings?: any;
   };
-}
+};
 
 export type ReviewCriteria = {
   autoApproveThreshold: number;
   autoRejectThreshold: number;
   requireManualReviewFor: string[];
-}
+};
 
 export class ReviewQueueService {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClientType;
   private defaultCriteria: ReviewCriteria;
 
-  constructor(supabaseUrl: string, supabaseKey: string) {
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+  constructor() {
+    this.supabase = createWorkerClient();
     this.defaultCriteria = {
       autoApproveThreshold: 0.85,
       autoRejectThreshold: 0.5,
@@ -60,7 +59,7 @@ export class ReviewQueueService {
     }
 
     let status: QualityReview['status'] = 'pending';
-    
+
     // Auto-approve/reject based on score unless manual review is forced
     if (!forceManualReview) {
       if (qualityScore >= this.defaultCriteria.autoApproveThreshold) {
@@ -110,11 +109,7 @@ export class ReviewQueueService {
     return data as QualityReview[];
   }
 
-  async approveReview(
-    reviewId: string,
-    reviewedBy: string,
-    notes?: string
-  ): Promise<void> {
+  async approveReview(reviewId: string, reviewedBy: string, notes?: string): Promise<void> {
     const { error } = await this.supabase
       .from('quality_reviews')
       .update({
@@ -144,11 +139,7 @@ export class ReviewQueueService {
     }
   }
 
-  async rejectReview(
-    reviewId: string,
-    reviewedBy: string,
-    notes: string
-  ): Promise<void> {
+  async rejectReview(reviewId: string, reviewedBy: string, notes: string): Promise<void> {
     const { error } = await this.supabase
       .from('quality_reviews')
       .update({
@@ -173,10 +164,10 @@ export class ReviewQueueService {
     if (review) {
       await this.supabase
         .from('renders')
-        .update({ 
+        .update({
           qualityStatus: 'rejected',
           status: 'failed',
-          error: `Quality review rejected: ${notes}`
+          error: `Quality review rejected: ${notes}`,
         })
         .eq('id', review.renderId);
     }
@@ -216,24 +207,27 @@ export class ReviewQueueService {
     const reviews = data as QualityReview[];
     const issueCount: Record<string, number> = {};
 
-    reviews.forEach(review => {
-      review.issues.forEach(issue => {
+    reviews.forEach((review) => {
+      review.issues.forEach((issue) => {
         issueCount[issue] = (issueCount[issue] || 0) + 1;
       });
     });
 
     return {
       total: reviews.length,
-      pending: reviews.filter(r => r.status === 'pending').length,
-      approved: reviews.filter(r => r.status === 'approved').length,
-      rejected: reviews.filter(r => r.status === 'rejected').length,
-      autoApproved: reviews.filter(r => r.status === 'auto_approved').length,
+      pending: reviews.filter((r) => r.status === 'pending').length,
+      approved: reviews.filter((r) => r.status === 'approved').length,
+      rejected: reviews.filter((r) => r.status === 'rejected').length,
+      autoApproved: reviews.filter((r) => r.status === 'auto_approved').length,
       avgQualityScore: reviews.reduce((sum, r) => sum + r.qualityScore, 0) / reviews.length || 0,
       commonIssues: issueCount,
     };
   }
 
-  async checkForDuplicates(perceptualHash: string, threshold: number = 0.95): Promise<{
+  async checkForDuplicates(
+    perceptualHash: string,
+    threshold: number = 0.95
+  ): Promise<{
     isDuplicate: boolean;
     similarRenders: Array<{ renderId: string; similarity: number }>;
   }> {
@@ -247,7 +241,7 @@ export class ReviewQueueService {
       return { isDuplicate: false, similarRenders: [] };
     }
 
-    const phashService = await import('./phash.service').then(m => new m.PerceptualHashService());
+    const phashService = await import('./phash.service').then((m) => new m.PerceptualHashService());
     const similarRenders: Array<{ renderId: string; similarity: number }> = [];
 
     for (const review of reviews) {

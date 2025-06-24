@@ -37,7 +37,7 @@ type RenderDialogProps = {
     quality?: number;
   };
   onComplete?: (result: any) => void;
-}
+};
 
 export function RenderDialog({
   open,
@@ -108,7 +108,7 @@ export function RenderDialog({
             <Alert variant="warning">
               <AlertCircle className="size-4" />
               <AlertDescription>
-                You have {balance.balance} credits remaining. 
+                You have {balance.balance} credits remaining.
                 {balance.balance === 0 && ' Purchase more credits to continue rendering.'}
               </AlertDescription>
             </Alert>
@@ -124,19 +124,15 @@ export function RenderDialog({
 
           {/* Render Progress */}
           {renderId && (
-            <RenderProgress
-              renderId={renderId}
-              onComplete={handleComplete}
-              onError={setError}
-            />
+            <RenderProgress renderId={renderId} onComplete={handleComplete} onError={setError} />
           )}
 
           {/* Loading State */}
           {!renderId && !error && createRenderMutation.isLoading && (
             <div className="flex items-center justify-center py-8">
               <div className="space-y-2 text-center">
-                <div className="mx-auto size-8 animate-spin rounded-full border-b-2 border-primary" />
-                <p className="text-sm text-muted-foreground">Initializing render...</p>
+                <div className="border-primary mx-auto size-8 animate-spin rounded-full border-b-2" />
+                <p className="text-muted-foreground text-sm">Initializing render...</p>
               </div>
             </div>
           )}

@@ -1,7 +1,9 @@
-import { z } from 'zod';
-// @ts-ignore - isomorphic-dompurify doesn't have types
-import DOMPurify from 'isomorphic-dompurify';
+import { Buffer } from 'node:buffer';
+import crypto from 'node:crypto';
+
 import { TRPCError } from '@trpc/server';
+import DOMPurify from 'isomorphic-dompurify';
+import { z } from 'zod';
 
 // Common validation schemas
 export const uuidSchema = z.string().uuid('Invalid ID format');
@@ -15,26 +17,20 @@ export const paginationSchema = z.object({
 
 export const filePathSchema = z
   .string()
-  .regex(/^[a-zA-Z0-9-_/. ]+$/, 'Invalid file path')
-  .refine(
-    (path) => !path.includes('..') && !path.includes('~'),
-    'Path traversal detected'
-  );
+  .regex(/^[\w\-/. ]+$/, 'Invalid file path')
+  .refine((path) => !path.includes('..') && !path.includes('~'), 'Path traversal detected');
 
 export const urlSchema = z
   .string()
   .url('Invalid URL')
-  .refine(
-    (url) => {
-      try {
-        const parsed = new URL(url);
-        return ['http:', 'https:'].includes(parsed.protocol);
-      } catch {
-        return false;
-      }
-    },
-    'Only HTTP(S) URLs are allowed'
-  );
+  .refine((url) => {
+    try {
+      const parsed = new URL(url);
+      return ['http:', 'https:'].includes(parsed.protocol);
+    } catch {
+      return false;
+    }
+  }, 'Only HTTP(S) URLs are allowed');
 
 export const emailSchema = z
   .string()
@@ -42,9 +38,7 @@ export const emailSchema = z
   .toLowerCase()
   .transform((email) => email.trim());
 
-export const phoneSchema = z
-  .string()
-  .regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number');
+export const phoneSchema = z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number');
 
 // Sanitize HTML content
 export function sanitizeHtml(dirty: string): string {
@@ -58,16 +52,16 @@ export function sanitizeHtml(dirty: string): string {
 // Sanitize JSON to prevent prototype pollution
 export function sanitizeJson<T extends object>(obj: T): T {
   const dangerous = ['__proto__', 'constructor', 'prototype'];
-  
+
   function clean(item: any): any {
     if (item && typeof item === 'object') {
       if (Array.isArray(item)) {
         return item.map(clean);
       }
-      
+
       const cleaned: any = {};
       for (const key in item) {
-        if (item.hasOwnProperty(key) && !dangerous.includes(key)) {
+        if (Object.prototype.hasOwnProperty.call(item, key) && !dangerous.includes(key)) {
           cleaned[key] = clean(item[key]);
         }
       }
@@ -75,7 +69,7 @@ export function sanitizeJson<T extends object>(obj: T): T {
     }
     return item;
   }
-  
+
   return clean(obj) as T;
 }
 
@@ -83,7 +77,7 @@ export function sanitizeJson<T extends object>(obj: T): T {
 export const fileUploadSchema = z.object({
   filename: z
     .string()
-    .regex(/^[a-zA-Z0-9-_. ]+$/, 'Invalid filename')
+    .regex(/^[\w-. ]+$/, 'Invalid filename')
     .max(255, 'Filename too long'),
   mimetype: z.enum([
     'image/jpeg',
@@ -103,7 +97,7 @@ export const fileUploadSchema = z.object({
 
 // SQL injection prevention
 export function escapeSqlIdentifier(identifier: string): string {
-  if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(identifier)) {
+  if (!/^[a-z_]\w*$/i.test(identifier)) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: 'Invalid identifier',
@@ -118,25 +112,25 @@ export function validateSortParams(
   allowedFields: string[]
 ): string | undefined {
   if (!sortBy) return undefined;
-  
+
   if (!allowedFields.includes(sortBy)) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: `Invalid sort field. Allowed: ${allowedFields.join(', ')}`,
     });
   }
-  
+
   return sortBy;
 }
 
 // Create a validated environment variable getter
 export function getEnvVar(name: string, required: boolean = true): string {
   const value = process.env[name];
-  
+
   if (!value && required) {
     throw new Error(`Missing required environment variable: ${name}`);
   }
-  
+
   return value || '';
 }
 
@@ -146,32 +140,29 @@ export function validateWebhookSignature(
   signature: string,
   secret: string
 ): boolean {
-  const crypto = require('crypto');
-  const expectedSignature = crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex');
-  
+  const expectedSignature = crypto.createHmac('sha256', secret).update(payload).digest('hex');
+
   // Time-constant comparison
   if (signature.length !== expectedSignature.length) {
     return false;
   }
-  
+
   let result = 0;
   for (let i = 0; i < signature.length; i++) {
     result |= signature.charCodeAt(i) ^ expectedSignature.charCodeAt(i);
   }
-  
+
   return result === 0;
 }
 
 // IP address validation
 export function isValidIpAddress(ip: string): boolean {
   // IPv4
-  const ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+  const ipv4Regex = /^(?:(?:25[0-5]|2[0-4]\d|[01]?\d{1,2})\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d{1,2})$/;
   // IPv6
-  const ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/;
-  
+  const ipv6Regex =
+    /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]+|::(ffff(:0{1,4})?:)?((25[0-5]|(2[0-4]|1?\d)?\d)\.){3}(25[0-5]|(2[0-4]|1?\d)?\d)|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1?\d)?\d)\.){3}(25[0-5]|(2[0-4]|1?\d)?\d))$/;
+
   return ipv4Regex.test(ip) || ipv6Regex.test(ip);
 }
 
@@ -180,7 +171,7 @@ export function createSafeError(error: unknown): string {
   if (error instanceof TRPCError) {
     return error.message;
   }
-  
+
   if (error instanceof Error) {
     // Don't expose internal error messages in production
     if (process.env.NODE_ENV === 'production') {
@@ -188,6 +179,6 @@ export function createSafeError(error: unknown): string {
     }
     return error.message;
   }
-  
+
   return 'An unknown error occurred';
 }

@@ -7,7 +7,7 @@ type ProviderStatus = {
   available: boolean;
   latency?: number;
   lastChecked: Date;
-}
+};
 
 export class ProviderManager {
   private providers = new Map<RenderProvider, AIProvider>();
@@ -23,15 +23,12 @@ export class ProviderManager {
     });
 
     await Promise.allSettled(initPromises);
-    
+
     await this.updateProviderStatuses();
     this.selectPrimaryProvider();
   }
 
-  private async initializeProvider(
-    type: RenderProvider, 
-    config: ProviderConfig
-  ): Promise<void> {
+  private async initializeProvider(type: RenderProvider, config: ProviderConfig): Promise<void> {
     try {
       const provider = await ProviderFactory.createAndInitialize(type, config);
       this.providers.set(type, provider);
@@ -81,10 +78,7 @@ export class ProviderManager {
     await Promise.allSettled(statusPromises);
   }
 
-  private async updateProviderStatus(
-    type: RenderProvider, 
-    provider: AIProvider
-  ): Promise<void> {
+  private async updateProviderStatus(type: RenderProvider, provider: AIProvider): Promise<void> {
     try {
       const status = await provider.getStatus();
       this.providerStatus.set(type, {

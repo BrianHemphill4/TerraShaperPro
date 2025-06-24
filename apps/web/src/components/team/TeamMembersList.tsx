@@ -1,7 +1,7 @@
 'use client';
 
 import type { User, UserRole } from '@terrashaper/shared';
-import {MoreVertical, Shield, UserX } from 'lucide-react';
+import { MoreVertical, Shield, UserX } from 'lucide-react';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -16,12 +16,19 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog';
 
 type TeamMembersListProps = {
   currentUserId: string;
   currentUserRole: UserRole;
-}
+};
 
 const roleColors: Record<UserRole, string> = {
   owner: 'bg-purple-500',
@@ -113,9 +120,7 @@ export function TeamMembersList({ currentUserId, currentUserRole }: TeamMembersL
                     <p className="font-medium">{member.full_name || member.email}</p>
                     <p className="text-sm text-gray-500">{member.email}</p>
                   </div>
-                  <Badge className={roleColors[member.role]}>
-                    {member.role}
-                  </Badge>
+                  <Badge className={roleColors[member.role]}>{member.role}</Badge>
                 </div>
 
                 {canManageTeam && member.id !== currentUserId && (
@@ -187,7 +192,7 @@ export function TeamMembersList({ currentUserId, currentUserRole }: TeamMembersL
           )}
         </CardContent>
       </Card>
-      
+
       <Dialog open={isRemoveDialogOpen} onOpenChange={setIsRemoveDialogOpen}>
         <DialogContent>
           <DialogHeader>

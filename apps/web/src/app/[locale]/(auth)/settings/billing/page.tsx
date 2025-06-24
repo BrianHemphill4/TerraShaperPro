@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default async function BillingSettingsPage() {
   const { _userId } = auth();
-  
+
   // In a real app, you'd fetch the current subscription tier from the database
   const currentTier = 'free';
 

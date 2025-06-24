@@ -1,14 +1,14 @@
 'use client';
 
-// import * as Sentry from '@sentry/nextjs';
 import type { ReactNode } from 'react';
 import React, { Component } from 'react';
 
-// import { captureException } from '@/sentry';
+import { toast } from '@terrashaper/hooks/use-toast';
+import { browserLogger } from '@/lib/logger';
 
 // Temporary mock for Sentry
 const captureException = (error: Error) => {
-  console.error('Error captured:', error);
+  browserLogger.error('Error captured', error);
   return Date.now().toString();
 };
 
@@ -107,7 +107,11 @@ export class ErrorBoundary extends Component<Props, State> {
                 onClick={() => {
                   // Temporarily disabled Sentry report dialog
                   // Sentry.showReportDialog({ eventId: this.state.eventId! });
-                  alert('Error reporting is temporarily disabled');
+                  toast({
+                    title: 'Error Reporting',
+                    description: 'Error reporting is temporarily disabled',
+                    variant: 'default',
+                  });
                 }}
                 className="w-full rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
               >

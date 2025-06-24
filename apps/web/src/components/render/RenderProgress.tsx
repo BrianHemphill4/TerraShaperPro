@@ -1,14 +1,14 @@
 'use client';
 
-import { 
+import {
   AlertCircle,
-  CheckCircle2, 
+  CheckCircle2,
   Clock,
-  Loader2, 
-  RefreshCw, 
+  Loader2,
+  RefreshCw,
   Sparkles,
   Users,
-  XCircle
+  XCircle,
 } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -24,18 +24,20 @@ type RenderProgressProps = {
   renderId: string;
   onComplete?: (result: any) => void;
   onError?: (error: string) => void;
-}
+};
 
 export function RenderProgress({ renderId, onComplete, onError }: RenderProgressProps) {
   const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState<'pending' | 'processing' | 'completed' | 'failed'>('pending');
+  const [status, setStatus] = useState<'pending' | 'processing' | 'completed' | 'failed'>(
+    'pending'
+  );
   const [error, setError] = useState<string | null>(null);
   const [queuePosition, setQueuePosition] = useState<number | null>(null);
   const [estimatedTime, setEstimatedTime] = useState<number | null>(null);
 
   const { data: renderStatus } = trpc.render.status.useQuery(
     { renderId },
-    { 
+    {
       refetchInterval: status === 'completed' || status === 'failed' ? false : 2000,
     }
   );
@@ -90,12 +92,11 @@ export function RenderProgress({ renderId, onComplete, onError }: RenderProgress
       // Find position in queue
       const position = queueMetrics.waiting + 1;
       setQueuePosition(position);
-      
+
       // Estimate time based on average processing time
-      const avgTime = queueMetrics.completed > 0 
-        ? queueMetrics.processingTime / queueMetrics.completed
-        : 30000; // Default 30s
-      
+      const avgTime =
+        queueMetrics.completed > 0 ? queueMetrics.processingTime / queueMetrics.completed : 30000; // Default 30s
+
       const estimatedMs = position * avgTime;
       setEstimatedTime(Math.ceil(estimatedMs / 1000)); // Convert to seconds
     }
@@ -155,9 +156,7 @@ export function RenderProgress({ renderId, onComplete, onError }: RenderProgress
             {getStatusIcon()}
             <CardTitle>Render Progress</CardTitle>
           </div>
-          <Badge variant={getStatusColor() as any}>
-            {getStatusText()}
-          </Badge>
+          <Badge variant={getStatusColor() as any}>{getStatusText()}</Badge>
         </div>
         <CardDescription>
           {status === 'pending' && 'Your render is queued and will start soon'}
@@ -166,7 +165,7 @@ export function RenderProgress({ renderId, onComplete, onError }: RenderProgress
           {status === 'failed' && 'Something went wrong with your render'}
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* Progress Bar */}
         {(status === 'pending' || status === 'processing') && (
@@ -187,9 +186,13 @@ export function RenderProgress({ renderId, onComplete, onError }: RenderProgress
             <Users className="size-4" />
             <AlertTitle>Queue Position</AlertTitle>
             <AlertDescription>
-              You are #{queuePosition} in the queue. 
+              You are #{queuePosition} in the queue.
               {queueMetrics?.active && queueMetrics.active > 0 && (
-                <span> {queueMetrics.active} render{queueMetrics.active > 1 ? 's' : ''} currently processing.</span>
+                <span>
+                  {' '}
+                  {queueMetrics.active} render{queueMetrics.active > 1 ? 's' : ''} currently
+                  processing.
+                </span>
               )}
             </AlertDescription>
           </Alert>
@@ -199,20 +202,32 @@ export function RenderProgress({ renderId, onComplete, onError }: RenderProgress
         {status === 'processing' && (
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
-              <Sparkles className={`size-4 ${progress >= 20 ? 'text-primary' : 'text-muted-foreground'}`} />
-              <span className={`text-sm ${progress >= 20 ? 'text-primary' : 'text-muted-foreground'}`}>
+              <Sparkles
+                className={`size-4 ${progress >= 20 ? 'text-primary' : 'text-muted-foreground'}`}
+              />
+              <span
+                className={`text-sm ${progress >= 20 ? 'text-primary' : 'text-muted-foreground'}`}
+              >
                 Analyzing design elements
               </span>
             </div>
             <div className="flex items-center space-x-2">
-              <Sparkles className={`size-4 ${progress >= 50 ? 'text-primary' : 'text-muted-foreground'}`} />
-              <span className={`text-sm ${progress >= 50 ? 'text-primary' : 'text-muted-foreground'}`}>
+              <Sparkles
+                className={`size-4 ${progress >= 50 ? 'text-primary' : 'text-muted-foreground'}`}
+              />
+              <span
+                className={`text-sm ${progress >= 50 ? 'text-primary' : 'text-muted-foreground'}`}
+              >
                 Generating landscape visualization
               </span>
             </div>
             <div className="flex items-center space-x-2">
-              <Sparkles className={`size-4 ${progress >= 80 ? 'text-primary' : 'text-muted-foreground'}`} />
-              <span className={`text-sm ${progress >= 80 ? 'text-primary' : 'text-muted-foreground'}`}>
+              <Sparkles
+                className={`size-4 ${progress >= 80 ? 'text-primary' : 'text-muted-foreground'}`}
+              />
+              <span
+                className={`text-sm ${progress >= 80 ? 'text-primary' : 'text-muted-foreground'}`}
+              >
                 Finalizing render quality
               </span>
             </div>
@@ -224,9 +239,7 @@ export function RenderProgress({ renderId, onComplete, onError }: RenderProgress
           <Alert variant="destructive">
             <AlertCircle className="size-4" />
             <AlertTitle>Render Failed</AlertTitle>
-            <AlertDescription>
-              {error}
-            </AlertDescription>
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 

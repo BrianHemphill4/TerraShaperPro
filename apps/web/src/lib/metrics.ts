@@ -1,4 +1,3 @@
-// import * as Sentry from '@sentry/nextjs';
 import { PerformanceMonitor } from './performance';
 
 // Mock Sentry functions when disabled
@@ -13,13 +12,13 @@ export type Metric = {
   value: number;
   unit: string;
   tags?: Record<string, string>;
-}
+};
 
 export type PerformanceBudget = {
   metric: string;
   budget: number;
   unit: string;
-}
+};
 
 export class MetricsService {
   private static instance: MetricsService;
@@ -42,17 +41,17 @@ export class MetricsService {
     this.setBudget('page.load', 3000, 'ms');
     this.setBudget('page.interactive', 5000, 'ms');
     this.setBudget('page.firstPaint', 1500, 'ms');
-    
+
     // API response budgets
     this.setBudget('api.response', 200, 'ms');
     this.setBudget('api.render.create', 500, 'ms');
     this.setBudget('api.plant.search', 100, 'ms');
-    
+
     // Resource budgets
     this.setBudget('bundle.size.main', 300, 'kb');
     this.setBudget('bundle.size.vendor', 500, 'kb');
     this.setBudget('image.size.max', 200, 'kb');
-    
+
     // Canvas performance budgets
     this.setBudget('canvas.render', 16, 'ms'); // 60fps
     this.setBudget('canvas.interaction', 50, 'ms');
@@ -67,18 +66,16 @@ export class MetricsService {
   }
 
   recordMetric(metric: Metric): void {
-    // Record in Sentry
-    const span = Sentry.getActiveSpan();
-    if (span) {
-      span.setAttribute(metric.name, metric.value);
-      
-      // Add tags
-      if (metric.tags) {
-        Object.entries(metric.tags).forEach(([key, value]) => {
-          span.setAttribute(key, value);
-        });
-      }
-    }
+    // Record in Sentry (disabled)
+    // const span = Sentry.getActiveSpan();
+    // if (span) {
+    //   span.setAttribute(metric.name, metric.value);
+    //   if (metric.tags) {
+    //     Object.entries(metric.tags).forEach(([key, value]) => {
+    //       span.setAttribute(key, value);
+    //     });
+    //   }
+    // }
 
     // Check against budget
     const budget = this.budgets.get(metric.name);
@@ -100,17 +97,17 @@ export class MetricsService {
       percentage: ((metric.value / budget.budget) * 100).toFixed(2),
     };
 
-    // Log to Sentry
-    Sentry.captureMessage(`Performance budget exceeded: ${metric.name}`, {
-      level: 'warning',
-      tags: {
-        metric: metric.name,
-        ...metric.tags,
-      },
-      contexts: {
-        performanceBudget: violation,
-      },
-    });
+    // Log to Sentry (disabled)
+    // Sentry.captureMessage(`Performance budget exceeded: ${metric.name}`, {
+    //   level: 'warning',
+    //   tags: {
+    //     metric: metric.name,
+    //     ...metric.tags,
+    //   },
+    //   contexts: {
+    //     performanceBudget: violation,
+    //   },
+    // });
 
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
@@ -120,16 +117,16 @@ export class MetricsService {
 
   recordWebVitals(metric: { name: string; value: number; id: string }): void {
     const webVitalMap: Record<string, string> = {
-      'FCP': 'first-contentful-paint',
-      'LCP': 'largest-contentful-paint',
-      'CLS': 'cumulative-layout-shift',
-      'FID': 'first-input-delay',
-      'TTFB': 'time-to-first-byte',
-      'INP': 'interaction-to-next-paint',
+      FCP: 'first-contentful-paint',
+      LCP: 'largest-contentful-paint',
+      CLS: 'cumulative-layout-shift',
+      FID: 'first-input-delay',
+      TTFB: 'time-to-first-byte',
+      INP: 'interaction-to-next-paint',
     };
 
     const metricName = webVitalMap[metric.name] || metric.name.toLowerCase();
-    
+
     this.recordMetric({
       name: `webvital.${metricName}`,
       value: metric.value,
@@ -177,7 +174,12 @@ export class MetricsService {
     });
   }
 
-  recordCustomMetric(name: string, value: number, unit: string = 'count', tags?: Record<string, string>): void {
+  recordCustomMetric(
+    name: string,
+    value: number,
+    unit: string = 'count',
+    tags?: Record<string, string>
+  ): void {
     this.recordMetric({
       name: `custom.${name}`,
       value,
@@ -209,18 +211,21 @@ export class MetricsService {
   }
 
   startTransaction(name: string, op: string = 'navigation'): any {
-    return Sentry.startSpan({
-      name,
-      op,
-      attributes: {
-        source: 'custom',
+    return Sentry.startSpan(
+      {
+        name,
+        op,
+        attributes: {
+          source: 'custom',
+        },
       },
-    }, (span) => {
-      return span;
-    });
+      (_span: any) => {
+        return _span;
+      }
+    );
   }
 
-  finishTransaction(transaction: any): void {
+  finishTransaction(_transaction: any): void {
     // Spans are automatically finished in the new API
   }
 }

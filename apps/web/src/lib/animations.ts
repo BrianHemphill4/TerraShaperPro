@@ -28,8 +28,8 @@ export const scaleIn: Variants = {
 
 export const scaleInBounce: Variants = {
   initial: { opacity: 0, scale: 0.8 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     scale: 1,
     transition: {
       type: 'spring',
@@ -71,7 +71,7 @@ export const staggerItem: Variants = {
 // Card hover effect
 export const cardHover: Variants = {
   initial: { scale: 1 },
-  hover: { 
+  hover: {
     scale: 1.02,
     transition: {
       duration: 0.2,
@@ -89,18 +89,18 @@ export const buttonTap: Variants = {
 // Tooltip animation
 export const tooltipAnimation: Variants = {
   initial: { opacity: 0, scale: 0.95, y: 5 },
-  animate: { 
-    opacity: 1, 
-    scale: 1, 
+  animate: {
+    opacity: 1,
+    scale: 1,
     y: 0,
     transition: {
       duration: 0.15,
       ease: 'easeOut',
     },
   },
-  exit: { 
-    opacity: 0, 
-    scale: 0.95, 
+  exit: {
+    opacity: 0,
+    scale: 0.95,
     y: 5,
     transition: {
       duration: 0.1,
@@ -112,16 +112,16 @@ export const tooltipAnimation: Variants = {
 // Modal/Dialog animation
 export const modalAnimation: Variants = {
   initial: { opacity: 0, scale: 0.95 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     scale: 1,
     transition: {
       duration: 0.2,
       ease: 'easeOut',
     },
   },
-  exit: { 
-    opacity: 0, 
+  exit: {
+    opacity: 0,
     scale: 0.95,
     transition: {
       duration: 0.15,
@@ -133,7 +133,7 @@ export const modalAnimation: Variants = {
 // Drawer animations
 export const drawerSlideIn: Variants = {
   initial: { x: '100%' },
-  animate: { 
+  animate: {
     x: 0,
     transition: {
       type: 'spring',
@@ -141,7 +141,7 @@ export const drawerSlideIn: Variants = {
       damping: 30,
     },
   },
-  exit: { 
+  exit: {
     x: '100%',
     transition: {
       duration: 0.2,
@@ -165,7 +165,7 @@ export const spinnerRotate = {
 // Success checkmark
 export const checkmarkPath: Variants = {
   initial: { pathLength: 0 },
-  animate: { 
+  animate: {
     pathLength: 1,
     transition: {
       duration: 0.5,
@@ -177,7 +177,7 @@ export const checkmarkPath: Variants = {
 // Error shake
 export const errorShake: Variants = {
   initial: { x: 0 },
-  animate: { 
+  animate: {
     x: [0, -10, 10, -10, 10, 0],
     transition: {
       duration: 0.5,
@@ -202,16 +202,16 @@ export const pulseAnimation = {
 // Page transitions
 export const pageTransition: Variants = {
   initial: { opacity: 0, y: 20 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     y: 0,
     transition: {
       duration: 0.3,
       ease: 'easeOut',
     },
   },
-  exit: { 
-    opacity: 0, 
+  exit: {
+    opacity: 0,
     y: -20,
     transition: {
       duration: 0.2,

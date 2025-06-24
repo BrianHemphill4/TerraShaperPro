@@ -5,12 +5,12 @@ import { lookup } from 'mime-types';
 import { getBucket } from './client';
 import { getStorageConfig } from './config';
 import { ImageProcessor } from './image-processor';
-import type { 
-  ImageOptimizationOptions, 
-  SignedUrlOptions, 
+import type {
+  ImageOptimizationOptions,
+  SignedUrlOptions,
   StorageBucket,
-  UploadOptions, 
-  UploadResult
+  UploadOptions,
+  UploadResult,
 } from './types';
 
 export class StorageService {
@@ -46,9 +46,8 @@ export class StorageService {
       await file.makePublic();
     }
 
-    const bucketName = bucketType === 'renders' 
-      ? this.config.rendersBucket 
-      : this.config.assetsBucket;
+    const bucketName =
+      bucketType === 'renders' ? this.config.rendersBucket : this.config.assetsBucket;
 
     const publicUrl = this.getPublicUrl(bucketName, fileName);
 
@@ -91,7 +90,7 @@ export class StorageService {
     if (!optimizationOptions?.thumbnail) {
       const thumbnailBuffer = await ImageProcessor.createThumbnail(buffer);
       const thumbnailFileName = this.getThumbnailFileName(fileName);
-      
+
       thumbnail = await this.uploadFile({
         bucket: bucketType,
         fileName: thumbnailFileName,
@@ -157,14 +156,14 @@ export class StorageService {
   async deleteFile(bucketType: StorageBucket, fileName: string): Promise<void> {
     const bucket = getBucket(bucketType);
     const file = bucket.file(fileName);
-    
+
     await file.delete();
   }
 
   async fileExists(bucketType: StorageBucket, fileName: string): Promise<boolean> {
     const bucket = getBucket(bucketType);
     const file = bucket.file(fileName);
-    
+
     const [exists] = await file.exists();
     return exists;
   }
@@ -172,7 +171,7 @@ export class StorageService {
   async getFileMetadata(bucketType: StorageBucket, fileName: string) {
     const bucket = getBucket(bucketType);
     const file = bucket.file(fileName);
-    
+
     const [metadata] = await file.getMetadata();
     return metadata;
   }
@@ -185,10 +184,10 @@ export class StorageService {
   ): Promise<void> {
     const sourceBucketObj = getBucket(sourceBucket);
     const destBucketObj = getBucket(destBucket);
-    
+
     const sourceFile = sourceBucketObj.file(sourceFileName);
     const destFile = destBucketObj.file(destFileName);
-    
+
     await sourceFile.copy(destFile);
   }
 
@@ -204,7 +203,7 @@ export class StorageService {
     if (lastDotIndex === -1) {
       return `${originalFileName}_thumb.webp`;
     }
-    
+
     const name = originalFileName.substring(0, lastDotIndex);
     return `${name}_thumb.webp`;
   }
@@ -216,7 +215,7 @@ export class StorageService {
     metadata?: Record<string, string>
   ): Promise<{ original: UploadResult; thumbnail: UploadResult }> {
     const fileName = `renders/${renderId}.webp`;
-    
+
     const result = await this.uploadImage('renders', fileName, imageBuffer, {
       format: 'webp',
       quality: 85,
@@ -243,7 +242,7 @@ export class StorageService {
     metadata?: Record<string, string>
   ): Promise<{ original: UploadResult; thumbnail: UploadResult }> {
     const fileName = `assets/${assetId}.webp`;
-    
+
     const result = await this.uploadImage('assets', fileName, imageBuffer, {
       format: 'webp',
       quality: 90,

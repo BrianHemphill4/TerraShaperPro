@@ -1,19 +1,33 @@
 {
   "compilerOptions": {
+    "incremental": false,
     "target": "es2015",
+    "jsx": "preserve",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
+    "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "node",
+    "paths": {
+      "@terrashaper/ui": ["packages/ui/src"],
+      "@terrashaper/hooks": ["packages/hooks/src"],
+      "@terrashaper/services": ["packages/services/src"],
+      "@terrashaper/shared": ["packages/shared/src"],
+      "@terrashaper/storage": ["packages/storage/src"],
+      "@terrashaper/queue": ["packages/queue/src"],
+      "@terrashaper/stripe": ["packages/stripe/src"],
+      "@terrashaper/scripts": ["packages/scripts/src"],
+      "@terrashaper/db": ["packages/db/src"],
+      "@terrashaper/ai-service": ["packages/ai-service/src"],
+      "@terrashaper/sentry": ["packages/sentry"]
+    },
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": false
+    "allowJs": true,
+    "strict": true,
+    "noEmit": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "isolatedModules": true
   },
   "exclude": ["node_modules"]
 } 

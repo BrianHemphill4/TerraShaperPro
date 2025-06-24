@@ -70,7 +70,7 @@ export function startTransaction(name: string, op: string) {
 
 export function withSentry<T extends (...args: any[]) => any>(
   fn: T,
-  options?: { name?: string; op?: string },
+  options?: { name?: string; op?: string }
 ): T {
   return ((...args: Parameters<T>) => {
     return Sentry.startSpan(
@@ -78,7 +78,7 @@ export function withSentry<T extends (...args: any[]) => any>(
         name: options?.name || fn.name || 'anonymous',
         op: options?.op || 'function',
       },
-      () => fn(...args),
+      () => fn(...args)
     );
   }) as T;
 }

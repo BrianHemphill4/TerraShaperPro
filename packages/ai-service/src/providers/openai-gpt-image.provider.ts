@@ -1,10 +1,10 @@
 import OpenAI from 'openai';
 
-import type { 
-  AIProvider, 
-  GenerationResult, 
-  ImageGenerationOptions, 
-  ProviderConfig
+import type {
+  AIProvider,
+  GenerationResult,
+  ImageGenerationOptions,
+  ProviderConfig,
 } from '../types/ai-provider.interface';
 import { withRetry } from '../utils/retry';
 
@@ -15,7 +15,7 @@ export class OpenAIGPTImageProvider implements AIProvider {
 
   async initialize(config: ProviderConfig): Promise<void> {
     this.config = config;
-    
+
     this.openai = new OpenAI({
       apiKey: config.apiKey,
       baseURL: config.baseUrl,
@@ -30,7 +30,7 @@ export class OpenAIGPTImageProvider implements AIProvider {
       width: 1024,
       height: 1024,
       style: 'realistic',
-      quality: 'high'
+      quality: 'high',
     }
   ): Promise<GenerationResult> {
     if (!this.openai) {
@@ -41,16 +41,17 @@ export class OpenAIGPTImageProvider implements AIProvider {
 
     try {
       const enhancedPrompt = this.enhancePrompt(prompt, options);
-      
+
       const response = await withRetry(
-        () => this.openai!.images.generate({
-          model: 'dall-e-3',
-          prompt: enhancedPrompt,
-          n: 1,
-          size: this.getSize(options.width || 1024, options.height || 1024),
-          quality: this.mapQuality(options.quality || 'high'),
-          style: this.mapStyle(options.style || 'realistic'),
-        }),
+        () =>
+          this.openai!.images.generate({
+            model: 'dall-e-3',
+            prompt: enhancedPrompt,
+            n: 1,
+            size: this.getSize(options.width || 1024, options.height || 1024),
+            quality: this.mapQuality(options.quality || 'high'),
+            style: this.mapStyle(options.style || 'realistic'),
+          }),
         {
           maxAttempts: 3,
           initialDelay: 2000,
@@ -60,7 +61,7 @@ export class OpenAIGPTImageProvider implements AIProvider {
                 error.status === 429 || // Rate limit
                 error.status === 500 || // Server error
                 error.status === 502 || // Bad gateway
-                error.status === 503    // Service unavailable
+                error.status === 503 // Service unavailable
               );
             }
             return false;
@@ -91,7 +92,9 @@ export class OpenAIGPTImageProvider implements AIProvider {
       if (error instanceof OpenAI.APIError) {
         throw new TypeError(`OpenAI API error: ${error.message}`);
       }
-      throw new Error(`Image generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Image generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -123,7 +126,7 @@ export class OpenAIGPTImageProvider implements AIProvider {
 
     const quality = options.quality || 'high';
     const size = this.getSize(options.width || 1024, options.height || 1024);
-    
+
     return qualityCost[quality] * (sizeCost[size as keyof typeof sizeCost] || 1);
   }
 
@@ -138,10 +141,10 @@ export class OpenAIGPTImageProvider implements AIProvider {
 
     try {
       const startTime = Date.now();
-      
+
       const models = await this.openai.models.list();
-      const dalleAvailable = models.data.some(model => model.id.includes('dall-e'));
-      
+      const dalleAvailable = models.data.some((model) => model.id.includes('dall-e'));
+
       const latency = Date.now() - startTime;
 
       return {
@@ -155,7 +158,7 @@ export class OpenAIGPTImageProvider implements AIProvider {
 
   private getSize(width: number, height: number): '1024x1024' | '1792x1024' | '1024x1792' {
     const ratio = width / height;
-    
+
     if (ratio > 1.5) return '1792x1024';
     if (ratio < 0.66) return '1024x1792';
     return '1024x1024';
@@ -165,7 +168,9 @@ export class OpenAIGPTImageProvider implements AIProvider {
     return quality === 'low' || quality === 'medium' ? 'standard' : 'hd';
   }
 
-  private mapStyle(style: 'realistic' | 'artistic' | 'architectural' | 'photographic'): 'natural' | 'vivid' {
+  private mapStyle(
+    style: 'realistic' | 'artistic' | 'architectural' | 'photographic'
+  ): 'natural' | 'vivid' {
     return style === 'realistic' || style === 'photographic' ? 'natural' : 'vivid';
   }
 

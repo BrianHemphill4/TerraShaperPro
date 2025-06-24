@@ -1,4 +1,4 @@
-import { db, designElements, eq } from '@terrasherper/db';
+import { db, designElements, eq } from '@terrashaper/db';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 

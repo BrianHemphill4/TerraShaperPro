@@ -17,4 +17,4 @@ export const db = drizzle(pool, { schema });
 export * from './schema';
 export * from './supabase';
 export * from './supabase-helpers';
-export { eq } from 'drizzle-orm'; 
+export { eq } from 'drizzle-orm';

@@ -49,11 +49,7 @@ export default withSentryConfig(
         contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
         deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
         imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-        domains: [
-          'storage.googleapis.com',
-          'lh3.googleusercontent.com',
-          'images.unsplash.com',
-        ],
+        domains: ['storage.googleapis.com', 'lh3.googleusercontent.com', 'images.unsplash.com'],
       },
       async headers() {
         return [
@@ -113,7 +109,7 @@ export default withSentryConfig(
             ...config.resolve.alias,
             'date-fns': 'date-fns/esm',
           };
-          
+
           config.optimization.splitChunks = {
             ...config.optimization.splitChunks,
             chunks: 'all',
@@ -145,11 +141,11 @@ export default withSentryConfig(
               },
             },
           };
-          
+
           config.optimization.usedExports = true;
           config.optimization.sideEffects = false;
         }
-        
+
         config.module.rules.push({
           test: /\.svg$/,
           use: [
@@ -173,14 +169,17 @@ export default withSentryConfig(
             },
           ],
         });
-        
+
         return config;
       },
       output: 'standalone',
       compiler: {
-        removeConsole: process.env.NODE_ENV === 'production' ? {
-          exclude: ['error', 'warn'],
-        } : false,
+        removeConsole:
+          process.env.NODE_ENV === 'production'
+            ? {
+                exclude: ['error', 'warn'],
+              }
+            : false,
       },
       swcMinify: true,
       modularizeImports: {
@@ -197,7 +196,7 @@ export default withSentryConfig(
           skipDefaultConversion: true,
         },
       },
-    }),
+    })
   ),
   {
     // For all available options, see:
@@ -234,5 +233,5 @@ export default withSentryConfig(
 
     // Disable Sentry telemetry
     telemetry: false,
-  },
+  }
 );

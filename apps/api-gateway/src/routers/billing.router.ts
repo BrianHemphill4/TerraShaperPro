@@ -1,24 +1,24 @@
-import { protectedProcedure, publicProcedure, router } from '../trpc';
-import { z } from 'zod';
-import { TRPCError } from '@trpc/server';
 import {
+  ActivityActions,
+  AddPaymentMethodSchema,
+  CancelSubscriptionSchema,
   CreateCheckoutSessionSchema,
   CreatePortalSessionSchema,
-  UpdateSubscriptionSchema,
-  CancelSubscriptionSchema,
-  AddPaymentMethodSchema,
   hasPermission,
-  ActivityActions,
-  UserRoleEnum,
+  UpdateSubscriptionSchema,
   type UserRole,
 } from '@terrashaper/shared';
 import {
   CustomerService,
-  SubscriptionService,
-  PaymentService,
   InvoiceService,
+  PaymentService,
   PortalService,
+  SubscriptionService,
 } from '@terrashaper/stripe';
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
+
+import { protectedProcedure, publicProcedure, router } from '../trpc';
 
 const customerService = new CustomerService();
 const subscriptionService = new SubscriptionService();
@@ -219,7 +219,7 @@ export const billingRouter = router({
         user_id: ctx.session.userId,
         action: ActivityActions.ORG_SUBSCRIPTION_CHANGED,
         entity_type: 'subscription',
-        metadata: { 
+        metadata: {
           action: 'plan_changed',
           newPriceId: input.priceId,
           oldTier: org.subscription_tier,
@@ -273,8 +273,12 @@ export const billingRouter = router({
       await ctx.supabase
         .from('organizations')
         .update({
-          stripe_cancel_at: subscription.cancel_at ? new Date(subscription.cancel_at * 1000).toISOString() : null,
-          stripe_canceled_at: subscription.canceled_at ? new Date(subscription.canceled_at * 1000).toISOString() : null,
+          stripe_cancel_at: subscription.cancel_at
+            ? new Date(subscription.cancel_at * 1000).toISOString()
+            : null,
+          stripe_canceled_at: subscription.canceled_at
+            ? new Date(subscription.canceled_at * 1000).toISOString()
+            : null,
         })
         .eq('id', ctx.session.organizationId);
 
@@ -284,7 +288,7 @@ export const billingRouter = router({
         user_id: ctx.session.userId,
         action: ActivityActions.ORG_SUBSCRIPTION_CHANGED,
         entity_type: 'subscription',
-        metadata: { 
+        metadata: {
           action: 'subscription_canceled',
           cancelAtPeriodEnd: input.cancelAtPeriodEnd,
           reason: input.reason,
@@ -307,7 +311,7 @@ export const billingRouter = router({
     }
 
     const paymentMethods = await customerService.listPaymentMethods(org.stripe_customer_id);
-    
+
     // Also get from database
     const { data: dbPaymentMethods } = await ctx.supabase
       .from('payment_methods')
@@ -322,9 +326,11 @@ export const billingRouter = router({
       last4: pm.card?.last4,
       expMonth: pm.card?.exp_month,
       expYear: pm.card?.exp_year,
-      isDefault: dbPaymentMethods?.find((db: any) => db.stripe_payment_method_id === pm.id)?.is_default || false,
+      isDefault:
+        dbPaymentMethods?.find((db: any) => db.stripe_payment_method_id === pm.id)?.is_default ||
+        false,
     }));
-    }),
+  }),
 
   // Add payment method
   addPaymentMethod: protectedProcedure
@@ -377,7 +383,7 @@ export const billingRouter = router({
 
       if (input.setAsDefault) {
         await customerService.setDefaultPaymentMethod(org.stripe_customer_id, paymentMethod.id);
-        
+
         // Update other payment methods to not be default
         await ctx.supabase
           .from('payment_methods')
@@ -391,10 +397,12 @@ export const billingRouter = router({
 
   // Get invoices
   getInvoices: protectedProcedure
-    .input(z.object({
-      limit: z.number().min(1).max(100).default(10),
-      offset: z.number().min(0).default(0),
-    }))
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(10),
+        offset: z.number().min(0).default(0),
+      })
+    )
     .query(async ({ ctx, input }) => {
       const { data: invoices } = await ctx.supabase
         .from('invoices')
@@ -472,10 +480,12 @@ export const billingRouter = router({
   getSubscription: protectedProcedure.query(async ({ ctx }) => {
     const { data: org } = await ctx.supabase
       .from('organizations')
-      .select(`
+      .select(
+        `
         *,
         subscription_plans!organizations_stripe_price_id_fkey (*)
-      `)
+      `
+      )
       .eq('id', ctx.session.organizationId)
       .single();
 
@@ -494,12 +504,13 @@ export const billingRouter = router({
         .select('*')
         .eq('stripe_price_id', org.stripe_price_id)
         .single();
-      
+
       currentPlan = plan;
     }
 
     // If no plan or inactive subscription, default to starter
-    const effectiveTier = (org.stripe_subscription_status === 'active' && currentPlan?.tier) || 'starter';
+    const effectiveTier =
+      (org.stripe_subscription_status === 'active' && currentPlan?.tier) || 'starter';
 
     return {
       organization: org,
@@ -517,15 +528,16 @@ export const billingRouter = router({
 
   // Check feature access
   checkFeature: protectedProcedure
-    .input(z.object({
-      feature: z.string(),
-    }))
+    .input(
+      z.object({
+        feature: z.string(),
+      })
+    )
     .query(async ({ ctx, input }) => {
-      const { data: result } = await ctx.supabase
-        .rpc('check_feature_access', {
-          org_id: ctx.session.organizationId,
-          feature_name: input.feature,
-        });
+      const { data: result } = await ctx.supabase.rpc('check_feature_access', {
+        org_id: ctx.session.organizationId,
+        feature_name: input.feature,
+      });
 
       return {
         hasAccess: result || false,
@@ -535,10 +547,12 @@ export const billingRouter = router({
 
   // Check usage limit
   checkUsageLimit: protectedProcedure
-    .input(z.object({
-      limitType: z.enum(['projects', 'team_members', 'renders', 'storage_gb']),
-      currentUsage: z.number().optional(),
-    }))
+    .input(
+      z.object({
+        limitType: z.enum(['projects', 'team_members', 'renders', 'storage_gb']),
+        currentUsage: z.number().optional(),
+      })
+    )
     .query(async ({ ctx, input }) => {
       let usage = input.currentUsage;
 
@@ -565,14 +579,14 @@ export const billingRouter = router({
             const startOfMonth = new Date();
             startOfMonth.setDate(1);
             startOfMonth.setHours(0, 0, 0, 0);
-            
+
             const { data } = await ctx.supabase
               .from('usage_records')
               .select('quantity')
               .eq('organization_id', ctx.session.organizationId)
               .eq('record_type', 'render')
               .gte('created_at', startOfMonth.toISOString());
-            
+
             usage = data?.reduce((sum: number, record: any) => sum + record.quantity, 0) || 0;
             break;
           }
@@ -584,38 +598,40 @@ export const billingRouter = router({
         }
       }
 
-      const { data: result } = await ctx.supabase
-        .rpc('check_usage_limit', {
-          org_id: ctx.session.organizationId,
-          limit_type: input.limitType,
-          current_usage: usage || 0,
-        });
+      const { data: result } = await ctx.supabase.rpc('check_usage_limit', {
+        org_id: ctx.session.organizationId,
+        limit_type: input.limitType,
+        current_usage: usage || 0,
+      });
 
-      return result || {
-        limit: 0,
-        usage: usage || 0,
-        remaining: 0,
-        exceeded: true,
-        percentage: 100,
-      };
+      return (
+        result || {
+          limit: 0,
+          usage: usage || 0,
+          remaining: 0,
+          exceeded: true,
+          percentage: 100,
+        }
+      );
     }),
 
   // Get current overage charges
   getCurrentOverages: protectedProcedure.query(async ({ ctx }) => {
-    const { data: overages } = await ctx.supabase
-      .rpc('get_current_overages', {
-        p_organization_id: ctx.session.organizationId,
-      });
+    const { data: overages } = await ctx.supabase.rpc('get_current_overages', {
+      p_organization_id: ctx.session.organizationId,
+    });
 
     return overages || [];
   }),
 
   // Get overage history
   getOverageHistory: protectedProcedure
-    .input(z.object({
-      limit: z.number().min(1).max(100).default(12),
-      offset: z.number().min(0).default(0),
-    }))
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(12),
+        offset: z.number().min(0).default(0),
+      })
+    )
     .query(async ({ ctx, input }) => {
       const { data: charges, error } = await ctx.supabase
         .from('overage_charges')

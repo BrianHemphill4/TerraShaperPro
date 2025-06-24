@@ -1,7 +1,7 @@
 'use client';
 
-import { AnimatePresence,motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight,X } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { useOnboardingStore } from '@/stores/onboarding';
 type HighlightOverlayProps = {
   target: string | null;
   padding?: number;
-}
+};
 
 function HighlightOverlay({ target, padding = 8 }: HighlightOverlayProps) {
   const [bounds, setBounds] = useState<DOMRect | null>(null);
@@ -34,11 +34,11 @@ function HighlightOverlay({ target, padding = 8 }: HighlightOverlayProps) {
     };
 
     updateBounds();
-    
+
     // Update on resize or scroll
     window.addEventListener('resize', updateBounds);
     window.addEventListener('scroll', updateBounds);
-    
+
     // Observe DOM changes
     const observer = new MutationObserver(updateBounds);
     observer.observe(document.body, { childList: true, subtree: true });
@@ -80,10 +80,10 @@ function HighlightOverlay({ target, padding = 8 }: HighlightOverlayProps) {
           />
         </svg>
       </div>
-      
+
       {/* Highlight border */}
       <div
-        className="pointer-events-none fixed z-[9999] rounded-lg border-2 border-primary transition-all duration-300"
+        className="border-primary pointer-events-none fixed z-[9999] rounded-lg border-2 transition-all duration-300"
         style={{
           left: bounds.left - padding,
           top: bounds.top - padding,
@@ -100,7 +100,7 @@ type TooltipPosition = {
   bottom?: number;
   left?: number;
   right?: number;
-}
+};
 
 function calculateTooltipPosition(
   targetBounds: DOMRect | null,
@@ -144,16 +144,28 @@ function calculateTooltipPosition(
 
   // Ensure tooltip stays within viewport
   if (position.left !== undefined) {
-    position.left = Math.max(padding, Math.min(position.left, window.innerWidth - tooltipWidth - padding));
+    position.left = Math.max(
+      padding,
+      Math.min(position.left, window.innerWidth - tooltipWidth - padding)
+    );
   }
   if (position.right !== undefined) {
-    position.right = Math.max(padding, Math.min(position.right, window.innerWidth - tooltipWidth - padding));
+    position.right = Math.max(
+      padding,
+      Math.min(position.right, window.innerWidth - tooltipWidth - padding)
+    );
   }
   if (position.top !== undefined) {
-    position.top = Math.max(padding, Math.min(position.top, window.innerHeight - tooltipHeight - padding));
+    position.top = Math.max(
+      padding,
+      Math.min(position.top, window.innerHeight - tooltipHeight - padding)
+    );
   }
   if (position.bottom !== undefined) {
-    position.bottom = Math.max(padding, Math.min(position.bottom, window.innerHeight - tooltipHeight - padding));
+    position.bottom = Math.max(
+      padding,
+      Math.min(position.bottom, window.innerHeight - tooltipHeight - padding)
+    );
   }
 
   return position;
@@ -162,7 +174,7 @@ function calculateTooltipPosition(
 export function InteractiveTutorial() {
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [targetBounds, setTargetBounds] = useState<DOMRect | null>(null);
-  
+
   const {
     currentFlowId,
     currentStepIndex,
@@ -193,10 +205,7 @@ export function InteractiveTutorial() {
 
   const isFirstStep = currentStepIndex === 0;
   const isLastStep = currentStepIndex === flow.steps.length - 1;
-  const tooltipPosition = calculateTooltipPosition(
-    targetBounds,
-    step.placement || 'center'
-  );
+  const tooltipPosition = calculateTooltipPosition(targetBounds, step.placement || 'center');
 
   return (
     <AnimatePresence>
@@ -237,10 +246,10 @@ export function InteractiveTutorial() {
                 className={cn(
                   'h-1.5 rounded-full transition-all',
                   index === currentStepIndex
-                    ? 'w-8 bg-primary'
+                    ? 'bg-primary w-8'
                     : index < currentStepIndex
-                    ? 'w-4 bg-primary/50'
-                    : 'w-4 bg-gray-200 dark:bg-gray-700'
+                      ? 'bg-primary/50 w-4'
+                      : 'w-4 bg-gray-200 dark:bg-gray-700'
                 )}
               />
             ))}
@@ -248,20 +257,13 @@ export function InteractiveTutorial() {
 
           {/* Content */}
           <h3 className="mb-2 text-lg font-semibold">{step.title}</h3>
-          <p className="mb-6 text-gray-600 dark:text-gray-300">
-            {step.description}
-          </p>
+          <p className="mb-6 text-gray-600 dark:text-gray-300">{step.description}</p>
 
           {/* Actions */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {!isFirstStep && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={previousStep}
-                  className="gap-1"
-                >
+                <Button variant="ghost" size="sm" onClick={previousStep} className="gap-1">
                   <ChevronLeft className="size-4" />
                   Back
                 </Button>
@@ -270,15 +272,11 @@ export function InteractiveTutorial() {
 
             <div className="flex items-center gap-2">
               {step.canSkip && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={skipFlow}
-                >
+                <Button variant="ghost" size="sm" onClick={skipFlow}>
                   {step.skipLabel || 'Skip'}
                 </Button>
               )}
-              
+
               <Button
                 size="sm"
                 onClick={() => {

@@ -1,23 +1,36 @@
 'use client';
 
-import { Download, FileText, Filter,Search } from 'lucide-react';
+import { Download, FileText, Filter, Search } from 'lucide-react';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { api } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
 
 export function InvoiceHistory() {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const { data: invoices, isLoading } = api.billing.getInvoices.useQuery({ 
+  const { data: invoices, isLoading } = api.billing.getInvoices.useQuery({
     status: filter === 'all' ? undefined : filter,
-    search: searchTerm 
+    search: searchTerm,
   });
 
   const downloadInvoice = (invoiceId: string) => {
@@ -57,9 +70,7 @@ export function InvoiceHistory() {
       {/* Header */}
       <div>
         <h2 className="text-2xl font-bold">Invoice History</h2>
-        <p className="text-muted-foreground">
-          View and download your past invoices
-        </p>
+        <p className="text-muted-foreground">View and download your past invoices</p>
       </div>
 
       {/* Filters */}
@@ -70,7 +81,7 @@ export function InvoiceHistory() {
         <CardContent>
           <div className="flex flex-col gap-4 sm:flex-row">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
               <Input
                 placeholder="Search by invoice number..."
                 value={searchTerm}
@@ -112,7 +123,7 @@ export function InvoiceHistory() {
             <TableBody>
               {invoices?.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
+                  <TableCell colSpan={6} className="text-muted-foreground py-8 text-center">
                     No invoices found
                   </TableCell>
                 </TableRow>
@@ -121,16 +132,14 @@ export function InvoiceHistory() {
                   <TableRow key={invoice.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
-                        <FileText className="size-4 text-muted-foreground" />
+                        <FileText className="text-muted-foreground size-4" />
                         {invoice.number || 'Draft'}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      {new Date(invoice.created * 1000).toLocaleDateString()}
-                    </TableCell>
+                    <TableCell>{new Date(invoice.created * 1000).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        {new Date(invoice.period_start * 1000).toLocaleDateString()} - 
+                        {new Date(invoice.period_start * 1000).toLocaleDateString()} -
                         {new Date(invoice.period_end * 1000).toLocaleDateString()}
                       </div>
                     </TableCell>
@@ -163,7 +172,8 @@ export function InvoiceHistory() {
           <CardContent>
             <p className="text-2xl font-bold">
               {formatCurrency(
-                (invoices?.filter(i => i.status === 'paid')
+                (invoices
+                  ?.filter((i) => i.status === 'paid')
                   .reduce((sum, i) => sum + i.total, 0) || 0) / 100
               )}
             </p>
@@ -177,7 +187,8 @@ export function InvoiceHistory() {
           <CardContent>
             <p className="text-2xl font-bold text-yellow-600">
               {formatCurrency(
-                (invoices?.filter(i => i.status === 'open')
+                (invoices
+                  ?.filter((i) => i.status === 'open')
                   .reduce((sum, i) => sum + i.total, 0) || 0) / 100
               )}
             </p>
@@ -200,10 +211,9 @@ export function InvoiceHistory() {
           <CardContent>
             <p className="text-2xl font-bold">
               {formatCurrency(
-                (invoices?.length 
+                invoices?.length
                   ? invoices.reduce((sum, i) => sum + i.total, 0) / invoices.length / 100
                   : 0
-                )
               )}
             </p>
           </CardContent>
@@ -219,10 +229,13 @@ export function InvoiceHistory() {
         <CardContent>
           <div className="space-y-3">
             {invoices?.slice(0, 5).map((invoice) => (
-              <div key={invoice.id} className="flex items-center justify-between border-b py-2 last:border-0">
+              <div
+                key={invoice.id}
+                className="flex items-center justify-between border-b py-2 last:border-0"
+              >
                 <div>
                   <p className="font-medium">{invoice.description || 'Subscription Payment'}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {new Date(invoice.created * 1000).toLocaleDateString()}
                   </p>
                 </div>

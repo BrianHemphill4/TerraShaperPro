@@ -87,16 +87,12 @@ export function InvoiceList() {
                     <TableCell className="font-medium">
                       {invoice.invoice_number || invoice.stripe_invoice_id}
                     </TableCell>
+                    <TableCell>{format(new Date(invoice.created_at), 'MMM d, yyyy')}</TableCell>
                     <TableCell>
-                      {format(new Date(invoice.created_at), 'MMM d, yyyy')}
+                      ${invoice.amount_due.toFixed(2)} {invoice.currency.toUpperCase()}
                     </TableCell>
                     <TableCell>
-                      ${(invoice.amount_due).toFixed(2)} {invoice.currency.toUpperCase()}
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={statusColors[invoice.status]}>
-                        {invoice.status}
-                      </Badge>
+                      <Badge className={statusColors[invoice.status]}>{invoice.status}</Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
@@ -104,7 +100,9 @@ export function InvoiceList() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => window.open(invoice.stripe_hosted_invoice_url!, '_blank')}
+                            onClick={() =>
+                              window.open(invoice.stripe_hosted_invoice_url!, '_blank')
+                            }
                           >
                             <ExternalLink className="size-4" />
                           </Button>

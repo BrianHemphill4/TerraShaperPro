@@ -2,12 +2,12 @@
 
 import { loadStripe } from '@stripe/stripe-js';
 import type { SubscriptionPlan } from '@terrashaper/shared';
-import { Check, CheckCircle2,X } from 'lucide-react';
+import { Check, CheckCircle2, X } from 'lucide-react';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription,CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 
@@ -15,7 +15,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 
 type PricingPlansProps = {
   currentTier?: string;
-}
+};
 
 export function PricingPlans({ currentTier }: PricingPlansProps) {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
@@ -68,9 +68,7 @@ export function PricingPlans({ currentTier }: PricingPlansProps) {
         <div className="rounded-lg bg-gray-100 p-1">
           <button
             className={`rounded px-4 py-2 text-sm font-medium transition ${
-              billingPeriod === 'monthly'
-                ? 'bg-white shadow'
-                : 'text-gray-600 hover:text-gray-900'
+              billingPeriod === 'monthly' ? 'bg-white shadow' : 'text-gray-600 hover:text-gray-900'
             }`}
             onClick={() => setBillingPeriod('monthly')}
           >
@@ -78,9 +76,7 @@ export function PricingPlans({ currentTier }: PricingPlansProps) {
           </button>
           <button
             className={`rounded px-4 py-2 text-sm font-medium transition ${
-              billingPeriod === 'yearly'
-                ? 'bg-white shadow'
-                : 'text-gray-600 hover:text-gray-900'
+              billingPeriod === 'yearly' ? 'bg-white shadow' : 'text-gray-600 hover:text-gray-900'
             }`}
             onClick={() => setBillingPeriod('yearly')}
           >
@@ -101,9 +97,7 @@ export function PricingPlans({ currentTier }: PricingPlansProps) {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>{plan.name}</CardTitle>
-                  {isCurrentPlan && (
-                    <Badge variant="secondary">Current Plan</Badge>
-                  )}
+                  {isCurrentPlan && <Badge variant="secondary">Current Plan</Badge>}
                 </div>
                 <CardDescription>
                   <span className="text-3xl font-bold">
@@ -111,9 +105,7 @@ export function PricingPlans({ currentTier }: PricingPlansProps) {
                   </span>
                   <span className="text-gray-500">/month</span>
                   {billingPeriod === 'yearly' && (
-                    <div className="text-sm text-green-600">
-                      ${price}/year
-                    </div>
+                    <div className="text-sm text-green-600">${price}/year</div>
                   )}
                 </CardDescription>
               </CardHeader>
@@ -129,7 +121,8 @@ export function PricingPlans({ currentTier }: PricingPlansProps) {
                   </li>
                   <li className="flex items-center">
                     <Check className="mr-2 size-4 text-green-500" />
-                    {plan.max_team_members === -1 ? 'Unlimited' : plan.max_team_members} team members
+                    {plan.max_team_members === -1 ? 'Unlimited' : plan.max_team_members} team
+                    members
                   </li>
                   <li className="flex items-center">
                     {features.watermark ? (
@@ -182,10 +175,10 @@ export function PricingPlans({ currentTier }: PricingPlansProps) {
                   {loading === plan.id
                     ? 'Loading...'
                     : isCurrentPlan
-                    ? 'Current Plan'
-                    : plan.tier === 'enterprise'
-                    ? 'Contact Sales'
-                    : 'Subscribe'}
+                      ? 'Current Plan'
+                      : plan.tier === 'enterprise'
+                        ? 'Contact Sales'
+                        : 'Subscribe'}
                 </Button>
               </CardContent>
             </Card>

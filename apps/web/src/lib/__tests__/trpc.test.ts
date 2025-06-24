@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { beforeEach,describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
@@ -62,14 +62,14 @@ describe('tRPC Client', () => {
     it('should generate consistent query keys', () => {
       const queryKey1 = ['project', 'list', { search: 'test' }];
       const queryKey2 = ['project', 'list', { search: 'test' }];
-      
+
       expect(JSON.stringify(queryKey1)).toBe(JSON.stringify(queryKey2));
     });
 
     it('should generate different keys for different inputs', () => {
       const queryKey1 = ['project', 'list', { search: 'test1' }];
       const queryKey2 = ['project', 'list', { search: 'test2' }];
-      
+
       expect(JSON.stringify(queryKey1)).not.toBe(JSON.stringify(queryKey2));
     });
   });
@@ -79,7 +79,8 @@ describe('tRPC Client', () => {
       const validUUID = '123e4567-e89b-12d3-a456-426614174000';
       const invalidUUID = 'invalid-uuid';
 
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
       expect(uuidRegex.test(validUUID)).toBe(true);
       expect(uuidRegex.test(invalidUUID)).toBe(false);
@@ -98,4 +99,4 @@ describe('tRPC Client', () => {
       expect(invalidOffset).toBeLessThan(0);
     });
   });
-}); 
+});

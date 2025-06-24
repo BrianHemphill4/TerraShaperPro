@@ -1,4 +1,4 @@
-import type { PLAN_ID } from '@/utils/AppConfig';
+import type { PLAN_ID } from '@/utils/appConfig';
 
 import type { EnumValues } from './Enum';
 
@@ -45,11 +45,12 @@ export type IStripeSubscription = {
 
 export type PlanDetails =
   | {
-    isPaid: true;
-    plan: PricingPlan;
-    stripeDetails: IStripeSubscription;
-  } | {
-    isPaid: false;
-    plan: PricingPlan;
-    stripeDetails?: undefined;
-  };
+      isPaid: true;
+      plan: PricingPlan;
+      stripeDetails: IStripeSubscription;
+    }
+  | {
+      isPaid: false;
+      plan: PricingPlan;
+      stripeDetails?: undefined;
+    };

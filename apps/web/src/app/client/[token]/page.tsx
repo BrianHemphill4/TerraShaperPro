@@ -1,12 +1,6 @@
 'use client';
 
-import { 
-  AlertCircle,
-  CheckCircle,
-  Eye,
-  MessageSquare, 
-  XCircle
-} from 'lucide-react';
+import { AlertCircle, CheckCircle, Eye, MessageSquare, XCircle } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
@@ -31,7 +25,11 @@ export default function ClientPortalPage() {
   });
   const [isIdentified, setIsIdentified] = useState(false);
 
-  const { data: projectData, isLoading, error } = api.clientPortal.getClientProject.useQuery(
+  const {
+    data: projectData,
+    isLoading,
+    error,
+  } = api.clientPortal.getClientProject.useQuery(
     { token },
     { enabled: isIdentified || !clientInfo.name }
   );
@@ -61,7 +59,10 @@ export default function ClientPortalPage() {
     }
   };
 
-  const handleApproval = (approvalId: string, status: 'approved' | 'rejected' | 'revision_requested') => {
+  const handleApproval = (
+    approvalId: string,
+    status: 'approved' | 'rejected' | 'revision_requested'
+  ) => {
     submitApprovalMutation.mutate({
       token,
       approvalId,
@@ -105,7 +106,13 @@ export default function ClientPortalPage() {
             <CardTitle>Welcome to TerraShaper Pro</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={(e) => { e.preventDefault(); handleIdentify(); }} className="space-y-4">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleIdentify();
+              }}
+              className="space-y-4"
+            >
               <div className="space-y-2">
                 <Label htmlFor="name">Your Name</Label>
                 <Input
@@ -171,10 +178,7 @@ export default function ClientPortalPage() {
             <Card>
               <CardContent className="p-0">
                 <div className="h-[600px]">
-                  <DesignCanvas
-                    initialData={project?.canvas_data}
-                    readOnly
-                  />
+                  <DesignCanvas initialData={project?.canvas_data} readOnly />
                 </div>
               </CardContent>
             </Card>
@@ -198,7 +202,7 @@ export default function ClientPortalPage() {
                         <MessageSquare className="size-4" />
                       </Button>
                     </div>
-                    
+
                     {/* Comments would be loaded here */}
                     <p className="text-sm text-gray-500">
                       Your comments will be visible to the design team.
@@ -226,7 +230,7 @@ export default function ClientPortalPage() {
                         rows={4}
                       />
                     </div>
-                    
+
                     <div className="flex space-x-2">
                       <Button
                         onClick={() => handleApproval('approval-id', 'approved')}

@@ -1,16 +1,17 @@
-import { protectedProcedure, publicProcedure, router } from '../trpc';
-import { z } from 'zod';
-import { TRPCError } from '@trpc/server';
 import {
+  ActivityActions,
   CreateClientAccessLinkSchema,
   CreateProjectApprovalSchema,
-  UpdateApprovalStatusSchema,
   CreateProjectCommentSchema,
-  ResolveCommentSchema,
   hasPermission,
-  ActivityActions,
+  ResolveCommentSchema,
+  UpdateApprovalStatusSchema,
   type UserRole,
 } from '@terrashaper/shared';
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
+
+import { protectedProcedure, publicProcedure, router } from '../trpc';
 
 export const clientPortalRouter = router({
   // Create client access link
@@ -93,9 +94,11 @@ export const clientPortalRouter = router({
 
   // List access links for a project
   listAccessLinks: protectedProcedure
-    .input(z.object({
-      projectId: z.string().uuid(),
-    }))
+    .input(
+      z.object({
+        projectId: z.string().uuid(),
+      })
+    )
     .query(async ({ ctx, input }) => {
       const { data: links, error } = await ctx.supabase
         .from('client_access_links')
@@ -119,9 +122,11 @@ export const clientPortalRouter = router({
 
   // Revoke access link
   revokeAccessLink: protectedProcedure
-    .input(z.object({
-      linkId: z.string().uuid(),
-    }))
+    .input(
+      z.object({
+        linkId: z.string().uuid(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       const { error } = await ctx.supabase
         .from('client_access_links')
@@ -166,10 +171,12 @@ export const clientPortalRouter = router({
 
   // List approval requests
   listApprovals: protectedProcedure
-    .input(z.object({
-      projectId: z.string().uuid(),
-      status: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        projectId: z.string().uuid(),
+        status: z.string().optional(),
+      })
+    )
     .query(async ({ ctx, input }) => {
       let query = ctx.supabase
         .from('project_approvals')
@@ -261,18 +268,22 @@ export const clientPortalRouter = router({
 
   // List comments
   listComments: protectedProcedure
-    .input(z.object({
-      projectId: z.string().uuid(),
-      includeResolved: z.boolean().default(false),
-    }))
+    .input(
+      z.object({
+        projectId: z.string().uuid(),
+        includeResolved: z.boolean().default(false),
+      })
+    )
     .query(async ({ ctx, input }) => {
       let query = ctx.supabase
         .from('project_comments')
-        .select(`
+        .select(
+          `
           *,
           author:users!project_comments_author_id_fkey(email, full_name),
           replies:project_comments!parent_id(*)
-        `)
+        `
+        )
         .eq('project_id', input.projectId)
         .is('parent_id', null)
         .order('created_at', { ascending: false });
@@ -320,17 +331,21 @@ export const clientPortalRouter = router({
 
   // Public endpoint for client portal access
   getClientProject: publicProcedure
-    .input(z.object({
-      token: z.string(),
-    }))
+    .input(
+      z.object({
+        token: z.string(),
+      })
+    )
     .query(async ({ ctx, input }) => {
       // Validate token and get project
       const { data: accessLink } = await ctx.supabase
         .from('client_access_links')
-        .select(`
+        .select(
+          `
           *,
           project:projects(*)
-        `)
+        `
+        )
         .eq('token', input.token)
         .eq('is_active', true)
         .single();
@@ -368,14 +383,16 @@ export const clientPortalRouter = router({
 
   // Create client comment (public endpoint)
   createClientComment: publicProcedure
-    .input(z.object({
-      token: z.string(),
-      projectId: z.string().uuid(),
-      content: z.string(),
-      authorEmail: z.string().email(),
-      authorName: z.string(),
-      position: z.object({ x: z.number(), y: z.number() }).optional(),
-    }))
+    .input(
+      z.object({
+        token: z.string(),
+        projectId: z.string().uuid(),
+        content: z.string(),
+        authorEmail: z.string().email(),
+        authorName: z.string(),
+        position: z.object({ x: z.number(), y: z.number() }).optional(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       // Validate token
       const { data: accessLink } = await ctx.supabase
@@ -418,14 +435,16 @@ export const clientPortalRouter = router({
 
   // Submit client approval (public endpoint)
   submitClientApproval: publicProcedure
-    .input(z.object({
-      token: z.string(),
-      approvalId: z.string().uuid(),
-      status: z.enum(['approved', 'rejected', 'revision_requested']),
-      notes: z.string().optional(),
-      approverEmail: z.string().email(),
-      approverName: z.string(),
-    }))
+    .input(
+      z.object({
+        token: z.string(),
+        approvalId: z.string().uuid(),
+        status: z.enum(['approved', 'rejected', 'revision_requested']),
+        notes: z.string().optional(),
+        approverEmail: z.string().email(),
+        approverName: z.string(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       // Validate token and permissions
       const { data: accessLink } = await ctx.supabase

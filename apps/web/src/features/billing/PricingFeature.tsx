@@ -1,5 +1,5 @@
 export const PricingFeature = (props: { children: React.ReactNode }) => (
-  <li className="flex items-center text-muted-foreground">
+  <li className="text-muted-foreground flex items-center">
     <svg
       className="mr-1 size-6 stroke-current stroke-2 text-purple-400"
       xmlns="http://www.w3.org/2000/svg"

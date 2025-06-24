@@ -1,23 +1,19 @@
 import { stripe, STRIPE_WEBHOOK_SECRET } from './stripe-client';
 import type { Stripe } from 'stripe';
+import { createServiceLogger } from '@terrashaper/shared';
+
+const logger = createServiceLogger('stripe-webhook');
 
 export class WebhookService {
   /**
    * Verify webhook signature and construct event
    */
-  async constructEvent(
-    payload: string | Buffer,
-    signature: string
-  ): Promise<Stripe.Event> {
+  async constructEvent(payload: string | Buffer, signature: string): Promise<Stripe.Event> {
     try {
-      const event = stripe.webhooks.constructEvent(
-        payload,
-        signature,
-        STRIPE_WEBHOOK_SECRET
-      );
+      const event = stripe.webhooks.constructEvent(payload, signature, STRIPE_WEBHOOK_SECRET);
       return event;
     } catch (error) {
-      console.error('Webhook signature verification failed:', error);
+      logger.error('Webhook signature verification failed', error as Error);
       throw new Error('Invalid webhook signature');
     }
   }
@@ -26,7 +22,7 @@ export class WebhookService {
    * Handle customer.created event
    */
   async handleCustomerCreated(customer: Stripe.Customer): Promise<void> {
-    console.log('Customer created:', customer.id);
+    logger.info('Customer created', { customerId: customer.id });
     // Update database with Stripe customer ID
   }
 
@@ -34,7 +30,10 @@ export class WebhookService {
    * Handle customer.subscription.created event
    */
   async handleSubscriptionCreated(subscription: Stripe.Subscription): Promise<void> {
-    console.log('Subscription created:', subscription.id);
+    logger.info('Subscription created', {
+      subscriptionId: subscription.id,
+      customerId: subscription.customer,
+    });
     // Update organization with subscription details
   }
 
@@ -42,7 +41,10 @@ export class WebhookService {
    * Handle customer.subscription.updated event
    */
   async handleSubscriptionUpdated(subscription: Stripe.Subscription): Promise<void> {
-    console.log('Subscription updated:', subscription.id);
+    logger.info('Subscription updated', {
+      subscriptionId: subscription.id,
+      status: subscription.status,
+    });
     // Update organization subscription status
   }
 
@@ -50,7 +52,10 @@ export class WebhookService {
    * Handle customer.subscription.deleted event
    */
   async handleSubscriptionDeleted(subscription: Stripe.Subscription): Promise<void> {
-    console.log('Subscription deleted:', subscription.id);
+    logger.info('Subscription deleted', {
+      subscriptionId: subscription.id,
+      customerId: subscription.customer,
+    });
     // Handle subscription cancellation
   }
 
@@ -58,7 +63,11 @@ export class WebhookService {
    * Handle invoice.paid event
    */
   async handleInvoicePaid(invoice: Stripe.Invoice): Promise<void> {
-    console.log('Invoice paid:', invoice.id);
+    logger.info('Invoice paid', {
+      invoiceId: invoice.id,
+      amountPaid: invoice.amount_paid,
+      customerId: invoice.customer,
+    });
     // Record payment in database
   }
 
@@ -66,7 +75,11 @@ export class WebhookService {
    * Handle invoice.payment_failed event
    */
   async handleInvoicePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
-    console.log('Invoice payment failed:', invoice.id);
+    logger.warn('Invoice payment failed', {
+      invoiceId: invoice.id,
+      attemptCount: invoice.attempt_count,
+      customerId: invoice.customer,
+    });
     // Handle failed payment
   }
 
@@ -74,7 +87,10 @@ export class WebhookService {
    * Handle payment_intent.succeeded event
    */
   async handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
-    console.log('Payment intent succeeded:', paymentIntent.id);
+    logger.info('Payment intent succeeded', {
+      paymentIntentId: paymentIntent.id,
+      amount: paymentIntent.amount,
+    });
     // Record successful payment
   }
 
@@ -82,7 +98,11 @@ export class WebhookService {
    * Handle payment_method.attached event
    */
   async handlePaymentMethodAttached(paymentMethod: Stripe.PaymentMethod): Promise<void> {
-    console.log('Payment method attached:', paymentMethod.id);
+    logger.info('Payment method attached', {
+      paymentMethodId: paymentMethod.id,
+      type: paymentMethod.type,
+      customerId: paymentMethod.customer,
+    });
     // Store payment method details
   }
 
@@ -126,11 +146,14 @@ export class WebhookService {
       case 'checkout.session.completed':
         // Handle checkout session completion
         const session = event.data.object as Stripe.Checkout.Session;
-        console.log('Checkout session completed:', session.id);
+        logger.info('Checkout session completed', {
+          sessionId: session.id,
+          customerId: session.customer,
+        });
         break;
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        logger.debug('Unhandled webhook event type', { eventType: event.type, eventId: event.id });
     }
   }
 }

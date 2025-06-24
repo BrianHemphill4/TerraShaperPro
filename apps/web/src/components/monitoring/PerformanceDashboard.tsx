@@ -1,6 +1,6 @@
 'use client';
 
-import {AlertTriangle, CheckCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -15,13 +15,13 @@ type MetricStat = {
   max: number;
   p95: number;
   p99: number;
-}
+};
 
 type BudgetViolation = {
   metric: string;
   budget: number;
   current: number;
-}
+};
 
 export function PerformanceDashboard() {
   const [performanceData, setPerformanceData] = useState<{
@@ -46,7 +46,7 @@ export function PerformanceDashboard() {
   const formatMetricName = (name: string): string => {
     return name
       .split('.')
-      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
       .join(' ');
   };
 
@@ -77,15 +77,9 @@ export function PerformanceDashboard() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Performance Monitoring</h2>
         <div className="flex items-center gap-2">
-          {healthStatus === 'healthy' && (
-            <CheckCircle className="size-5 text-green-500" />
-          )}
-          {healthStatus === 'warning' && (
-            <AlertTriangle className="size-5 text-yellow-500" />
-          )}
-          {healthStatus === 'critical' && (
-            <AlertTriangle className="size-5 text-red-500" />
-          )}
+          {healthStatus === 'healthy' && <CheckCircle className="size-5 text-green-500" />}
+          {healthStatus === 'warning' && <AlertTriangle className="size-5 text-yellow-500" />}
+          {healthStatus === 'critical' && <AlertTriangle className="size-5 text-red-500" />}
           <span className="text-sm font-medium">
             System {healthStatus.charAt(0).toUpperCase() + healthStatus.slice(1)}
           </span>
@@ -100,9 +94,9 @@ export function PerformanceDashboard() {
             <ul className="mt-2 space-y-1">
               {performanceData.violations.map((violation, index) => (
                 <li key={index}>
-                  <strong>{formatMetricName(violation.metric)}</strong>: 
-                  {' '}{formatValue(violation.current, violation.metric)} 
-                  {' '}(budget: {formatValue(violation.budget, violation.metric)})
+                  <strong>{formatMetricName(violation.metric)}</strong>:{' '}
+                  {formatValue(violation.current, violation.metric)} (budget:{' '}
+                  {formatValue(violation.budget, violation.metric)})
                 </li>
               ))}
             </ul>
@@ -119,25 +113,25 @@ export function PerformanceDashboard() {
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {Object.entries(performanceData.metrics).slice(0, 6).map(([metric, stats]) => (
-              <Card key={metric}>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {formatMetricName(metric)}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {formatValue(stats.avg, metric)}
-                  </div>
-                  <div className="mt-2 space-y-1 text-xs text-muted-foreground">
-                    <div>Min: {formatValue(stats.min, metric)}</div>
-                    <div>Max: {formatValue(stats.max, metric)}</div>
-                    <div>P95: {formatValue(stats.p95, metric)}</div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {Object.entries(performanceData.metrics)
+              .slice(0, 6)
+              .map(([metric, stats]) => (
+                <Card key={metric}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      {formatMetricName(metric)}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{formatValue(stats.avg, metric)}</div>
+                    <div className="text-muted-foreground mt-2 space-y-1 text-xs">
+                      <div>Min: {formatValue(stats.min, metric)}</div>
+                      <div>Max: {formatValue(stats.max, metric)}</div>
+                      <div>P95: {formatValue(stats.p95, metric)}</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
           </div>
         </TabsContent>
 
@@ -151,9 +145,7 @@ export function PerformanceDashboard() {
                     <CardTitle className="text-sm font-medium">
                       {formatMetricName(metric)}
                     </CardTitle>
-                    <CardDescription>
-                      Average: {formatValue(stats.avg, metric)}
-                    </CardDescription>
+                    <CardDescription>Average: {formatValue(stats.avg, metric)}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
@@ -163,8 +155,8 @@ export function PerformanceDashboard() {
                           P95: {formatValue(stats.p95, metric)}
                         </span>
                       </div>
-                      <Progress 
-                        value={Math.min((stats.avg / stats.p95) * 100, 100)} 
+                      <Progress
+                        value={Math.min((stats.avg / stats.p95) * 100, 100)}
                         className="h-2"
                       />
                     </div>
@@ -177,10 +169,11 @@ export function PerformanceDashboard() {
         <TabsContent value="frontend" className="space-y-4">
           <div className="grid gap-4">
             {Object.entries(performanceData.metrics)
-              .filter(([metric]) => 
-                metric.includes('component') || 
-                metric.includes('canvas') || 
-                metric.includes('webvital')
+              .filter(
+                ([metric]) =>
+                  metric.includes('component') ||
+                  metric.includes('canvas') ||
+                  metric.includes('webvital')
               )
               .map(([metric, stats]) => (
                 <Card key={metric}>
@@ -188,9 +181,7 @@ export function PerformanceDashboard() {
                     <CardTitle className="text-sm font-medium">
                       {formatMetricName(metric)}
                     </CardTitle>
-                    <CardDescription>
-                      Average: {formatValue(stats.avg, metric)}
-                    </CardDescription>
+                    <CardDescription>Average: {formatValue(stats.avg, metric)}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
@@ -200,8 +191,8 @@ export function PerformanceDashboard() {
                           P99: {formatValue(stats.p99, metric)}
                         </span>
                       </div>
-                      <Progress 
-                        value={Math.min((stats.avg / stats.p99) * 100, 100)} 
+                      <Progress
+                        value={Math.min((stats.avg / stats.p99) * 100, 100)}
                         className="h-2"
                       />
                     </div>

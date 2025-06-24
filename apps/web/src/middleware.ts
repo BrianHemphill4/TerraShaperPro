@@ -1,17 +1,13 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-import {
-  type NextFetchEvent,
-  type NextRequest,
-  NextResponse,
-} from 'next/server';
+import { type NextFetchEvent, type NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 
-import { AllLocales,AppConfig } from './utils/AppConfig';
+import { AllLocales, AppConfig } from './utils/appConfig';
 
 // Helper function to get allowed origins
 function getAllowedOrigins(): string[] {
   const origins: string[] = [];
-  
+
   // Development origins
   if (process.env.NODE_ENV === 'development') {
     origins.push(
@@ -23,12 +19,12 @@ function getAllowedOrigins(): string[] {
       'http://127.0.0.1:3002'
     );
   }
-  
+
   // Production origins
   if (process.env.NEXT_PUBLIC_API_URL) {
     origins.push(process.env.NEXT_PUBLIC_API_URL);
   }
-  
+
   // Add production domains
   origins.push(
     'https://terrashaperpro.com',
@@ -36,7 +32,7 @@ function getAllowedOrigins(): string[] {
     'https://app.terrashaperpro.com',
     'https://api.terrashaperpro.com'
   );
-  
+
   return origins;
 }
 
@@ -46,11 +42,11 @@ function applySecurityHeaders(response: NextResponse, request: NextRequest): Nex
   if (request.nextUrl.pathname.startsWith('/api/')) {
     const origin = request.headers.get('origin');
     const allowedOrigins = getAllowedOrigins();
-    
+
     if (origin && allowedOrigins.includes(origin)) {
       response.headers.set('Access-Control-Allow-Origin', origin);
     }
-    
+
     response.headers.set('Access-Control-Allow-Credentials', 'true');
     response.headers.set('Access-Control-Allow-Methods', 'GET,DELETE,PATCH,POST,PUT,OPTIONS');
     response.headers.set(
@@ -58,27 +54,30 @@ function applySecurityHeaders(response: NextResponse, request: NextRequest): Nex
       'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
     );
     response.headers.set('Access-Control-Max-Age', '86400');
-    
+
     // Handle preflight requests
     if (request.method === 'OPTIONS') {
       return NextResponse.rewrite(new URL(request.url), { status: 200, headers: response.headers });
     }
   }
-  
+
   // Security headers for all routes
   response.headers.set('X-DNS-Prefetch-Control', 'on');
-  
+
   // Only apply HSTS in production
   if (process.env.NODE_ENV === 'production') {
-    response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+    response.headers.set(
+      'Strict-Transport-Security',
+      'max-age=63072000; includeSubDomains; preload'
+    );
   }
-  
+
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('X-Frame-Options', 'SAMEORIGIN');
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('Referrer-Policy', 'origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  
+
   // Content Security Policy - exclude upgrade-insecure-requests in development
   const cspHeader = [
     "default-src 'self'",
@@ -93,11 +92,11 @@ function applySecurityHeaders(response: NextResponse, request: NextRequest): Nex
     "form-action 'self'",
     "media-src 'self'",
     "object-src 'none'",
-    ...(process.env.NODE_ENV === 'production' ? ["upgrade-insecure-requests"] : []),
+    ...(process.env.NODE_ENV === 'production' ? ['upgrade-insecure-requests'] : []),
   ].join('; ');
-  
+
   response.headers.set('Content-Security-Policy', cspHeader);
-  
+
   return response;
 }
 
@@ -116,19 +115,15 @@ const isProtectedRoute = createRouteMatcher([
   '/:locale/api(.*)',
 ]);
 
-export default function middleware(
-  request: NextRequest,
-  event: NextFetchEvent,
-) {
+export default function middleware(request: NextRequest, event: NextFetchEvent) {
   if (
-    request.nextUrl.pathname.includes('/sign-in')
-    || request.nextUrl.pathname.includes('/sign-up')
-    || isProtectedRoute(request)
+    request.nextUrl.pathname.includes('/sign-in') ||
+    request.nextUrl.pathname.includes('/sign-up') ||
+    isProtectedRoute(request)
   ) {
     return clerkMiddleware(async (auth, req) => {
       if (isProtectedRoute(req)) {
-        const locale
-          = req.nextUrl.pathname.match(/(\/.*)\/dashboard/)?.at(1) ?? '';
+        const locale = req.nextUrl.pathname.match(/(\/.*)\/dashboard/)?.at(1) ?? '';
 
         const signInUrl = new URL(`${locale}/sign-in`, req.url);
 
@@ -141,15 +136,12 @@ export default function middleware(
       const authObj = await auth();
 
       if (
-        authObj.userId
-        && !authObj.orgId
-        && req.nextUrl.pathname.includes('/dashboard')
-        && !req.nextUrl.pathname.endsWith('/organization-selection')
+        authObj.userId &&
+        !authObj.orgId &&
+        req.nextUrl.pathname.includes('/dashboard') &&
+        !req.nextUrl.pathname.endsWith('/organization-selection')
       ) {
-        const orgSelection = new URL(
-          '/onboarding/organization-selection',
-          req.url,
-        );
+        const orgSelection = new URL('/onboarding/organization-selection', req.url);
 
         return NextResponse.redirect(orgSelection);
       }
@@ -162,8 +154,6 @@ export default function middleware(
   const response = intlMiddleware(request);
   return applySecurityHeaders(response, request);
 }
-
-
 
 export const config = {
   matcher: [

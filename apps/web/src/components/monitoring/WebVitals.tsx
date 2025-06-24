@@ -3,31 +3,28 @@
 import { useReportWebVitals } from 'next/web-vitals';
 import { useEffect } from 'react';
 
+import { browserLogger } from '@/lib/logger';
 import { metrics } from '@/lib/metrics';
 
 export function WebVitals() {
   useReportWebVitals((metric) => {
     // Record the metric
     metrics.recordWebVitals(metric);
-    
+
     // Log in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Web Vital: ${metric.name}`, {
-        value: metric.value,
-        rating: (metric as any).rating || 'N/A',
-      });
-    }
+    browserLogger.debug('Web Vital recorded', {
+      name: metric.name,
+      value: metric.value,
+      rating: (metric as any).rating || 'N/A',
+    });
   });
 
   // Track page visibility changes
   useEffect(() => {
     const handleVisibilityChange = () => {
-      metrics.recordCustomMetric(
-        'page.visibility.change',
-        document.hidden ? 0 : 1,
-        'boolean',
-        { hidden: document.hidden.toString() }
-      );
+      metrics.recordCustomMetric('page.visibility.change', document.hidden ? 0 : 1, 'boolean', {
+        hidden: document.hidden.toString(),
+      });
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -46,11 +43,7 @@ export function WebVitals() {
           memory.usedJSHeapSize / 1048576, // Convert to MB
           'mb'
         );
-        metrics.recordCustomMetric(
-          'browser.memory.total',
-          memory.totalJSHeapSize / 1048576,
-          'mb'
-        );
+        metrics.recordCustomMetric('browser.memory.total', memory.totalJSHeapSize / 1048576, 'mb');
       };
 
       // Track initially
@@ -66,18 +59,13 @@ export function WebVitals() {
   useEffect(() => {
     if ('connection' in navigator) {
       const connection = (navigator as any).connection;
-      
+
       const trackConnection = () => {
-        metrics.recordCustomMetric(
-          'network.effective.type',
-          1,
-          'count',
-          {
-            effectiveType: connection.effectiveType || 'unknown',
-            downlink: connection.downlink?.toString() || 'unknown',
-            rtt: connection.rtt?.toString() || 'unknown',
-          }
-        );
+        metrics.recordCustomMetric('network.effective.type', 1, 'count', {
+          effectiveType: connection.effectiveType || 'unknown',
+          downlink: connection.downlink?.toString() || 'unknown',
+          rtt: connection.rtt?.toString() || 'unknown',
+        });
       };
 
       trackConnection();

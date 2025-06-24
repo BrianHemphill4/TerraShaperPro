@@ -41,21 +41,10 @@ export const getCorsOptions = (): FastifyCorsOptions => {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 
     // Allowed headers
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'X-Request-ID',
-      'X-Job-ID',
-      'X-Worker-ID',
-    ],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID', 'X-Job-ID', 'X-Worker-ID'],
 
     // Expose headers to the client
-    exposedHeaders: [
-      'X-Request-ID',
-      'X-Job-ID',
-      'X-Worker-ID',
-      'X-Processing-Time',
-    ],
+    exposedHeaders: ['X-Request-ID', 'X-Job-ID', 'X-Worker-ID', 'X-Processing-Time'],
 
     // Allow credentials for internal service auth
     credentials: true,
@@ -93,13 +82,13 @@ export const securityHeaders = {
 
   // Content Security Policy for worker
   'Content-Security-Policy': [
-    'default-src \'none\'',
-    'script-src \'self\'',
-    'connect-src \'self\' https://api.sentry.io',
-    'img-src \'self\' data: https:',
-    'style-src \'self\'',
-    'base-uri \'self\'',
-    'form-action \'none\'',
+    "default-src 'none'",
+    "script-src 'self'",
+    "connect-src 'self' https://api.sentry.io",
+    "img-src 'self' data: https:",
+    "style-src 'self'",
+    "base-uri 'self'",
+    "form-action 'none'",
   ].join('; '),
 
   // Additional worker-specific headers

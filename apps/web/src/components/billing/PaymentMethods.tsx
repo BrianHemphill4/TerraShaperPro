@@ -70,9 +70,7 @@ export function PaymentMethods() {
           <div className="py-8 text-center">
             <CreditCard className="mx-auto mb-4 size-12 text-gray-400" />
             <p className="mb-4 text-gray-500">No payment methods added yet</p>
-            <Button onClick={handleAddPaymentMethod}>
-              Add Payment Method
-            </Button>
+            <Button onClick={handleAddPaymentMethod}>Add Payment Method</Button>
           </div>
         ) : (
           <div className="space-y-4">
@@ -127,8 +125,8 @@ export function PaymentMethods() {
 
         <div className="mt-6 rounded-lg bg-gray-50 p-4">
           <p className="text-sm text-gray-600">
-            Payment methods are securely stored and processed by Stripe. 
-            TerraShaper Pro never stores your complete card details.
+            Payment methods are securely stored and processed by Stripe. TerraShaper Pro never
+            stores your complete card details.
           </p>
         </div>
       </CardContent>

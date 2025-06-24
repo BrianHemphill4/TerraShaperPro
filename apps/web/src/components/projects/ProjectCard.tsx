@@ -29,11 +29,11 @@ type Project = {
   updatedAt: string;
   sceneCount: number;
   renderCount: number;
-}
+};
 
 type ProjectCardProps = {
   project: Project;
-}
+};
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const [imageError, setImageError] = useState(false);
@@ -49,7 +49,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-lg">
       <CardHeader className="p-0">
-        <div className="relative h-48 bg-muted">
+        <div className="bg-muted relative h-48">
           {project.thumbnailUrl && !imageError ? (
             <Image
               src={project.thumbnailUrl}
@@ -59,7 +59,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="flex h-full items-center justify-center text-muted-foreground">
+            <div className="text-muted-foreground flex h-full items-center justify-center">
               <div className="text-center">
                 <Calendar className="mx-auto mb-2 size-12" />
                 <p className="text-sm">No preview available</p>
@@ -94,14 +94,11 @@ export function ProjectCard({ project }: ProjectCardProps) {
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="p-4">
         <div className="mb-2 flex items-start justify-between">
           <h3 className="flex-1 truncate text-lg font-semibold">
-            <Link 
-              href={`/dashboard/projects/${project.id}`}
-              className="hover:underline"
-            >
+            <Link href={`/dashboard/projects/${project.id}`} className="hover:underline">
               {project.name}
             </Link>
           </h3>
@@ -109,27 +106,23 @@ export function ProjectCard({ project }: ProjectCardProps) {
             {status.label}
           </Badge>
         </div>
-        
+
         {project.description && (
-          <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
-            {project.description}
-          </p>
+          <p className="text-muted-foreground mb-3 line-clamp-2 text-sm">{project.description}</p>
         )}
 
         {project.clientName && (
-          <p className="mb-3 text-sm text-muted-foreground">
-            Client: {project.clientName}
-          </p>
+          <p className="text-muted-foreground mb-3 text-sm">Client: {project.clientName}</p>
         )}
 
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex items-center gap-4 text-sm">
           <span>{project.sceneCount} scenes</span>
           <span>{project.renderCount} renders</span>
         </div>
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
-        <div className="flex items-center text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex items-center text-sm">
           <Clock className="mr-1 size-3" />
           Updated {formatDistanceToNow(new Date(project.updatedAt), { addSuffix: true })}
         </div>
