@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FeatureGateService = void 0;
-const billing_1 = require("../types/billing");
-class FeatureGateService {
+import { PlanFeatures } from '../types/billing';
+export class FeatureGateService {
     /**
      * Check if a feature is available for a given subscription tier
      */
     static hasFeature(tier, featureName) {
         const currentTier = tier || 'starter';
-        const features = billing_1.PlanFeatures[currentTier];
+        const features = PlanFeatures[currentTier];
         if (!features) {
             return false;
         }
@@ -33,7 +30,7 @@ class FeatureGateService {
      */
     static checkUsageLimit(tier, limitType, currentUsage) {
         const currentTier = tier || 'starter';
-        const features = billing_1.PlanFeatures[currentTier];
+        const features = PlanFeatures[currentTier];
         if (!features) {
             return {
                 limit: 0,
@@ -58,14 +55,14 @@ class FeatureGateService {
      */
     static getFeaturesForTier(tier) {
         const currentTier = tier || 'starter';
-        return billing_1.PlanFeatures[currentTier] || billing_1.PlanFeatures.starter;
+        return PlanFeatures[currentTier] || PlanFeatures.starter;
     }
     /**
      * Compare features between two tiers
      */
     static compareFeatures(fromTier, toTier) {
-        const fromFeatures = billing_1.PlanFeatures[fromTier];
-        const toFeatures = billing_1.PlanFeatures[toTier];
+        const fromFeatures = PlanFeatures[fromTier];
+        const toFeatures = PlanFeatures[toTier];
         const comparison = [];
         // Compare all features
         const allFeatureKeys = new Set([
@@ -109,13 +106,14 @@ class FeatureGateService {
      * Get tier ranking (for upgrade/downgrade logic)
      */
     static getTierRank(tier) {
+        var _a;
         const ranks = {
             starter: 0,
             professional: 1,
             growth: 2,
             enterprise: 3,
         };
-        return ranks[tier] ?? 0;
+        return (_a = ranks[tier]) !== null && _a !== void 0 ? _a : 0;
     }
     /**
      * Check if moving from one tier to another is an upgrade
@@ -157,4 +155,3 @@ class FeatureGateService {
         return null;
     }
 }
-exports.FeatureGateService = FeatureGateService;

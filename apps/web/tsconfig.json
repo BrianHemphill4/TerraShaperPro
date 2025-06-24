@@ -32,7 +32,9 @@
     "forceConsistentCasingInFileNames": true,
 
     "jsx": "preserve",
-    "noEmit": true,
+    "composite": true,
+    "noEmit": false,
+    "declaration": true,
     "isolatedModules": true,
     "incremental": true,
 
@@ -61,5 +63,10 @@
     ".storybook/*.ts",
     ".next/types/**/*.ts",
     "**/*.mts"
+  ],
+  "references": [
+    { "path": "../../packages/ui" },
+    { "path": "../../packages/hooks" },
+    { "path": "../../packages/shared" }
   ]
 }

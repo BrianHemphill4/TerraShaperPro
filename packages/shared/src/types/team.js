@@ -1,68 +1,64 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ActivityActions = exports.roleHierarchy = exports.AcceptInvitationSchema = exports.UpdateUserRoleSchema = exports.CreateInvitationSchema = exports.ActivityLogSchema = exports.InvitationSchema = exports.UserSchema = exports.UserRoleEnum = void 0;
-exports.hasPermission = hasPermission;
-const zod_1 = require("zod");
-exports.UserRoleEnum = zod_1.z.enum(['owner', 'admin', 'designer', 'member', 'viewer']);
-exports.UserSchema = zod_1.z.object({
-    id: zod_1.z.string().uuid(),
-    clerk_id: zod_1.z.string(),
-    email: zod_1.z.string().email(),
-    full_name: zod_1.z.string().nullable(),
-    organization_id: zod_1.z.string().uuid(),
-    role: exports.UserRoleEnum,
-    created_at: zod_1.z.string().datetime(),
-    updated_at: zod_1.z.string().datetime(),
+import { z } from 'zod';
+export const UserRoleEnum = z.enum(['owner', 'admin', 'designer', 'member', 'viewer']);
+export const UserSchema = z.object({
+    id: z.string().uuid(),
+    clerk_id: z.string(),
+    email: z.string().email(),
+    full_name: z.string().nullable(),
+    organization_id: z.string().uuid(),
+    role: UserRoleEnum,
+    created_at: z.string().datetime(),
+    updated_at: z.string().datetime(),
 });
-exports.InvitationSchema = zod_1.z.object({
-    id: zod_1.z.string().uuid(),
-    organization_id: zod_1.z.string().uuid(),
-    email: zod_1.z.string().email(),
-    role: exports.UserRoleEnum,
-    invited_by: zod_1.z.string().uuid(),
-    token: zod_1.z.string(),
-    expires_at: zod_1.z.string().datetime(),
-    accepted_at: zod_1.z.string().datetime().nullable(),
-    created_at: zod_1.z.string().datetime(),
-    updated_at: zod_1.z.string().datetime(),
+export const InvitationSchema = z.object({
+    id: z.string().uuid(),
+    organization_id: z.string().uuid(),
+    email: z.string().email(),
+    role: UserRoleEnum,
+    invited_by: z.string().uuid(),
+    token: z.string(),
+    expires_at: z.string().datetime(),
+    accepted_at: z.string().datetime().nullable(),
+    created_at: z.string().datetime(),
+    updated_at: z.string().datetime(),
 });
-exports.ActivityLogSchema = zod_1.z.object({
-    id: zod_1.z.string().uuid(),
-    organization_id: zod_1.z.string().uuid(),
-    user_id: zod_1.z.string().uuid().nullable(),
-    action: zod_1.z.string(),
-    entity_type: zod_1.z.string(),
-    entity_id: zod_1.z.string().uuid().nullable(),
-    metadata: zod_1.z.record(zod_1.z.any()).default({}),
-    ip_address: zod_1.z.string().nullable(),
-    user_agent: zod_1.z.string().nullable(),
-    created_at: zod_1.z.string().datetime(),
+export const ActivityLogSchema = z.object({
+    id: z.string().uuid(),
+    organization_id: z.string().uuid(),
+    user_id: z.string().uuid().nullable(),
+    action: z.string(),
+    entity_type: z.string(),
+    entity_id: z.string().uuid().nullable(),
+    metadata: z.record(z.any()).default({}),
+    ip_address: z.string().nullable(),
+    user_agent: z.string().nullable(),
+    created_at: z.string().datetime(),
 });
 // Input schemas for API operations
-exports.CreateInvitationSchema = zod_1.z.object({
-    email: zod_1.z.string().email(),
-    role: exports.UserRoleEnum,
+export const CreateInvitationSchema = z.object({
+    email: z.string().email(),
+    role: UserRoleEnum,
 });
-exports.UpdateUserRoleSchema = zod_1.z.object({
-    userId: zod_1.z.string().uuid(),
-    role: exports.UserRoleEnum,
+export const UpdateUserRoleSchema = z.object({
+    userId: z.string().uuid(),
+    role: UserRoleEnum,
 });
-exports.AcceptInvitationSchema = zod_1.z.object({
-    token: zod_1.z.string(),
+export const AcceptInvitationSchema = z.object({
+    token: z.string(),
 });
 // Permission helpers
-exports.roleHierarchy = {
+export const roleHierarchy = {
     owner: 5,
     admin: 4,
     designer: 3,
     member: 2,
     viewer: 1,
 };
-function hasPermission(userRole, requiredRole) {
-    return exports.roleHierarchy[userRole] >= exports.roleHierarchy[requiredRole];
+export function hasPermission(userRole, requiredRole) {
+    return roleHierarchy[userRole] >= roleHierarchy[requiredRole];
 }
 // Activity log action types
-exports.ActivityActions = {
+export const ActivityActions = {
     // User management
     USER_INVITED: 'user.invited',
     USER_JOINED: 'user.joined',

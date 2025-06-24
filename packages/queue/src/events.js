@@ -1,21 +1,24 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRenderQueueEvents = void 0;
-exports.getQueueEventEmitter = getQueueEventEmitter;
-const events_1 = require("events");
-const render_queue_1 = require("./queues/render.queue");
-Object.defineProperty(exports, "getRenderQueueEvents", { enumerable: true, get: function () { return render_queue_1.getRenderQueueEvents; } });
-class QueueEventEmitter extends events_1.EventEmitter {
-    queueEvents;
-    initialized = false;
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { EventEmitter } from 'events';
+import { getRenderQueueEvents } from './queues/render.queue';
+class QueueEventEmitter extends EventEmitter {
     constructor() {
         super();
+        this.initialized = false;
         this.setMaxListeners(100); // Allow many SSE connections
     }
     initialize() {
         if (this.initialized)
             return;
-        this.queueEvents = (0, render_queue_1.getRenderQueueEvents)();
+        this.queueEvents = getRenderQueueEvents();
         // Set up queue event listeners
         this.queueEvents.on('progress', (data) => {
             this.emit('progress', {
@@ -37,19 +40,22 @@ class QueueEventEmitter extends events_1.EventEmitter {
         });
         this.initialized = true;
     }
-    async close() {
-        if (this.queueEvents) {
-            await this.queueEvents.close();
-        }
-        this.removeAllListeners();
+    close() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.queueEvents) {
+                yield this.queueEvents.close();
+            }
+            this.removeAllListeners();
+        });
     }
 }
 // Singleton instance
 let queueEventEmitter = null;
-function getQueueEventEmitter() {
+export function getQueueEventEmitter() {
     if (!queueEventEmitter) {
         queueEventEmitter = new QueueEventEmitter();
         queueEventEmitter.initialize();
     }
     return queueEventEmitter;
 }
+export { getRenderQueueEvents };

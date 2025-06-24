@@ -1,4 +1,4 @@
-import { db, masks, type Mask, type NewMask, eq, and } from '@terrasherper/db';
+import { db, masks, type Mask, type NewMask, eq, and } from '@terrashaper/db';
 
 export interface MaskData {
   id?: string;

@@ -1,17 +1,14 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UsageLimitCheckSchema = exports.PlanLimitsSchema = exports.PlanFeatures = exports.StripeWebhookEventSchema = exports.AddPaymentMethodSchema = exports.CancelSubscriptionSchema = exports.UpdateSubscriptionSchema = exports.CreatePortalSessionSchema = exports.CreateCheckoutSessionSchema = exports.PaymentHistorySchema = exports.InvoiceSchema = exports.PaymentMethodSchema = exports.SubscriptionPlanSchema = exports.InvoiceStatusEnum = exports.PaymentStatusEnum = exports.SubscriptionStatusEnum = exports.SubscriptionTierEnum = void 0;
-const zod_1 = require("zod");
+import { z } from 'zod';
 /**
  * Enum schema for subscription tiers available in the application.
  * Defines the hierarchy of subscription plans from starter to enterprise.
  */
-exports.SubscriptionTierEnum = zod_1.z.enum(['starter', 'professional', 'growth', 'enterprise']);
+export const SubscriptionTierEnum = z.enum(['starter', 'professional', 'growth', 'enterprise']);
 /**
  * Enum schema for subscription status values.
  * Covers all possible states a subscription can be in.
  */
-exports.SubscriptionStatusEnum = zod_1.z.enum([
+export const SubscriptionStatusEnum = z.enum([
     'active',
     'canceled',
     'incomplete',
@@ -24,108 +21,108 @@ exports.SubscriptionStatusEnum = zod_1.z.enum([
  * Enum schema for payment status values.
  * Represents the outcome of payment processing attempts.
  */
-exports.PaymentStatusEnum = zod_1.z.enum(['succeeded', 'failed', 'pending', 'refunded']);
+export const PaymentStatusEnum = z.enum(['succeeded', 'failed', 'pending', 'refunded']);
 /**
  * Enum schema for invoice status values.
  * Tracks the lifecycle state of billing invoices.
  */
-exports.InvoiceStatusEnum = zod_1.z.enum(['draft', 'open', 'paid', 'void', 'uncollectible']);
+export const InvoiceStatusEnum = z.enum(['draft', 'open', 'paid', 'void', 'uncollectible']);
 /**
  * Zod schema for subscription plan data.
  * Defines the structure of a subscription plan with pricing and features.
  */
-exports.SubscriptionPlanSchema = zod_1.z.object({
-    id: zod_1.z.string().uuid(),
-    name: zod_1.z.string(),
-    stripe_price_id: zod_1.z.string(),
-    tier: exports.SubscriptionTierEnum,
-    price_monthly: zod_1.z.number(),
-    price_yearly: zod_1.z.number().nullable(),
-    render_credits_monthly: zod_1.z.number(),
-    max_projects: zod_1.z.number().nullable(),
-    max_team_members: zod_1.z.number().nullable(),
-    features: zod_1.z.record(zod_1.z.any()),
-    is_active: zod_1.z.boolean(),
+export const SubscriptionPlanSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    stripe_price_id: z.string(),
+    tier: SubscriptionTierEnum,
+    price_monthly: z.number(),
+    price_yearly: z.number().nullable(),
+    render_credits_monthly: z.number(),
+    max_projects: z.number().nullable(),
+    max_team_members: z.number().nullable(),
+    features: z.record(z.any()),
+    is_active: z.boolean(),
 });
-exports.PaymentMethodSchema = zod_1.z.object({
-    id: zod_1.z.string().uuid(),
-    organization_id: zod_1.z.string().uuid(),
-    stripe_payment_method_id: zod_1.z.string(),
-    type: zod_1.z.string(),
-    brand: zod_1.z.string().nullable(),
-    last4: zod_1.z.string().nullable(),
-    exp_month: zod_1.z.number().nullable(),
-    exp_year: zod_1.z.number().nullable(),
-    is_default: zod_1.z.boolean(),
-    created_at: zod_1.z.string().datetime(),
-    updated_at: zod_1.z.string().datetime(),
+export const PaymentMethodSchema = z.object({
+    id: z.string().uuid(),
+    organization_id: z.string().uuid(),
+    stripe_payment_method_id: z.string(),
+    type: z.string(),
+    brand: z.string().nullable(),
+    last4: z.string().nullable(),
+    exp_month: z.number().nullable(),
+    exp_year: z.number().nullable(),
+    is_default: z.boolean(),
+    created_at: z.string().datetime(),
+    updated_at: z.string().datetime(),
 });
-exports.InvoiceSchema = zod_1.z.object({
-    id: zod_1.z.string().uuid(),
-    organization_id: zod_1.z.string().uuid(),
-    stripe_invoice_id: zod_1.z.string(),
-    invoice_number: zod_1.z.string().nullable(),
-    status: exports.InvoiceStatusEnum,
-    amount_due: zod_1.z.number(),
-    amount_paid: zod_1.z.number(),
-    currency: zod_1.z.string(),
-    due_date: zod_1.z.string().datetime().nullable(),
-    paid_at: zod_1.z.string().datetime().nullable(),
-    period_start: zod_1.z.string().datetime().nullable(),
-    period_end: zod_1.z.string().datetime().nullable(),
-    stripe_hosted_invoice_url: zod_1.z.string().nullable(),
-    stripe_invoice_pdf: zod_1.z.string().nullable(),
-    metadata: zod_1.z.record(zod_1.z.any()),
-    created_at: zod_1.z.string().datetime(),
+export const InvoiceSchema = z.object({
+    id: z.string().uuid(),
+    organization_id: z.string().uuid(),
+    stripe_invoice_id: z.string(),
+    invoice_number: z.string().nullable(),
+    status: InvoiceStatusEnum,
+    amount_due: z.number(),
+    amount_paid: z.number(),
+    currency: z.string(),
+    due_date: z.string().datetime().nullable(),
+    paid_at: z.string().datetime().nullable(),
+    period_start: z.string().datetime().nullable(),
+    period_end: z.string().datetime().nullable(),
+    stripe_hosted_invoice_url: z.string().nullable(),
+    stripe_invoice_pdf: z.string().nullable(),
+    metadata: z.record(z.any()),
+    created_at: z.string().datetime(),
 });
-exports.PaymentHistorySchema = zod_1.z.object({
-    id: zod_1.z.string().uuid(),
-    organization_id: zod_1.z.string().uuid(),
-    invoice_id: zod_1.z.string().uuid().nullable(),
-    stripe_payment_intent_id: zod_1.z.string().nullable(),
-    stripe_charge_id: zod_1.z.string().nullable(),
-    amount: zod_1.z.number(),
-    currency: zod_1.z.string(),
-    status: exports.PaymentStatusEnum,
-    payment_method_id: zod_1.z.string().uuid().nullable(),
-    failure_code: zod_1.z.string().nullable(),
-    failure_message: zod_1.z.string().nullable(),
-    refunded_amount: zod_1.z.number(),
-    metadata: zod_1.z.record(zod_1.z.any()),
-    created_at: zod_1.z.string().datetime(),
+export const PaymentHistorySchema = z.object({
+    id: z.string().uuid(),
+    organization_id: z.string().uuid(),
+    invoice_id: z.string().uuid().nullable(),
+    stripe_payment_intent_id: z.string().nullable(),
+    stripe_charge_id: z.string().nullable(),
+    amount: z.number(),
+    currency: z.string(),
+    status: PaymentStatusEnum,
+    payment_method_id: z.string().uuid().nullable(),
+    failure_code: z.string().nullable(),
+    failure_message: z.string().nullable(),
+    refunded_amount: z.number(),
+    metadata: z.record(z.any()),
+    created_at: z.string().datetime(),
 });
 // Input schemas for API operations
-exports.CreateCheckoutSessionSchema = zod_1.z.object({
-    priceId: zod_1.z.string(),
-    successUrl: zod_1.z.string(),
-    cancelUrl: zod_1.z.string(),
+export const CreateCheckoutSessionSchema = z.object({
+    priceId: z.string(),
+    successUrl: z.string(),
+    cancelUrl: z.string(),
 });
-exports.CreatePortalSessionSchema = zod_1.z.object({
-    returnUrl: zod_1.z.string(),
+export const CreatePortalSessionSchema = z.object({
+    returnUrl: z.string(),
 });
-exports.UpdateSubscriptionSchema = zod_1.z.object({
-    priceId: zod_1.z.string(),
-    prorationBehavior: zod_1.z.enum(['create_prorations', 'none', 'always_invoice']).optional(),
+export const UpdateSubscriptionSchema = z.object({
+    priceId: z.string(),
+    prorationBehavior: z.enum(['create_prorations', 'none', 'always_invoice']).optional(),
 });
-exports.CancelSubscriptionSchema = zod_1.z.object({
-    cancelAtPeriodEnd: zod_1.z.boolean().default(true),
-    reason: zod_1.z.string().optional(),
+export const CancelSubscriptionSchema = z.object({
+    cancelAtPeriodEnd: z.boolean().default(true),
+    reason: z.string().optional(),
 });
-exports.AddPaymentMethodSchema = zod_1.z.object({
-    paymentMethodId: zod_1.z.string(),
-    setAsDefault: zod_1.z.boolean().default(false),
+export const AddPaymentMethodSchema = z.object({
+    paymentMethodId: z.string(),
+    setAsDefault: z.boolean().default(false),
 });
 // Webhook event types
-exports.StripeWebhookEventSchema = zod_1.z.object({
-    id: zod_1.z.string(),
-    type: zod_1.z.string(),
-    data: zod_1.z.object({
-        object: zod_1.z.record(zod_1.z.any()),
+export const StripeWebhookEventSchema = z.object({
+    id: z.string(),
+    type: z.string(),
+    data: z.object({
+        object: z.record(z.any()),
     }),
-    created: zod_1.z.number(),
+    created: z.number(),
 });
 // Subscription features
-exports.PlanFeatures = {
+export const PlanFeatures = {
     starter: {
         watermark: true,
         exportFormats: ['png', 'jpg'],
@@ -208,18 +205,18 @@ exports.PlanFeatures = {
     },
 };
 // Plan limits type
-exports.PlanLimitsSchema = zod_1.z.object({
-    maxProjects: zod_1.z.number().nullable(),
-    maxTeamMembers: zod_1.z.number().nullable(),
-    maxStorageGb: zod_1.z.number(),
-    maxRendersPerMonth: zod_1.z.number(),
-    renderCreditsMonthly: zod_1.z.number(),
+export const PlanLimitsSchema = z.object({
+    maxProjects: z.number().nullable(),
+    maxTeamMembers: z.number().nullable(),
+    maxStorageGb: z.number(),
+    maxRendersPerMonth: z.number(),
+    renderCreditsMonthly: z.number(),
 });
 // Usage limit check result
-exports.UsageLimitCheckSchema = zod_1.z.object({
-    limit: zod_1.z.number(),
-    usage: zod_1.z.number(),
-    remaining: zod_1.z.number(),
-    exceeded: zod_1.z.boolean(),
-    percentage: zod_1.z.number(),
+export const UsageLimitCheckSchema = z.object({
+    limit: z.number(),
+    usage: z.number(),
+    remaining: z.number(),
+    exceeded: z.boolean(),
+    percentage: z.number(),
 });

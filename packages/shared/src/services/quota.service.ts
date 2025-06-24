@@ -1,4 +1,4 @@
-import { db, organizations, eq } from '@terrasherper/db';
+import { db, organizations, eq } from '@terrashaper/db';
 
 export interface QuotaStatus {
   remaining: number;

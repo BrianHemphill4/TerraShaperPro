@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "incremental": false,
+    "incremental": true,
     "target": "es2015",
     "jsx": "preserve",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -29,5 +29,19 @@
     "esModuleInterop": true,
     "isolatedModules": true
   },
+  "references": [
+    { "path": "./packages/db" },
+    { "path": "./packages/shared" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/hooks" },
+    { "path": "./packages/services" },
+    { "path": "./packages/storage" },
+    { "path": "./packages/queue" },
+    { "path": "./packages/stripe" },
+    { "path": "./packages/ai-service" },
+    { "path": "./apps/api-gateway" },
+    { "path": "./apps/render-worker" },
+    { "path": "./apps/web" }
+  ],
   "exclude": ["node_modules"]
 } 

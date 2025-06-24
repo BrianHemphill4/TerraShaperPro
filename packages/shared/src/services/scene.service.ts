@@ -1,4 +1,4 @@
-import { db, scenes, masks, type Scene, type NewScene, eq, and } from '@terrasherper/db';
+import { db, scenes, masks, type Scene, type NewScene, eq, and } from '@terrashaper/db';
 
 export interface SceneWithMasks extends Scene {
   masks: Array<{

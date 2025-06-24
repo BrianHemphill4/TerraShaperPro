@@ -1,11 +1,13 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "composite": true,
+    "noEmit": false,
+    "declaration": true,
     "module": "ESNext",
     "target": "ESNext",
     "lib": ["ESNext"],
     "outDir": "./dist",
-    "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true

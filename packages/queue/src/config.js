@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.QUEUE_PRIORITIES = exports.QUEUE_NAMES = exports.defaultQueueOptions = exports.redisConnection = void 0;
 // Parse Upstash Redis URL if provided
 function getRedisConnection() {
     const redisHost = process.env.REDIS_HOST;
@@ -23,9 +20,9 @@ function getRedisConnection() {
         maxRetriesPerRequest: null,
     };
 }
-exports.redisConnection = getRedisConnection();
-exports.defaultQueueOptions = {
-    connection: exports.redisConnection,
+export const redisConnection = getRedisConnection();
+export const defaultQueueOptions = {
+    connection: redisConnection,
     defaultJobOptions: {
         attempts: 3,
         backoff: {
@@ -41,11 +38,11 @@ exports.defaultQueueOptions = {
         },
     },
 };
-exports.QUEUE_NAMES = {
+export const QUEUE_NAMES = {
     RENDER: 'renderQueue',
     NOTIFICATION: 'notificationQueue',
 };
-exports.QUEUE_PRIORITIES = {
+export const QUEUE_PRIORITIES = {
     STARTER: 5,
     PRO: 3,
     GROWTH: 1,

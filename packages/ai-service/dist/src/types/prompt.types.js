@@ -1,0 +1,25 @@
+import { z } from 'zod';
+export const AnnotationSchema = z.object({
+    id: z.string(),
+    type: z.enum(['plant', 'hardscape', 'feature', 'lighting', 'water']),
+    name: z.string(),
+    position: z.object({
+        x: z.number(),
+        y: z.number(),
+    }),
+    size: z.object({
+        width: z.number(),
+        height: z.number(),
+    }),
+    attributes: z.record(z.string(), z.any()).optional(),
+});
+export const PromptTemplateSchema = z.object({
+    base: z.string(),
+    style: z.string().optional(),
+    quality: z.string().optional(),
+    lighting: z.string().optional(),
+    season: z.string().optional(),
+    timeOfDay: z.string().optional(),
+    weather: z.string().optional(),
+    cameraAngle: z.string().optional(),
+});

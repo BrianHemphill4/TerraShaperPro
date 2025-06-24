@@ -1,9 +1,9 @@
 {
-  "name": "@terrasherper/scripts",
+  "name": "@terrashaper/scripts",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "echo \"No build required for @terrasherper/scripts\"",
+    "build": "echo \"No build required for @terrashaper/scripts\"",
     "ingest:plants": "tsx src/ingest-plants.ts",
     "lint": "echo \"(scripts) nothing to lint\"",
     "lint:fix": "echo \"(scripts) nothing to fix\"",
@@ -16,7 +16,7 @@
     "@sentry/profiling-node": "^9.30.0",
     "@sentry/tracing": "^7.120.3",
     "@svgr/webpack": "^8.1.0",
-    "@terrasherper/db": "0.1.0",
+    "@terrashaper/db": "0.1.0",
     "@trpc/server": "^11.4.2",
     "@types/cors": "^2.8.19",
     "clsx": "^2.1.1",

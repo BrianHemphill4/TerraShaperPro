@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Scene, Mask } from '@terrasherper/db';
+import * as drizzle_orm_pg_core from 'drizzle-orm/pg-core';
 import pino from 'pino';
 export { Logger as PinoLogger } from 'pino';
 
@@ -62,27 +62,27 @@ declare const SubscriptionPlanSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     id: string;
     name: string;
+    is_active: boolean;
+    features: Record<string, any>;
     stripe_price_id: string;
-    tier: "starter" | "professional" | "growth" | "enterprise";
+    tier: "professional" | "enterprise" | "starter" | "growth";
     price_monthly: number;
     price_yearly: number | null;
     render_credits_monthly: number;
     max_projects: number | null;
     max_team_members: number | null;
-    features: Record<string, any>;
-    is_active: boolean;
 }, {
     id: string;
     name: string;
+    is_active: boolean;
+    features: Record<string, any>;
     stripe_price_id: string;
-    tier: "starter" | "professional" | "growth" | "enterprise";
+    tier: "professional" | "enterprise" | "starter" | "growth";
     price_monthly: number;
     price_yearly: number | null;
     render_credits_monthly: number;
     max_projects: number | null;
     max_team_members: number | null;
-    features: Record<string, any>;
-    is_active: boolean;
 }>;
 type SubscriptionPlan = z.infer<typeof SubscriptionPlanSchema>;
 declare const PaymentMethodSchema: z.ZodObject<{
@@ -98,29 +98,29 @@ declare const PaymentMethodSchema: z.ZodObject<{
     created_at: z.ZodString;
     updated_at: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    type: string;
     id: string;
-    organization_id: string;
-    stripe_payment_method_id: string;
     brand: string | null;
+    created_at: string;
+    updated_at: string;
+    organization_id: string;
+    is_default: boolean;
+    type: string;
+    stripe_payment_method_id: string;
     last4: string | null;
     exp_month: number | null;
     exp_year: number | null;
-    is_default: boolean;
-    created_at: string;
-    updated_at: string;
 }, {
-    type: string;
     id: string;
-    organization_id: string;
-    stripe_payment_method_id: string;
     brand: string | null;
+    created_at: string;
+    updated_at: string;
+    organization_id: string;
+    is_default: boolean;
+    type: string;
+    stripe_payment_method_id: string;
     last4: string | null;
     exp_month: number | null;
     exp_year: number | null;
-    is_default: boolean;
-    created_at: string;
-    updated_at: string;
 }>;
 type PaymentMethod = z.infer<typeof PaymentMethodSchema>;
 declare const InvoiceSchema: z.ZodObject<{
@@ -141,39 +141,39 @@ declare const InvoiceSchema: z.ZodObject<{
     metadata: z.ZodRecord<z.ZodString, z.ZodAny>;
     created_at: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    status: "draft" | "open" | "paid" | "void" | "uncollectible";
     id: string;
-    organization_id: string;
     created_at: string;
-    stripe_invoice_id: string;
-    invoice_number: string | null;
+    organization_id: string;
+    status: "draft" | "void" | "paid" | "open" | "uncollectible";
+    metadata: Record<string, any>;
     amount_due: number;
     amount_paid: number;
     currency: string;
     due_date: string | null;
-    paid_at: string | null;
-    period_start: string | null;
     period_end: string | null;
+    period_start: string | null;
+    stripe_invoice_id: string;
+    invoice_number: string | null;
+    paid_at: string | null;
     stripe_hosted_invoice_url: string | null;
     stripe_invoice_pdf: string | null;
-    metadata: Record<string, any>;
 }, {
-    status: "draft" | "open" | "paid" | "void" | "uncollectible";
     id: string;
-    organization_id: string;
     created_at: string;
-    stripe_invoice_id: string;
-    invoice_number: string | null;
+    organization_id: string;
+    status: "draft" | "void" | "paid" | "open" | "uncollectible";
+    metadata: Record<string, any>;
     amount_due: number;
     amount_paid: number;
     currency: string;
     due_date: string | null;
-    paid_at: string | null;
-    period_start: string | null;
     period_end: string | null;
+    period_start: string | null;
+    stripe_invoice_id: string;
+    invoice_number: string | null;
+    paid_at: string | null;
     stripe_hosted_invoice_url: string | null;
     stripe_invoice_pdf: string | null;
-    metadata: Record<string, any>;
 }>;
 type Invoice = z.infer<typeof InvoiceSchema>;
 declare const PaymentHistorySchema: z.ZodObject<{
@@ -192,12 +192,12 @@ declare const PaymentHistorySchema: z.ZodObject<{
     metadata: z.ZodRecord<z.ZodString, z.ZodAny>;
     created_at: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    status: "succeeded" | "failed" | "pending" | "refunded";
     id: string;
-    organization_id: string;
     created_at: string;
-    currency: string;
+    organization_id: string;
+    status: "pending" | "failed" | "succeeded" | "refunded";
     metadata: Record<string, any>;
+    currency: string;
     invoice_id: string | null;
     stripe_payment_intent_id: string | null;
     stripe_charge_id: string | null;
@@ -207,12 +207,12 @@ declare const PaymentHistorySchema: z.ZodObject<{
     failure_message: string | null;
     refunded_amount: number;
 }, {
-    status: "succeeded" | "failed" | "pending" | "refunded";
     id: string;
-    organization_id: string;
     created_at: string;
-    currency: string;
+    organization_id: string;
+    status: "pending" | "failed" | "succeeded" | "refunded";
     metadata: Record<string, any>;
+    currency: string;
     invoice_id: string | null;
     stripe_payment_intent_id: string | null;
     stripe_charge_id: string | null;
@@ -290,18 +290,18 @@ declare const StripeWebhookEventSchema: z.ZodObject<{
     }>;
     created: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
-    type: string;
     id: string;
     data: {
         object: Record<string, any>;
     };
+    type: string;
     created: number;
 }, {
-    type: string;
     id: string;
     data: {
         object: Record<string, any>;
     };
+    type: string;
     created: number;
 }>;
 type StripeWebhookEvent = z.infer<typeof StripeWebhookEventSchema>;
@@ -584,6 +584,261 @@ declare class QuotaService {
 }
 declare const quotaService: QuotaService;
 
+declare const scenes: drizzle_orm_pg_core.PgTableWithColumns<{
+    name: "scenes";
+    schema: undefined;
+    columns: {
+        id: drizzle_orm_pg_core.PgColumn<{
+            name: "id";
+            tableName: "scenes";
+            dataType: "string";
+            columnType: "PgUUID";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: true;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        projectId: drizzle_orm_pg_core.PgColumn<{
+            name: "project_id";
+            tableName: "scenes";
+            dataType: "string";
+            columnType: "PgUUID";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        imageUrl: drizzle_orm_pg_core.PgColumn<{
+            name: "image_url";
+            tableName: "scenes";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        order: drizzle_orm_pg_core.PgColumn<{
+            name: "order";
+            tableName: "scenes";
+            dataType: "number";
+            columnType: "PgInteger";
+            data: number;
+            driverParam: string | number;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        isDefault: drizzle_orm_pg_core.PgColumn<{
+            name: "is_default";
+            tableName: "scenes";
+            dataType: "boolean";
+            columnType: "PgBoolean";
+            data: boolean;
+            driverParam: boolean;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        createdAt: drizzle_orm_pg_core.PgColumn<{
+            name: "created_at";
+            tableName: "scenes";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        updatedAt: drizzle_orm_pg_core.PgColumn<{
+            name: "updated_at";
+            tableName: "scenes";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+    };
+    dialect: "pg";
+}>;
+declare const masks: drizzle_orm_pg_core.PgTableWithColumns<{
+    name: "masks";
+    schema: undefined;
+    columns: {
+        id: drizzle_orm_pg_core.PgColumn<{
+            name: "id";
+            tableName: "masks";
+            dataType: "string";
+            columnType: "PgUUID";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: true;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        sceneId: drizzle_orm_pg_core.PgColumn<{
+            name: "scene_id";
+            tableName: "masks";
+            dataType: "string";
+            columnType: "PgUUID";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        category: drizzle_orm_pg_core.PgColumn<{
+            name: "category";
+            tableName: "masks";
+            dataType: "string";
+            columnType: "PgVarchar";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        path: drizzle_orm_pg_core.PgColumn<{
+            name: "path";
+            tableName: "masks";
+            dataType: "json";
+            columnType: "PgJsonb";
+            data: unknown;
+            driverParam: unknown;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        deleted: drizzle_orm_pg_core.PgColumn<{
+            name: "deleted";
+            tableName: "masks";
+            dataType: "boolean";
+            columnType: "PgBoolean";
+            data: boolean;
+            driverParam: boolean;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        authorId: drizzle_orm_pg_core.PgColumn<{
+            name: "author_id";
+            tableName: "masks";
+            dataType: "string";
+            columnType: "PgUUID";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        createdAt: drizzle_orm_pg_core.PgColumn<{
+            name: "created_at";
+            tableName: "masks";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+    };
+    dialect: "pg";
+}>;
+type Scene = typeof scenes.$inferSelect;
+type Mask = typeof masks.$inferSelect;
+
 interface SceneWithMasks extends Scene {
     masks: Array<{
         id: string;
@@ -713,12 +968,12 @@ declare const ClientAccessLinkSchema: z.ZodObject<{
     updated_at: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     id: string;
-    is_active: boolean;
     created_at: string;
     updated_at: string;
     created_by: string;
     project_id: string;
     expires_at: string | null;
+    is_active: boolean;
     token: string;
     client_email: string | null;
     client_name: string | null;
@@ -764,10 +1019,10 @@ declare const ProjectApprovalSchema: z.ZodObject<{
     created_at: z.ZodString;
     updated_at: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    status: "pending" | "approved" | "rejected" | "revision_requested";
     id: string;
     created_at: string;
     updated_at: string;
+    status: "pending" | "approved" | "rejected" | "revision_requested";
     project_id: string;
     version_id: string | null;
     requested_by: string;
@@ -776,10 +1031,10 @@ declare const ProjectApprovalSchema: z.ZodObject<{
     notes: string | null;
     approved_at: string | null;
 }, {
-    status: "pending" | "approved" | "rejected" | "revision_requested";
     id: string;
     created_at: string;
     updated_at: string;
+    status: "pending" | "approved" | "rejected" | "revision_requested";
     project_id: string;
     version_id: string | null;
     requested_by: string;
@@ -1046,22 +1301,22 @@ declare const UserSchema: z.ZodObject<{
     updated_at: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     id: string;
-    organization_id: string;
+    clerk_id: string;
     created_at: string;
     updated_at: string;
     email: string;
-    clerk_id: string;
     full_name: string | null;
-    role: "member" | "owner" | "admin" | "designer" | "viewer";
+    organization_id: string;
+    role: "admin" | "member" | "owner" | "designer" | "viewer";
 }, {
     id: string;
-    organization_id: string;
+    clerk_id: string;
     created_at: string;
     updated_at: string;
     email: string;
-    clerk_id: string;
     full_name: string | null;
-    role: "member" | "owner" | "admin" | "designer" | "viewer";
+    organization_id: string;
+    role: "admin" | "member" | "owner" | "designer" | "viewer";
 }>;
 type User = z.infer<typeof UserSchema>;
 declare const InvitationSchema: z.ZodObject<{
@@ -1077,22 +1332,22 @@ declare const InvitationSchema: z.ZodObject<{
     updated_at: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     id: string;
-    organization_id: string;
     created_at: string;
     updated_at: string;
     email: string;
-    role: "member" | "owner" | "admin" | "designer" | "viewer";
+    organization_id: string;
+    role: "admin" | "member" | "owner" | "designer" | "viewer";
     expires_at: string;
     token: string;
     invited_by: string;
     accepted_at: string | null;
 }, {
     id: string;
-    organization_id: string;
     created_at: string;
     updated_at: string;
     email: string;
-    role: "member" | "owner" | "admin" | "designer" | "viewer";
+    organization_id: string;
+    role: "admin" | "member" | "owner" | "designer" | "viewer";
     expires_at: string;
     token: string;
     invited_by: string;
@@ -1112,8 +1367,8 @@ declare const ActivityLogSchema: z.ZodObject<{
     created_at: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     id: string;
-    organization_id: string;
     created_at: string;
+    organization_id: string;
     metadata: Record<string, any>;
     user_id: string | null;
     action: string;
@@ -1123,8 +1378,8 @@ declare const ActivityLogSchema: z.ZodObject<{
     entity_id: string | null;
 }, {
     id: string;
-    organization_id: string;
     created_at: string;
+    organization_id: string;
     user_id: string | null;
     action: string;
     ip_address: string | null;
@@ -1139,20 +1394,20 @@ declare const CreateInvitationSchema: z.ZodObject<{
     role: z.ZodEnum<["owner", "admin", "designer", "member", "viewer"]>;
 }, "strip", z.ZodTypeAny, {
     email: string;
-    role: "member" | "owner" | "admin" | "designer" | "viewer";
+    role: "admin" | "member" | "owner" | "designer" | "viewer";
 }, {
     email: string;
-    role: "member" | "owner" | "admin" | "designer" | "viewer";
+    role: "admin" | "member" | "owner" | "designer" | "viewer";
 }>;
 type CreateInvitationInput = z.infer<typeof CreateInvitationSchema>;
 declare const UpdateUserRoleSchema: z.ZodObject<{
     userId: z.ZodString;
     role: z.ZodEnum<["owner", "admin", "designer", "member", "viewer"]>;
 }, "strip", z.ZodTypeAny, {
-    role: "member" | "owner" | "admin" | "designer" | "viewer";
+    role: "admin" | "member" | "owner" | "designer" | "viewer";
     userId: string;
 }, {
-    role: "member" | "owner" | "admin" | "designer" | "viewer";
+    role: "admin" | "member" | "owner" | "designer" | "viewer";
     userId: string;
 }>;
 type UpdateUserRoleInput = z.infer<typeof UpdateUserRoleSchema>;

@@ -5,11 +5,15 @@
     "target": "ESNext",
     "lib": ["ESNext"],
     "outDir": "./dist",
-    "rootDir": "./src",
+    "composite": true,
+    "noEmit": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    { "path": "../db" }
+  ]
 }
