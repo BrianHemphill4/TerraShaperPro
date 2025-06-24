@@ -75,23 +75,23 @@ class Logger {
     return childLogger;
   }
 
-  trace(message: string, data?: unknown): void {
+  trace(message: string, data?: Record<string, unknown>): void {
     this.logger.trace({ ...this.context, ...data }, message);
   }
 
-  debug(message: string, data?: unknown): void {
+  debug(message: string, data?: Record<string, unknown>): void {
     this.logger.debug({ ...this.context, ...data }, message);
   }
 
-  info(message: string, data?: unknown): void {
+  info(message: string, data?: Record<string, unknown>): void {
     this.logger.info({ ...this.context, ...data }, message);
   }
 
-  warn(message: string, data?: unknown): void {
+  warn(message: string, data?: Record<string, unknown>): void {
     this.logger.warn({ ...this.context, ...data }, message);
   }
 
-  error(message: string, error?: Error | unknown, data?: unknown): void {
+  error(message: string, error?: Error | unknown, data?: Record<string, unknown>): void {
     const errorData =
       error instanceof Error
         ? {
@@ -100,14 +100,14 @@ class Logger {
               stack: error.stack,
               name: error.name,
             },
-            ...data,
+            ...(data || {}),
           }
-        : { error, ...data };
+        : { error, ...(data || {}) };
 
     this.logger.error({ ...this.context, ...errorData }, message);
   }
 
-  fatal(message: string, error?: Error | unknown, data?: unknown): void {
+  fatal(message: string, error?: Error | unknown, data?: Record<string, unknown>): void {
     const errorData =
       error instanceof Error
         ? {
@@ -116,9 +116,9 @@ class Logger {
               stack: error.stack,
               name: error.name,
             },
-            ...data,
+            ...(data || {}),
           }
-        : { error, ...data };
+        : { error, ...(data || {}) };
 
     this.logger.fatal({ ...this.context, ...errorData }, message);
   }

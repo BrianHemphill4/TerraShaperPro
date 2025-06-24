@@ -2,11 +2,11 @@ import type { LucideIcon } from 'lucide-react';
 // Specific empty state components
 import {
   FileText,
+  Flower2,
   FolderOpen,
   Inbox,
   Layers,
   MessageSquare,
-  Flower2,
   Search,
   Users,
 } from 'lucide-react';

@@ -1,6 +1,7 @@
 import {
   boolean,
   decimal,
+  index,
   integer,
   jsonb,
   pgEnum,
@@ -64,23 +65,75 @@ export const templates = pgTable('templates', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
-export const renders = pgTable('renders', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  projectId: uuid('project_id')
-    .references(() => projects.id, { onDelete: 'cascade' })
-    .notNull(),
-  createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
-  prompt: text('prompt').notNull(),
-  enhancedPrompt: text('enhanced_prompt'),
-  imageUrl: text('image_url'),
-  thumbnailUrl: text('thumbnail_url'),
-  provider: renderProviderEnum('provider').notNull(),
-  status: renderStatusEnum('status').default('pending').notNull(),
-  qualityStatus: renderQualityStatusEnum('quality_status'),
-  processingTimeMs: integer('processing_time_ms'),
-  errorMessage: text('error_message'),
-  settings: jsonb('settings').default({}).notNull(),
-  metadata: jsonb('metadata').default({}).notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  completedAt: timestamp('completed_at', { withTimezone: true }),
-});
+export const scenes = pgTable(
+  'scenes',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    projectId: uuid('project_id')
+      .references(() => projects.id, { onDelete: 'cascade' })
+      .notNull(),
+    imageUrl: text('image_url').notNull(),
+    order: integer('order').notNull(),
+    isDefault: boolean('is_default').default(false).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    projectIdIdx: index('idx_scenes_project_id').on(table.projectId),
+  })
+);
+
+export const masks = pgTable(
+  'masks',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    sceneId: uuid('scene_id')
+      .references(() => scenes.id, { onDelete: 'cascade' })
+      .notNull(),
+    category: varchar('category', { length: 50 }).notNull(),
+    path: jsonb('path').notNull(),
+    deleted: boolean('deleted').default(false).notNull(),
+    authorId: uuid('author_id').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    sceneIdIdx: index('idx_masks_scene_id').on(table.sceneId),
+    categoryIdx: index('idx_masks_category').on(table.category),
+  })
+);
+
+export const renders = pgTable(
+  'renders',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    sceneId: uuid('scene_id')
+      .references(() => scenes.id, { onDelete: 'cascade' })
+      .notNull(),
+    projectId: uuid('project_id')
+      .references(() => projects.id, { onDelete: 'cascade' })
+      .notNull(),
+    createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+    prompt: text('prompt').notNull(),
+    enhancedPrompt: text('enhanced_prompt'),
+    imageUrl: text('image_url'),
+    thumbnailUrl: text('thumbnail_url'),
+    provider: renderProviderEnum('provider').notNull(),
+    status: renderStatusEnum('status').default('pending').notNull(),
+    qualityStatus: renderQualityStatusEnum('quality_status'),
+    resolution: varchar('resolution', { length: 20 }).default('4K').notNull(),
+    processingTimeMs: integer('processing_time_ms'),
+    errorMessage: text('error_message'),
+    settings: jsonb('settings').default({}).notNull(),
+    metadata: jsonb('metadata').default({}).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+  },
+  (table) => ({
+    sceneIdIdx: index('idx_renders_scene_id').on(table.sceneId),
+  })
+);
+
+export type Scene = typeof scenes.$inferSelect;
+export type NewScene = typeof scenes.$inferInsert;
+export type Mask = typeof masks.$inferSelect;
+export type NewMask = typeof masks.$inferInsert;

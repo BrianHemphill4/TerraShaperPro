@@ -1,30 +1,30 @@
 import { supabase } from '@terrashaper/db';
 
-export interface TeamService {
-  createTeam(data: CreateTeamInput): Promise<Team>;
-  findTeamById(id: string): Promise<Team | null>;
-  updateTeam(id: string, data: UpdateTeamInput): Promise<Team>;
-  deleteTeam(id: string): Promise<void>;
+export type TeamService = {
+  createTeam: (data: CreateTeamInput) => Promise<Team>;
+  findTeamById: (id: string) => Promise<Team | null>;
+  updateTeam: (id: string, data: UpdateTeamInput) => Promise<Team>;
+  deleteTeam: (id: string) => Promise<void>;
   
-  addMember(teamId: string, userId: string, role: string): Promise<TeamMember>;
-  removeMember(teamId: string, userId: string): Promise<void>;
-  updateMemberRole(teamId: string, userId: string, role: string): Promise<TeamMember>;
-  getTeamMembers(teamId: string): Promise<TeamMember[]>;
+  addMember: (teamId: string, userId: string, role: string) => Promise<TeamMember>;
+  removeMember: (teamId: string, userId: string) => Promise<void>;
+  updateMemberRole: (teamId: string, userId: string, role: string) => Promise<TeamMember>;
+  getTeamMembers: (teamId: string) => Promise<TeamMember[]>;
 }
 
-export interface CreateTeamInput {
+export type CreateTeamInput = {
   name: string;
   organization_id: string;
   created_by: string;
   metadata?: Record<string, any>;
 }
 
-export interface UpdateTeamInput {
+export type UpdateTeamInput = {
   name?: string;
   metadata?: Record<string, any>;
 }
 
-export interface Team {
+export type Team = {
   id: string;
   name: string;
   organization_id: string;
@@ -34,7 +34,7 @@ export interface Team {
   updated_at: Date;
 }
 
-export interface TeamMember {
+export type TeamMember = {
   id: string;
   userId: string;
   teamId: string;

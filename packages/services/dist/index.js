@@ -19879,129 +19879,8 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
-// src/project.service.ts
-var import_db = require("@terrashaper/db");
-var ProjectServiceImpl = class {
-  create(data) {
-    return __async(this, null, function* () {
-      const { data: project, error } = yield import_db.supabase.from("projects").insert(__spreadProps(__spreadValues({}, data), {
-        created_at: /* @__PURE__ */ new Date(),
-        updated_at: /* @__PURE__ */ new Date()
-      })).select().single();
-      if (error) throw error;
-      return project;
-    });
-  }
-  findById(id) {
-    return __async(this, null, function* () {
-      const { data: project, error } = yield import_db.supabase.from("projects").select("*").eq("id", id).single();
-      if (error && error.code !== "PGRST116") throw error;
-      return project;
-    });
-  }
-  findByUserId(userId) {
-    return __async(this, null, function* () {
-      const { data: projects, error } = yield import_db.supabase.from("projects").select("*").eq("user_id", userId).order("created_at", { ascending: false });
-      if (error) throw error;
-      return projects || [];
-    });
-  }
-  findByOrganizationId(organizationId) {
-    return __async(this, null, function* () {
-      const { data: projects, error } = yield import_db.supabase.from("projects").select("*").eq("organization_id", organizationId).order("created_at", { ascending: false });
-      if (error) throw error;
-      return projects || [];
-    });
-  }
-  update(id, data) {
-    return __async(this, null, function* () {
-      const { data: project, error } = yield import_db.supabase.from("projects").update(__spreadProps(__spreadValues({}, data), {
-        updated_at: /* @__PURE__ */ new Date()
-      })).eq("id", id).select().single();
-      if (error) throw error;
-      return project;
-    });
-  }
-  delete(id) {
-    return __async(this, null, function* () {
-      const { error } = yield import_db.supabase.from("projects").delete().eq("id", id);
-      if (error) throw error;
-    });
-  }
-  createVersion(data) {
-    return __async(this, null, function* () {
-      const { data: version2, error } = yield import_db.supabase.from("project_versions").insert(__spreadProps(__spreadValues({}, data), {
-        created_at: /* @__PURE__ */ new Date()
-      })).select().single();
-      if (error) throw error;
-      return version2;
-    });
-  }
-  getVersions(projectId) {
-    return __async(this, null, function* () {
-      const { data: versions, error } = yield import_db.supabase.from("project_versions").select("*").eq("project_id", projectId).order("created_at", { ascending: false });
-      if (error) throw error;
-      return versions || [];
-    });
-  }
-  getStats(organizationId) {
-    return __async(this, null, function* () {
-      const { data: projects } = yield import_db.supabase.from("projects").select("id, name, status, created_at, updated_at").eq("organization_id", organizationId);
-      const total = (projects == null ? void 0 : projects.length) || 0;
-      const byStatus = (projects == null ? void 0 : projects.reduce((acc, project) => {
-        const status = project.status || "draft";
-        acc[status] = (acc[status] || 0) + 1;
-        return acc;
-      }, {})) || {};
-      const { data: recentProjects } = yield import_db.supabase.from("projects").select("id, name, created_at, updated_at, user_id, users(name)").eq("organization_id", organizationId).order("updated_at", { ascending: false }).limit(10);
-      const { data: recentRenders } = yield import_db.supabase.from("renders").select("id, project_id, created_at, user_id, projects(name), users(name)").eq("organization_id", organizationId).order("created_at", { ascending: false }).limit(10);
-      const activities = [];
-      recentProjects == null ? void 0 : recentProjects.forEach((project) => {
-        var _a, _b;
-        if (project.created_at === project.updated_at) {
-          activities.push({
-            projectId: project.id,
-            projectName: project.name,
-            action: "created",
-            timestamp: new Date(project.created_at),
-            userId: project.user_id,
-            userName: (_a = project.users) == null ? void 0 : _a.name
-          });
-        } else {
-          activities.push({
-            projectId: project.id,
-            projectName: project.name,
-            action: "updated",
-            timestamp: new Date(project.updated_at),
-            userId: project.user_id,
-            userName: (_b = project.users) == null ? void 0 : _b.name
-          });
-        }
-      });
-      recentRenders == null ? void 0 : recentRenders.forEach((render) => {
-        var _a, _b;
-        activities.push({
-          projectId: render.project_id,
-          projectName: ((_a = render.projects) == null ? void 0 : _a.name) || "Unknown Project",
-          action: "rendered",
-          timestamp: new Date(render.created_at),
-          userId: render.user_id,
-          userName: (_b = render.users) == null ? void 0 : _b.name
-        });
-      });
-      const recentActivity = activities.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 10);
-      return {
-        total,
-        byStatus,
-        recentActivity
-      };
-    });
-  }
-};
-var projectService = new ProjectServiceImpl();
-
 // src/billing.service.ts
-var import_db2 = require("@terrashaper/db");
+var import_db = require("@terrashaper/db");
 var import_stripe = require("@terrashaper/stripe");
 var BillingServiceImpl = class {
   constructor() {
@@ -20041,12 +19920,12 @@ var BillingServiceImpl = class {
   getUsage(customerId, period) {
     return __async(this, null, function* () {
       var _a;
-      const { data: org } = yield import_db2.supabase.from("organizations").select("*, subscriptions(*)").eq("stripe_customer_id", customerId).single();
+      const { data: org } = yield import_db.supabase.from("organizations").select("*, subscriptions(*)").eq("stripe_customer_id", customerId).single();
       if (!org) {
         throw new Error("Organization not found");
       }
-      const { data: renderUsage } = yield import_db2.supabase.from("renders").select("id").eq("organization_id", org.id).gte("created_at", period.start.toISOString()).lte("created_at", period.end.toISOString());
-      const { data: storageData } = yield import_db2.supabase.rpc("get_organization_storage_usage", {
+      const { data: renderUsage } = yield import_db.supabase.from("renders").select("id").eq("organization_id", org.id).gte("created_at", period.start.toISOString()).lte("created_at", period.end.toISOString());
+      const { data: storageData } = yield import_db.supabase.rpc("get_organization_storage_usage", {
         org_id: org.id
       });
       const subscription = (_a = org.subscriptions) == null ? void 0 : _a[0];
@@ -20078,14 +19957,14 @@ var BillingServiceImpl = class {
   }
   getPlans() {
     return __async(this, null, function* () {
-      const { data: plans } = yield import_db2.supabase.from("subscription_plans").select("*").eq("is_active", true).order("price_monthly", { ascending: true });
+      const { data: plans } = yield import_db.supabase.from("subscription_plans").select("*").eq("is_active", true).order("price_monthly", { ascending: true });
       return plans || [];
     });
   }
   getCurrentSubscription(organizationId) {
     return __async(this, null, function* () {
       var _a;
-      const { data: org } = yield import_db2.supabase.from("organizations").select("*").eq("id", organizationId).single();
+      const { data: org } = yield import_db.supabase.from("organizations").select("*").eq("id", organizationId).single();
       if (!org || !org.stripe_customer_id || !org.stripe_subscription_id) {
         return null;
       }
@@ -20093,7 +19972,7 @@ var BillingServiceImpl = class {
       if (!subscription) {
         return null;
       }
-      const { data: plan } = yield import_db2.supabase.from("subscription_plans").select("*").eq("stripe_price_id", (_a = subscription.items.data[0]) == null ? void 0 : _a.price.id).single();
+      const { data: plan } = yield import_db.supabase.from("subscription_plans").select("*").eq("stripe_price_id", (_a = subscription.items.data[0]) == null ? void 0 : _a.price.id).single();
       return {
         id: subscription.id,
         status: subscription.status,
@@ -20126,7 +20005,7 @@ var BillingServiceImpl = class {
     return __async(this, null, function* () {
       var _a;
       const alerts = [];
-      const { data: org } = yield import_db2.supabase.from("organizations").select("*, subscriptions(*, subscription_plans(*))").eq("id", organizationId).single();
+      const { data: org } = yield import_db.supabase.from("organizations").select("*, subscriptions(*, subscription_plans(*))").eq("id", organizationId).single();
       if (!org) return alerts;
       if (org.stripe_customer_id) {
         const invoices = yield this.invoiceService.listInvoices(org.stripe_customer_id, {
@@ -20188,6 +20067,127 @@ var BillingServiceImpl = class {
   }
 };
 var billingService = new BillingServiceImpl();
+
+// src/project.service.ts
+var import_db2 = require("@terrashaper/db");
+var ProjectServiceImpl = class {
+  create(data) {
+    return __async(this, null, function* () {
+      const { data: project, error } = yield import_db2.supabase.from("projects").insert(__spreadProps(__spreadValues({}, data), {
+        created_at: /* @__PURE__ */ new Date(),
+        updated_at: /* @__PURE__ */ new Date()
+      })).select().single();
+      if (error) throw error;
+      return project;
+    });
+  }
+  findById(id) {
+    return __async(this, null, function* () {
+      const { data: project, error } = yield import_db2.supabase.from("projects").select("*").eq("id", id).single();
+      if (error && error.code !== "PGRST116") throw error;
+      return project;
+    });
+  }
+  findByUserId(userId) {
+    return __async(this, null, function* () {
+      const { data: projects, error } = yield import_db2.supabase.from("projects").select("*").eq("user_id", userId).order("created_at", { ascending: false });
+      if (error) throw error;
+      return projects || [];
+    });
+  }
+  findByOrganizationId(organizationId) {
+    return __async(this, null, function* () {
+      const { data: projects, error } = yield import_db2.supabase.from("projects").select("*").eq("organization_id", organizationId).order("created_at", { ascending: false });
+      if (error) throw error;
+      return projects || [];
+    });
+  }
+  update(id, data) {
+    return __async(this, null, function* () {
+      const { data: project, error } = yield import_db2.supabase.from("projects").update(__spreadProps(__spreadValues({}, data), {
+        updated_at: /* @__PURE__ */ new Date()
+      })).eq("id", id).select().single();
+      if (error) throw error;
+      return project;
+    });
+  }
+  delete(id) {
+    return __async(this, null, function* () {
+      const { error } = yield import_db2.supabase.from("projects").delete().eq("id", id);
+      if (error) throw error;
+    });
+  }
+  createVersion(data) {
+    return __async(this, null, function* () {
+      const { data: version2, error } = yield import_db2.supabase.from("project_versions").insert(__spreadProps(__spreadValues({}, data), {
+        created_at: /* @__PURE__ */ new Date()
+      })).select().single();
+      if (error) throw error;
+      return version2;
+    });
+  }
+  getVersions(projectId) {
+    return __async(this, null, function* () {
+      const { data: versions, error } = yield import_db2.supabase.from("project_versions").select("*").eq("project_id", projectId).order("created_at", { ascending: false });
+      if (error) throw error;
+      return versions || [];
+    });
+  }
+  getStats(organizationId) {
+    return __async(this, null, function* () {
+      const { data: projects } = yield import_db2.supabase.from("projects").select("id, name, status, created_at, updated_at").eq("organization_id", organizationId);
+      const total = (projects == null ? void 0 : projects.length) || 0;
+      const byStatus = (projects == null ? void 0 : projects.reduce((acc, project) => {
+        const status = project.status || "draft";
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {})) || {};
+      const { data: recentProjects } = yield import_db2.supabase.from("projects").select("id, name, created_at, updated_at, user_id, users(name)").eq("organization_id", organizationId).order("updated_at", { ascending: false }).limit(10);
+      const { data: recentRenders } = yield import_db2.supabase.from("renders").select("id, project_id, created_at, user_id, projects(name), users(name)").eq("organization_id", organizationId).order("created_at", { ascending: false }).limit(10);
+      const activities = [];
+      recentProjects == null ? void 0 : recentProjects.forEach((project) => {
+        var _a, _b;
+        if (project.created_at === project.updated_at) {
+          activities.push({
+            projectId: project.id,
+            projectName: project.name,
+            action: "created",
+            timestamp: new Date(project.created_at),
+            userId: project.user_id,
+            userName: (_a = project.users) == null ? void 0 : _a.name
+          });
+        } else {
+          activities.push({
+            projectId: project.id,
+            projectName: project.name,
+            action: "updated",
+            timestamp: new Date(project.updated_at),
+            userId: project.user_id,
+            userName: (_b = project.users) == null ? void 0 : _b.name
+          });
+        }
+      });
+      recentRenders == null ? void 0 : recentRenders.forEach((render) => {
+        var _a, _b;
+        activities.push({
+          projectId: render.project_id,
+          projectName: ((_a = render.projects) == null ? void 0 : _a.name) || "Unknown Project",
+          action: "rendered",
+          timestamp: new Date(render.created_at),
+          userId: render.user_id,
+          userName: (_b = render.users) == null ? void 0 : _b.name
+        });
+      });
+      const recentActivity = activities.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 10);
+      return {
+        total,
+        byStatus,
+        recentActivity
+      };
+    });
+  }
+};
+var projectService = new ProjectServiceImpl();
 
 // src/render.service.ts
 var import_db3 = require("@terrashaper/db");
@@ -35813,20 +35813,7 @@ var ClientType;
   ClientType2["normal"] = "normal";
 })(ClientType || (ClientType = {}));
 
-// ../queue/dist/index.mjs
-var __defProp2 = Object.defineProperty;
-var __getOwnPropSymbols2 = Object.getOwnPropertySymbols;
-var __hasOwnProp2 = Object.prototype.hasOwnProperty;
-var __propIsEnum2 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp2 = (obj, key, value) => key in obj ? __defProp2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues2 = (a, b) => {
-  for (var prop in b || (b = {})) if (__hasOwnProp2.call(b, prop)) __defNormalProp2(a, prop, b[prop]);
-  if (__getOwnPropSymbols2)
-    for (var prop of __getOwnPropSymbols2(b)) {
-      if (__propIsEnum2.call(b, prop)) __defNormalProp2(a, prop, b[prop]);
-    }
-  return a;
-};
+// ../queue/src/config.ts
 function getRedisConnection() {
   const redisHost = process.env.REDIS_HOST;
   if (redisHost && redisHost.startsWith("https://")) {
@@ -35870,13 +35857,12 @@ var QUEUE_NAMES = {
   RENDER: "renderQueue",
   NOTIFICATION: "notificationQueue"
 };
+
+// ../queue/src/queues/render.queue.ts
 var renderQueue = null;
 function getRenderQueue(connection) {
   if (!renderQueue) {
-    renderQueue = new Queue(
-      QUEUE_NAMES.RENDER,
-      __spreadValues2(__spreadValues2({}, defaultQueueOptions), connection && { connection })
-    );
+    renderQueue = new Queue(QUEUE_NAMES.RENDER, __spreadValues(__spreadValues({}, defaultQueueOptions), connection && { connection }));
   }
   return renderQueue;
 }

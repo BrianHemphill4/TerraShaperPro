@@ -1,18 +1,18 @@
 import { supabase } from '@terrashaper/db';
 
-export interface ProjectService {
-  create(data: CreateProjectInput): Promise<Project>;
-  findById(id: string): Promise<Project | null>;
-  findByUserId(userId: string): Promise<Project[]>;
-  findByOrganizationId(organizationId: string): Promise<Project[]>;
-  update(id: string, data: UpdateProjectInput): Promise<Project>;
-  delete(id: string): Promise<void>;
-  createVersion(data: CreateVersionInput): Promise<ProjectVersion>;
-  getVersions(projectId: string): Promise<ProjectVersion[]>;
-  getStats(organizationId: string): Promise<ProjectStats>;
+export type ProjectService = {
+  create: (data: CreateProjectInput) => Promise<Project>;
+  findById: (id: string) => Promise<Project | null>;
+  findByUserId: (userId: string) => Promise<Project[]>;
+  findByOrganizationId: (organizationId: string) => Promise<Project[]>;
+  update: (id: string, data: UpdateProjectInput) => Promise<Project>;
+  delete: (id: string) => Promise<void>;
+  createVersion: (data: CreateVersionInput) => Promise<ProjectVersion>;
+  getVersions: (projectId: string) => Promise<ProjectVersion[]>;
+  getStats: (organizationId: string) => Promise<ProjectStats>;
 }
 
-export interface CreateProjectInput {
+export type CreateProjectInput = {
   name: string;
   description?: string;
   organization_id: string;
@@ -21,7 +21,7 @@ export interface CreateProjectInput {
   metadata?: Record<string, any>;
 }
 
-export interface UpdateProjectInput {
+export type UpdateProjectInput = {
   name?: string;
   description?: string;
   canvas_data?: any;
@@ -29,7 +29,7 @@ export interface UpdateProjectInput {
   status?: string;
 }
 
-export interface Project {
+export type Project = {
   id: string;
   name: string;
   description?: string;
@@ -42,7 +42,7 @@ export interface Project {
   updated_at: Date;
 }
 
-export interface CreateVersionInput {
+export type CreateVersionInput = {
   project_id: string;
   version_number: number;
   canvas_data: any;
@@ -50,7 +50,7 @@ export interface CreateVersionInput {
   created_by: string;
 }
 
-export interface ProjectVersion {
+export type ProjectVersion = {
   id: string;
   project_id: string;
   version_number: number;
@@ -60,13 +60,13 @@ export interface ProjectVersion {
   created_at: Date;
 }
 
-export interface ProjectStats {
+export type ProjectStats = {
   total: number;
   byStatus: Record<string, number>;
   recentActivity: RecentActivity[];
 }
 
-export interface RecentActivity {
+export type RecentActivity = {
   projectId: string;
   projectName: string;
   action: 'created' | 'updated' | 'rendered';

@@ -1,6 +1,6 @@
 // src/client.ts
-import { Buffer } from 'buffer';
-import { Storage } from '@google-cloud/storage';
+import { Buffer } from "buffer";
+import { Storage } from "@google-cloud/storage";
 
 // src/config.ts
 function getStorageConfig() {
@@ -9,7 +9,7 @@ function getStorageConfig() {
   const assetsBucket = process.env.GCS_ASSETS_BUCKET;
   if (!projectId || !rendersBucket || !assetsBucket) {
     throw new Error(
-      'Missing required Google Cloud Storage environment variables: GCS_PROJECT_ID, GCS_RENDERS_BUCKET, GCS_ASSETS_BUCKET'
+      "Missing required Google Cloud Storage environment variables: GCS_PROJECT_ID, GCS_RENDERS_BUCKET, GCS_ASSETS_BUCKET"
     );
   }
   return {
@@ -17,7 +17,7 @@ function getStorageConfig() {
     rendersBucket,
     assetsBucket,
     keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-    cdnUrl: process.env.GCS_CDN_URL,
+    cdnUrl: process.env.GCS_CDN_URL
   };
 }
 
@@ -27,16 +27,16 @@ function getStorageClient() {
   if (!storageClient) {
     const config = getStorageConfig();
     if (process.env.GCS_KEY_BASE64) {
-      const keyJson = Buffer.from(process.env.GCS_KEY_BASE64, 'base64').toString('utf-8');
+      const keyJson = Buffer.from(process.env.GCS_KEY_BASE64, "base64").toString("utf-8");
       const keyData = JSON.parse(keyJson);
       storageClient = new Storage({
         projectId: keyData.project_id,
-        credentials: keyData,
+        credentials: keyData
       });
     } else {
       storageClient = new Storage({
         projectId: config.projectId,
-        keyFilename: config.keyFilename,
+        keyFilename: config.keyFilename
       });
     }
   }
@@ -45,36 +45,36 @@ function getStorageClient() {
 function getBucket(bucketType) {
   const client = getStorageClient();
   const config = getStorageConfig();
-  const bucketName = bucketType === 'renders' ? config.rendersBucket : config.assetsBucket;
+  const bucketName = bucketType === "renders" ? config.rendersBucket : config.assetsBucket;
   return client.bucket(bucketName);
 }
 
 // src/image-processor.ts
-import sharp from 'sharp';
+import sharp from "sharp";
 var ImageProcessor = class {
   static async optimizeImage(buffer, options = {}) {
-    const { width, height, quality = 80, format = 'webp', thumbnail = false } = options;
+    const { width, height, quality = 80, format = "webp", thumbnail = false } = options;
     let processor = sharp(buffer);
     if (width || height) {
       processor = processor.resize(width, height, {
-        fit: 'inside',
-        withoutEnlargement: true,
+        fit: "inside",
+        withoutEnlargement: true
       });
     }
     if (thumbnail) {
       processor = processor.resize(300, 300, {
-        fit: 'cover',
-        position: 'center',
+        fit: "cover",
+        position: "center"
       });
     }
     switch (format) {
-      case 'webp':
+      case "webp":
         processor = processor.webp({ quality });
         break;
-      case 'jpeg':
+      case "jpeg":
         processor = processor.jpeg({ quality });
         break;
-      case 'png':
+      case "png":
         processor = processor.png({ quality });
         break;
     }
@@ -82,17 +82,14 @@ var ImageProcessor = class {
     return {
       buffer: optimizedBuffer,
       contentType: `image/${format}`,
-      size: optimizedBuffer.length,
+      size: optimizedBuffer.length
     };
   }
   static async createThumbnail(buffer) {
-    return sharp(buffer)
-      .resize(300, 300, {
-        fit: 'cover',
-        position: 'center',
-      })
-      .webp({ quality: 70 })
-      .toBuffer();
+    return sharp(buffer).resize(300, 300, {
+      fit: "cover",
+      position: "center"
+    }).webp({ quality: 70 }).toBuffer();
   }
   static async getImageMetadata(buffer) {
     const metadata = await sharp(buffer).metadata();
@@ -101,16 +98,16 @@ var ImageProcessor = class {
       height: metadata.height,
       format: metadata.format,
       size: metadata.size,
-      hasAlpha: metadata.hasAlpha,
+      hasAlpha: metadata.hasAlpha
     };
   }
 };
 
 // src/render-storage.ts
-import { Buffer as Buffer2 } from 'buffer';
+import { Buffer as Buffer2 } from "buffer";
 
 // src/storage-service.ts
-import { lookup } from 'mime-types';
+import { lookup } from "mime-types";
 var StorageService = class {
   config = getStorageConfig();
   async uploadFile(options) {
@@ -120,35 +117,34 @@ var StorageService = class {
       buffer,
       contentType,
       metadata = {},
-      makePublic = false,
+      makePublic = false
     } = options;
     const bucket = getBucket(bucketType);
     const file = bucket.file(fileName);
-    const finalContentType = contentType || lookup(fileName) || 'application/octet-stream';
+    const finalContentType = contentType || lookup(fileName) || "application/octet-stream";
     await file.save(buffer, {
       metadata: {
         contentType: finalContentType,
-        metadata,
+        metadata
       },
-      resumable: false,
+      resumable: false
     });
     if (makePublic) {
       await file.makePublic();
     }
-    const bucketName =
-      bucketType === 'renders' ? this.config.rendersBucket : this.config.assetsBucket;
+    const bucketName = bucketType === "renders" ? this.config.rendersBucket : this.config.assetsBucket;
     const publicUrl = this.getPublicUrl(bucketName, fileName);
     return {
       fileName,
       bucket: bucketName,
       publicUrl,
       size: buffer.length,
-      contentType: finalContentType,
+      contentType: finalContentType
     };
   }
   async uploadImage(bucketType, fileName, buffer, optimizationOptions) {
     let finalBuffer = buffer;
-    let contentType = 'image/jpeg';
+    let contentType = "image/jpeg";
     if (optimizationOptions) {
       const optimized = await ImageProcessor.optimizeImage(buffer, optimizationOptions);
       finalBuffer = optimized.buffer;
@@ -159,7 +155,7 @@ var StorageService = class {
       fileName,
       buffer: finalBuffer,
       contentType,
-      makePublic: true,
+      makePublic: true
     });
     let thumbnail;
     if (!optimizationOptions?.thumbnail) {
@@ -169,8 +165,8 @@ var StorageService = class {
         bucket: bucketType,
         fileName: thumbnailFileName,
         buffer: thumbnailBuffer,
-        contentType: 'image/webp',
-        makePublic: true,
+        contentType: "image/webp",
+        makePublic: true
       });
     }
     return { original, thumbnail };
@@ -182,15 +178,15 @@ var StorageService = class {
       action,
       expires = new Date(Date.now() + 15 * 60 * 1e3),
       // 15 minutes default
-      contentType,
+      contentType
     } = options;
     const bucket = getBucket(bucketType);
     const file = bucket.file(fileName);
     const [url] = await file.getSignedUrl({
-      version: 'v4',
+      version: "v4",
       action,
       expires,
-      contentType,
+      contentType
     });
     return url;
   }
@@ -198,17 +194,17 @@ var StorageService = class {
     return this.generateSignedUrl({
       bucket: bucketType,
       fileName,
-      action: 'write',
+      action: "write",
       contentType,
-      expires,
+      expires
     });
   }
   async generateDownloadUrl(bucketType, fileName, expires) {
     return this.generateSignedUrl({
       bucket: bucketType,
       fileName,
-      action: 'read',
-      expires,
+      action: "read",
+      expires
     });
   }
   async deleteFile(bucketType, fileName) {
@@ -242,7 +238,7 @@ var StorageService = class {
     return `https://storage.googleapis.com/${bucketName}/${fileName}`;
   }
   getThumbnailFileName(originalFileName) {
-    const lastDotIndex = originalFileName.lastIndexOf('.');
+    const lastDotIndex = originalFileName.lastIndexOf(".");
     if (lastDotIndex === -1) {
       return `${originalFileName}_thumb.webp`;
     }
@@ -252,34 +248,34 @@ var StorageService = class {
   // Utility methods for common file operations
   async uploadRenderResult(renderId, imageBuffer, metadata) {
     const fileName = `renders/${renderId}.webp`;
-    const result = await this.uploadImage('renders', fileName, imageBuffer, {
-      format: 'webp',
-      quality: 85,
+    const result = await this.uploadImage("renders", fileName, imageBuffer, {
+      format: "webp",
+      quality: 85
     });
     if (metadata && result.thumbnail) {
-      const bucket = getBucket('renders');
+      const bucket = getBucket("renders");
       const originalFile = bucket.file(fileName);
       const thumbnailFile = bucket.file(this.getThumbnailFileName(fileName));
       await Promise.all([
         originalFile.setMetadata({ metadata }),
-        thumbnailFile.setMetadata({ metadata }),
+        thumbnailFile.setMetadata({ metadata })
       ]);
     }
     return result;
   }
   async uploadAsset(assetId, imageBuffer, metadata) {
     const fileName = `assets/${assetId}.webp`;
-    const result = await this.uploadImage('assets', fileName, imageBuffer, {
-      format: 'webp',
-      quality: 90,
+    const result = await this.uploadImage("assets", fileName, imageBuffer, {
+      format: "webp",
+      quality: 90
     });
     if (metadata && result.thumbnail) {
-      const bucket = getBucket('assets');
+      const bucket = getBucket("assets");
       const originalFile = bucket.file(fileName);
       const thumbnailFile = bucket.file(this.getThumbnailFileName(fileName));
       await Promise.all([
         originalFile.setMetadata({ metadata }),
-        thumbnailFile.setMetadata({ metadata }),
+        thumbnailFile.setMetadata({ metadata })
       ]);
     }
     return result;
@@ -295,58 +291,58 @@ var RenderStorageService = class extends StorageService {
     const fileName = `renders/${renderId}`;
     const imageMetadata = await ImageProcessor.getImageMetadata(imageBuffer);
     const webpOptimized = await ImageProcessor.optimizeImage(imageBuffer, {
-      format: 'webp',
+      format: "webp",
       quality: 85,
       width: Math.min(imageMetadata.width || 2048, 2048),
-      height: Math.min(imageMetadata.height || 2048, 2048),
+      height: Math.min(imageMetadata.height || 2048, 2048)
     });
     const thumbnailBuffer = await ImageProcessor.createThumbnail(imageBuffer);
     const [original, webp, thumbnail] = await Promise.all([
       // Original (high quality)
       this.uploadFile({
-        bucket: 'renders',
-        fileName: `${fileName}_original.${imageMetadata.format || 'jpg'}`,
+        bucket: "renders",
+        fileName: `${fileName}_original.${imageMetadata.format || "jpg"}`,
         buffer: imageBuffer,
-        contentType: `image/${imageMetadata.format || 'jpeg'}`,
+        contentType: `image/${imageMetadata.format || "jpeg"}`,
         makePublic: true,
         metadata: {
           renderId,
-          type: 'original',
+          type: "original",
           userId: metadata.userId,
           projectId: metadata.projectId,
-          provider: metadata.provider,
-        },
+          provider: metadata.provider
+        }
       }),
       // Optimized WebP (primary display)
       this.uploadFile({
-        bucket: 'renders',
+        bucket: "renders",
         fileName: `${fileName}.webp`,
         buffer: webpOptimized.buffer,
         contentType: webpOptimized.contentType,
         makePublic: true,
         metadata: {
           renderId,
-          type: 'optimized',
+          type: "optimized",
           userId: metadata.userId,
           projectId: metadata.projectId,
-          provider: metadata.provider,
-        },
+          provider: metadata.provider
+        }
       }),
       // Thumbnail
       this.uploadFile({
-        bucket: 'renders',
+        bucket: "renders",
         fileName: `${fileName}_thumb.webp`,
         buffer: thumbnailBuffer,
-        contentType: 'image/webp',
+        contentType: "image/webp",
         makePublic: true,
         metadata: {
           renderId,
-          type: 'thumbnail',
+          type: "thumbnail",
           userId: metadata.userId,
           projectId: metadata.projectId,
-          provider: metadata.provider,
-        },
-      }),
+          provider: metadata.provider
+        }
+      })
     ]);
     const metadataContent = {
       renderId,
@@ -357,37 +353,37 @@ var RenderStorageService = class extends StorageService {
           size: original.size,
           contentType: original.contentType,
           width: imageMetadata.width,
-          height: imageMetadata.height,
+          height: imageMetadata.height
         },
         webp: {
           url: webp.publicUrl,
           size: webp.size,
-          contentType: webp.contentType,
+          contentType: webp.contentType
         },
         thumbnail: {
           url: thumbnail.publicUrl,
           size: thumbnail.size,
-          contentType: thumbnail.contentType,
-        },
+          contentType: thumbnail.contentType
+        }
       },
-      createdAt: /* @__PURE__ */ new Date().toISOString(),
+      createdAt: (/* @__PURE__ */ new Date()).toISOString()
     };
     await this.uploadFile({
-      bucket: 'renders',
+      bucket: "renders",
       fileName: `${fileName}_metadata.json`,
       buffer: Buffer2.from(JSON.stringify(metadataContent, null, 2)),
-      contentType: 'application/json',
+      contentType: "application/json",
       makePublic: false,
       metadata: {
         renderId,
-        type: 'metadata',
-      },
+        type: "metadata"
+      }
     });
     return {
       original,
       webp,
       thumbnail,
-      metadata: metadataContent,
+      metadata: metadataContent
     };
   }
   /**
@@ -396,18 +392,18 @@ var RenderStorageService = class extends StorageService {
   async getRenderUrls(renderId) {
     try {
       const fileName = `renders/${renderId}`;
-      const webpExists = await this.fileExists('renders', `${fileName}.webp`);
+      const webpExists = await this.fileExists("renders", `${fileName}.webp`);
       if (!webpExists) {
         return null;
       }
       const bucketName = process.env.GCS_RENDERS_BUCKET;
       const urls = {
         webp: this.getPublicUrl(bucketName, `${fileName}.webp`),
-        thumbnail: this.getPublicUrl(bucketName, `${fileName}_thumb.webp`),
+        thumbnail: this.getPublicUrl(bucketName, `${fileName}_thumb.webp`)
       };
       const [originalExists, metadataExists] = await Promise.all([
         this.checkOriginalFile(renderId),
-        this.fileExists('renders', `${fileName}_metadata.json`),
+        this.fileExists("renders", `${fileName}_metadata.json`)
       ]);
       if (originalExists.exists) {
         urls.original = this.getPublicUrl(bucketName, originalExists.fileName);
@@ -416,7 +412,7 @@ var RenderStorageService = class extends StorageService {
       if (metadataExists) {
         try {
           const metadataUrl = await this.generateDownloadUrl(
-            'renders',
+            "renders",
             `${fileName}_metadata.json`,
             new Date(Date.now() + 5 * 60 * 1e3)
             // 5 minutes
@@ -426,12 +422,12 @@ var RenderStorageService = class extends StorageService {
             metadata = await response.json();
           }
         } catch (error) {
-          console.warn('Failed to fetch render metadata:', error);
+          console.warn("Failed to fetch render metadata:", error);
         }
       }
       return { ...urls, metadata };
     } catch (error) {
-      console.error('Failed to get render URLs:', error);
+      console.error("Failed to get render URLs:", error);
       return null;
     }
   }
@@ -443,7 +439,7 @@ var RenderStorageService = class extends StorageService {
     const possibleFiles = [
       `${fileName}.webp`,
       `${fileName}_thumb.webp`,
-      `${fileName}_metadata.json`,
+      `${fileName}_metadata.json`
     ];
     const originalFile = await this.checkOriginalFile(renderId);
     if (originalFile.exists) {
@@ -451,9 +447,9 @@ var RenderStorageService = class extends StorageService {
     }
     const deletePromises = possibleFiles.map(async (file) => {
       try {
-        const exists = await this.fileExists('renders', file);
+        const exists = await this.fileExists("renders", file);
         if (exists) {
-          await this.deleteFile('renders', file);
+          await this.deleteFile("renders", file);
         }
       } catch (error) {
         console.warn(`Failed to delete file ${file}:`, error);
@@ -466,15 +462,15 @@ var RenderStorageService = class extends StorageService {
    */
   async checkOriginalFile(renderId) {
     const fileName = `renders/${renderId}`;
-    const possibleExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff'];
+    const possibleExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "tiff"];
     for (const ext of possibleExtensions) {
       const testFileName = `${fileName}_original.${ext}`;
-      const exists = await this.fileExists('renders', testFileName);
+      const exists = await this.fileExists("renders", testFileName);
       if (exists) {
         return { exists: true, fileName: testFileName };
       }
     }
-    return { exists: false, fileName: '' };
+    return { exists: false, fileName: "" };
   }
   /**
    * Generate download URLs for render results
@@ -484,24 +480,24 @@ var RenderStorageService = class extends StorageService {
     const expires = new Date(Date.now() + expiresInHours * 60 * 60 * 1e3);
     const urls = {};
     try {
-      const webpExists = await this.fileExists('renders', `${fileName}.webp`);
+      const webpExists = await this.fileExists("renders", `${fileName}.webp`);
       if (webpExists) {
-        urls.webp = await this.generateDownloadUrl('renders', `${fileName}.webp`, expires);
+        urls.webp = await this.generateDownloadUrl("renders", `${fileName}.webp`, expires);
       }
-      const thumbExists = await this.fileExists('renders', `${fileName}_thumb.webp`);
+      const thumbExists = await this.fileExists("renders", `${fileName}_thumb.webp`);
       if (thumbExists) {
         urls.thumbnail = await this.generateDownloadUrl(
-          'renders',
+          "renders",
           `${fileName}_thumb.webp`,
           expires
         );
       }
       const originalFile = await this.checkOriginalFile(renderId);
       if (originalFile.exists) {
-        urls.original = await this.generateDownloadUrl('renders', originalFile.fileName, expires);
+        urls.original = await this.generateDownloadUrl("renders", originalFile.fileName, expires);
       }
     } catch (error) {
-      console.error('Failed to generate download URLs:', error);
+      console.error("Failed to generate download URLs:", error);
     }
     return urls;
   }
@@ -521,14 +517,13 @@ var UploadUtils = class {
       contentType,
       expiresAt
     );
-    const bucketName =
-      bucketType === 'renders' ? process.env.GCS_RENDERS_BUCKET : process.env.GCS_ASSETS_BUCKET;
+    const bucketName = bucketType === "renders" ? process.env.GCS_RENDERS_BUCKET : process.env.GCS_ASSETS_BUCKET;
     const publicUrl = this.storageService.getPublicUrl(bucketName, fileName);
     return {
       uploadUrl,
       fileName,
       publicUrl,
-      expiresAt,
+      expiresAt
     };
   }
   /**
@@ -542,20 +537,20 @@ var UploadUtils = class {
   /**
    * Generate file name for render result
    */
-  static generateRenderFileName(renderId, format = 'webp') {
+  static generateRenderFileName(renderId, format = "webp") {
     return `renders/${renderId}.${format}`;
   }
   /**
    * Generate file name for asset
    */
-  static generateAssetFileName(assetId, format = 'webp') {
+  static generateAssetFileName(assetId, format = "webp") {
     return `assets/${assetId}.${format}`;
   }
   /**
    * Generate file name for user upload
    */
   static generateUserUploadFileName(userId, originalFileName) {
-    const extension = originalFileName.split('.').pop() || 'jpg';
+    const extension = originalFileName.split(".").pop() || "jpg";
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 8);
     return `uploads/${userId}/${timestamp}-${random}.${extension}`;
@@ -564,11 +559,11 @@ var UploadUtils = class {
    * Validate file type for uploads
    */
   static validateImageFile(contentType, _maxSizeMB = 10) {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
     if (!allowedTypes.includes(contentType.toLowerCase())) {
       return {
         valid: false,
-        error: `Invalid file type. Allowed: ${allowedTypes.join(', ')}`,
+        error: `Invalid file type. Allowed: ${allowedTypes.join(", ")}`
       };
     }
     return { valid: true };
@@ -579,29 +574,24 @@ var UploadUtils = class {
   static getCorsConfig() {
     return {
       origin: [
-        process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-        'https://terrashaper.pro',
-        'https://*.terrashaper.pro',
+        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+        "https://terrashaper.pro",
+        "https://*.terrashaper.pro"
       ],
-      methods: ['GET', 'PUT', 'POST', 'OPTIONS'],
+      methods: ["GET", "PUT", "POST", "OPTIONS"],
       allowedHeaders: [
-        'Content-Type',
-        'Content-Length',
-        'x-goog-content-length-range',
-        'x-goog-resumable',
+        "Content-Type",
+        "Content-Length",
+        "x-goog-content-length-range",
+        "x-goog-resumable"
       ],
-      maxAgeSeconds: 3600,
+      maxAgeSeconds: 3600
     };
   }
   /**
    * Create presigned POST policy for direct browser uploads
    */
-  static async generatePresignedPost(
-    bucketType,
-    fileName,
-    contentType,
-    _maxSizeBytes = 10 * 1024 * 1024
-  ) {
+  static async generatePresignedPost(bucketType, fileName, contentType, _maxSizeBytes = 10 * 1024 * 1024) {
     const uploadUrl = await this.storageService.generateUploadUrl(
       bucketType,
       fileName,
@@ -610,8 +600,8 @@ var UploadUtils = class {
     return {
       url: uploadUrl,
       fields: {
-        'Content-Type': contentType,
-      },
+        "Content-Type": contentType
+      }
     };
   }
 };
@@ -623,6 +613,6 @@ export {
   StorageService as default,
   getBucket,
   getStorageClient,
-  getStorageConfig,
+  getStorageConfig
 };
 //# sourceMappingURL=index.mjs.map

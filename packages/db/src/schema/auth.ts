@@ -1,4 +1,4 @@
-import { integer, pgEnum, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { date, integer, pgEnum, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 
 export const subscriptionTierEnum = pgEnum('subscription_tier', [
   'free',
@@ -14,6 +14,9 @@ export const organizations = pgTable('organizations', {
   subscriptionTier: subscriptionTierEnum('subscription_tier').default('free').notNull(),
   subscriptionExpiresAt: timestamp('subscription_expires_at', { withTimezone: true }),
   renderCredits: integer('render_credits').default(10).notNull(),
+  renderQuota: integer('render_quota').default(20).notNull(),
+  renderQuotaUsed: integer('render_quota_used').default(0).notNull(),
+  quotaRefreshDate: date('quota_refresh_date'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });

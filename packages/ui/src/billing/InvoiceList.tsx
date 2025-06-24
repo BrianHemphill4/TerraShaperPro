@@ -14,7 +14,7 @@ import {
   TableRow,
 } from '../table';
 
-export interface Invoice {
+export type Invoice = {
   id: string;
   invoice_number?: string | null;
   stripe_invoice_id: string;
@@ -26,7 +26,7 @@ export interface Invoice {
   stripe_invoice_pdf?: string | null;
 }
 
-export interface InvoiceListProps {
+export type InvoiceListProps = {
   invoices: Invoice[];
   total?: number;
   page?: number;

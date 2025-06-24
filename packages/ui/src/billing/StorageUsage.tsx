@@ -6,13 +6,13 @@ import { Button } from '../button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../card';
 import { Progress } from '../progress';
 
-export interface StorageBreakdown {
+export type StorageBreakdown = {
   project_uploads: { bytes: number; count: number };
   renders: { bytes: number; count: number };
   templates: { bytes: number; count: number };
 }
 
-export interface StorageUsageProps {
+export type StorageUsageProps = {
   current: number;
   limit: number;
   percentage: number;
@@ -59,7 +59,7 @@ export function StorageUsage({
           <CardDescription>Loading storage information...</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-20 animate-pulse rounded bg-muted" />
+          <div className="bg-muted h-20 animate-pulse rounded" />
         </CardContent>
       </Card>
     );
@@ -94,7 +94,7 @@ export function StorageUsage({
             </p>
           )}
           {isOverLimit && (
-            <p className="mt-2 flex items-center gap-2 text-sm text-destructive">
+            <p className="text-destructive mt-2 flex items-center gap-2 text-sm">
               <AlertTriangle className="size-4" />
               Storage limit exceeded - uploads may be blocked
             </p>
@@ -109,10 +109,10 @@ export function StorageUsage({
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FileImage className="size-4 text-muted-foreground" />
+                  <FileImage className="text-muted-foreground size-4" />
                   <span className="text-sm">Project Uploads</span>
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-muted-foreground text-sm">
                   {formatBytes(breakdown.project_uploads.bytes)} (
                   {breakdown.project_uploads.count} files)
                 </div>
@@ -120,10 +120,10 @@ export function StorageUsage({
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <HardDrive className="size-4 text-muted-foreground" />
+                  <HardDrive className="text-muted-foreground size-4" />
                   <span className="text-sm">Renders</span>
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-muted-foreground text-sm">
                   {formatBytes(breakdown.renders.bytes)} (
                   {breakdown.renders.count} files)
                 </div>
@@ -131,10 +131,10 @@ export function StorageUsage({
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Layout className="size-4 text-muted-foreground" />
+                  <Layout className="text-muted-foreground size-4" />
                   <span className="text-sm">Templates</span>
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-muted-foreground text-sm">
                   {formatBytes(breakdown.templates.bytes)} (
                   {breakdown.templates.count} files)
                 </div>
@@ -161,7 +161,7 @@ export function StorageUsage({
 
         {/* Current Plan Info */}
         <div className="border-t pt-4">
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Your {currentTier} plan includes{' '}
             {limit === -1 ? 'unlimited' : `${limit} GB of`} storage.
             {limit !== -1 && ' Additional storage may incur extra charges.'}

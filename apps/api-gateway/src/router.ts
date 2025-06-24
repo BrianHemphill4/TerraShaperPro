@@ -3,9 +3,12 @@ import { z } from 'zod';
 import { billingRouter } from './routers/billing.router';
 import { clientPortalRouter } from './routers/client-portal.router';
 import { creditRouter } from './routers/credit.router';
+import { exportRouter } from './routers/export.router';
+import { maskRouter } from './routers/mask.router';
 import { plantRouter } from './routers/plant.router';
 import { projectRouter } from './routers/project.router';
 import { renderRouter } from './routers/render.router';
+import { sceneRouter } from './routers/scene.router';
 import { storageRouter } from './routers/storage.router';
 import { teamRouter } from './routers/team.router';
 import { publicProcedure, router } from './trpc';
@@ -21,6 +24,9 @@ export const appRouter = router({
   credit: creditRouter,
   plant: plantRouter,
   project: projectRouter,
+  scene: sceneRouter,
+  mask: maskRouter,
+  export: exportRouter,
   team: teamRouter,
   clientPortal: clientPortalRouter,
   billing: billingRouter,

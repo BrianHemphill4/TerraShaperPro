@@ -8,26 +8,26 @@ import {
 } from '@terrashaper/stripe';
 import type { Stripe } from 'stripe';
 
-export interface BillingService {
-  createCustomer(userId: string, email: string): Promise<Stripe.Customer>;
-  getSubscription(customerId: string): Promise<Stripe.Subscription | null>;
-  updateSubscription(subscriptionId: string, priceId: string): Promise<Stripe.Subscription>;
-  cancelSubscription(subscriptionId: string): Promise<Stripe.Subscription>;
-  getUsage(customerId: string, period: { start: Date; end: Date }): Promise<UsageData>;
-  createPaymentIntent(amount: number, customerId: string): Promise<Stripe.PaymentIntent>;
-  getPlans(): Promise<SubscriptionPlan[]>;
-  getCurrentSubscription(organizationId: string): Promise<CurrentSubscription | null>;
-  getInvoices(customerId: string, limit?: number): Promise<Invoice[]>;
-  getBillingAlerts(organizationId: string): Promise<BillingAlert[]>;
+export type BillingService = {
+  createCustomer: (userId: string, email: string) => Promise<Stripe.Customer>;
+  getSubscription: (customerId: string) => Promise<Stripe.Subscription | null>;
+  updateSubscription: (subscriptionId: string, priceId: string) => Promise<Stripe.Subscription>;
+  cancelSubscription: (subscriptionId: string) => Promise<Stripe.Subscription>;
+  getUsage: (customerId: string, period: { start: Date; end: Date }) => Promise<UsageData>;
+  createPaymentIntent: (amount: number, customerId: string) => Promise<Stripe.PaymentIntent>;
+  getPlans: () => Promise<SubscriptionPlan[]>;
+  getCurrentSubscription: (organizationId: string) => Promise<CurrentSubscription | null>;
+  getInvoices: (customerId: string, limit?: number) => Promise<Invoice[]>;
+  getBillingAlerts: (organizationId: string) => Promise<BillingAlert[]>;
 }
 
-export interface UsageData {
+export type UsageData = {
   renders: { used: number; limit: number };
   storage: { used: number; limit: number };
   credits: { used: number; remaining: number };
 }
 
-export interface SubscriptionPlan {
+export type SubscriptionPlan = {
   id: string;
   name: string;
   tier: string;
@@ -40,7 +40,7 @@ export interface SubscriptionPlan {
   features: Record<string, any>;
 }
 
-export interface CurrentSubscription {
+export type CurrentSubscription = {
   id: string;
   status: string;
   plan: SubscriptionPlan | null;
@@ -48,7 +48,7 @@ export interface CurrentSubscription {
   cancel_at_period_end: boolean;
 }
 
-export interface Invoice {
+export type Invoice = {
   id: string;
   invoice_number?: string | null;
   stripe_invoice_id: string;
@@ -60,7 +60,7 @@ export interface Invoice {
   stripe_invoice_pdf?: string | null;
 }
 
-export interface BillingAlert {
+export type BillingAlert = {
   id: string;
   type: string;
   severity: 'error' | 'warning' | 'info';

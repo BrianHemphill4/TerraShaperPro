@@ -5,7 +5,7 @@ import { AlertCircle, Calendar, CreditCard, Zap } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '../alert';
 import { Button } from '../button';
 
-export interface BillingAlert {
+export type BillingAlert = {
   id: string;
   type: 'payment_failed' | 'subscription_expiring' | 'usage_limit' | string;
   severity: 'error' | 'warning' | 'info';
@@ -17,7 +17,7 @@ export interface BillingAlert {
   };
 }
 
-export interface BillingAlertsProps {
+export type BillingAlertsProps = {
   alerts?: BillingAlert[];
   onActionClick?: (alert: BillingAlert) => void;
 }

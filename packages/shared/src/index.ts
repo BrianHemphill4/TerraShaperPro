@@ -1,4 +1,7 @@
 export * from './services/feature-gate.service';
+export * from './services/quota.service';
+export * from './services/scene.service';
+export * from './services/mask.service';
 export * from './types/billing';
 export * from './types/client-portal';
 export * from './types/onboarding';

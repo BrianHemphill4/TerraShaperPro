@@ -1,13 +1,13 @@
 'use client';
 
-import { Check, CheckCircle2, X } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { useState } from 'react';
 
 import { Badge } from '../badge';
 import { Button } from '../button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../card';
 
-export interface SubscriptionPlan {
+export type SubscriptionPlan = {
   id: string;
   name: string;
   tier: string;
@@ -28,7 +28,7 @@ export interface SubscriptionPlan {
   };
 }
 
-export interface PricingPlansProps {
+export type PricingPlansProps = {
   plans: SubscriptionPlan[];
   currentTier?: string;
   onSubscribe?: (plan: SubscriptionPlan) => void;

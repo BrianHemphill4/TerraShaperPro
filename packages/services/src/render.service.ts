@@ -1,16 +1,16 @@
 import { supabase } from '@terrashaper/db';
 import { getRenderQueue } from '@terrashaper/queue';
 
-export interface RenderService {
-  createRenderJob(projectId: string, options: RenderOptions): Promise<RenderJob>;
-  getRenderStatus(jobId: string): Promise<RenderStatus>;
-  cancelRender(jobId: string): Promise<void>;
-  getRenderHistory(projectId: string): Promise<RenderJob[]>;
-  getCreditsUsage(organizationId: string, period: { start: Date; end: Date }): Promise<CreditsUsage>;
-  estimateCredits(params: EstimateCreditsInput): Promise<number>;
+export type RenderService = {
+  createRenderJob: (projectId: string, options: RenderOptions) => Promise<RenderJob>;
+  getRenderStatus: (jobId: string) => Promise<RenderStatus>;
+  cancelRender: (jobId: string) => Promise<void>;
+  getRenderHistory: (projectId: string) => Promise<RenderJob[]>;
+  getCreditsUsage: (organizationId: string, period: { start: Date; end: Date }) => Promise<CreditsUsage>;
+  estimateCredits: (params: EstimateCreditsInput) => Promise<number>;
 }
 
-export interface RenderOptions {
+export type RenderOptions = {
   quality: 'draft' | 'standard' | 'high' | 'ultra';
   format: 'png' | 'jpg' | 'webp';
   width: number;
@@ -21,7 +21,7 @@ export interface RenderOptions {
   organizationId: string;
 }
 
-export interface RenderJob {
+export type RenderJob = {
   id: string;
   projectId: string;
   status: RenderStatus;
@@ -35,14 +35,14 @@ export interface RenderJob {
 
 export type RenderStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
 
-export interface CreditsUsage {
+export type CreditsUsage = {
   total: number;
   byQuality: Record<string, number>;
   byProject: Array<{ projectId: string; projectName: string; credits: number }>;
   dailyUsage: Array<{ date: string; credits: number }>;
 }
 
-export interface EstimateCreditsInput {
+export type EstimateCreditsInput = {
   quality: 'draft' | 'standard' | 'high' | 'ultra';
   resolution: string;
   style?: string;
@@ -123,7 +123,7 @@ export class RenderServiceImpl implements RenderService {
     const queue = getRenderQueue();
     await queue.add('process-render', {
       renderId: result.id,
-      projectId: projectId,
+      projectId,
       sceneId: 'default', // TODO: Add scene support
       userId: options.userId,
       organizationId: options.organizationId,
@@ -146,7 +146,7 @@ export class RenderServiceImpl implements RenderService {
       id: result.id,
       projectId: result.project_id,
       status: result.status as RenderStatus,
-      options: options,
+      options,
       createdAt: result.created_at,
       creditsUsed: result.credits_used,
     };
