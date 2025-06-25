@@ -17,6 +17,7 @@
     "lint": "echo \"(queue) nothing to lint\"",
     "lint:fix": "echo \"(queue) nothing to fix\"",
     "check-types": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"

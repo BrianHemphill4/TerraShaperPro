@@ -157,6 +157,16 @@ vi.mock('@terrashaper/stripe', () => ({
 
 // Mock the metrics module
 vi.mock('../lib/metrics', () => ({
+  apiMetrics: {
+    recordTrpcCall: vi.fn(),
+    recordHttpRequest: vi.fn(),
+    recordDatabaseQuery: vi.fn(),
+    recordCacheOperation: vi.fn(),
+    recordApiCall: vi.fn(),
+    recordBusinessMetric: vi.fn(),
+    flushMetrics: vi.fn(),
+    destroy: vi.fn(),
+  },
   ApiMetrics: {
     getInstance: vi.fn(() => ({
       recordHttpRequest: vi.fn(),
@@ -164,11 +174,106 @@ vi.mock('../lib/metrics', () => ({
       recordCacheOperation: vi.fn(),
       recordApiCall: vi.fn(),
       recordBusinessMetric: vi.fn(),
+      recordTrpcCall: vi.fn(),
       flushMetrics: vi.fn(),
       destroy: vi.fn(),
     })),
   },
   metricsMiddleware: vi.fn(() => (req: any, res: any, next: any) => next()),
+}));
+
+// Mock shared services
+vi.mock('@terrashaper/shared', () => ({
+  sceneService: {
+    createScene: vi.fn(),
+    updateScene: vi.fn(),
+    deleteScene: vi.fn(),
+    getSceneById: vi.fn(),
+    getScenesByProject: vi.fn(),
+    reorderScenes: vi.fn(),
+  },
+  maskService: {
+    saveMasks: vi.fn(),
+    getMasksByScene: vi.fn(),
+    getMaskHistory: vi.fn(),
+    exportMasks: vi.fn(),
+  },
+  quotaService: {
+    checkQuota: vi.fn(),
+    incrementUsage: vi.fn(),
+    resetQuota: vi.fn(),
+  },
+}));
+
+// Enhanced storage mock  
+vi.mock('@terrashaper/storage', () => ({
+  StorageService: vi.fn().mockImplementation(() => ({
+    uploadFile: vi.fn().mockResolvedValue({
+      url: 'https://storage.test/file.png',
+      key: 'test-key',
+      size: 1024,
+    }),
+    deleteFile: vi.fn().mockResolvedValue(undefined),
+    getSignedUrl: vi.fn().mockResolvedValue('https://storage.test/signed-url'),
+    getUsage: vi.fn().mockResolvedValue({
+      used: 100,
+      total: 1000,
+      remaining: 900,
+    }),
+  })),
+  storageService: {
+    uploadFile: vi.fn().mockResolvedValue({
+      url: 'https://storage.test/file.png',
+      key: 'test-key',
+      size: 1024,
+    }),
+    deleteFile: vi.fn().mockResolvedValue(undefined),
+    getSignedUrl: vi.fn().mockResolvedValue('https://storage.test/signed-url'),
+    getUsage: vi.fn().mockResolvedValue({
+      used: 100,
+      total: 1000,
+      remaining: 900,
+    }),
+  },
+}));
+
+// Enhanced Stripe mock
+vi.mock('@terrashaper/stripe', () => ({
+  CustomerService: vi.fn().mockImplementation(() => ({
+    createCustomer: vi.fn().mockResolvedValue({ id: 'cus_test' }),
+    getCustomer: vi.fn().mockResolvedValue({ id: 'cus_test' }),
+  })),
+  SubscriptionService: vi.fn().mockImplementation(() => ({
+    createSubscription: vi.fn().mockResolvedValue({ id: 'sub_test' }),
+    getSubscription: vi.fn().mockResolvedValue({ id: 'sub_test' }),
+    updateSubscription: vi.fn().mockResolvedValue({ id: 'sub_test' }),
+    cancelSubscription: vi.fn().mockResolvedValue({ id: 'sub_test' }),
+    getCurrentPlan: vi.fn().mockResolvedValue({
+      maxProjects: 10,
+      maxTeamMembers: 5,
+      renderCreditsMonthly: 100,
+    }),
+  })),
+  subscriptionService: {
+    createSubscription: vi.fn().mockResolvedValue({ id: 'sub_test' }),
+    getSubscription: vi.fn().mockResolvedValue({ id: 'sub_test' }),
+    updateSubscription: vi.fn().mockResolvedValue({ id: 'sub_test' }),
+    cancelSubscription: vi.fn().mockResolvedValue({ id: 'sub_test' }),
+    getCurrentPlan: vi.fn().mockResolvedValue({
+      maxProjects: 10,
+      maxTeamMembers: 5,
+      renderCreditsMonthly: 100,
+    }),
+  },
+  PaymentService: vi.fn().mockImplementation(() => ({
+    createPaymentIntent: vi.fn().mockResolvedValue({ id: 'pi_test' }),
+  })),
+  InvoiceService: vi.fn().mockImplementation(() => ({
+    listInvoices: vi.fn().mockResolvedValue([]),
+  })),
+  PortalService: vi.fn().mockImplementation(() => ({
+    createSession: vi.fn().mockResolvedValue({ url: 'https://billing.stripe.com/test' }),
+  })),
 }));
 
 afterAll(() => {

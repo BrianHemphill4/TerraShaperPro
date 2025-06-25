@@ -65,8 +65,8 @@
     "**/*.mts"
   ],
   "references": [
-    { "path": "../../packages/ui" },
+    { "path": "../../packages/shared" },
     { "path": "../../packages/hooks" },
-    { "path": "../../packages/shared" }
+    { "path": "../../packages/ui" }
   ]
 }

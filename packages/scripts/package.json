@@ -7,7 +7,8 @@
     "ingest:plants": "tsx src/ingest-plants.ts",
     "lint": "echo \"(scripts) nothing to lint\"",
     "lint:fix": "echo \"(scripts) nothing to fix\"",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.22.0",

@@ -12,6 +12,7 @@
     "lint": "echo \"(db) nothing to lint\"",
     "lint:fix": "echo \"(db) nothing to fix\"",
     "check-types": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "docs:generate": "typedoc",
     "docs:serve": "npx http-server ../../docs/api/db -p 8081"
   },
