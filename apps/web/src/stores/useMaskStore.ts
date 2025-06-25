@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { ANNOTATION_CATEGORIES, type AnnotationCategory } from '@terrashaper/shared';
 
 export interface GeoJSONGeometry {
   type: 'Point' | 'Polygon' | 'LineString';
@@ -9,7 +10,7 @@ export interface GeoJSONGeometry {
 export interface Mask {
   id: string;
   sceneId: string;
-  category: string;
+  category: AnnotationCategory;
   path: GeoJSONGeometry;
   deleted: boolean;
   authorId: string;
@@ -20,7 +21,7 @@ export interface MaskStore {
   masks: Mask[];
   selectedMaskIds: string[];
   isDrawing: boolean;
-  drawingCategory: string;
+  drawingCategory: AnnotationCategory;
   isLoading: boolean;
   error: string | null;
   
@@ -32,14 +33,14 @@ export interface MaskStore {
   setSelectedMasks: (ids: string[]) => void;
   toggleMaskSelection: (id: string) => void;
   setDrawing: (isDrawing: boolean) => void;
-  setDrawingCategory: (category: string) => void;
+  setDrawingCategory: (category: AnnotationCategory) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   
   // Getters
   getMasksByScene: (sceneId: string) => Mask[];
   getSelectedMasks: () => Mask[];
-  getMasksByCategory: (sceneId: string, category: string) => Mask[];
+  getMasksByCategory: (sceneId: string, category: AnnotationCategory) => Mask[];
 }
 
 export const useMaskStore = create<MaskStore>()(
@@ -48,7 +49,7 @@ export const useMaskStore = create<MaskStore>()(
       masks: [],
       selectedMaskIds: [],
       isDrawing: false,
-      drawingCategory: 'Plants & Trees',
+      drawingCategory: ANNOTATION_CATEGORIES[0],
       isLoading: false,
       error: null,
 

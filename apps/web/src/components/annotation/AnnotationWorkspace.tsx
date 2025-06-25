@@ -1,21 +1,26 @@
 'use client';
 
+import { useState } from 'react';
+
 import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { useSceneStore } from '@/stores/useSceneStore';
-import { useMaskStore } from '@/stores/useMaskStore';
-import { SceneBoard } from './SceneBoard';
-import { ThumbnailRail } from './ThumbnailRail';
-import { SceneUploadZone } from './SceneUploadZone';
-import { QuotaBadge } from './QuotaBadge';
 
-export interface AnnotationWorkspaceProps {
+import { CategoryTabs } from './CategoryTabs';
+import { QuotaBadge } from './QuotaBadge';
+import { SceneBoard } from './SceneBoard';
+import { SceneUploadZone } from './SceneUploadZone';
+import { ThumbnailRail } from './ThumbnailRail';
+import { ToolPalette, type ToolType } from './ToolPalette';
+
+export type AnnotationWorkspaceProps = {
   projectId: string;
-}
+};
 
 export function AnnotationWorkspace({ projectId }: AnnotationWorkspaceProps) {
   const { hasFeature } = useFeatureGate();
   const { getCurrentScene } = useSceneStore();
-  const { drawingCategory, setDrawingCategory } = useMaskStore();
+  const [activeTool, setActiveTool] = useState<ToolType>('select');
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   
   // Check if new annotation system is enabled
   const hasNewAnnotationSystem = hasFeature('newAnnotationSystem');
@@ -30,7 +35,8 @@ export function AnnotationWorkspace({ projectId }: AnnotationWorkspaceProps) {
           The new photo annotation system is available with Professional plans and above.
         </p>
         <button 
-          className="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition-colors"
+          type="button"
+          className="rounded-md bg-yellow-600 px-4 py-2 text-white transition-colors hover:bg-yellow-700"
           onClick={() => window.location.href = '/settings/billing'}
         >
           Upgrade to Access
@@ -40,7 +46,6 @@ export function AnnotationWorkspace({ projectId }: AnnotationWorkspaceProps) {
   }
 
   const currentScene = getCurrentScene();
-  const categories = ['Plants & Trees', 'Mulch & Rocks', 'Hardscape', 'Other'];
 
   return (
     <div className="h-full flex flex-col bg-gray-50">
@@ -55,6 +60,16 @@ export function AnnotationWorkspace({ projectId }: AnnotationWorkspaceProps) {
           </div>
           <QuotaBadge showDetails={false} />
         </div>
+        
+        {/* Category Tabs */}
+        <div className="mt-4">
+          <CategoryTabs 
+            onCategoryChange={(_category) => {
+              // Category change handled by the component itself
+              // Additional logic can be added here if needed
+            }}
+          />
+        </div>
       </div>
 
       {/* Main workspace */}
@@ -64,51 +79,29 @@ export function AnnotationWorkspace({ projectId }: AnnotationWorkspaceProps) {
           {/* Upload zone */}
           <SceneUploadZone 
             projectId={projectId}
-            onSceneUploaded={(scene) => {
-              console.log('Scene uploaded:', scene);
+            onSceneUploaded={(_scene) => {
+              // Scene upload handled by the component
             }}
           />
           
           {/* Scene thumbnails */}
           <ThumbnailRail 
             projectId={projectId}
-            onSceneSelect={(scene) => {
-              console.log('Scene selected:', scene);
+            onSceneSelect={(_scene) => {
+              // Scene selection handled by the component
             }}
           />
           
-          {/* Drawing tools */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Drawing Tools</h3>
-            
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Category
-                </label>
-                <select
-                  value={drawingCategory}
-                  onChange={(e) => setDrawingCategory(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="text-xs text-gray-500">
-                <p className="mb-1">Instructions:</p>
-                <ul className="space-y-1">
-                  <li>• Click and drag to draw annotations</li>
-                  <li>• Click existing annotations to select</li>
-                  <li>• Change category before drawing</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          {/* Tool Palette */}
+          <ToolPalette
+            activeTool={activeTool}
+            onToolChange={setActiveTool}
+            hasUnsavedChanges={hasUnsavedChanges}
+            onSave={() => {
+              // TODO: Implement save functionality
+              setHasUnsavedChanges(false);
+            }}
+          />
           
           {/* Quota details */}
           <QuotaBadge showDetails={true} />
@@ -121,11 +114,12 @@ export function AnnotationWorkspace({ projectId }: AnnotationWorkspaceProps) {
               projectId={projectId}
               width={800}
               height={600}
-              onMaskCreated={(mask) => {
-                console.log('Mask created:', mask);
+              onMaskCreated={(_mask) => {
+                // Mask creation handled by the component
+                setHasUnsavedChanges(true);
               }}
-              onMaskSelected={(maskIds) => {
-                console.log('Masks selected:', maskIds);
+              onMaskSelected={(_maskIds) => {
+                // Mask selection handled by the component
               }}
             />
           ) : (

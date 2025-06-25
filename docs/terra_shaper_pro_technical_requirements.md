@@ -86,93 +86,125 @@ Core pillars:
 3. **Versioning** → Each render spawn creates new *version* record; view diff overlay.
 4. **Archive/Restore** → Soft‑delete with 30‑day grace
 
-### 3.2 Design Workspace (see PDF UI)
+### 3.2 Information Architecture & User Flows
 
-#### 3.2.1 Core Canvas & Annotation
+#### 3.2.1 Information Architecture
 
-- **Annotation Objects**
-  - `mask` (freeform polygon) – defines replace‑area for Imagen prompt.
-  - `assetInstance` – links to `assets.id`, stores category, class, material, color, style, geometry, and tool properties.
-  - `textLabel` – optional overlay for callouts or measurements.
-- **Snapping & Guides** – 24 px grid; magnetic edges; angle snapping at 15° increments.
-- **Multi‑select & Group** – Shift+click or drag to select multiple objects; group/ungroup for batch transforms.
+**Level Structure & Key Objects:**
 
-#### 3.2.2 Parametric Object Composition UX
+| Level | Purpose | Key Objects |
+|-------|---------|-------------|
+| **Account (subscription)** | Manages render quota (e.g., 18 / 20 renders remaining this month) | user, plan, quota |
+| **Project** | One address-specific landscape job (e.g., 1221 Rockland Dr.) | scenes[], renders[], metadata |
+| **Scene** | A single uploaded photo the user will annotate | sceneImage, masks[], renders[] |
+| **Render** | The AI-generated 4K output for a scene | status, resolution, downloadURL |
 
-**Overview** Shift from icon‑only drag‑and‑drop to a parametric composition flow for both area‑ and line‑based elements (e.g. mulch beds, gravel drives, edging). This maximizes precision, enforces consistency, and avoids managing hundreds of discrete thumbnails.
+#### 3.2.2 Primary User Flows
 
-**Selection & Tool Routing**
+**Project Dashboard**
+- Lists projects (card layout). "Back to Project View" link visible on inner pages.
+- CTA: "Open Project" ⇒ Scene board.
 
-1. **Search & Filter**: top‑aligned bar with facets:
-   - [Search Bar] [Favorites] [Category > Class > Material > Color Swatch > Size/Style]
-   - Example: `Mulch → Organic Mulch → Shredded Bark → Brown → Standard`
-2. **Parametric Pick**: selecting an entry auto‑activates the correct drawing tool:
-   - **Area tool** for beds, turf, gravel
-   - **Line tool** for edging, hoses, lighting runs
-3. **Floating Preview**: a semi‑transparent swatch and label follows the cursor until first click.
+**Scene Board (per project)**
 
-**Drawing & Commit**
+*Base layout*
+- Full‑width flex container with left thumbnail rail (fixed 140 px) and right workspace.
+- Uses CSS Grid in mobile (single‑column) and flex split on ≥768 px.
 
-- **Area drawing**: click‑to‑place vertices; press Enter to close polygon. Fills with material texture.
-- **Line drawing**: click for start; click for each waypoint; Enter to finish. Configurable width & smoothing.
-- **Live Properties Panel**: after commit, side panel shows:
-  ```
-  [Material] Black Dyed Mulch
-  [Width] 6" (editable slider)
-  [Smoothing] Enabled (checkbox)
-  ```
+*Thumbnail rail*
+- Each Scene image rendered as 112 × 80 px rounded‑corner thumbnail.
+- Thumbnails lazy‑load via next/image with blur‑up placeholder.
+- Rail is vertically scrollable; native scrollbars hidden with ::-webkit-scrollbar but remain accessible.
+- Current Scene has a 2 px brand‑primary outline and elevated shadow to stand out.
+- Hover state reveals a mini‑toolbar containing Set Default, Duplicate, Delete icons.
+- Drag‑and‑drop enabled via @dnd-kit; re‑ordering triggers POST /api/scene/reorder.
+- Keyboard navigation: ↑ / ↓ moves focus; Enter selects focused scene.
+- First cell is an Upload Drop‑zone with "＋ Add Image" icon; accepts JPEG/PNG ≤ 15 MB, ≥ 1500 × 1000 px.
+- Validation errors surface as toast with precise reason (filetype, size, dimensions).
+- Drop‑zone turns green on drag‑over, grey on invalid file.
 
-**Right‑Click Context Menu (for lines & areas)**
+*Global quota badge*
+- Lives inside AppHeader top‑right; component QuotaBadge.tsx.
+- Shows remaining renders, e.g., 18 / 20.
+- Tooltip explains replenishment schedule and links to Upgrade Plan modal.
+- Badge turns yellow at ≤25 % quota, red at 0 %; colors conform to WCAG contrast.
+- Subscribes to quota.updated WebSocket so multiple tabs stay in sync.
 
-- [Bring Forward]
+*Breadcrumb & Toolbar*
+- Breadcrumb path: Projects ▸ {ProjectName} ▸ Scene Board.
+- Right‑side toolbar houses: Export Masks JSON, Download All Renders, Project Settings.
+- Export downloads a zipped GeoJSON of all masks in project.
+- Download All Streams a ZIP of every render in project via server‑side streaming.
 
-- [Send Backward]
+*Empty‑state handling*
+- If no scenes exist, workspace shows illustration and CTA Upload First Scene.
+- Quota badge still visible; renders remain disabled until a scene is uploaded.
 
-- [Move Forward]
+*Responsive behaviour*
+- Below 768 px, thumbnail rail collapses into horizontal carousel above workspace.
+- Drag‑and‑drop swaps to long‑press gesture on touch devices.
+- Quota badge shrinks to icon + tooltip in mobile header.
 
-- [Move Backward]
+*Accessibility*
+- All thumbnails have alt text derived from scene filename or user label.
+- Drag‑and‑drop operations announce reorder position via aria-live.
+- Quota badge includes visually hidden text "renders remaining".
+- Drop‑zone is focusable and operable via keyboard file picker.
 
-- [Duplicate]
+**Annotation Workspace (current scene)**
 
-- [Delete]
+*Category Tabs*
+- Four primary tabs: Plants & Trees, Mulch & Rocks, Hardscape, Other; plus a hidden Custom tab revealed via settings.
+- Each tab displays a pill counter of active masks (e.g., Trees 3). Counter animates on add/remove.
+- Hovering reveals the colour‑swatch and a kebab‑menu to Rename, Merge into…, or Hide a category.
+- Long‑press (≥600 ms) opens a colour‑picker modal allowing users to change the category accent; colour is persisted to user profile.
+- Switching tabs filters mask visibility to that material class without resetting canvas zoom/pan.
+- Keyboard navigation: ⌥ + ←/→ cycles tabs; ⌥ + Number (1‑4) jumps directly.
 
-- [Rotate] ← opens rotation handle or numeric input (degrees)
+*Canvas & Mask Layer*
+- Fabric.js canvas initialised at native scene resolution, scaled by devicePixelRatio for crispness on 4K displays.
+- Optional 20 cm grid overlay toggled with G provides spatial reference; grid opacity 15%, colour adapts to scene luminance.
+- "Snap‑to‑edge" helper magnetises new polygon vertices within 4 px of existing path endpoints to reduce micro‑gaps.
+- Mask render order: category → creationTimestamp; re‑render is dirty‑rect optimised via requestAnimationFrame.
+- Brush cursor previews diameter ring and crosshair at centre; jitter smoothing averages last 3 pointer positions.
+- Performance budget: maintain < 16 ms frame budget; masks > 1000 auto‑thin with Douglas–Peucker ε = 0.8.
+- High‑DPI export routine saves masks as GeoJSON + PNG sprite‑sheet (4096²) for backend ingestion.
 
-- [Flip Horizontal]
+*Tool Palette*
+- Docked left vertical bar; collapses to icon‑only at < 1024 px width, accessible via slide‑out gesture.
+- Mask (Polygon): click‑click‑click then Enter to close; Shift + Click adds vertex on existing edge.
+- Mask (Brush): pressure‑sensitive on Apple Pencil / stylus; width slider 2–50 px with live preview.
+- Pen (Freehand): Bézier smoothing factor 0.35; double‑tap toggles smoothing on/off.
+- Select / Move tool appears once ≥ 1 mask exists; drag to reposition with snap enabled.
+- Save button pulses after unsaved edits; disabled until ≥ 1 unsaved mask—tooltip "Nothing to save yet".
+- Context tooltips describe modifier keys (e.g., Shift = constrain angle, Alt = subtract region).
 
-- [Flip Vertical]
+*State Rules*
+- Autosave diff patch every 60 s or on navigation; visual toast "Draft auto‑saved".
+- Multi‑tab safety: tabId stored in mask metadata; concurrent save prompts merge dialogue.
+- Soft‑delete: masks flagged deleted=true; hidden from canvas but restorable via history panel.
+- Deleting the last mask of a category greys out its legend entry and unbolds the corresponding tab.
 
-- [Make Favorite] ← stars the assetInstance for quick access in Favorites
+*Revision & History Panel*
+- Toggled with H; right sidebar lists chronological edits with timestamp and author (future multi‑user).
+- Each entry shows a 56 × 40 px diff thumbnail (red/green overlay) and brief action label (e.g., Added Mask).
+- Clicking an entry restores that revision non‑destructively (creates a new history entry).
 
-- [Edit Width] ← numeric input or slider
+*Accessibility / ARIA*
+- Canvas wrapper role="img" with dynamic aria‑label summarising selected masks and categories.
+- Tab list uses proper WAI‑ARIA role="tablist"; active tab flagged with aria‑selected.
+- Tool palette forms a toolbar with roving tabindex; shortcuts announced via aria‑keyshortcuts.
 
-- [Toggle Smoothing] ← checkbox
+*Keyboard Shortcuts*
+- M = Polygon tool, B = Brush, P = Pen, S = Select/Move, Esc = Cancel draw.
+- Cmd + S = Save masks; Cmd + Z / Shift + Cmd + Z = Undo/Redo (max 20 steps).
+- Cmd + D = Duplicate object.
 
-- [Bring Forward] [Send Backward] [Duplicate] [Delete]
+### 3.3 Material Catalog Management
 
-- [Edit Width] ← numeric input or slider
-
-- [Toggle Smoothing] ← checkbox
-
-**Smart Defaults & Personalized Overrides**
-
-- Default smoothing ON for polylines; can be toggled per instance.
-- Area shapes auto‑close if last vertex within 10 px of first.
-- Undo/Redo stacks handle individual vertex edits.
-- **Personalization**: Users can set their own default materials and styles (e.g., "always use black mulch for new beds") in their user profile, which override the system defaults.
-
-#### 3.2.3 Plant & Tree Icon Drag‑and‑Drop
-
-- **Asset Palette** tabs: Plants & Trees / Hardscape / Other.
-- **Drag‑and‑Drop**: click or drag icon from palette onto canvas; ghost preview indicates placement.
-- **Parametric Placement**: upon drop, system prompts for rotation, scale, and count (if clustering plants).
-- **Batch Placement Mode**: hold Shift to stamp repeated instances along a path or within a region.
-- **Instance Metadata**: stores rotation, scale, count, and linked `asset.id` for render prompt.
-
-*Next → 3.3 Asset Palette & Catalog*### 3.3 Asset Palette & Catalog
-
-- **Backend ingest pipeline**: CSV→Supabase row create; image files pushed to `assets/` bucket. Cloud Function auto‑generates 256×256 WebP thumbs and dominant‑color JSON.
-- **Tag taxonomy**: category>sub‑category>species; Sun Preference (Full Sun, Partial Sun, Full Shade); Maintenance Level (1–5); Drought Resistant (1–5); Disease Risk (1–5).
+- **Material Categories**: Plants & Trees, Mulch & Rocks, Hardscape, Other (plus user-definable Custom category).
+- **Material Database**: Curated list of landscaping materials organized by category, with descriptive names and metadata for AI prompt generation.
+- **No Asset Images**: Unlike the old system, materials don't require thumbnail images since users draw masks directly on scene photos.
 
 
 
@@ -180,8 +212,8 @@ Core pillars:
 
 #### 3.4.1 Data Preparation
 
-- **Frame Image**: Signed URL to the full-resolution current canvas export (JPEG/PNG ≥ 4096×4096), with any masks already applied client-side (areas requiring removal have been erased).
-- **Metadata**: JSON summary of all annotation objects (`mask`, `assetInstance`, `textLabel`) on the canvas. This structured data is the input for the Dynamic Prompt Generation engine.
+- **Scene Image**: Signed URL to the full-resolution scene photo (JPEG/PNG ≥ 4096×4096).
+- **Masks**: Array of polygon masks with category assignments (Plants & Trees, Mulch & Rocks, Hardscape, Other). Each mask includes geometry data and material specifications.
 
 #### 3.4.2 Dynamic Prompt Generation
 
@@ -190,18 +222,18 @@ The quality of the final render is critically dependent on the quality of the pr
 - **System Prompt** (static):
   > "You are a professional landscape visualization engine. Your task is to modify a source image based on specific instructions. Produce a natural, high-resolution 4K photograph by seamlessly integrating all requested landscaping elements. Pay close attention to matching the existing lighting, perspective, and shadows to create a cohesive, photorealistic scene."
 
-- **Dynamic User Prompt** (generated from annotations):
-  The engine will iterate through the `assetInstance` list and construct a narrative prompt.
+- **Dynamic User Prompt** (generated from masks):
+  The engine will iterate through the mask array and construct a narrative prompt based on category and material specifications.
   - **Example Input (JSON from canvas):**
     ```json
     [
-      { "asset": "Red Maple", "type": "tree", "position": [250, 400], "scale": 1.2 },
-      { "asset": "Black Mulch", "type": "area", "polygon": [[...]], "coverage": "3-inch depth" }
+      { "category": "Plants & Trees", "material": "Red Maple", "polygon": [[250, 400], [300, 450], [280, 500], [230, 480]] },
+      { "category": "Mulch & Rocks", "material": "Black Mulch", "polygon": [[100, 200], [150, 250], [140, 300], [90, 280]] }
     ]
     ```
   - **Example Output (Generated Text):**
     ```text
-    In the user-provided image, perform the following modifications. In the area defined by the polygon mask, add a 'Red Maple' tree at approximate coordinates (250, 400), scaled to 120% of its default size. Ensure its autumn foliage is vibrant. Fill the specified polygonal area with 'Black Mulch' to a depth of 3 inches. The final output should be a single, cohesive 4096×4096 image.
+    In the user-provided image, perform the following modifications. In the area defined by the first polygon mask, add mature Red Maple trees with vibrant autumn foliage. Fill the second polygonal area with Black Mulch material. Ensure all elements blend naturally with the existing lighting, shadows, and perspective. The final output should be a single, cohesive 4096×4096 image.
     ```
 
 #### 3.4.3 API Payload & Abstraction
@@ -211,11 +243,11 @@ To avoid vendor lock-in, all model interactions will be routed through an intern
 - **Example Payload (to internal service):**
   ```json
   {
-    "sourceImageUrl": "gcs://...",
-    "maskImageUrl": "gcs://...",
+    "sourceImageUrl": "gcs://bucket/scene-123.jpg",
+    "maskImageUrl": "gcs://bucket/masks-123.png",
     "prompt": {
-      "system": "You are a professional...",
-      "user": "In the user-provided image, perform..."
+      "system": "You are a professional landscape visualization engine...",
+      "user": "In the user-provided image, perform the following modifications..."
     },
     "output": { "format": "PNG", "resolution": [4096, 4096] }
   }
@@ -283,7 +315,7 @@ graph TD
     C -- CRUD --> H
 ```
 
-### 5.2 Front-End Details Front‑End Details
+### 5.2 Front-End Details
 
 - **Leveraging shadcn/ui** & Tailwind.
 - Zustand store in-memory; autosave throttled to backend whenever a stable internet connection is detected (simpler state layer).
@@ -329,9 +361,7 @@ graph TD
 - Eliminate separate worker Dockerfile; single Docker image for tRPC gateway.
 - Prune unused libraries (Fabric.js for front-end, no server-side image libs).
 
-### 5.4 DevOps & CI/CD DevOps & CI/CD
-
-DevOps & CI/CD
+### 5.4 DevOps & CI/CD
 
 - GitHub Actions: PR → unit & e2e tests (Playwright) → container build for Gateway and Worker → deploy to Cloud Run staging → Cypress smoke.
 - Terraform provisions: Cloud Run services, Redis, SQL Instance, GCS buckets, Secret Manager.
@@ -343,21 +373,24 @@ DevOps & CI/CD
 erDiagram
   users ||--o{ user_projects : "creates"
   projects ||--o{ scenes : contains
-  scenes ||--o{ scene_versions : versions
-  scene_versions ||--o{ annotations : has
+  scenes ||--o{ masks : has
   scenes ||--o{ renders : produces
   renders ||--|{ render_files : outputs
-  annotations }o--|| assets : references
+  masks }o--|| material_catalog : references
   audit_logs ||--|| users : actor
 
   users { uuid pk; email; role; stripe_customer_id; seat_group_id; render_quota }
-  assets { id pk; name; category; license; tags text[]; img_url; thumb_url; metadata jsonb }
+  projects { id pk; name; address; metadata; created_at; updated_at }
+  scenes { id pk; project_id fk; image_url; is_default; order_index }
+  masks { id pk; scene_id fk; category; material; polygon jsonb; deleted boolean }
+  material_catalog { id pk; category; name; tags text[]; metadata jsonb }
   renders { id pk; scene_id fk; status; cost_cents; generated_at; prompt_hash; prompt_text }
   audit_logs { id pk; actor_id; action; resource; diff jsonb; ts timestamptz }
 ```
 
 - `audit_logs` enables GDPR‑style access logs; retained 1 y.
-- `assets.license` tracks usage rights for catalog images.
+- `masks` stores polygon geometry with soft-delete support for history tracking.
+- `material_catalog` replaces asset library, focusing on material types per category.
 - `renders.prompt_hash` allows for caching/re-use of identical render requests.
 
 ---
