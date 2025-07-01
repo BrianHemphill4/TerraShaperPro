@@ -1,7 +1,10 @@
-export class QualityModifier {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.QualityModifier = void 0;
+class QualityModifier {
+    qualityPresets = new Map();
+    technicalSpecs = [];
     constructor() {
-        this.qualityPresets = new Map();
-        this.technicalSpecs = [];
         this.initializePresets();
     }
     applyQuality(prompt, quality) {
@@ -56,3 +59,4 @@ export class QualityModifier {
         return Array.from(this.qualityPresets.keys());
     }
 }
+exports.QualityModifier = QualityModifier;

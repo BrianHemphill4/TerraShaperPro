@@ -1,14 +1,22 @@
-import { createHash } from 'node:crypto';
-import { AnnotationConverter } from './annotation-converter';
-import { PromptTemplateManager } from './prompt-template';
-import { QualityModifier } from './quality-modifier';
-import { StyleModifier } from './style-modifier';
-export class PromptGenerator {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PromptGenerator = void 0;
+const node_crypto_1 = require("node:crypto");
+const annotation_converter_1 = require("./annotation-converter");
+const prompt_template_1 = require("./prompt-template");
+const quality_modifier_1 = require("./quality-modifier");
+const style_modifier_1 = require("./style-modifier");
+class PromptGenerator {
+    templateManager;
+    annotationConverter;
+    styleModifier;
+    qualityModifier;
+    promptCache;
     constructor() {
-        this.templateManager = new PromptTemplateManager();
-        this.annotationConverter = new AnnotationConverter();
-        this.styleModifier = new StyleModifier();
-        this.qualityModifier = new QualityModifier();
+        this.templateManager = new prompt_template_1.PromptTemplateManager();
+        this.annotationConverter = new annotation_converter_1.AnnotationConverter();
+        this.styleModifier = new style_modifier_1.StyleModifier();
+        this.qualityModifier = new quality_modifier_1.QualityModifier();
         this.promptCache = new Map();
     }
     generatePrompt(context) {
@@ -51,11 +59,10 @@ export class PromptGenerator {
             userPreferences: context.userPreferences,
             projectMetadata: context.projectMetadata,
         };
-        return createHash('md5').update(JSON.stringify(key)).digest('hex');
+        return (0, node_crypto_1.createHash)('md5').update(JSON.stringify(key)).digest('hex');
     }
     resolveTemplate(context) {
-        var _a;
-        const style = ((_a = context.userPreferences) === null || _a === void 0 ? void 0 : _a.style) || 'landscape';
+        const style = context.userPreferences?.style || 'landscape';
         const baseTemplate = this.templateManager.getTemplate(style) || this.templateManager.getTemplate('landscape');
         return this.templateManager.mergeTemplates(baseTemplate, context.template);
     }
@@ -67,10 +74,9 @@ export class PromptGenerator {
         return parts.join(' ');
     }
     applyStyleModifiers(prompt, context) {
-        var _a, _b, _c;
-        const style = ((_a = context.userPreferences) === null || _a === void 0 ? void 0 : _a.style) || 'landscape';
-        const mood = (_b = context.userPreferences) === null || _b === void 0 ? void 0 : _b.mood;
-        const colorScheme = (_c = context.userPreferences) === null || _c === void 0 ? void 0 : _c.colorScheme;
+        const style = context.userPreferences?.style || 'landscape';
+        const mood = context.userPreferences?.mood;
+        const colorScheme = context.userPreferences?.colorScheme;
         prompt = this.styleModifier.applyStyle(prompt, style);
         if (mood) {
             prompt = this.styleModifier.applyMood(prompt, mood);
@@ -106,7 +112,7 @@ export class PromptGenerator {
         if (template.cameraAngle) {
             factors.push(`viewed from ${template.cameraAngle}`);
         }
-        if (metadata === null || metadata === void 0 ? void 0 : metadata.location) {
+        if (metadata?.location) {
             factors.push(`in ${metadata.location} climate`);
         }
         if (factors.length > 0) {
@@ -126,18 +132,17 @@ export class PromptGenerator {
         return `${prompt}. ${negativePrompts.join(', ')}`;
     }
     hashPrompt(prompt) {
-        return createHash('sha256').update(prompt).digest('hex');
+        return (0, node_crypto_1.createHash)('sha256').update(prompt).digest('hex');
     }
     getAppliedModifiers(context) {
-        var _a, _b, _c;
         const modifiers = [];
-        if ((_a = context.userPreferences) === null || _a === void 0 ? void 0 : _a.style) {
+        if (context.userPreferences?.style) {
             modifiers.push(`style:${context.userPreferences.style}`);
         }
-        if ((_b = context.userPreferences) === null || _b === void 0 ? void 0 : _b.mood) {
+        if (context.userPreferences?.mood) {
             modifiers.push(`mood:${context.userPreferences.mood}`);
         }
-        if ((_c = context.userPreferences) === null || _c === void 0 ? void 0 : _c.colorScheme) {
+        if (context.userPreferences?.colorScheme) {
             modifiers.push(`color:${context.userPreferences.colorScheme}`);
         }
         if (context.template.quality) {
@@ -152,3 +157,4 @@ export class PromptGenerator {
         return this.promptCache.size;
     }
 }
+exports.PromptGenerator = PromptGenerator;

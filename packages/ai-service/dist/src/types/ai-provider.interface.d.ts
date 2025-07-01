@@ -12,21 +12,21 @@ export declare const ImageGenerationOptionsSchema: z.ZodObject<{
     guidanceScale: z.ZodOptional<z.ZodNumber>;
     numInferenceSteps: z.ZodOptional<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
-    width: number;
-    height: number;
-    style: "realistic" | "artistic" | "architectural" | "photographic";
-    quality: "high" | "low" | "medium" | "ultra";
-    seed?: number | undefined;
-    guidanceScale?: number | undefined;
-    numInferenceSteps?: number | undefined;
+    width?: number;
+    height?: number;
+    style?: "realistic" | "artistic" | "architectural" | "photographic";
+    quality?: "high" | "low" | "medium" | "ultra";
+    seed?: number;
+    guidanceScale?: number;
+    numInferenceSteps?: number;
 }, {
-    width?: number | undefined;
-    height?: number | undefined;
-    style?: "realistic" | "artistic" | "architectural" | "photographic" | undefined;
-    quality?: "high" | "low" | "medium" | "ultra" | undefined;
-    seed?: number | undefined;
-    guidanceScale?: number | undefined;
-    numInferenceSteps?: number | undefined;
+    width?: number;
+    height?: number;
+    style?: "realistic" | "artistic" | "architectural" | "photographic";
+    quality?: "high" | "low" | "medium" | "ultra";
+    seed?: number;
+    guidanceScale?: number;
+    numInferenceSteps?: number;
 }>;
 /**
  * Type definition for image generation options.
@@ -45,19 +45,19 @@ export declare const ProviderConfigSchema: z.ZodObject<{
     maxRetries: z.ZodDefault<z.ZodNumber>;
     timeout: z.ZodDefault<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
-    apiKey: string;
-    maxRetries: number;
-    timeout: number;
-    projectId?: string | undefined;
-    region?: string | undefined;
-    baseUrl?: string | undefined;
+    apiKey?: string;
+    projectId?: string;
+    region?: string;
+    baseUrl?: string;
+    maxRetries?: number;
+    timeout?: number;
 }, {
-    apiKey: string;
-    projectId?: string | undefined;
-    region?: string | undefined;
-    baseUrl?: string | undefined;
-    maxRetries?: number | undefined;
-    timeout?: number | undefined;
+    apiKey?: string;
+    projectId?: string;
+    region?: string;
+    baseUrl?: string;
+    maxRetries?: number;
+    timeout?: number;
 }>;
 /**
  * Type definition for AI provider configuration.

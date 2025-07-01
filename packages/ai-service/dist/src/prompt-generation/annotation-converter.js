@@ -1,4 +1,8 @@
-export class AnnotationConverter {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AnnotationConverter = void 0;
+class AnnotationConverter {
+    plantDatabase;
     constructor() {
         this.plantDatabase = new Map();
         this.initializePlantDatabase();
@@ -66,35 +70,31 @@ export class AnnotationConverter {
     }
     describeHardscape(hardscapes) {
         const elements = hardscapes.map((h) => {
-            var _a, _b;
-            const material = ((_a = h.attributes) === null || _a === void 0 ? void 0 : _a.material) || 'natural stone';
-            const pattern = ((_b = h.attributes) === null || _b === void 0 ? void 0 : _b.pattern) || 'irregular';
+            const material = h.attributes?.material || 'natural stone';
+            const pattern = h.attributes?.pattern || 'irregular';
             return `${h.name} made of ${material} in ${pattern} pattern`;
         });
         return `hardscape elements including ${elements.join(', ')}`;
     }
     describeFeatures(features) {
         const elements = features.map((f) => {
-            var _a;
-            const style = ((_a = f.attributes) === null || _a === void 0 ? void 0 : _a.style) || 'contemporary';
+            const style = f.attributes?.style || 'contemporary';
             return `${style} ${f.name}`;
         });
         return `landscape features including ${elements.join(', ')}`;
     }
     describeLighting(lighting) {
         const types = lighting.map((l) => {
-            var _a, _b;
-            const type = ((_a = l.attributes) === null || _a === void 0 ? void 0 : _a.type) || 'accent';
-            const placement = ((_b = l.attributes) === null || _b === void 0 ? void 0 : _b.placement) || 'strategic';
+            const type = l.attributes?.type || 'accent';
+            const placement = l.attributes?.placement || 'strategic';
             return `${type} lighting with ${placement} placement`;
         });
         return `professional landscape lighting with ${types.join(', ')}`;
     }
     describeWater(water) {
         const features = water.map((w) => {
-            var _a, _b;
-            const style = ((_a = w.attributes) === null || _a === void 0 ? void 0 : _a.style) || 'natural';
-            const flow = ((_b = w.attributes) === null || _b === void 0 ? void 0 : _b.flow) || 'gentle';
+            const style = w.attributes?.style || 'natural';
+            const flow = w.attributes?.flow || 'gentle';
             return `${style} ${w.name} with ${flow} water movement`;
         });
         return `water features including ${features.join(', ')}`;
@@ -145,6 +145,15 @@ export class AnnotationConverter {
         if (!plantInfo) {
             return annotation;
         }
-        return Object.assign(Object.assign({}, annotation), { attributes: Object.assign(Object.assign({}, annotation.attributes), { scientificName: plantInfo.scientificName, commonName: plantInfo.commonName, visualCharacteristics: plantInfo.visualCharacteristics }) });
+        return {
+            ...annotation,
+            attributes: {
+                ...annotation.attributes,
+                scientificName: plantInfo.scientificName,
+                commonName: plantInfo.commonName,
+                visualCharacteristics: plantInfo.visualCharacteristics,
+            },
+        };
     }
 }
+exports.AnnotationConverter = AnnotationConverter;

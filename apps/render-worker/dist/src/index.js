@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -76,33 +67,33 @@ worker.on('progress', (job, progress) => {
     logger_1.logger.debug(`◊ Render ${job.id} progress: ${progressValue}%`);
 });
 // Graceful shutdown
-process.on('SIGTERM', () => __awaiter(void 0, void 0, void 0, function* () {
+process.on('SIGTERM', async () => {
     logger_1.logger.info('SIGTERM received, closing worker...');
-    yield worker.close();
+    await worker.close();
     process.exit(0);
-}));
-process.on('SIGINT', () => __awaiter(void 0, void 0, void 0, function* () {
+});
+process.on('SIGINT', async () => {
     logger_1.logger.info('SIGINT received, closing worker...');
-    yield worker.close();
+    await worker.close();
     process.exit(0);
-}));
+});
 logger_1.logger.info(`🚀 Render Worker started with concurrency: ${concurrency}`);
 // Start failure monitoring
 (0, failureMonitor_1.startFailureMonitor)();
 // Start periodic queue metrics collection
-setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+setInterval(async () => {
     try {
         // Use the metrics function from the queue module instead of accessing worker.queue
-        const { getRenderQueue } = yield Promise.resolve().then(() => __importStar(require('@terrashaper/queue')));
+        const { getRenderQueue } = await Promise.resolve().then(() => __importStar(require('@terrashaper/queue')));
         const queue = getRenderQueue(redis_1.connection);
-        const waiting = yield queue.getWaitingCount();
-        const active = yield queue.getActiveCount();
-        const completed = yield queue.getCompletedCount();
-        const failed = yield queue.getFailedCount();
+        const waiting = await queue.getWaitingCount();
+        const active = await queue.getActiveCount();
+        const completed = await queue.getCompletedCount();
+        const failed = await queue.getFailedCount();
         metrics_1.workerMetrics.recordQueueMetrics('render', waiting + active, waiting, active);
         logger_1.logger.debug(`Queue metrics: waiting=${waiting}, active=${active}, completed=${completed}, failed=${failed}`);
     }
     catch (error) {
         logger_1.logger.error('Failed to collect queue metrics', error);
     }
-}), 30000); // Every 30 seconds
+}, 30000); // Every 30 seconds

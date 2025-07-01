@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { useFeatureGate } from '@terrashaper/hooks/useFeatureGate';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { cn } from '@/lib/utils';
 
 type FeatureGateProps = {

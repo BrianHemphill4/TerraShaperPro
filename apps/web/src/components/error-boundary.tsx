@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import React, { Component } from 'react';
 
-import { toast } from '@terrashaper/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { browserLogger } from '@/lib/logger';
 
 // Temporary mock for Sentry

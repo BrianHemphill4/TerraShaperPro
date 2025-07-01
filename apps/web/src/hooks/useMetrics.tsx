@@ -68,7 +68,7 @@ export function useMetrics(options: UseMetricsOptions = {}) {
 
   // Track API call
   const trackApiCall = useCallback(
-    async <T>(endpoint: string, fn: () => Promise<T>): Promise<T> => {
+    async <T,>(endpoint: string, fn: () => Promise<T>): Promise<T> => {
       const start = performance.now();
       let status = 200;
 
@@ -87,7 +87,7 @@ export function useMetrics(options: UseMetricsOptions = {}) {
   );
 
   // Track canvas operation
-  const trackCanvasOperation = useCallback(<T>(operation: string, fn: () => T): T => {
+  const trackCanvasOperation = useCallback(<T,>(operation: string, fn: () => T): T => {
     const start = performance.now();
     try {
       return fn();
@@ -107,7 +107,7 @@ export function useMetrics(options: UseMetricsOptions = {}) {
 
   // Track timing
   const trackTiming = useCallback(
-    <T>(name: string, fn: () => T, tags?: Record<string, string>): T => {
+    <T,>(name: string, fn: () => T, tags?: Record<string, string>): T => {
       const start = performance.now();
       try {
         return fn();

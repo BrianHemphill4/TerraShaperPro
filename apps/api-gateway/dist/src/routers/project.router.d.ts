@@ -1,30 +1,19 @@
-import { z } from 'zod';
 export declare const projectRouter: import("@trpc/server").TRPCBuiltRouter<{
     ctx: {
         session: import("../context").Session;
         supabase: import("../context").SupabaseClient;
     };
     meta: object;
-    errorShape: {
-        data: {
-            zodError: z.typeToFlattenedError<any, string> | null;
-            code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-            httpStatus: number;
-            path?: string;
-            stack?: string;
-        };
-        message: string;
-        code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-    };
+    errorShape: import("@trpc/server").TRPCDefaultErrorShape;
     transformer: false;
 }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
     list: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            search?: string | undefined;
-            limit?: number | undefined;
-            offset?: number | undefined;
-            sortBy?: "status" | "name" | "recent" | undefined;
-            filterStatus?: "active" | "all" | "completed" | "archived" | undefined;
+            search?: string;
+            limit?: number;
+            offset?: number;
+            sortBy?: "status" | "name" | "recent";
+            filterStatus?: "all" | "active" | "completed" | "archived";
         };
         output: {
             projects: any;
@@ -45,40 +34,40 @@ export declare const projectRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     get: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            id: string;
+            id?: string;
         };
         output: any;
         meta: object;
     }>;
     create: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            name: string;
-            description?: string | undefined;
-            address?: string | undefined;
-            client_name?: string | undefined;
-            client_email?: string | undefined;
-            canvas_data?: Record<string, any> | undefined;
+            name?: string;
+            description?: string;
+            address?: string;
+            client_name?: string;
+            client_email?: string;
+            canvas_data?: Record<string, any>;
         };
         output: any;
         meta: object;
     }>;
     update: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            id: string;
-            description?: string | undefined;
-            status?: "active" | "completed" | "archived" | undefined;
-            name?: string | undefined;
-            address?: string | undefined;
-            client_name?: string | undefined;
-            client_email?: string | undefined;
-            canvas_data?: Record<string, any> | undefined;
+            status?: "active" | "completed" | "archived";
+            name?: string;
+            description?: string;
+            id?: string;
+            address?: string;
+            client_name?: string;
+            client_email?: string;
+            canvas_data?: Record<string, any>;
         };
         output: any;
         meta: object;
     }>;
     delete: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            id: string;
+            id?: string;
         };
         output: {
             success: boolean;
@@ -87,9 +76,9 @@ export declare const projectRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     listVersions: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            projectId: string;
-            limit?: number | undefined;
-            offset?: number | undefined;
+            limit?: number;
+            offset?: number;
+            projectId?: string;
         };
         output: {
             versions: any;
@@ -100,17 +89,17 @@ export declare const projectRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     createVersion: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            projectId: string;
-            snapshot: Record<string, any>;
-            comment?: string | undefined;
+            projectId?: string;
+            snapshot?: Record<string, any>;
+            comment?: string;
         };
         output: any;
         meta: object;
     }>;
     getVersionDiff: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            versionIdA: string;
-            versionIdB: string;
+            versionIdA?: string;
+            versionIdB?: string;
         };
         output: {
             diff: Record<string, {
@@ -124,7 +113,7 @@ export declare const projectRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     restoreVersion: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            versionId: string;
+            versionId?: string;
         };
         output: {
             restored: boolean;

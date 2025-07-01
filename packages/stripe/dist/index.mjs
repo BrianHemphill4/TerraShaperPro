@@ -101,7 +101,6 @@ var require_package = __commonJS({
 // ../../node_modules/dotenv/lib/main.js
 var require_main = __commonJS({
   "../../node_modules/dotenv/lib/main.js"(exports, module) {
-    "use strict";
     var fs = __require("fs");
     var path = __require("path");
     var os = __require("os");

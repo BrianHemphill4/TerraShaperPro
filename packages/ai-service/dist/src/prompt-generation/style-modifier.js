@@ -1,8 +1,11 @@
-export class StyleModifier {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StyleModifier = void 0;
+class StyleModifier {
+    styleModifiers = new Map();
+    moodModifiers = new Map();
+    colorSchemeModifiers = new Map();
     constructor() {
-        this.styleModifiers = new Map();
-        this.moodModifiers = new Map();
-        this.colorSchemeModifiers = new Map();
         this.initializeModifiers();
     }
     applyStyle(prompt, style) {
@@ -136,3 +139,4 @@ export class StyleModifier {
         this.colorSchemeModifiers.set(name, modifiers);
     }
 }
+exports.StyleModifier = StyleModifier;

@@ -1,21 +1,10 @@
-import { z } from 'zod';
 export declare const clientPortalRouter: import("@trpc/server").TRPCBuiltRouter<{
     ctx: {
         session: import("../context").Session;
         supabase: import("../context").SupabaseClient;
     };
     meta: object;
-    errorShape: {
-        data: {
-            zodError: z.typeToFlattenedError<any, string> | null;
-            code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-            httpStatus: number;
-            path?: string;
-            stack?: string;
-        };
-        message: string;
-        code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-    };
+    errorShape: import("@trpc/server").TRPCDefaultErrorShape;
     transformer: false;
 }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
     createAccessLink: import("@trpc/server").TRPCMutationProcedure<{
@@ -35,14 +24,14 @@ export declare const clientPortalRouter: import("@trpc/server").TRPCBuiltRouter<
     }>;
     listAccessLinks: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            projectId: string;
+            projectId?: string;
         };
         output: any;
         meta: object;
     }>;
     revokeAccessLink: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            linkId: string;
+            linkId?: string;
         };
         output: {
             success: boolean;
@@ -60,8 +49,8 @@ export declare const clientPortalRouter: import("@trpc/server").TRPCBuiltRouter<
     }>;
     listApprovals: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            projectId: string;
-            status?: string | undefined;
+            status?: string;
+            projectId?: string;
         };
         output: any;
         meta: object;
@@ -91,8 +80,8 @@ export declare const clientPortalRouter: import("@trpc/server").TRPCBuiltRouter<
     }>;
     listComments: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            projectId: string;
-            includeResolved?: boolean | undefined;
+            projectId?: string;
+            includeResolved?: boolean;
         };
         output: any;
         meta: object;
@@ -107,7 +96,7 @@ export declare const clientPortalRouter: import("@trpc/server").TRPCBuiltRouter<
     }>;
     getClientProject: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            token: string;
+            token?: string;
         };
         output: {
             project: any;
@@ -118,27 +107,27 @@ export declare const clientPortalRouter: import("@trpc/server").TRPCBuiltRouter<
     }>;
     createClientComment: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            projectId: string;
-            token: string;
-            content: string;
-            authorEmail: string;
-            authorName: string;
+            projectId?: string;
+            token?: string;
+            content?: string;
+            authorEmail?: string;
+            authorName?: string;
             position?: {
-                x: number;
-                y: number;
-            } | undefined;
+                x?: number;
+                y?: number;
+            };
         };
         output: any;
         meta: object;
     }>;
     submitClientApproval: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            status: "approved" | "rejected" | "revision_requested";
-            token: string;
-            approvalId: string;
-            approverEmail: string;
-            approverName: string;
-            notes?: string | undefined;
+            status?: "approved" | "rejected" | "revision_requested";
+            token?: string;
+            approvalId?: string;
+            notes?: string;
+            approverEmail?: string;
+            approverName?: string;
         };
         output: any;
         meta: object;

@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { useFeatureGate } from '@terrashaper/hooks/useFeatureGate';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { api } from '@/lib/api';
 import { formatBytes } from '@/lib/utils';
 

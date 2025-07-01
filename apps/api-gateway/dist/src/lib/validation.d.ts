@@ -7,15 +7,15 @@ export declare const paginationSchema: z.ZodObject<{
     sortBy: z.ZodOptional<z.ZodString>;
     sortOrder: z.ZodOptional<z.ZodEnum<["asc", "desc"]>>;
 }, "strip", z.ZodTypeAny, {
-    limit: number;
-    page: number;
-    sortBy?: string | undefined;
-    sortOrder?: "asc" | "desc" | undefined;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+    page?: number;
 }, {
-    limit?: number | undefined;
-    sortBy?: string | undefined;
-    sortOrder?: "asc" | "desc" | undefined;
-    page?: number | undefined;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+    page?: number;
 }>;
 export declare const filePathSchema: z.ZodEffects<z.ZodString, string, string>;
 export declare const urlSchema: z.ZodEffects<z.ZodString, string, string>;
@@ -29,15 +29,15 @@ export declare const fileUploadSchema: z.ZodObject<{
     size: z.ZodNumber;
     buffer: z.ZodOptional<z.ZodType<Buffer<ArrayBufferLike>, z.ZodTypeDef, Buffer<ArrayBufferLike>>>;
 }, "strip", z.ZodTypeAny, {
-    size: number;
-    filename: string;
-    mimetype: "image/jpeg" | "image/png" | "image/webp" | "image/svg+xml" | "application/pdf" | "application/json" | "text/csv";
-    buffer?: Buffer<ArrayBufferLike> | undefined;
+    size?: number;
+    buffer?: Buffer<ArrayBufferLike>;
+    filename?: string;
+    mimetype?: "image/jpeg" | "image/png" | "image/webp" | "image/svg+xml" | "application/pdf" | "application/json" | "text/csv";
 }, {
-    size: number;
-    filename: string;
-    mimetype: "image/jpeg" | "image/png" | "image/webp" | "image/svg+xml" | "application/pdf" | "application/json" | "text/csv";
-    buffer?: Buffer<ArrayBufferLike> | undefined;
+    size?: number;
+    buffer?: Buffer<ArrayBufferLike>;
+    filename?: string;
+    mimetype?: "image/jpeg" | "image/png" | "image/webp" | "image/svg+xml" | "application/pdf" | "application/json" | "text/csv";
 }>;
 export declare function escapeSqlIdentifier(identifier: string): string;
 export declare function validateSortParams(sortBy: string | undefined, allowedFields: string[]): string | undefined;

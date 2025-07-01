@@ -32,7 +32,7 @@ export declare const cspConfig: {
     baseUri: string[];
     formAction: string[];
     frameAncestors: string[];
-    upgradeInsecureRequests: never[] | undefined;
+    upgradeInsecureRequests: any[];
 };
 /**
  * Apply security headers middleware to Fastify instance

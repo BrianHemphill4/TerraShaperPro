@@ -1,40 +1,29 @@
-import { z } from 'zod';
 export declare const plantRouter: import("@trpc/server").TRPCBuiltRouter<{
     ctx: {
         session: import("../context").Session;
         supabase: import("../context").SupabaseClient;
     };
     meta: object;
-    errorShape: {
-        data: {
-            zodError: z.typeToFlattenedError<any, string> | null;
-            code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-            httpStatus: number;
-            path?: string;
-            stack?: string;
-        };
-        message: string;
-        code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-    };
+    errorShape: import("@trpc/server").TRPCDefaultErrorShape;
     transformer: false;
 }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
     list: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            limit?: number | undefined;
-            offset?: number | undefined;
+            limit?: number;
+            offset?: number;
             filters?: {
-                tags?: string[] | undefined;
-                search?: string | undefined;
-                category?: string | undefined;
-                sunRequirements?: ("full_sun" | "partial_sun" | "shade")[] | undefined;
-                waterNeeds?: ("low" | "moderate" | "high")[] | undefined;
-                usdaZones?: string[] | undefined;
-                texasNative?: boolean | undefined;
-                droughtTolerant?: boolean | undefined;
-                favoritesOnly?: boolean | undefined;
-            } | undefined;
-            sortBy?: "name" | "category" | "scientific" | "water" | "sun" | undefined;
-            sortOrder?: "asc" | "desc" | undefined;
+                search?: string;
+                category?: string;
+                sunRequirements?: ("full_sun" | "partial_sun" | "shade")[];
+                waterNeeds?: ("low" | "moderate" | "high")[];
+                usdaZones?: string[];
+                texasNative?: boolean;
+                droughtTolerant?: boolean;
+                tags?: string[];
+                favoritesOnly?: boolean;
+            };
+            sortBy?: "category" | "name" | "scientific" | "water" | "sun";
+            sortOrder?: "asc" | "desc";
         };
         output: {
             plants: any;
@@ -45,7 +34,7 @@ export declare const plantRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     get: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            id: string;
+            id?: string;
         };
         output: any;
         meta: object;
@@ -60,7 +49,7 @@ export declare const plantRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     toggleFavorite: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            plantId: string;
+            plantId?: string;
         };
         output: {
             isFavorite: boolean;

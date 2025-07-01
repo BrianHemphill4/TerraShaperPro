@@ -4,9 +4,9 @@ import { z } from 'zod';
 
 import { protectedProcedure, router } from '../trpc';
 
-let storageService: StorageService | null = null;
+let storageService: InstanceType<typeof StorageService> | null = null;
 
-function getStorageService(): StorageService {
+function getStorageService(): InstanceType<typeof StorageService> {
   if (!storageService) {
     try {
       storageService = new StorageService();

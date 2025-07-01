@@ -1,21 +1,10 @@
-import { z } from 'zod';
 export declare const exportRouter: import("@trpc/server").TRPCBuiltRouter<{
     ctx: {
         session: import("../context").Session;
         supabase: import("../context").SupabaseClient;
     };
     meta: object;
-    errorShape: {
-        data: {
-            zodError: z.typeToFlattenedError<any, string> | null;
-            code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-            httpStatus: number;
-            path?: string;
-            stack?: string;
-        };
-        message: string;
-        code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-    };
+    errorShape: import("@trpc/server").TRPCDefaultErrorShape;
     transformer: false;
 }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
     /**
@@ -23,7 +12,7 @@ export declare const exportRouter: import("@trpc/server").TRPCBuiltRouter<{
      */
     projectGeoJSON: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            projectId: string;
+            projectId?: string;
         };
         output: {
             type: string;
@@ -42,9 +31,9 @@ export declare const exportRouter: import("@trpc/server").TRPCBuiltRouter<{
      */
     sceneSprite: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            sceneId: string;
-            format?: "png" | "svg" | undefined;
-            resolution?: "1x" | "2x" | "4x" | undefined;
+            sceneId?: string;
+            format?: "png" | "svg";
+            resolution?: "1x" | "2x" | "4x";
         };
         output: {
             spriteSheetUrl: string;
@@ -64,21 +53,14 @@ export declare const exportRouter: import("@trpc/server").TRPCBuiltRouter<{
      */
     projectSummary: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            projectId: string;
+            projectId?: string;
         };
         output: {
             projectId: string;
             totalScenes: number;
             totalMasks: number;
             categoryStats: Record<string, number>;
-            sceneStats: {
-                sceneId: string;
-                imageUrl: string;
-                order: number;
-                isDefault: boolean;
-                maskCount: number;
-                categories: Record<string, number>;
-            }[];
+            sceneStats: any[];
             exportedAt: string;
         };
         meta: object;

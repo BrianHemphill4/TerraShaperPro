@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.startFailureMonitor = startFailureMonitor;
 const ai_service_1 = require("@terrashaper/ai-service");
@@ -17,12 +8,12 @@ const MONITOR_INTERVAL = 5 * 60 * 1000; // 5 minutes
 function startFailureMonitor() {
     const failureDetectionService = new ai_service_1.FailureDetectionService();
     // Set up alert handler
-    failureDetectionService.onAlert((alert) => __awaiter(this, void 0, void 0, function* () {
+    failureDetectionService.onAlert(async (alert) => {
         logger_1.logger.error(`🚨 Failure Alert: ${alert.message}`, alert.details);
         // Send to monitoring service (e.g., PagerDuty, Slack, etc.)
         if (process.env.SLACK_WEBHOOK_URL) {
             try {
-                yield fetch(process.env.SLACK_WEBHOOK_URL, {
+                await fetch(process.env.SLACK_WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -50,11 +41,11 @@ function startFailureMonitor() {
                 logger_1.logger.error('Failed to send Slack alert:', err);
             }
         }
-    }));
+    });
     // Run periodic health checks
-    const checkHealth = () => __awaiter(this, void 0, void 0, function* () {
+    const checkHealth = async () => {
         try {
-            const health = yield failureDetectionService.healthCheck();
+            const health = await failureDetectionService.healthCheck();
             logger_1.logger.info('🏥 Health Check:', {
                 healthy: health.healthy,
                 failureRate: `${(health.recentFailureRate * 100).toFixed(1)}%`,
@@ -71,20 +62,20 @@ function startFailureMonitor() {
             logger_1.logger.error('Health check failed:', error);
             (0, sentry_1.captureException)(error);
         }
-    });
+    };
     // Initial check
     checkHealth();
     // Set up periodic monitoring
-    const intervalId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
+    const intervalId = setInterval(async () => {
         try {
-            yield failureDetectionService.checkForFailurePatterns();
-            yield checkHealth();
+            await failureDetectionService.checkForFailurePatterns();
+            await checkHealth();
         }
         catch (error) {
             logger_1.logger.error('Failure monitoring error:', error);
             (0, sentry_1.captureException)(error);
         }
-    }), MONITOR_INTERVAL);
+    }, MONITOR_INTERVAL);
     // Graceful shutdown
     process.on('SIGTERM', () => {
         clearInterval(intervalId);

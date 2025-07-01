@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
-import { useFeatureGate } from '@terrashaper/hooks/useFeatureGate';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { api } from '@/lib/api';
 
 export function TeamSeatsManagement() {

@@ -1,4 +1,3 @@
-"use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
@@ -9,8 +8,6 @@ var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __reflectGet = Reflect.get;
-var __pow = Math.pow;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __spreadValues = (a, b) => {
   for (var prop in b || (b = {}))
@@ -60,27 +57,6 @@ var __toESM = (mod, isNodeMode, target2) => (target2 = mod != null ? __create(__
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var __superGet = (cls, obj, key) => __reflectGet(__getProtoOf(cls), key, obj);
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
 
 // ../../node_modules/@ioredis/commands/built/commands.json
 var require_commands = __commonJS({
@@ -2948,7 +2924,6 @@ var require_redis_errors = __commonJS({
 // ../../node_modules/cluster-key-slot/lib/index.js
 var require_lib = __commonJS({
   "../../node_modules/cluster-key-slot/lib/index.js"(exports2, module2) {
-    "use strict";
     var lookup = [
       0,
       4129,
@@ -3272,7 +3247,6 @@ var require_lib = __commonJS({
 // ../../node_modules/lodash.defaults/index.js
 var require_lodash = __commonJS({
   "../../node_modules/lodash.defaults/index.js"(exports2, module2) {
-    "use strict";
     var MAX_SAFE_INTEGER = 9007199254740991;
     var argsTag = "[object Arguments]";
     var funcTag = "[object Function]";
@@ -3452,7 +3426,6 @@ var require_lodash = __commonJS({
 // ../../node_modules/lodash.isarguments/index.js
 var require_lodash2 = __commonJS({
   "../../node_modules/lodash.isarguments/index.js"(exports2, module2) {
-    "use strict";
     var MAX_SAFE_INTEGER = 9007199254740991;
     var argsTag = "[object Arguments]";
     var funcTag = "[object Function]";
@@ -3507,7 +3480,6 @@ var require_lodash3 = __commonJS({
 // ../../node_modules/ms/index.js
 var require_ms = __commonJS({
   "../../node_modules/ms/index.js"(exports2, module2) {
-    "use strict";
     var s = 1e3;
     var m = s * 60;
     var h = m * 60;
@@ -3624,7 +3596,6 @@ var require_ms = __commonJS({
 // ../../node_modules/debug/src/common.js
 var require_common = __commonJS({
   "../../node_modules/debug/src/common.js"(exports2, module2) {
-    "use strict";
     function setup(env) {
       createDebug.debug = createDebug;
       createDebug.default = createDebug;
@@ -3802,7 +3773,6 @@ var require_common = __commonJS({
 // ../../node_modules/debug/src/browser.js
 var require_browser = __commonJS({
   "../../node_modules/debug/src/browser.js"(exports2, module2) {
-    "use strict";
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
@@ -4088,7 +4058,6 @@ var require_supports_color = __commonJS({
 // ../../node_modules/debug/src/node.js
 var require_node = __commonJS({
   "../../node_modules/debug/src/node.js"(exports2, module2) {
-    "use strict";
     var tty = require("tty");
     var util = require("util");
     exports2.init = init;
@@ -4263,7 +4232,6 @@ var require_node = __commonJS({
 // ../../node_modules/debug/src/index.js
 var require_src = __commonJS({
   "../../node_modules/debug/src/index.js"(exports2, module2) {
-    "use strict";
     if (typeof process === "undefined" || process.type === "renderer" || process.browser === true || process.__nwjs) {
       module2.exports = require_browser();
     } else {
@@ -7575,28 +7543,26 @@ var require_cluster = __commonJS({
        * This process happens every time when #connect() is called since
        * #startupNodes and DNS records may chanage.
        */
-      resolveStartupNodeHostnames() {
-        return __async(this, null, function* () {
-          if (!Array.isArray(this.startupNodes) || this.startupNodes.length === 0) {
-            throw new Error("`startupNodes` should contain at least one node.");
+      async resolveStartupNodeHostnames() {
+        if (!Array.isArray(this.startupNodes) || this.startupNodes.length === 0) {
+          throw new Error("`startupNodes` should contain at least one node.");
+        }
+        const startupNodes = (0, util_1.normalizeNodeOptions)(this.startupNodes);
+        const hostnames = (0, util_1.getUniqueHostnamesFromOptions)(startupNodes);
+        if (hostnames.length === 0) {
+          return startupNodes;
+        }
+        const configs = await Promise.all(hostnames.map((this.options.useSRVRecords ? this.resolveSrv : this.dnsLookup).bind(this)));
+        const hostnameToConfig = (0, utils_1.zipMap)(hostnames, configs);
+        return startupNodes.map((node) => {
+          const config = hostnameToConfig.get(node.host);
+          if (!config) {
+            return node;
           }
-          const startupNodes = (0, util_1.normalizeNodeOptions)(this.startupNodes);
-          const hostnames = (0, util_1.getUniqueHostnamesFromOptions)(startupNodes);
-          if (hostnames.length === 0) {
-            return startupNodes;
+          if (this.options.useSRVRecords) {
+            return Object.assign({}, node, config);
           }
-          const configs = yield Promise.all(hostnames.map((this.options.useSRVRecords ? this.resolveSrv : this.dnsLookup).bind(this)));
-          const hostnameToConfig = (0, utils_1.zipMap)(hostnames, configs);
-          return startupNodes.map((node) => {
-            const config = hostnameToConfig.get(node.host);
-            if (!config) {
-              return node;
-            }
-            if (this.options.useSRVRecords) {
-              return Object.assign({}, node, config);
-            }
-            return Object.assign({}, node, { host: config });
-          });
+          return Object.assign({}, node, { host: config });
         });
       }
       createScanStream(command, { key, options = {} }) {
@@ -7773,23 +7739,21 @@ var require_FailoverDetector = __commonJS({
           sentinel.client.disconnect();
         }
       }
-      subscribe() {
-        return __async(this, null, function* () {
-          debug("Starting FailoverDetector");
-          const promises = [];
-          for (const sentinel of this.sentinels) {
-            const promise = sentinel.client.subscribe(CHANNEL_NAME).catch((err) => {
-              debug("Failed to subscribe to failover messages on sentinel %s:%s (%s)", sentinel.address.host || "127.0.0.1", sentinel.address.port || 26739, err.message);
-            });
-            promises.push(promise);
-            sentinel.client.on("message", (channel) => {
-              if (!this.isDisconnected && channel === CHANNEL_NAME) {
-                this.disconnect();
-              }
-            });
-          }
-          yield Promise.all(promises);
-        });
+      async subscribe() {
+        debug("Starting FailoverDetector");
+        const promises = [];
+        for (const sentinel of this.sentinels) {
+          const promise = sentinel.client.subscribe(CHANNEL_NAME).catch((err) => {
+            debug("Failed to subscribe to failover messages on sentinel %s:%s (%s)", sentinel.address.host || "127.0.0.1", sentinel.address.port || 26739, err.message);
+          });
+          promises.push(promise);
+          sentinel.client.on("message", (channel) => {
+            if (!this.isDisconnected && channel === CHANNEL_NAME) {
+              this.disconnect();
+            }
+          });
+        }
+        await Promise.all(promises);
       }
       disconnect() {
         this.isDisconnected = true;
@@ -7850,7 +7814,7 @@ var require_SentinelConnector = __commonJS({
         this.connecting = true;
         this.retryAttempts = 0;
         let lastError;
-        const connectToNext = () => __async(this, null, function* () {
+        const connectToNext = async () => {
           const endpoint = this.sentinelIterator.next();
           if (endpoint.done) {
             this.sentinelIterator.reset(false);
@@ -7863,7 +7827,7 @@ var require_SentinelConnector = __commonJS({
             const error = new Error(errorMsg);
             if (typeof retryDelay === "number") {
               eventEmitter("error", error);
-              yield new Promise((resolve) => setTimeout(resolve, retryDelay));
+              await new Promise((resolve) => setTimeout(resolve, retryDelay));
               return connectToNext();
             } else {
               throw error;
@@ -7872,7 +7836,7 @@ var require_SentinelConnector = __commonJS({
           let resolved = null;
           let err = null;
           try {
-            resolved = yield this.resolve(endpoint.value);
+            resolved = await this.resolve(endpoint.value);
           } catch (error) {
             err = error;
           }
@@ -7903,46 +7867,40 @@ var require_SentinelConnector = __commonJS({
             }
             return connectToNext();
           }
-        });
+        };
         return connectToNext();
       }
-      updateSentinels(client) {
-        return __async(this, null, function* () {
-          if (!this.options.updateSentinels) {
-            return;
-          }
-          const result = yield client.sentinel("sentinels", this.options.name);
-          if (!Array.isArray(result)) {
-            return;
-          }
-          result.map(utils_1.packObject).forEach((sentinel) => {
-            const flags = sentinel.flags ? sentinel.flags.split(",") : [];
-            if (flags.indexOf("disconnected") === -1 && sentinel.ip && sentinel.port) {
-              const endpoint = this.sentinelNatResolve(addressResponseToAddress(sentinel));
-              if (this.sentinelIterator.add(endpoint)) {
-                debug("adding sentinel %s:%s", endpoint.host, endpoint.port);
-              }
+      async updateSentinels(client) {
+        if (!this.options.updateSentinels) {
+          return;
+        }
+        const result = await client.sentinel("sentinels", this.options.name);
+        if (!Array.isArray(result)) {
+          return;
+        }
+        result.map(utils_1.packObject).forEach((sentinel) => {
+          const flags = sentinel.flags ? sentinel.flags.split(",") : [];
+          if (flags.indexOf("disconnected") === -1 && sentinel.ip && sentinel.port) {
+            const endpoint = this.sentinelNatResolve(addressResponseToAddress(sentinel));
+            if (this.sentinelIterator.add(endpoint)) {
+              debug("adding sentinel %s:%s", endpoint.host, endpoint.port);
             }
-          });
-          debug("Updated internal sentinels: %s", this.sentinelIterator);
-        });
-      }
-      resolveMaster(client) {
-        return __async(this, null, function* () {
-          const result = yield client.sentinel("get-master-addr-by-name", this.options.name);
-          yield this.updateSentinels(client);
-          return this.sentinelNatResolve(Array.isArray(result) ? { host: result[0], port: Number(result[1]) } : null);
-        });
-      }
-      resolveSlave(client) {
-        return __async(this, null, function* () {
-          const result = yield client.sentinel("slaves", this.options.name);
-          if (!Array.isArray(result)) {
-            return null;
           }
-          const availableSlaves = result.map(utils_1.packObject).filter((slave) => slave.flags && !slave.flags.match(/(disconnected|s_down|o_down)/));
-          return this.sentinelNatResolve(selectPreferredSentinel(availableSlaves, this.options.preferredSlaves));
         });
+        debug("Updated internal sentinels: %s", this.sentinelIterator);
+      }
+      async resolveMaster(client) {
+        const result = await client.sentinel("get-master-addr-by-name", this.options.name);
+        await this.updateSentinels(client);
+        return this.sentinelNatResolve(Array.isArray(result) ? { host: result[0], port: Number(result[1]) } : null);
+      }
+      async resolveSlave(client) {
+        const result = await client.sentinel("slaves", this.options.name);
+        if (!Array.isArray(result)) {
+          return null;
+        }
+        const availableSlaves = result.map(utils_1.packObject).filter((slave) => slave.flags && !slave.flags.match(/(disconnected|s_down|o_down)/));
+        return this.sentinelNatResolve(selectPreferredSentinel(availableSlaves, this.options.preferredSlaves));
       }
       sentinelNatResolve(item) {
         if (!item || !this.options.natMap)
@@ -7975,52 +7933,48 @@ var require_SentinelConnector = __commonJS({
         }, options));
         return redis;
       }
-      resolve(endpoint) {
-        return __async(this, null, function* () {
-          const client = this.connectToSentinel(endpoint);
-          client.on("error", noop);
-          try {
-            if (this.options.role === "slave") {
-              return yield this.resolveSlave(client);
-            } else {
-              return yield this.resolveMaster(client);
-            }
-          } finally {
-            client.disconnect();
+      async resolve(endpoint) {
+        const client = this.connectToSentinel(endpoint);
+        client.on("error", noop);
+        try {
+          if (this.options.role === "slave") {
+            return await this.resolveSlave(client);
+          } else {
+            return await this.resolveMaster(client);
           }
-        });
+        } finally {
+          client.disconnect();
+        }
       }
-      initFailoverDetector() {
-        return __async(this, null, function* () {
-          var _a;
-          if (!this.options.failoverDetector) {
-            return;
+      async initFailoverDetector() {
+        var _a;
+        if (!this.options.failoverDetector) {
+          return;
+        }
+        this.sentinelIterator.reset(true);
+        const sentinels = [];
+        while (sentinels.length < this.options.sentinelMaxConnections) {
+          const { done, value } = this.sentinelIterator.next();
+          if (done) {
+            break;
           }
-          this.sentinelIterator.reset(true);
-          const sentinels = [];
-          while (sentinels.length < this.options.sentinelMaxConnections) {
-            const { done, value } = this.sentinelIterator.next();
-            if (done) {
-              break;
-            }
-            const client = this.connectToSentinel(value, {
-              lazyConnect: true,
-              retryStrategy: this.options.sentinelReconnectStrategy
-            });
-            client.on("reconnecting", () => {
-              var _a2;
-              (_a2 = this.emitter) === null || _a2 === void 0 ? void 0 : _a2.emit("sentinelReconnecting");
-            });
-            sentinels.push({ address: value, client });
-          }
-          this.sentinelIterator.reset(false);
-          if (this.failoverDetector) {
-            this.failoverDetector.cleanup();
-          }
-          this.failoverDetector = new FailoverDetector_1.FailoverDetector(this, sentinels);
-          yield this.failoverDetector.subscribe();
-          (_a = this.emitter) === null || _a === void 0 ? void 0 : _a.emit("failoverSubscribed");
-        });
+          const client = this.connectToSentinel(value, {
+            lazyConnect: true,
+            retryStrategy: this.options.sentinelReconnectStrategy
+          });
+          client.on("reconnecting", () => {
+            var _a2;
+            (_a2 = this.emitter) === null || _a2 === void 0 ? void 0 : _a2.emit("sentinelReconnecting");
+          });
+          sentinels.push({ address: value, client });
+        }
+        this.sentinelIterator.reset(false);
+        if (this.failoverDetector) {
+          this.failoverDetector.cleanup();
+        }
+        this.failoverDetector = new FailoverDetector_1.FailoverDetector(this, sentinels);
+        await this.failoverDetector.subscribe();
+        (_a = this.emitter) === null || _a === void 0 ? void 0 : _a.emit("failoverSubscribed");
       }
     };
     exports2.default = SentinelConnector;
@@ -9884,18 +9838,18 @@ var require_detect_libc = __commonJS({
       }
       return null;
     };
-    var familyFromFilesystem = () => __async(null, null, function* () {
+    var familyFromFilesystem = async () => {
       if (cachedFamilyFilesystem !== void 0) {
         return cachedFamilyFilesystem;
       }
       cachedFamilyFilesystem = null;
       try {
-        const lddContent = yield readFile(LDD_PATH);
+        const lddContent = await readFile(LDD_PATH);
         cachedFamilyFilesystem = getFamilyFromLddContent(lddContent);
       } catch (e) {
       }
       return cachedFamilyFilesystem;
-    });
+    };
     var familyFromFilesystemSync = () => {
       if (cachedFamilyFilesystem !== void 0) {
         return cachedFamilyFilesystem;
@@ -9908,20 +9862,20 @@ var require_detect_libc = __commonJS({
       }
       return cachedFamilyFilesystem;
     };
-    var family = () => __async(null, null, function* () {
+    var family = async () => {
       let family2 = null;
       if (isLinux()) {
-        family2 = yield familyFromFilesystem();
+        family2 = await familyFromFilesystem();
         if (!family2) {
           family2 = familyFromReport();
         }
         if (!family2) {
-          const out = yield safeCommand();
+          const out = await safeCommand();
           family2 = familyFromCommand(out);
         }
       }
       return family2;
-    });
+    };
     var familySync = () => {
       let family2 = null;
       if (isLinux()) {
@@ -9936,17 +9890,15 @@ var require_detect_libc = __commonJS({
       }
       return family2;
     };
-    var isNonGlibcLinux = () => __async(null, null, function* () {
-      return isLinux() && (yield family()) !== GLIBC;
-    });
+    var isNonGlibcLinux = async () => isLinux() && await family() !== GLIBC;
     var isNonGlibcLinuxSync = () => isLinux() && familySync() !== GLIBC;
-    var versionFromFilesystem = () => __async(null, null, function* () {
+    var versionFromFilesystem = async () => {
       if (cachedVersionFilesystem !== void 0) {
         return cachedVersionFilesystem;
       }
       cachedVersionFilesystem = null;
       try {
-        const lddContent = yield readFile(LDD_PATH);
+        const lddContent = await readFile(LDD_PATH);
         const versionMatch = lddContent.match(RE_GLIBC_VERSION);
         if (versionMatch) {
           cachedVersionFilesystem = versionMatch[1];
@@ -9954,7 +9906,7 @@ var require_detect_libc = __commonJS({
       } catch (e) {
       }
       return cachedVersionFilesystem;
-    });
+    };
     var versionFromFilesystemSync = () => {
       if (cachedVersionFilesystem !== void 0) {
         return cachedVersionFilesystem;
@@ -9988,20 +9940,20 @@ var require_detect_libc = __commonJS({
       }
       return null;
     };
-    var version2 = () => __async(null, null, function* () {
+    var version2 = async () => {
       let version3 = null;
       if (isLinux()) {
-        version3 = yield versionFromFilesystem();
+        version3 = await versionFromFilesystem();
         if (!version3) {
           version3 = versionFromReport();
         }
         if (!version3) {
-          const out = yield safeCommand();
+          const out = await safeCommand();
           version3 = versionFromCommand(out);
         }
       }
       return version3;
-    });
+    };
     var versionSync = () => {
       let version3 = null;
       if (isLinux()) {
@@ -10032,7 +9984,6 @@ var require_detect_libc = __commonJS({
 // ../../node_modules/node-gyp-build-optional-packages/node-gyp-build.js
 var require_node_gyp_build = __commonJS({
   "../../node_modules/node-gyp-build-optional-packages/node-gyp-build.js"(exports2, module2) {
-    "use strict";
     var fs = require("fs");
     var path = require("path");
     var url = require("url");
@@ -10230,7 +10181,6 @@ var require_node_gyp_build = __commonJS({
 // ../../node_modules/node-gyp-build-optional-packages/index.js
 var require_node_gyp_build_optional_packages = __commonJS({
   "../../node_modules/node-gyp-build-optional-packages/index.js"(exports2, module2) {
-    "use strict";
     var runtimeRequire = typeof __webpack_require__ === "function" ? __non_webpack_require__ : require;
     if (typeof runtimeRequire.addon === "function") {
       module2.exports = runtimeRequire.addon.bind(runtimeRequire);
@@ -10243,7 +10193,6 @@ var require_node_gyp_build_optional_packages = __commonJS({
 // ../../node_modules/msgpackr-extract/index.js
 var require_msgpackr_extract = __commonJS({
   "../../node_modules/msgpackr-extract/index.js"(exports2, module2) {
-    "use strict";
     module2.exports = require_node_gyp_build_optional_packages()(__dirname);
   }
 });
@@ -13847,7 +13796,7 @@ var require_luxon = __commonJS({
       }
     }
     function roundTo(number, digits, towardZero = false) {
-      const factor = __pow(10, digits), rounder = towardZero ? Math.trunc : Math.round;
+      const factor = 10 ** digits, rounder = towardZero ? Math.trunc : Math.round;
       return rounder(number * factor) / factor;
     }
     function isLeapYear(year) {
@@ -19800,7 +19749,6 @@ var require_parser2 = __commonJS({
 // ../../node_modules/node-abort-controller/index.js
 var require_node_abort_controller = __commonJS({
   "../../node_modules/node-abort-controller/index.js"(exports2, module2) {
-    "use strict";
     var { EventEmitter: EventEmitter3 } = require("events");
     var AbortSignal = class {
       constructor() {
@@ -19890,180 +19838,160 @@ var BillingServiceImpl = class {
     this.invoiceService = new import_stripe.InvoiceService();
     this.portalService = new import_stripe.PortalService();
   }
-  createCustomer(userId, email) {
-    return __async(this, null, function* () {
-      return this.customerService.createCustomer({
-        organizationId: userId,
-        // Using userId as organizationId for compatibility
-        email,
-        metadata: { userId }
-      });
+  async createCustomer(userId, email) {
+    return this.customerService.createCustomer({
+      organizationId: userId,
+      // Using userId as organizationId for compatibility
+      email,
+      metadata: { userId }
     });
   }
-  getSubscription(customerId) {
-    return __async(this, null, function* () {
+  async getSubscription(customerId) {
+    return null;
+  }
+  async updateSubscription(subscriptionId, priceId) {
+    return this.subscriptionService.updateSubscription(subscriptionId, {
+      priceId
+    });
+  }
+  async cancelSubscription(subscriptionId) {
+    return this.subscriptionService.cancelSubscription(subscriptionId);
+  }
+  async getUsage(customerId, period) {
+    var _a;
+    const { data: org } = await import_db.supabase.from("organizations").select("*, subscriptions(*)").eq("stripe_customer_id", customerId).single();
+    if (!org) {
+      throw new Error("Organization not found");
+    }
+    const { data: renderUsage } = await import_db.supabase.from("renders").select("id").eq("organization_id", org.id).gte("created_at", period.start.toISOString()).lte("created_at", period.end.toISOString());
+    const { data: storageData } = await import_db.supabase.rpc("get_organization_storage_usage", {
+      org_id: org.id
+    });
+    const subscription = (_a = org.subscriptions) == null ? void 0 : _a[0];
+    const plan = subscription == null ? void 0 : subscription.subscription_plans;
+    return {
+      renders: {
+        used: (renderUsage == null ? void 0 : renderUsage.length) || 0,
+        limit: (plan == null ? void 0 : plan.render_credits_monthly) || 0
+      },
+      storage: {
+        used: (storageData == null ? void 0 : storageData.total_bytes) || 0,
+        limit: (plan == null ? void 0 : plan.max_storage_gb) ? plan.max_storage_gb * 1024 * 1024 * 1024 : 0
+      },
+      credits: {
+        used: (renderUsage == null ? void 0 : renderUsage.length) || 0,
+        remaining: Math.max(0, ((plan == null ? void 0 : plan.render_credits_monthly) || 0) - ((renderUsage == null ? void 0 : renderUsage.length) || 0))
+      }
+    };
+  }
+  async createPaymentIntent(amount, customerId) {
+    return this.paymentService.createPaymentIntent({
+      customerId,
+      amount,
+      currency: "usd"
+    });
+  }
+  async getPlans() {
+    const { data: plans } = await import_db.supabase.from("subscription_plans").select("*").eq("is_active", true).order("price_monthly", { ascending: true });
+    return plans || [];
+  }
+  async getCurrentSubscription(organizationId) {
+    var _a;
+    const { data: org } = await import_db.supabase.from("organizations").select("*").eq("id", organizationId).single();
+    if (!org || !org.stripe_customer_id || !org.stripe_subscription_id) {
       return null;
-    });
+    }
+    const subscription = await this.subscriptionService.getSubscription(org.stripe_subscription_id);
+    if (!subscription) {
+      return null;
+    }
+    const { data: plan } = await import_db.supabase.from("subscription_plans").select("*").eq("stripe_price_id", (_a = subscription.items.data[0]) == null ? void 0 : _a.price.id).single();
+    return {
+      id: subscription.id,
+      status: subscription.status,
+      plan: plan || null,
+      current_period_end: new Date(subscription.current_period_end * 1e3).toISOString(),
+      cancel_at_period_end: subscription.cancel_at_period_end || false
+    };
   }
-  updateSubscription(subscriptionId, priceId) {
-    return __async(this, null, function* () {
-      return this.subscriptionService.updateSubscription(subscriptionId, {
-        priceId
+  async getInvoices(customerId, limit = 10) {
+    const invoices = await this.invoiceService.listInvoices(customerId, {
+      limit
+    });
+    return invoices.map((invoice) => ({
+      id: invoice.id,
+      invoice_number: invoice.number,
+      stripe_invoice_id: invoice.id,
+      created_at: new Date(invoice.created * 1e3).toISOString(),
+      amount_due: invoice.amount_due / 100,
+      // Convert from cents
+      currency: invoice.currency,
+      status: invoice.status || "draft",
+      stripe_hosted_invoice_url: invoice.hosted_invoice_url,
+      stripe_invoice_pdf: invoice.invoice_pdf
+    }));
+  }
+  async getBillingAlerts(organizationId) {
+    var _a;
+    const alerts = [];
+    const { data: org } = await import_db.supabase.from("organizations").select("*, subscriptions(*, subscription_plans(*))").eq("id", organizationId).single();
+    if (!org) return alerts;
+    if (org.stripe_customer_id) {
+      const invoices = await this.invoiceService.listInvoices(org.stripe_customer_id, {
+        status: "open"
       });
-    });
-  }
-  cancelSubscription(subscriptionId) {
-    return __async(this, null, function* () {
-      return this.subscriptionService.cancelSubscription(subscriptionId);
-    });
-  }
-  getUsage(customerId, period) {
-    return __async(this, null, function* () {
-      var _a;
-      const { data: org } = yield import_db.supabase.from("organizations").select("*, subscriptions(*)").eq("stripe_customer_id", customerId).single();
-      if (!org) {
-        throw new Error("Organization not found");
-      }
-      const { data: renderUsage } = yield import_db.supabase.from("renders").select("id").eq("organization_id", org.id).gte("created_at", period.start.toISOString()).lte("created_at", period.end.toISOString());
-      const { data: storageData } = yield import_db.supabase.rpc("get_organization_storage_usage", {
-        org_id: org.id
-      });
-      const subscription = (_a = org.subscriptions) == null ? void 0 : _a[0];
-      const plan = subscription == null ? void 0 : subscription.subscription_plans;
-      return {
-        renders: {
-          used: (renderUsage == null ? void 0 : renderUsage.length) || 0,
-          limit: (plan == null ? void 0 : plan.render_credits_monthly) || 0
-        },
-        storage: {
-          used: (storageData == null ? void 0 : storageData.total_bytes) || 0,
-          limit: (plan == null ? void 0 : plan.max_storage_gb) ? plan.max_storage_gb * 1024 * 1024 * 1024 : 0
-        },
-        credits: {
-          used: (renderUsage == null ? void 0 : renderUsage.length) || 0,
-          remaining: Math.max(0, ((plan == null ? void 0 : plan.render_credits_monthly) || 0) - ((renderUsage == null ? void 0 : renderUsage.length) || 0))
-        }
-      };
-    });
-  }
-  createPaymentIntent(amount, customerId) {
-    return __async(this, null, function* () {
-      return this.paymentService.createPaymentIntent({
-        customerId,
-        amount,
-        currency: "usd"
-      });
-    });
-  }
-  getPlans() {
-    return __async(this, null, function* () {
-      const { data: plans } = yield import_db.supabase.from("subscription_plans").select("*").eq("is_active", true).order("price_monthly", { ascending: true });
-      return plans || [];
-    });
-  }
-  getCurrentSubscription(organizationId) {
-    return __async(this, null, function* () {
-      var _a;
-      const { data: org } = yield import_db.supabase.from("organizations").select("*").eq("id", organizationId).single();
-      if (!org || !org.stripe_customer_id || !org.stripe_subscription_id) {
-        return null;
-      }
-      const subscription = yield this.subscriptionService.getSubscription(org.stripe_subscription_id);
-      if (!subscription) {
-        return null;
-      }
-      const { data: plan } = yield import_db.supabase.from("subscription_plans").select("*").eq("stripe_price_id", (_a = subscription.items.data[0]) == null ? void 0 : _a.price.id).single();
-      return {
-        id: subscription.id,
-        status: subscription.status,
-        plan: plan || null,
-        current_period_end: new Date(subscription.current_period_end * 1e3).toISOString(),
-        cancel_at_period_end: subscription.cancel_at_period_end || false
-      };
-    });
-  }
-  getInvoices(customerId, limit = 10) {
-    return __async(this, null, function* () {
-      const invoices = yield this.invoiceService.listInvoices(customerId, {
-        limit
-      });
-      return invoices.map((invoice) => ({
-        id: invoice.id,
-        invoice_number: invoice.number,
-        stripe_invoice_id: invoice.id,
-        created_at: new Date(invoice.created * 1e3).toISOString(),
-        amount_due: invoice.amount_due / 100,
-        // Convert from cents
-        currency: invoice.currency,
-        status: invoice.status || "draft",
-        stripe_hosted_invoice_url: invoice.hosted_invoice_url,
-        stripe_invoice_pdf: invoice.invoice_pdf
-      }));
-    });
-  }
-  getBillingAlerts(organizationId) {
-    return __async(this, null, function* () {
-      var _a;
-      const alerts = [];
-      const { data: org } = yield import_db.supabase.from("organizations").select("*, subscriptions(*, subscription_plans(*))").eq("id", organizationId).single();
-      if (!org) return alerts;
-      if (org.stripe_customer_id) {
-        const invoices = yield this.invoiceService.listInvoices(org.stripe_customer_id, {
-          status: "open"
-        });
-        if (invoices.some((inv) => inv.attempted && !inv.paid)) {
-          alerts.push({
-            id: "payment_failed",
-            type: "payment_failed",
-            severity: "error",
-            title: "Payment Failed",
-            message: "Your last payment attempt failed. Please update your payment method.",
-            action: {
-              label: "Update Payment Method",
-              url: "/settings/billing/payment-methods"
-            }
-          });
-        }
-      }
-      const subscription = (_a = org.subscriptions) == null ? void 0 : _a[0];
-      if (subscription && subscription.cancel_at_period_end) {
-        const daysUntilExpiry = Math.ceil(
-          (new Date(subscription.current_period_end).getTime() - Date.now()) / (1e3 * 60 * 60 * 24)
-        );
-        if (daysUntilExpiry <= 7) {
-          alerts.push({
-            id: "subscription_expiring",
-            type: "subscription_expiring",
-            severity: "warning",
-            title: "Subscription Expiring Soon",
-            message: `Your subscription will expire in ${daysUntilExpiry} days.`,
-            action: {
-              label: "Renew Subscription",
-              url: "/settings/billing"
-            }
-          });
-        }
-      }
-      const usage = yield this.getUsage(org.stripe_customer_id, {
-        start: new Date((subscription == null ? void 0 : subscription.current_period_start) || Date.now()),
-        end: /* @__PURE__ */ new Date()
-      });
-      const plan = subscription == null ? void 0 : subscription.subscription_plans;
-      if (plan && usage.renders.used >= plan.render_credits_monthly * 0.9) {
+      if (invoices.some((inv) => inv.attempted && !inv.paid)) {
         alerts.push({
-          id: "usage_limit",
-          type: "usage_limit",
-          severity: "warning",
-          title: "Approaching Render Limit",
-          message: `You've used ${usage.renders.used} of ${plan.render_credits_monthly} renders this month.`,
+          id: "payment_failed",
+          type: "payment_failed",
+          severity: "error",
+          title: "Payment Failed",
+          message: "Your last payment attempt failed. Please update your payment method.",
           action: {
-            label: "Upgrade Plan",
+            label: "Update Payment Method",
+            url: "/settings/billing/payment-methods"
+          }
+        });
+      }
+    }
+    const subscription = (_a = org.subscriptions) == null ? void 0 : _a[0];
+    if (subscription && subscription.cancel_at_period_end) {
+      const daysUntilExpiry = Math.ceil(
+        (new Date(subscription.current_period_end).getTime() - Date.now()) / (1e3 * 60 * 60 * 24)
+      );
+      if (daysUntilExpiry <= 7) {
+        alerts.push({
+          id: "subscription_expiring",
+          type: "subscription_expiring",
+          severity: "warning",
+          title: "Subscription Expiring Soon",
+          message: `Your subscription will expire in ${daysUntilExpiry} days.`,
+          action: {
+            label: "Renew Subscription",
             url: "/settings/billing"
           }
         });
       }
-      return alerts;
+    }
+    const usage = await this.getUsage(org.stripe_customer_id, {
+      start: new Date((subscription == null ? void 0 : subscription.current_period_start) || Date.now()),
+      end: /* @__PURE__ */ new Date()
     });
+    const plan = subscription == null ? void 0 : subscription.subscription_plans;
+    if (plan && usage.renders.used >= plan.render_credits_monthly * 0.9) {
+      alerts.push({
+        id: "usage_limit",
+        type: "usage_limit",
+        severity: "warning",
+        title: "Approaching Render Limit",
+        message: `You've used ${usage.renders.used} of ${plan.render_credits_monthly} renders this month.`,
+        action: {
+          label: "Upgrade Plan",
+          url: "/settings/billing"
+        }
+      });
+    }
+    return alerts;
   }
 };
 var billingService = new BillingServiceImpl();
@@ -20071,120 +19999,102 @@ var billingService = new BillingServiceImpl();
 // src/project.service.ts
 var import_db2 = require("@terrashaper/db");
 var ProjectServiceImpl = class {
-  create(data) {
-    return __async(this, null, function* () {
-      const { data: project, error } = yield import_db2.supabase.from("projects").insert(__spreadProps(__spreadValues({}, data), {
-        created_at: /* @__PURE__ */ new Date(),
-        updated_at: /* @__PURE__ */ new Date()
-      })).select().single();
-      if (error) throw error;
-      return project;
-    });
+  async create(data) {
+    const { data: project, error } = await import_db2.supabase.from("projects").insert(__spreadProps(__spreadValues({}, data), {
+      created_at: /* @__PURE__ */ new Date(),
+      updated_at: /* @__PURE__ */ new Date()
+    })).select().single();
+    if (error) throw error;
+    return project;
   }
-  findById(id) {
-    return __async(this, null, function* () {
-      const { data: project, error } = yield import_db2.supabase.from("projects").select("*").eq("id", id).single();
-      if (error && error.code !== "PGRST116") throw error;
-      return project;
-    });
+  async findById(id) {
+    const { data: project, error } = await import_db2.supabase.from("projects").select("*").eq("id", id).single();
+    if (error && error.code !== "PGRST116") throw error;
+    return project;
   }
-  findByUserId(userId) {
-    return __async(this, null, function* () {
-      const { data: projects, error } = yield import_db2.supabase.from("projects").select("*").eq("user_id", userId).order("created_at", { ascending: false });
-      if (error) throw error;
-      return projects || [];
-    });
+  async findByUserId(userId) {
+    const { data: projects, error } = await import_db2.supabase.from("projects").select("*").eq("user_id", userId).order("created_at", { ascending: false });
+    if (error) throw error;
+    return projects || [];
   }
-  findByOrganizationId(organizationId) {
-    return __async(this, null, function* () {
-      const { data: projects, error } = yield import_db2.supabase.from("projects").select("*").eq("organization_id", organizationId).order("created_at", { ascending: false });
-      if (error) throw error;
-      return projects || [];
-    });
+  async findByOrganizationId(organizationId) {
+    const { data: projects, error } = await import_db2.supabase.from("projects").select("*").eq("organization_id", organizationId).order("created_at", { ascending: false });
+    if (error) throw error;
+    return projects || [];
   }
-  update(id, data) {
-    return __async(this, null, function* () {
-      const { data: project, error } = yield import_db2.supabase.from("projects").update(__spreadProps(__spreadValues({}, data), {
-        updated_at: /* @__PURE__ */ new Date()
-      })).eq("id", id).select().single();
-      if (error) throw error;
-      return project;
-    });
+  async update(id, data) {
+    const { data: project, error } = await import_db2.supabase.from("projects").update(__spreadProps(__spreadValues({}, data), {
+      updated_at: /* @__PURE__ */ new Date()
+    })).eq("id", id).select().single();
+    if (error) throw error;
+    return project;
   }
-  delete(id) {
-    return __async(this, null, function* () {
-      const { error } = yield import_db2.supabase.from("projects").delete().eq("id", id);
-      if (error) throw error;
-    });
+  async delete(id) {
+    const { error } = await import_db2.supabase.from("projects").delete().eq("id", id);
+    if (error) throw error;
   }
-  createVersion(data) {
-    return __async(this, null, function* () {
-      const { data: version2, error } = yield import_db2.supabase.from("project_versions").insert(__spreadProps(__spreadValues({}, data), {
-        created_at: /* @__PURE__ */ new Date()
-      })).select().single();
-      if (error) throw error;
-      return version2;
-    });
+  async createVersion(data) {
+    const { data: version2, error } = await import_db2.supabase.from("project_versions").insert(__spreadProps(__spreadValues({}, data), {
+      created_at: /* @__PURE__ */ new Date()
+    })).select().single();
+    if (error) throw error;
+    return version2;
   }
-  getVersions(projectId) {
-    return __async(this, null, function* () {
-      const { data: versions, error } = yield import_db2.supabase.from("project_versions").select("*").eq("project_id", projectId).order("created_at", { ascending: false });
-      if (error) throw error;
-      return versions || [];
-    });
+  async getVersions(projectId) {
+    const { data: versions, error } = await import_db2.supabase.from("project_versions").select("*").eq("project_id", projectId).order("created_at", { ascending: false });
+    if (error) throw error;
+    return versions || [];
   }
-  getStats(organizationId) {
-    return __async(this, null, function* () {
-      const { data: projects } = yield import_db2.supabase.from("projects").select("id, name, status, created_at, updated_at").eq("organization_id", organizationId);
-      const total = (projects == null ? void 0 : projects.length) || 0;
-      const byStatus = (projects == null ? void 0 : projects.reduce((acc, project) => {
-        const status = project.status || "draft";
-        acc[status] = (acc[status] || 0) + 1;
-        return acc;
-      }, {})) || {};
-      const { data: recentProjects } = yield import_db2.supabase.from("projects").select("id, name, created_at, updated_at, user_id, users(name)").eq("organization_id", organizationId).order("updated_at", { ascending: false }).limit(10);
-      const { data: recentRenders } = yield import_db2.supabase.from("renders").select("id, project_id, created_at, user_id, projects(name), users(name)").eq("organization_id", organizationId).order("created_at", { ascending: false }).limit(10);
-      const activities = [];
-      recentProjects == null ? void 0 : recentProjects.forEach((project) => {
-        var _a, _b;
-        if (project.created_at === project.updated_at) {
-          activities.push({
-            projectId: project.id,
-            projectName: project.name,
-            action: "created",
-            timestamp: new Date(project.created_at),
-            userId: project.user_id,
-            userName: (_a = project.users) == null ? void 0 : _a.name
-          });
-        } else {
-          activities.push({
-            projectId: project.id,
-            projectName: project.name,
-            action: "updated",
-            timestamp: new Date(project.updated_at),
-            userId: project.user_id,
-            userName: (_b = project.users) == null ? void 0 : _b.name
-          });
-        }
-      });
-      recentRenders == null ? void 0 : recentRenders.forEach((render) => {
-        var _a, _b;
+  async getStats(organizationId) {
+    const { data: projects } = await import_db2.supabase.from("projects").select("id, name, status, created_at, updated_at").eq("organization_id", organizationId);
+    const total = (projects == null ? void 0 : projects.length) || 0;
+    const byStatus = (projects == null ? void 0 : projects.reduce((acc, project) => {
+      const status = project.status || "draft";
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    }, {})) || {};
+    const { data: recentProjects } = await import_db2.supabase.from("projects").select("id, name, created_at, updated_at, user_id, users(name)").eq("organization_id", organizationId).order("updated_at", { ascending: false }).limit(10);
+    const { data: recentRenders } = await import_db2.supabase.from("renders").select("id, project_id, created_at, user_id, projects(name), users(name)").eq("organization_id", organizationId).order("created_at", { ascending: false }).limit(10);
+    const activities = [];
+    recentProjects == null ? void 0 : recentProjects.forEach((project) => {
+      var _a, _b;
+      if (project.created_at === project.updated_at) {
         activities.push({
-          projectId: render.project_id,
-          projectName: ((_a = render.projects) == null ? void 0 : _a.name) || "Unknown Project",
-          action: "rendered",
-          timestamp: new Date(render.created_at),
-          userId: render.user_id,
-          userName: (_b = render.users) == null ? void 0 : _b.name
+          projectId: project.id,
+          projectName: project.name,
+          action: "created",
+          timestamp: new Date(project.created_at),
+          userId: project.user_id,
+          userName: (_a = project.users) == null ? void 0 : _a.name
         });
-      });
-      const recentActivity = activities.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 10);
-      return {
-        total,
-        byStatus,
-        recentActivity
-      };
+      } else {
+        activities.push({
+          projectId: project.id,
+          projectName: project.name,
+          action: "updated",
+          timestamp: new Date(project.updated_at),
+          userId: project.user_id,
+          userName: (_b = project.users) == null ? void 0 : _b.name
+        });
+      }
     });
+    recentRenders == null ? void 0 : recentRenders.forEach((render) => {
+      var _a, _b;
+      activities.push({
+        projectId: render.project_id,
+        projectName: ((_a = render.projects) == null ? void 0 : _a.name) || "Unknown Project",
+        action: "rendered",
+        timestamp: new Date(render.created_at),
+        userId: render.user_id,
+        userName: (_b = render.users) == null ? void 0 : _b.name
+      });
+    });
+    const recentActivity = activities.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 10);
+    return {
+      total,
+      byStatus,
+      recentActivity
+    };
   }
 };
 var projectService = new ProjectServiceImpl();
@@ -21947,7 +21857,7 @@ var Packr = class extends Unpackr {
             targetView.setFloat64(position2, Number(value));
           } else if (this.largeBigIntToString) {
             return pack3(value.toString());
-          } else if ((this.useBigIntExtension || this.moreTypes) && value < __pow(BigInt(2), BigInt(1023)) && value > -__pow(BigInt(2), BigInt(1023))) {
+          } else if ((this.useBigIntExtension || this.moreTypes) && value < BigInt(2) ** BigInt(1023) && value > -(BigInt(2) ** BigInt(1023))) {
             target[position2++] = 199;
             position2++;
             target[position2++] = 66;
@@ -23244,17 +23154,15 @@ var Scripts = class {
     const commandNameWithVersion = `${commandName}:${this.version}`;
     return client[commandNameWithVersion](args);
   }
-  isJobInList(listKey, jobId) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      let result;
-      if (isRedisVersionLowerThan(this.queue.redisVersion, "6.0.6")) {
-        result = yield this.execCommand(client, "isJobInList", [listKey, jobId]);
-      } else {
-        result = yield client.lpos(listKey, jobId);
-      }
-      return Number.isInteger(result);
-    });
+  async isJobInList(listKey, jobId) {
+    const client = await this.queue.client;
+    let result;
+    if (isRedisVersionLowerThan(this.queue.redisVersion, "6.0.6")) {
+      result = await this.execCommand(client, "isJobInList", [listKey, jobId]);
+    } else {
+      result = await client.lpos(listKey, jobId);
+    }
+    return Number.isInteger(result);
   }
   addDelayedJobArgs(job, encodedOpts, args) {
     const queueKeys = this.queue.keys;
@@ -23326,54 +23234,52 @@ var Scripts = class {
     const argsList = this.addStandardJobArgs(job, encodedOpts, args);
     return this.execCommand(client, "addStandardJob", argsList);
   }
-  addJob(_0, _1, _2, _3) {
-    return __async(this, arguments, function* (client, job, opts, jobId, parentKeyOpts = {}) {
-      const queueKeys = this.queue.keys;
-      const parent = job.parent;
-      const args = [
-        queueKeys[""],
-        typeof jobId !== "undefined" ? jobId : "",
-        job.name,
-        job.timestamp,
-        job.parentKey || null,
-        parentKeyOpts.waitChildrenKey || null,
-        parentKeyOpts.parentDependenciesKey || null,
-        parent,
-        job.repeatJobKey,
-        job.deduplicationId ? `${queueKeys.de}:${job.deduplicationId}` : null
-      ];
-      let encodedOpts;
-      if (opts.repeat) {
-        const repeat = Object.assign({}, opts.repeat);
-        if (repeat.startDate) {
-          repeat.startDate = +new Date(repeat.startDate);
-        }
-        if (repeat.endDate) {
-          repeat.endDate = +new Date(repeat.endDate);
-        }
-        encodedOpts = pack2(Object.assign(Object.assign({}, opts), { repeat }));
-      } else {
-        encodedOpts = pack2(opts);
+  async addJob(client, job, opts, jobId, parentKeyOpts = {}) {
+    const queueKeys = this.queue.keys;
+    const parent = job.parent;
+    const args = [
+      queueKeys[""],
+      typeof jobId !== "undefined" ? jobId : "",
+      job.name,
+      job.timestamp,
+      job.parentKey || null,
+      parentKeyOpts.waitChildrenKey || null,
+      parentKeyOpts.parentDependenciesKey || null,
+      parent,
+      job.repeatJobKey,
+      job.deduplicationId ? `${queueKeys.de}:${job.deduplicationId}` : null
+    ];
+    let encodedOpts;
+    if (opts.repeat) {
+      const repeat = Object.assign({}, opts.repeat);
+      if (repeat.startDate) {
+        repeat.startDate = +new Date(repeat.startDate);
       }
-      let result;
-      if (parentKeyOpts.waitChildrenKey) {
-        result = yield this.addParentJob(client, job, encodedOpts, args);
-      } else if (typeof opts.delay == "number" && opts.delay > 0) {
-        result = yield this.addDelayedJob(client, job, encodedOpts, args);
-      } else if (opts.priority) {
-        result = yield this.addPrioritizedJob(client, job, encodedOpts, args);
-      } else {
-        result = yield this.addStandardJob(client, job, encodedOpts, args);
+      if (repeat.endDate) {
+        repeat.endDate = +new Date(repeat.endDate);
       }
-      if (result < 0) {
-        throw this.finishedErrors({
-          code: result,
-          parentKey: parentKeyOpts.parentKey,
-          command: "addJob"
-        });
-      }
-      return result;
-    });
+      encodedOpts = pack2(Object.assign(Object.assign({}, opts), { repeat }));
+    } else {
+      encodedOpts = pack2(opts);
+    }
+    let result;
+    if (parentKeyOpts.waitChildrenKey) {
+      result = await this.addParentJob(client, job, encodedOpts, args);
+    } else if (typeof opts.delay == "number" && opts.delay > 0) {
+      result = await this.addDelayedJob(client, job, encodedOpts, args);
+    } else if (opts.priority) {
+      result = await this.addPrioritizedJob(client, job, encodedOpts, args);
+    } else {
+      result = await this.addStandardJob(client, job, encodedOpts, args);
+    }
+    if (result < 0) {
+      throw this.finishedErrors({
+        code: result,
+        parentKey: parentKeyOpts.parentKey,
+        command: "addJob"
+      });
+    }
+    return result;
   }
   pauseArgs(pause2) {
     let src2 = "wait", dst = "paused";
@@ -23386,12 +23292,10 @@ var Scripts = class {
     const args = [pause2 ? "paused" : "resumed"];
     return keys.concat(args);
   }
-  pause(pause2) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.pauseArgs(pause2);
-      return this.execCommand(client, "pause", args);
-    });
+  async pause(pause2) {
+    const client = await this.queue.client;
+    const args = this.pauseArgs(pause2);
+    return this.execCommand(client, "pause", args);
   }
   addRepeatableJobArgs(customKey, nextMillis, opts, legacyCustomKey) {
     const queueKeys = this.queue.keys;
@@ -23408,84 +23312,76 @@ var Scripts = class {
     ];
     return keys.concat(args);
   }
-  addRepeatableJob(customKey, nextMillis, opts, legacyCustomKey) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.addRepeatableJobArgs(customKey, nextMillis, opts, legacyCustomKey);
-      return this.execCommand(client, "addRepeatableJob", args);
-    });
+  async addRepeatableJob(customKey, nextMillis, opts, legacyCustomKey) {
+    const client = await this.queue.client;
+    const args = this.addRepeatableJobArgs(customKey, nextMillis, opts, legacyCustomKey);
+    return this.execCommand(client, "addRepeatableJob", args);
   }
-  addJobScheduler(jobSchedulerId, nextMillis, templateData, templateOpts, opts, delayedJobOpts, producerId) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const queueKeys = this.queue.keys;
-      const keys = [
-        queueKeys.repeat,
-        queueKeys.delayed,
-        queueKeys.wait,
-        queueKeys.paused,
-        queueKeys.meta,
-        queueKeys.prioritized,
-        queueKeys.marker,
-        queueKeys.id,
-        queueKeys.events,
-        queueKeys.pc,
-        queueKeys.active
-      ];
-      const args = [
-        nextMillis,
-        pack2(opts),
-        jobSchedulerId,
-        templateData,
-        pack2(templateOpts),
-        pack2(delayedJobOpts),
-        Date.now(),
-        queueKeys[""],
-        producerId ? this.queue.toKey(producerId) : ""
-      ];
-      return this.execCommand(client, "addJobScheduler", keys.concat(args));
-    });
+  async addJobScheduler(jobSchedulerId, nextMillis, templateData, templateOpts, opts, delayedJobOpts, producerId) {
+    const client = await this.queue.client;
+    const queueKeys = this.queue.keys;
+    const keys = [
+      queueKeys.repeat,
+      queueKeys.delayed,
+      queueKeys.wait,
+      queueKeys.paused,
+      queueKeys.meta,
+      queueKeys.prioritized,
+      queueKeys.marker,
+      queueKeys.id,
+      queueKeys.events,
+      queueKeys.pc,
+      queueKeys.active
+    ];
+    const args = [
+      nextMillis,
+      pack2(opts),
+      jobSchedulerId,
+      templateData,
+      pack2(templateOpts),
+      pack2(delayedJobOpts),
+      Date.now(),
+      queueKeys[""],
+      producerId ? this.queue.toKey(producerId) : ""
+    ];
+    return this.execCommand(client, "addJobScheduler", keys.concat(args));
   }
-  updateRepeatableJobMillis(client, customKey, nextMillis, legacyCustomKey) {
-    return __async(this, null, function* () {
-      const args = [
-        this.queue.keys.repeat,
-        nextMillis,
-        customKey,
-        legacyCustomKey
-      ];
-      return this.execCommand(client, "updateRepeatableJobMillis", args);
-    });
+  async updateRepeatableJobMillis(client, customKey, nextMillis, legacyCustomKey) {
+    const args = [
+      this.queue.keys.repeat,
+      nextMillis,
+      customKey,
+      legacyCustomKey
+    ];
+    return this.execCommand(client, "updateRepeatableJobMillis", args);
   }
-  updateJobSchedulerNextMillis(jobSchedulerId, nextMillis, templateData, delayedJobOpts, producerId) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const queueKeys = this.queue.keys;
-      const keys = [
-        queueKeys.repeat,
-        queueKeys.delayed,
-        queueKeys.wait,
-        queueKeys.paused,
-        queueKeys.meta,
-        queueKeys.prioritized,
-        queueKeys.marker,
-        queueKeys.id,
-        queueKeys.events,
-        queueKeys.pc,
-        producerId ? this.queue.toKey(producerId) : "",
-        queueKeys.active
-      ];
-      const args = [
-        nextMillis,
-        jobSchedulerId,
-        templateData,
-        pack2(delayedJobOpts),
-        Date.now(),
-        queueKeys[""],
-        producerId
-      ];
-      return this.execCommand(client, "updateJobScheduler", keys.concat(args));
-    });
+  async updateJobSchedulerNextMillis(jobSchedulerId, nextMillis, templateData, delayedJobOpts, producerId) {
+    const client = await this.queue.client;
+    const queueKeys = this.queue.keys;
+    const keys = [
+      queueKeys.repeat,
+      queueKeys.delayed,
+      queueKeys.wait,
+      queueKeys.paused,
+      queueKeys.meta,
+      queueKeys.prioritized,
+      queueKeys.marker,
+      queueKeys.id,
+      queueKeys.events,
+      queueKeys.pc,
+      producerId ? this.queue.toKey(producerId) : "",
+      queueKeys.active
+    ];
+    const args = [
+      nextMillis,
+      jobSchedulerId,
+      templateData,
+      pack2(delayedJobOpts),
+      Date.now(),
+      queueKeys[""],
+      producerId
+    ];
+    return this.execCommand(client, "updateJobScheduler", keys.concat(args));
   }
   removeRepeatableArgs(legacyRepeatJobId, repeatConcatOptions, repeatJobKey) {
     const queueKeys = this.queue.keys;
@@ -23505,131 +23401,113 @@ var Scripts = class {
     }
     return repeatConcatOptions;
   }
-  removeRepeatable(legacyRepeatJobId, repeatConcatOptions, repeatJobKey) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.removeRepeatableArgs(legacyRepeatJobId, repeatConcatOptions, repeatJobKey);
-      return this.execCommand(client, "removeRepeatable", args);
-    });
+  async removeRepeatable(legacyRepeatJobId, repeatConcatOptions, repeatJobKey) {
+    const client = await this.queue.client;
+    const args = this.removeRepeatableArgs(legacyRepeatJobId, repeatConcatOptions, repeatJobKey);
+    return this.execCommand(client, "removeRepeatable", args);
   }
-  removeJobScheduler(jobSchedulerId) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const queueKeys = this.queue.keys;
-      const keys = [queueKeys.repeat, queueKeys.delayed, queueKeys.events];
-      const args = [jobSchedulerId, queueKeys[""]];
-      return this.execCommand(client, "removeJobScheduler", keys.concat(args));
-    });
+  async removeJobScheduler(jobSchedulerId) {
+    const client = await this.queue.client;
+    const queueKeys = this.queue.keys;
+    const keys = [queueKeys.repeat, queueKeys.delayed, queueKeys.events];
+    const args = [jobSchedulerId, queueKeys[""]];
+    return this.execCommand(client, "removeJobScheduler", keys.concat(args));
   }
   removeArgs(jobId, removeChildren) {
     const keys = [jobId, "repeat"].map((name) => this.queue.toKey(name));
     const args = [jobId, removeChildren ? 1 : 0, this.queue.toKey("")];
     return keys.concat(args);
   }
-  remove(jobId, removeChildren) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.removeArgs(jobId, removeChildren);
-      const result = yield this.execCommand(client, "removeJob", args);
-      if (result < 0) {
-        throw this.finishedErrors({
-          code: result,
-          jobId,
-          command: "removeJob"
-        });
-      }
-      return result;
-    });
+  async remove(jobId, removeChildren) {
+    const client = await this.queue.client;
+    const args = this.removeArgs(jobId, removeChildren);
+    const result = await this.execCommand(client, "removeJob", args);
+    if (result < 0) {
+      throw this.finishedErrors({
+        code: result,
+        jobId,
+        command: "removeJob"
+      });
+    }
+    return result;
   }
-  removeUnprocessedChildren(jobId) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = [
-        this.queue.toKey(jobId),
-        this.queue.keys.meta,
-        this.queue.toKey(""),
-        jobId
-      ];
-      yield this.execCommand(client, "removeUnprocessedChildren", args);
-    });
+  async removeUnprocessedChildren(jobId) {
+    const client = await this.queue.client;
+    const args = [
+      this.queue.toKey(jobId),
+      this.queue.keys.meta,
+      this.queue.toKey(""),
+      jobId
+    ];
+    await this.execCommand(client, "removeUnprocessedChildren", args);
   }
-  extendLock(jobId, token, duration, client) {
-    return __async(this, null, function* () {
-      client = client || (yield this.queue.client);
-      const args = [
-        this.queue.toKey(jobId) + ":lock",
-        this.queue.keys.stalled,
-        token,
-        duration,
-        jobId
-      ];
-      return this.execCommand(client, "extendLock", args);
-    });
+  async extendLock(jobId, token, duration, client) {
+    client = client || await this.queue.client;
+    const args = [
+      this.queue.toKey(jobId) + ":lock",
+      this.queue.keys.stalled,
+      token,
+      duration,
+      jobId
+    ];
+    return this.execCommand(client, "extendLock", args);
   }
-  extendLocks(jobIds, tokens, duration) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = [
-        this.queue.keys.stalled,
-        this.queue.toKey(""),
-        pack2(tokens),
-        pack2(jobIds),
-        duration
-      ];
-      return this.execCommand(client, "extendLocks", args);
-    });
+  async extendLocks(jobIds, tokens, duration) {
+    const client = await this.queue.client;
+    const args = [
+      this.queue.keys.stalled,
+      this.queue.toKey(""),
+      pack2(tokens),
+      pack2(jobIds),
+      duration
+    ];
+    return this.execCommand(client, "extendLocks", args);
   }
-  updateData(job, data) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const keys = [this.queue.toKey(job.id)];
-      const dataJson = JSON.stringify(data);
-      const result = yield this.execCommand(client, "updateData", keys.concat([dataJson]));
-      if (result < 0) {
-        throw this.finishedErrors({
-          code: result,
-          jobId: job.id,
-          command: "updateData"
-        });
-      }
-    });
+  async updateData(job, data) {
+    const client = await this.queue.client;
+    const keys = [this.queue.toKey(job.id)];
+    const dataJson = JSON.stringify(data);
+    const result = await this.execCommand(client, "updateData", keys.concat([dataJson]));
+    if (result < 0) {
+      throw this.finishedErrors({
+        code: result,
+        jobId: job.id,
+        command: "updateData"
+      });
+    }
   }
-  updateProgress(jobId, progress) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const keys = [
-        this.queue.toKey(jobId),
-        this.queue.keys.events,
-        this.queue.keys.meta
-      ];
-      const progressJson = JSON.stringify(progress);
-      const result = yield this.execCommand(client, "updateProgress", keys.concat([jobId, progressJson]));
-      if (result < 0) {
-        throw this.finishedErrors({
-          code: result,
-          jobId,
-          command: "updateProgress"
-        });
-      }
-    });
+  async updateProgress(jobId, progress) {
+    const client = await this.queue.client;
+    const keys = [
+      this.queue.toKey(jobId),
+      this.queue.keys.events,
+      this.queue.keys.meta
+    ];
+    const progressJson = JSON.stringify(progress);
+    const result = await this.execCommand(client, "updateProgress", keys.concat([jobId, progressJson]));
+    if (result < 0) {
+      throw this.finishedErrors({
+        code: result,
+        jobId,
+        command: "updateProgress"
+      });
+    }
   }
-  addLog(jobId, logRow, keepLogs) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const keys = [
-        this.queue.toKey(jobId),
-        this.queue.toKey(jobId) + ":logs"
-      ];
-      const result = yield this.execCommand(client, "addLog", keys.concat([jobId, logRow, keepLogs ? keepLogs : ""]));
-      if (result < 0) {
-        throw this.finishedErrors({
-          code: result,
-          jobId,
-          command: "addLog"
-        });
-      }
-      return result;
-    });
+  async addLog(jobId, logRow, keepLogs) {
+    const client = await this.queue.client;
+    const keys = [
+      this.queue.toKey(jobId),
+      this.queue.toKey(jobId) + ":logs"
+    ];
+    const result = await this.execCommand(client, "addLog", keys.concat([jobId, logRow, keepLogs ? keepLogs : ""]));
+    if (result < 0) {
+      throw this.finishedErrors({
+        code: result,
+        jobId,
+        command: "addLog"
+      });
+    }
+    return result;
   }
   moveToFinishedArgs(job, val, propVal, shouldRemove, target2, token, timestamp, fetchNext = true, fieldsToUpdate) {
     var _a, _b, _c, _d, _e, _f, _g;
@@ -23674,23 +23552,21 @@ var Scripts = class {
     }
     return typeof shouldRemove === "object" ? shouldRemove : typeof shouldRemove === "number" ? { count: shouldRemove } : { count: shouldRemove ? 0 : -1 };
   }
-  moveToFinished(jobId, args) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const result = yield this.execCommand(client, "moveToFinished", args);
-      if (result < 0) {
-        throw this.finishedErrors({
-          code: result,
-          jobId,
-          command: "moveToFinished",
-          state: "active"
-        });
-      } else {
-        if (typeof result !== "undefined") {
-          return raw2NextJobData(result);
-        }
+  async moveToFinished(jobId, args) {
+    const client = await this.queue.client;
+    const result = await this.execCommand(client, "moveToFinished", args);
+    if (result < 0) {
+      throw this.finishedErrors({
+        code: result,
+        jobId,
+        command: "moveToFinished",
+        state: "active"
+      });
+    } else {
+      if (typeof result !== "undefined") {
+        return raw2NextJobData(result);
       }
-    });
+    }
   }
   drainArgs(delayed) {
     const queueKeys = this.queue.keys;
@@ -23704,12 +23580,10 @@ var Scripts = class {
     const args = [queueKeys[""], delayed ? "1" : "0"];
     return keys.concat(args);
   }
-  drain(delayed) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.drainArgs(delayed);
-      return this.execCommand(client, "drain", args);
-    });
+  async drain(delayed) {
+    const client = await this.queue.client;
+    const args = this.drainArgs(delayed);
+    return this.execCommand(client, "drain", args);
   }
   removeChildDependencyArgs(jobId, parentKey) {
     const queueKeys = this.queue.keys;
@@ -23717,25 +23591,23 @@ var Scripts = class {
     const args = [this.queue.toKey(jobId), parentKey];
     return keys.concat(args);
   }
-  removeChildDependency(jobId, parentKey) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.removeChildDependencyArgs(jobId, parentKey);
-      const result = yield this.execCommand(client, "removeChildDependency", args);
-      switch (result) {
-        case 0:
-          return true;
-        case 1:
-          return false;
-        default:
-          throw this.finishedErrors({
-            code: result,
-            jobId,
-            parentKey,
-            command: "removeChildDependency"
-          });
-      }
-    });
+  async removeChildDependency(jobId, parentKey) {
+    const client = await this.queue.client;
+    const args = this.removeChildDependencyArgs(jobId, parentKey);
+    const result = await this.execCommand(client, "removeChildDependency", args);
+    switch (result) {
+      case 0:
+        return true;
+      case 1:
+        return false;
+      default:
+        throw this.finishedErrors({
+          code: result,
+          jobId,
+          parentKey,
+          command: "removeChildDependency"
+        });
+    }
   }
   getRangesArgs(types, start, end, asc) {
     const queueKeys = this.queue.keys;
@@ -23746,12 +23618,10 @@ var Scripts = class {
     const args = [start, end, asc ? "1" : "0", ...transformedTypes];
     return keys.concat(args);
   }
-  getRanges(types, start = 0, end = 1, asc = false) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.getRangesArgs(types, start, end, asc);
-      return yield this.execCommand(client, "getRanges", args);
-    });
+  async getRanges(types, start = 0, end = 1, asc = false) {
+    const client = await this.queue.client;
+    const args = this.getRangesArgs(types, start, end, asc);
+    return await this.execCommand(client, "getRanges", args);
   }
   getCountsArgs(types) {
     const queueKeys = this.queue.keys;
@@ -23762,12 +23632,10 @@ var Scripts = class {
     const args = [...transformedTypes];
     return keys.concat(args);
   }
-  getCounts(types) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.getCountsArgs(types);
-      return yield this.execCommand(client, "getCounts", args);
-    });
+  async getCounts(types) {
+    const client = await this.queue.client;
+    const args = this.getCountsArgs(types);
+    return await this.execCommand(client, "getCounts", args);
   }
   getCountsPerPriorityArgs(priorities) {
     const keys = [
@@ -23779,12 +23647,10 @@ var Scripts = class {
     const args = priorities;
     return keys.concat(args);
   }
-  getCountsPerPriority(priorities) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.getCountsPerPriorityArgs(priorities);
-      return yield this.execCommand(client, "getCountsPerPriority", args);
-    });
+  async getCountsPerPriority(priorities) {
+    const client = await this.queue.client;
+    const args = this.getCountsPerPriorityArgs(priorities);
+    return await this.execCommand(client, "getCountsPerPriority", args);
   }
   getDependencyCountsArgs(jobId, types) {
     const keys = [
@@ -23798,12 +23664,10 @@ var Scripts = class {
     const args = types;
     return keys.concat(args);
   }
-  getDependencyCounts(jobId, types) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.getDependencyCountsArgs(jobId, types);
-      return yield this.execCommand(client, "getDependencyCounts", args);
-    });
+  async getDependencyCounts(jobId, types) {
+    const client = await this.queue.client;
+    const args = this.getDependencyCountsArgs(jobId, types);
+    return await this.execCommand(client, "getDependencyCounts", args);
   }
   moveToCompletedArgs(job, returnvalue, removeOnComplete, token, fetchNext = false) {
     const timestamp = Date.now();
@@ -23813,50 +23677,44 @@ var Scripts = class {
     const timestamp = Date.now();
     return this.moveToFinishedArgs(job, failedReason, "failedReason", removeOnFailed, "failed", token, timestamp, fetchNext, fieldsToUpdate);
   }
-  isFinished(jobId, returnValue = false) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const keys = ["completed", "failed", jobId].map((key) => {
-        return this.queue.toKey(key);
-      });
-      return this.execCommand(client, "isFinished", keys.concat([jobId, returnValue ? "1" : ""]));
+  async isFinished(jobId, returnValue = false) {
+    const client = await this.queue.client;
+    const keys = ["completed", "failed", jobId].map((key) => {
+      return this.queue.toKey(key);
     });
+    return this.execCommand(client, "isFinished", keys.concat([jobId, returnValue ? "1" : ""]));
   }
-  getState(jobId) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const keys = [
-        "completed",
-        "failed",
-        "delayed",
-        "active",
-        "wait",
-        "paused",
-        "waiting-children",
-        "prioritized"
-      ].map((key) => {
-        return this.queue.toKey(key);
-      });
-      if (isRedisVersionLowerThan(this.queue.redisVersion, "6.0.6")) {
-        return this.execCommand(client, "getState", keys.concat([jobId]));
-      }
-      return this.execCommand(client, "getStateV2", keys.concat([jobId]));
+  async getState(jobId) {
+    const client = await this.queue.client;
+    const keys = [
+      "completed",
+      "failed",
+      "delayed",
+      "active",
+      "wait",
+      "paused",
+      "waiting-children",
+      "prioritized"
+    ].map((key) => {
+      return this.queue.toKey(key);
     });
+    if (isRedisVersionLowerThan(this.queue.redisVersion, "6.0.6")) {
+      return this.execCommand(client, "getState", keys.concat([jobId]));
+    }
+    return this.execCommand(client, "getStateV2", keys.concat([jobId]));
   }
-  changeDelay(jobId, delay2) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.changeDelayArgs(jobId, delay2);
-      const result = yield this.execCommand(client, "changeDelay", args);
-      if (result < 0) {
-        throw this.finishedErrors({
-          code: result,
-          jobId,
-          command: "changeDelay",
-          state: "delayed"
-        });
-      }
-    });
+  async changeDelay(jobId, delay2) {
+    const client = await this.queue.client;
+    const args = this.changeDelayArgs(jobId, delay2);
+    const result = await this.execCommand(client, "changeDelay", args);
+    if (result < 0) {
+      throw this.finishedErrors({
+        code: result,
+        jobId,
+        command: "changeDelay",
+        state: "delayed"
+      });
+    }
   }
   changeDelayArgs(jobId, delay2) {
     const timestamp = Date.now();
@@ -23873,19 +23731,17 @@ var Scripts = class {
       this.queue.toKey(jobId)
     ]);
   }
-  changePriority(jobId, priority = 0, lifo = false) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.changePriorityArgs(jobId, priority, lifo);
-      const result = yield this.execCommand(client, "changePriority", args);
-      if (result < 0) {
-        throw this.finishedErrors({
-          code: result,
-          jobId,
-          command: "changePriority"
-        });
-      }
-    });
+  async changePriority(jobId, priority = 0, lifo = false) {
+    const client = await this.queue.client;
+    const args = this.changePriorityArgs(jobId, priority, lifo);
+    const result = await this.execCommand(client, "changePriority", args);
+    if (result < 0) {
+      throw this.finishedErrors({
+        code: result,
+        jobId,
+        command: "changePriority"
+      });
+    }
   }
   changePriorityArgs(jobId, priority = 0, lifo = false) {
     const keys = [
@@ -23949,27 +23805,23 @@ var Scripts = class {
     const keys = [queueKeys.meta, queueKeys.active];
     return keys;
   }
-  isMaxed() {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.isMaxedArgs();
-      return !!(yield this.execCommand(client, "isMaxed", args));
-    });
+  async isMaxed() {
+    const client = await this.queue.client;
+    const args = this.isMaxedArgs();
+    return !!await this.execCommand(client, "isMaxed", args);
   }
-  moveToDelayed(_0, _1, _2) {
-    return __async(this, arguments, function* (jobId, timestamp, delay2, token = "0", opts = {}) {
-      const client = yield this.queue.client;
-      const args = this.moveToDelayedArgs(jobId, timestamp, token, delay2, opts);
-      const result = yield this.execCommand(client, "moveToDelayed", args);
-      if (result < 0) {
-        throw this.finishedErrors({
-          code: result,
-          jobId,
-          command: "moveToDelayed",
-          state: "active"
-        });
-      }
-    });
+  async moveToDelayed(jobId, timestamp, delay2, token = "0", opts = {}) {
+    const client = await this.queue.client;
+    const args = this.moveToDelayedArgs(jobId, timestamp, token, delay2, opts);
+    const result = await this.execCommand(client, "moveToDelayed", args);
+    if (result < 0) {
+      throw this.finishedErrors({
+        code: result,
+        jobId,
+        command: "moveToDelayed",
+        state: "active"
+      });
+    }
   }
   /**
    * Move parent job to waiting-children state.
@@ -23982,66 +23834,58 @@ var Scripts = class {
    * @throws JobNotInState
    * This exception is thrown if job is not in active state.
    */
-  moveToWaitingChildren(_0, _1) {
-    return __async(this, arguments, function* (jobId, token, opts = {}) {
-      const client = yield this.queue.client;
-      const args = this.moveToWaitingChildrenArgs(jobId, token, opts);
-      const result = yield this.execCommand(client, "moveToWaitingChildren", args);
-      switch (result) {
-        case 0:
-          return true;
-        case 1:
-          return false;
-        default:
-          throw this.finishedErrors({
-            code: result,
-            jobId,
-            command: "moveToWaitingChildren",
-            state: "active"
-          });
-      }
-    });
+  async moveToWaitingChildren(jobId, token, opts = {}) {
+    const client = await this.queue.client;
+    const args = this.moveToWaitingChildrenArgs(jobId, token, opts);
+    const result = await this.execCommand(client, "moveToWaitingChildren", args);
+    switch (result) {
+      case 0:
+        return true;
+      case 1:
+        return false;
+      default:
+        throw this.finishedErrors({
+          code: result,
+          jobId,
+          command: "moveToWaitingChildren",
+          state: "active"
+        });
+    }
   }
   getRateLimitTtlArgs(maxJobs) {
     const keys = [this.queue.keys.limiter];
     return keys.concat([maxJobs !== null && maxJobs !== void 0 ? maxJobs : "0"]);
   }
-  getRateLimitTtl(maxJobs) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.getRateLimitTtlArgs(maxJobs);
-      return this.execCommand(client, "getRateLimitTtl", args);
-    });
+  async getRateLimitTtl(maxJobs) {
+    const client = await this.queue.client;
+    const args = this.getRateLimitTtlArgs(maxJobs);
+    return this.execCommand(client, "getRateLimitTtl", args);
   }
   /**
    * Remove jobs in a specific state.
    *
    * @returns Id jobs from the deleted records.
    */
-  cleanJobsInSet(set, timestamp, limit = 0) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      return this.execCommand(client, "cleanJobsInSet", [
-        this.queue.toKey(set),
-        this.queue.toKey("events"),
-        this.queue.toKey("repeat"),
-        this.queue.toKey(""),
-        timestamp,
-        limit,
-        set
-      ]);
-    });
+  async cleanJobsInSet(set, timestamp, limit = 0) {
+    const client = await this.queue.client;
+    return this.execCommand(client, "cleanJobsInSet", [
+      this.queue.toKey(set),
+      this.queue.toKey("events"),
+      this.queue.toKey("repeat"),
+      this.queue.toKey(""),
+      timestamp,
+      limit,
+      set
+    ]);
   }
   getJobSchedulerArgs(id) {
     const keys = [this.queue.keys.repeat];
     return keys.concat([id]);
   }
-  getJobScheduler(id) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.getJobSchedulerArgs(id);
-      return this.execCommand(client, "getJobScheduler", args);
-    });
+  async getJobScheduler(id) {
+    const client = await this.queue.client;
+    const args = this.getJobSchedulerArgs(id);
+    return this.execCommand(client, "getJobScheduler", args);
   }
   retryJobArgs(jobId, lifo, token, opts = {}) {
     const keys = [
@@ -24067,20 +23911,18 @@ var Scripts = class {
       opts.fieldsToUpdate ? pack2(objectToFlatArray(opts.fieldsToUpdate)) : void 0
     ]);
   }
-  retryJob(_0, _1) {
-    return __async(this, arguments, function* (jobId, lifo, token = "0", opts = {}) {
-      const client = yield this.queue.client;
-      const args = this.retryJobArgs(jobId, lifo, token, opts);
-      const result = yield this.execCommand(client, "retryJob", args);
-      if (result < 0) {
-        throw this.finishedErrors({
-          code: result,
-          jobId,
-          command: "retryJob",
-          state: "active"
-        });
-      }
-    });
+  async retryJob(jobId, lifo, token = "0", opts = {}) {
+    const client = await this.queue.client;
+    const args = this.retryJobArgs(jobId, lifo, token, opts);
+    const result = await this.execCommand(client, "retryJob", args);
+    if (result < 0) {
+      throw this.finishedErrors({
+        code: result,
+        jobId,
+        command: "retryJob",
+        state: "active"
+      });
+    }
   }
   moveJobsToWaitArgs(state, count, timestamp) {
     const keys = [
@@ -24096,19 +23938,15 @@ var Scripts = class {
     const args = [count, timestamp, state];
     return keys.concat(args);
   }
-  retryJobs() {
-    return __async(this, arguments, function* (state = "failed", count = 1e3, timestamp = (/* @__PURE__ */ new Date()).getTime()) {
-      const client = yield this.queue.client;
-      const args = this.moveJobsToWaitArgs(state, count, timestamp);
-      return this.execCommand(client, "moveJobsToWait", args);
-    });
+  async retryJobs(state = "failed", count = 1e3, timestamp = (/* @__PURE__ */ new Date()).getTime()) {
+    const client = await this.queue.client;
+    const args = this.moveJobsToWaitArgs(state, count, timestamp);
+    return this.execCommand(client, "moveJobsToWait", args);
   }
-  promoteJobs(count = 1e3) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.moveJobsToWaitArgs("delayed", count, Number.MAX_VALUE);
-      return this.execCommand(client, "moveJobsToWait", args);
-    });
+  async promoteJobs(count = 1e3) {
+    const client = await this.queue.client;
+    const args = this.moveJobsToWaitArgs("delayed", count, Number.MAX_VALUE);
+    return this.execCommand(client, "moveJobsToWait", args);
   }
   /**
    * Attempts to reprocess a job
@@ -24123,95 +23961,89 @@ var Scripts = class {
    * -1 means the job is currently locked and can't be retried.
    * -2 means the job was not found in the expected set
    */
-  reprocessJob(job, state) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const keys = [
-        this.queue.toKey(job.id),
-        this.queue.keys.events,
-        this.queue.toKey(state),
-        this.queue.keys.wait,
-        this.queue.keys.meta,
-        this.queue.keys.paused,
-        this.queue.keys.active,
-        this.queue.keys.marker
-      ];
-      const args = [
-        job.id,
-        (job.opts.lifo ? "R" : "L") + "PUSH",
-        state === "failed" ? "failedReason" : "returnvalue",
-        state
-      ];
-      const result = yield this.execCommand(client, "reprocessJob", keys.concat(args));
-      switch (result) {
-        case 1:
-          return;
-        default:
-          throw this.finishedErrors({
-            code: result,
-            jobId: job.id,
-            command: "reprocessJob",
-            state
-          });
-      }
-    });
-  }
-  moveToActive(client, token, name) {
-    return __async(this, null, function* () {
-      const opts = this.queue.opts;
-      const queueKeys = this.queue.keys;
-      const keys = [
-        queueKeys.wait,
-        queueKeys.active,
-        queueKeys.prioritized,
-        queueKeys.events,
-        queueKeys.stalled,
-        queueKeys.limiter,
-        queueKeys.delayed,
-        queueKeys.paused,
-        queueKeys.meta,
-        queueKeys.pc,
-        queueKeys.marker
-      ];
-      const args = [
-        queueKeys[""],
-        Date.now(),
-        pack2({
-          token,
-          lockDuration: opts.lockDuration,
-          limiter: opts.limiter,
-          name
-        })
-      ];
-      const result = yield this.execCommand(client, "moveToActive", keys.concat(args));
-      return raw2NextJobData(result);
-    });
-  }
-  promote(jobId) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const keys = [
-        this.queue.keys.delayed,
-        this.queue.keys.wait,
-        this.queue.keys.paused,
-        this.queue.keys.meta,
-        this.queue.keys.prioritized,
-        this.queue.keys.active,
-        this.queue.keys.pc,
-        this.queue.keys.events,
-        this.queue.keys.marker
-      ];
-      const args = [this.queue.toKey(""), jobId];
-      const code = yield this.execCommand(client, "promote", keys.concat(args));
-      if (code < 0) {
+  async reprocessJob(job, state) {
+    const client = await this.queue.client;
+    const keys = [
+      this.queue.toKey(job.id),
+      this.queue.keys.events,
+      this.queue.toKey(state),
+      this.queue.keys.wait,
+      this.queue.keys.meta,
+      this.queue.keys.paused,
+      this.queue.keys.active,
+      this.queue.keys.marker
+    ];
+    const args = [
+      job.id,
+      (job.opts.lifo ? "R" : "L") + "PUSH",
+      state === "failed" ? "failedReason" : "returnvalue",
+      state
+    ];
+    const result = await this.execCommand(client, "reprocessJob", keys.concat(args));
+    switch (result) {
+      case 1:
+        return;
+      default:
         throw this.finishedErrors({
-          code,
-          jobId,
-          command: "promote",
-          state: "delayed"
+          code: result,
+          jobId: job.id,
+          command: "reprocessJob",
+          state
         });
-      }
-    });
+    }
+  }
+  async moveToActive(client, token, name) {
+    const opts = this.queue.opts;
+    const queueKeys = this.queue.keys;
+    const keys = [
+      queueKeys.wait,
+      queueKeys.active,
+      queueKeys.prioritized,
+      queueKeys.events,
+      queueKeys.stalled,
+      queueKeys.limiter,
+      queueKeys.delayed,
+      queueKeys.paused,
+      queueKeys.meta,
+      queueKeys.pc,
+      queueKeys.marker
+    ];
+    const args = [
+      queueKeys[""],
+      Date.now(),
+      pack2({
+        token,
+        lockDuration: opts.lockDuration,
+        limiter: opts.limiter,
+        name
+      })
+    ];
+    const result = await this.execCommand(client, "moveToActive", keys.concat(args));
+    return raw2NextJobData(result);
+  }
+  async promote(jobId) {
+    const client = await this.queue.client;
+    const keys = [
+      this.queue.keys.delayed,
+      this.queue.keys.wait,
+      this.queue.keys.paused,
+      this.queue.keys.meta,
+      this.queue.keys.prioritized,
+      this.queue.keys.active,
+      this.queue.keys.pc,
+      this.queue.keys.events,
+      this.queue.keys.marker
+    ];
+    const args = [this.queue.toKey(""), jobId];
+    const code = await this.execCommand(client, "promote", keys.concat(args));
+    if (code < 0) {
+      throw this.finishedErrors({
+        code,
+        jobId,
+        command: "promote",
+        state: "delayed"
+      });
+    }
   }
   moveStalledJobsToWaitArgs() {
     const opts = this.queue.opts;
@@ -24242,12 +24074,10 @@ var Scripts = class {
    * (e.g. if the job handler keeps crashing),
    * we limit the number stalled job recoveries to settings.maxStalledCount.
    */
-  moveStalledJobsToWait() {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const args = this.moveStalledJobsToWaitArgs();
-      return this.execCommand(client, "moveStalledJobsToWait", args);
-    });
+  async moveStalledJobsToWait() {
+    const client = await this.queue.client;
+    const args = this.moveStalledJobsToWaitArgs();
+    return this.execCommand(client, "moveStalledJobsToWait", args);
   }
   /**
    * Moves a job back from Active to Wait.
@@ -24258,107 +24088,101 @@ var Scripts = class {
    * @param jobId - Job id
    * @returns
    */
-  moveJobFromActiveToWait(jobId, token) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const keys = [
-        this.queue.keys.active,
-        this.queue.keys.wait,
-        this.queue.keys.stalled,
-        this.queue.keys.paused,
-        this.queue.keys.meta,
-        this.queue.keys.limiter,
-        this.queue.keys.prioritized,
-        this.queue.keys.marker,
-        this.queue.keys.events
-      ];
-      const args = [jobId, token, this.queue.toKey(jobId)];
-      const result = yield this.execCommand(client, "moveJobFromActiveToWait", keys.concat(args));
-      if (result < 0) {
-        throw this.finishedErrors({
-          code: result,
-          jobId,
-          command: "moveJobFromActiveToWait",
-          state: "active"
-        });
-      }
-      return result;
-    });
+  async moveJobFromActiveToWait(jobId, token) {
+    const client = await this.queue.client;
+    const keys = [
+      this.queue.keys.active,
+      this.queue.keys.wait,
+      this.queue.keys.stalled,
+      this.queue.keys.paused,
+      this.queue.keys.meta,
+      this.queue.keys.limiter,
+      this.queue.keys.prioritized,
+      this.queue.keys.marker,
+      this.queue.keys.events
+    ];
+    const args = [jobId, token, this.queue.toKey(jobId)];
+    const result = await this.execCommand(client, "moveJobFromActiveToWait", keys.concat(args));
+    if (result < 0) {
+      throw this.finishedErrors({
+        code: result,
+        jobId,
+        command: "moveJobFromActiveToWait",
+        state: "active"
+      });
+    }
+    return result;
   }
-  obliterate(opts) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const keys = [
-        this.queue.keys.meta,
-        this.queue.toKey("")
-      ];
-      const args = [opts.count, opts.force ? "force" : null];
-      const result = yield this.execCommand(client, "obliterate", keys.concat(args));
-      if (result < 0) {
-        switch (result) {
-          case -1:
-            throw new Error("Cannot obliterate non-paused queue");
-          case -2:
-            throw new Error("Cannot obliterate queue with active jobs");
-        }
+  async obliterate(opts) {
+    const client = await this.queue.client;
+    const keys = [
+      this.queue.keys.meta,
+      this.queue.toKey("")
+    ];
+    const args = [opts.count, opts.force ? "force" : null];
+    const result = await this.execCommand(client, "obliterate", keys.concat(args));
+    if (result < 0) {
+      switch (result) {
+        case -1:
+          throw new Error("Cannot obliterate non-paused queue");
+        case -2:
+          throw new Error("Cannot obliterate queue with active jobs");
       }
-      return result;
-    });
+    }
+    return result;
   }
   /**
    * Paginate a set or hash keys.
    * @param opts - options to define the pagination behaviour
    *
    */
-  paginate(key, opts) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const keys = [key];
-      const maxIterations = 5;
-      const pageSize = opts.end >= 0 ? opts.end - opts.start + 1 : Infinity;
-      let cursor = "0", offset = 0, items, total, rawJobs, page = [], jobs = [];
-      do {
-        const args = [
-          opts.start + page.length,
-          opts.end,
-          cursor,
-          offset,
-          maxIterations
-        ];
-        if (opts.fetchJobs) {
-          args.push(1);
-        }
-        [cursor, offset, items, total, rawJobs] = yield this.execCommand(client, "paginate", keys.concat(args));
-        page = page.concat(items);
-        if (rawJobs && rawJobs.length) {
-          jobs = jobs.concat(rawJobs.map(array2obj));
-        }
-      } while (cursor != "0" && page.length < pageSize);
-      if (page.length && Array.isArray(page[0])) {
-        const result = [];
-        for (let index = 0; index < page.length; index++) {
-          const [id, value] = page[index];
-          try {
-            result.push({ id, v: JSON.parse(value) });
-          } catch (err) {
-            result.push({ id, err: err.message });
-          }
-        }
-        return {
-          cursor,
-          items: result,
-          total,
-          jobs
-        };
-      } else {
-        return {
-          cursor,
-          items: page.map((item) => ({ id: item })),
-          total,
-          jobs
-        };
+  async paginate(key, opts) {
+    const client = await this.queue.client;
+    const keys = [key];
+    const maxIterations = 5;
+    const pageSize = opts.end >= 0 ? opts.end - opts.start + 1 : Infinity;
+    let cursor = "0", offset = 0, items, total, rawJobs, page = [], jobs = [];
+    do {
+      const args = [
+        opts.start + page.length,
+        opts.end,
+        cursor,
+        offset,
+        maxIterations
+      ];
+      if (opts.fetchJobs) {
+        args.push(1);
       }
-    });
+      [cursor, offset, items, total, rawJobs] = await this.execCommand(client, "paginate", keys.concat(args));
+      page = page.concat(items);
+      if (rawJobs && rawJobs.length) {
+        jobs = jobs.concat(rawJobs.map(array2obj));
+      }
+    } while (cursor != "0" && page.length < pageSize);
+    if (page.length && Array.isArray(page[0])) {
+      const result = [];
+      for (let index = 0; index < page.length; index++) {
+        const [id, value] = page[index];
+        try {
+          result.push({ id, v: JSON.parse(value) });
+        } catch (err) {
+          result.push({ id, err: err.message });
+        }
+      }
+      return {
+        cursor,
+        items: result,
+        total,
+        jobs
+      };
+    } else {
+      return {
+        cursor,
+        items: page.map((item) => ({ id: item })),
+        total,
+        jobs
+      };
+    }
   }
   finishedErrors({ code, jobId, parentKey, command, state }) {
     switch (code) {
@@ -24527,45 +24351,43 @@ function removeUndefinedFields(obj) {
   }
   return newObj;
 }
-function trace(telemetry, spanKind, queueName, operation, destination, callback, srcPropagationMetadata) {
-  return __async(this, null, function* () {
-    if (!telemetry) {
-      return callback();
-    } else {
-      const { tracer, contextManager } = telemetry;
-      const currentContext = contextManager.active();
-      let parentContext;
-      if (srcPropagationMetadata) {
-        parentContext = contextManager.fromMetadata(currentContext, srcPropagationMetadata);
-      }
-      const spanName = destination ? `${operation} ${destination}` : operation;
-      const span = tracer.startSpan(spanName, {
-        kind: spanKind
-      }, parentContext);
-      try {
-        span.setAttributes({
-          [TelemetryAttributes.QueueName]: queueName,
-          [TelemetryAttributes.QueueOperation]: operation
-        });
-        let messageContext;
-        let dstPropagationMetadata;
-        if (spanKind === SpanKind.CONSUMER && parentContext) {
-          messageContext = span.setSpanOnContext(parentContext);
-        } else {
-          messageContext = span.setSpanOnContext(currentContext);
-        }
-        if (callback.length == 2) {
-          dstPropagationMetadata = contextManager.getMetadata(messageContext);
-        }
-        return yield contextManager.with(messageContext, () => callback(span, dstPropagationMetadata));
-      } catch (err) {
-        span.recordException(err);
-        throw err;
-      } finally {
-        span.end();
-      }
+async function trace(telemetry, spanKind, queueName, operation, destination, callback, srcPropagationMetadata) {
+  if (!telemetry) {
+    return callback();
+  } else {
+    const { tracer, contextManager } = telemetry;
+    const currentContext = contextManager.active();
+    let parentContext;
+    if (srcPropagationMetadata) {
+      parentContext = contextManager.fromMetadata(currentContext, srcPropagationMetadata);
     }
-  });
+    const spanName = destination ? `${operation} ${destination}` : operation;
+    const span = tracer.startSpan(spanName, {
+      kind: spanKind
+    }, parentContext);
+    try {
+      span.setAttributes({
+        [TelemetryAttributes.QueueName]: queueName,
+        [TelemetryAttributes.QueueOperation]: operation
+      });
+      let messageContext;
+      let dstPropagationMetadata;
+      if (spanKind === SpanKind.CONSUMER && parentContext) {
+        messageContext = span.setSpanOnContext(parentContext);
+      } else {
+        messageContext = span.setSpanOnContext(currentContext);
+      }
+      if (callback.length == 2) {
+        dstPropagationMetadata = contextManager.getMetadata(messageContext);
+      }
+      return await contextManager.with(messageContext, () => callback(span, dstPropagationMetadata));
+    } catch (err) {
+      span.recordException(err);
+      throw err;
+    } finally {
+      span.end();
+    }
+  }
 }
 
 // ../../node_modules/bullmq/dist/esm/classes/child-processor.js
@@ -24651,7 +24473,7 @@ function __rest(s, e) {
 // ../../node_modules/bullmq/dist/esm/classes/job.js
 var import_util = require("util");
 var logger = (0, import_util.debuglog)("bull");
-var PRIORITY_LIMIT = __pow(2, 21);
+var PRIORITY_LIMIT = 2 ** 21;
 var Job = class _Job {
   constructor(queue, name, data, opts = {}, id) {
     this.queue = queue;
@@ -24707,16 +24529,14 @@ var Job = class _Job {
    * @param opts - the options bag for this job.
    * @returns
    */
-  static create(queue, name, data, opts) {
-    return __async(this, null, function* () {
-      const client = yield queue.client;
-      const job = new this(queue, name, data, opts, opts && opts.jobId);
-      job.id = yield job.addJob(client, {
-        parentKey: job.parentKey,
-        parentDependenciesKey: job.parentKey ? `${job.parentKey}:dependencies` : ""
-      });
-      return job;
+  static async create(queue, name, data, opts) {
+    const client = await queue.client;
+    const job = new this(queue, name, data, opts, opts && opts.jobId);
+    job.id = await job.addJob(client, {
+      parentKey: job.parentKey,
+      parentDependenciesKey: job.parentKey ? `${job.parentKey}:dependencies` : ""
     });
+    return job;
   }
   /**
    * Creates a bulk of jobs and adds them atomically to the given queue.
@@ -24725,30 +24545,28 @@ var Job = class _Job {
    * @param jobs - an array of jobs to be added to the queue.
    * @returns
    */
-  static createBulk(queue, jobs) {
-    return __async(this, null, function* () {
-      const client = yield queue.client;
-      const jobInstances = jobs.map((job) => {
-        var _a;
-        return new this(queue, job.name, job.data, job.opts, (_a = job.opts) === null || _a === void 0 ? void 0 : _a.jobId);
-      });
-      const pipeline = client.pipeline();
-      for (const job of jobInstances) {
-        job.addJob(pipeline, {
-          parentKey: job.parentKey,
-          parentDependenciesKey: job.parentKey ? `${job.parentKey}:dependencies` : ""
-        });
-      }
-      const results = yield pipeline.exec();
-      for (let index = 0; index < results.length; ++index) {
-        const [err, id] = results[index];
-        if (err) {
-          throw err;
-        }
-        jobInstances[index].id = id;
-      }
-      return jobInstances;
+  static async createBulk(queue, jobs) {
+    const client = await queue.client;
+    const jobInstances = jobs.map((job) => {
+      var _a;
+      return new this(queue, job.name, job.data, job.opts, (_a = job.opts) === null || _a === void 0 ? void 0 : _a.jobId);
     });
+    const pipeline = client.pipeline();
+    for (const job of jobInstances) {
+      job.addJob(pipeline, {
+        parentKey: job.parentKey,
+        parentDependenciesKey: job.parentKey ? `${job.parentKey}:dependencies` : ""
+      });
+    }
+    const results = await pipeline.exec();
+    for (let index = 0; index < results.length; ++index) {
+      const [err, id] = results[index];
+      if (err) {
+        throw err;
+      }
+      jobInstances[index].id = id;
+    }
+    return jobInstances;
   }
   /**
    * Instantiates a Job from a JobJsonRaw object (coming from a deserialized JSON object)
@@ -24836,14 +24654,12 @@ var Job = class _Job {
    * @param jobId - the job id.
    * @returns
    */
-  static fromId(queue, jobId) {
-    return __async(this, null, function* () {
-      if (jobId) {
-        const client = yield queue.client;
-        const jobData = yield client.hgetall(queue.toKey(jobId));
-        return isEmpty(jobData) ? void 0 : this.fromJSON(queue, jobData, jobId);
-      }
-    });
+  static async fromId(queue, jobId) {
+    if (jobId) {
+      const client = await queue.client;
+      const jobData = await client.hgetall(queue.toKey(jobId));
+      return isEmpty(jobData) ? void 0 : this.fromJSON(queue, jobData, jobId);
+    }
   }
   /**
    * addJobLog
@@ -24934,12 +24750,10 @@ var Job = class _Job {
    *
    * @param progress - number or object to be saved as progress.
    */
-  updateProgress(progress) {
-    return __async(this, null, function* () {
-      this.progress = progress;
-      yield this.scripts.updateProgress(this.id, progress);
-      this.queue.emit("progress", this, progress);
-    });
+  async updateProgress(progress) {
+    this.progress = progress;
+    await this.scripts.updateProgress(this.id, progress);
+    this.queue.emit("progress", this, progress);
   }
   /**
    * Logs one row of log data.
@@ -24947,42 +24761,36 @@ var Job = class _Job {
    * @param logRow - string with log data to be logged.
    * @returns The total number of log entries for this job so far.
    */
-  log(logRow) {
-    return __async(this, null, function* () {
-      return _Job.addJobLog(this.queue, this.id, logRow, this.opts.keepLogs);
-    });
+  async log(logRow) {
+    return _Job.addJobLog(this.queue, this.id, logRow, this.opts.keepLogs);
   }
   /**
    * Removes child dependency from parent when child is not yet finished
    *
    * @returns True if the relationship existed and if it was removed.
    */
-  removeChildDependency() {
-    return __async(this, null, function* () {
-      const childDependencyIsRemoved = yield this.scripts.removeChildDependency(this.id, this.parentKey);
-      if (childDependencyIsRemoved) {
-        this.parent = void 0;
-        this.parentKey = void 0;
-        return true;
-      }
-      return false;
-    });
+  async removeChildDependency() {
+    const childDependencyIsRemoved = await this.scripts.removeChildDependency(this.id, this.parentKey);
+    if (childDependencyIsRemoved) {
+      this.parent = void 0;
+      this.parentKey = void 0;
+      return true;
+    }
+    return false;
   }
   /**
    * Clears job's logs
    *
    * @param keepLogs - the amount of log entries to preserve
    */
-  clearLogs(keepLogs) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const logsKey = this.toKey(this.id) + ":logs";
-      if (keepLogs) {
-        yield client.ltrim(logsKey, -keepLogs, -1);
-      } else {
-        yield client.del(logsKey);
-      }
-    });
+  async clearLogs(keepLogs) {
+    const client = await this.queue.client;
+    const logsKey = this.toKey(this.id) + ":logs";
+    if (keepLogs) {
+      await client.ltrim(logsKey, -keepLogs, -1);
+    } else {
+      await client.del(logsKey);
+    }
   }
   /**
    * Completely remove the job from the queue.
@@ -24991,18 +24799,16 @@ var Job = class _Job {
    *
    * @param opts - Options to remove a job
    */
-  remove() {
-    return __async(this, arguments, function* ({ removeChildren = true } = {}) {
-      yield this.queue.waitUntilReady();
-      const queue = this.queue;
-      const job = this;
-      const removed = yield this.scripts.remove(job.id, removeChildren);
-      if (removed) {
-        queue.emit("removed", job);
-      } else {
-        throw new Error(`Job ${this.id} could not be removed because it is locked by another worker`);
-      }
-    });
+  async remove({ removeChildren = true } = {}) {
+    await this.queue.waitUntilReady();
+    const queue = this.queue;
+    const job = this;
+    const removed = await this.scripts.remove(job.id, removeChildren);
+    if (removed) {
+      queue.emit("removed", job);
+    } else {
+      throw new Error(`Job ${this.id} could not be removed because it is locked by another worker`);
+    }
   }
   /**
    * Remove all children from this job that are not yet processed,
@@ -25012,11 +24818,9 @@ var Job = class _Job {
    *  - Jobs with locks (most likely active) are ignored.
    *  - This method can be slow if the number of children is large (\> 1000).
    */
-  removeUnprocessedChildren() {
-    return __async(this, null, function* () {
-      const jobId = this.id;
-      yield this.scripts.removeUnprocessedChildren(jobId);
-    });
+  async removeUnprocessedChildren() {
+    const jobId = this.id;
+    await this.scripts.removeUnprocessedChildren(jobId);
   }
   /**
    * Extend the lock for this job.
@@ -25036,28 +24840,26 @@ var Job = class _Job {
    * @param fetchNext - True when wanting to fetch the next job.
    * @returns Returns the jobData of the next job in the waiting queue or void.
    */
-  moveToCompleted(returnValue, token, fetchNext = true) {
-    return __async(this, null, function* () {
-      return this.queue.trace(SpanKind.INTERNAL, "complete", this.queue.name, (span, dstPropagationMedatadata) => __async(this, null, function* () {
-        var _a, _b;
-        let tm;
-        if (!((_b = (_a = this.opts) === null || _a === void 0 ? void 0 : _a.telemetry) === null || _b === void 0 ? void 0 : _b.omitContext) && dstPropagationMedatadata) {
-          tm = dstPropagationMedatadata;
-        }
-        yield this.queue.waitUntilReady();
-        this.returnvalue = returnValue || void 0;
-        const stringifiedReturnValue = tryCatch(JSON.stringify, JSON, [
-          returnValue
-        ]);
-        if (stringifiedReturnValue === errorObject) {
-          throw errorObject.value;
-        }
-        const args = this.scripts.moveToCompletedArgs(this, stringifiedReturnValue, this.opts.removeOnComplete, token, fetchNext);
-        const result = yield this.scripts.moveToFinished(this.id, args);
-        this.finishedOn = args[this.scripts.moveToFinishedKeys.length + 1];
-        this.attemptsMade += 1;
-        return result;
-      }));
+  async moveToCompleted(returnValue, token, fetchNext = true) {
+    return this.queue.trace(SpanKind.INTERNAL, "complete", this.queue.name, async (span, dstPropagationMedatadata) => {
+      var _a, _b;
+      let tm;
+      if (!((_b = (_a = this.opts) === null || _a === void 0 ? void 0 : _a.telemetry) === null || _b === void 0 ? void 0 : _b.omitContext) && dstPropagationMedatadata) {
+        tm = dstPropagationMedatadata;
+      }
+      await this.queue.waitUntilReady();
+      this.returnvalue = returnValue || void 0;
+      const stringifiedReturnValue = tryCatch(JSON.stringify, JSON, [
+        returnValue
+      ]);
+      if (stringifiedReturnValue === errorObject) {
+        throw errorObject.value;
+      }
+      const args = this.scripts.moveToCompletedArgs(this, stringifiedReturnValue, this.opts.removeOnComplete, token, fetchNext);
+      const result = await this.scripts.moveToFinished(this.id, args);
+      this.finishedOn = args[this.scripts.moveToFinishedKeys.length + 1];
+      this.attemptsMade += 1;
+      return result;
     });
   }
   /**
@@ -25069,16 +24871,14 @@ var Job = class _Job {
   moveToWait(token) {
     return this.scripts.moveJobFromActiveToWait(this.id, token);
   }
-  shouldRetryJob(err) {
-    return __async(this, null, function* () {
-      if (this.attemptsMade + 1 < this.opts.attempts && !this.discarded && !(err instanceof UnrecoverableError || err.name == "UnrecoverableError")) {
-        const opts = this.queue.opts;
-        const delay2 = yield Backoffs.calculate(this.opts.backoff, this.attemptsMade + 1, err, this, opts.settings && opts.settings.backoffStrategy);
-        return [delay2 == -1 ? false : true, delay2 == -1 ? 0 : delay2];
-      } else {
-        return [false, 0];
-      }
-    });
+  async shouldRetryJob(err) {
+    if (this.attemptsMade + 1 < this.opts.attempts && !this.discarded && !(err instanceof UnrecoverableError || err.name == "UnrecoverableError")) {
+      const opts = this.queue.opts;
+      const delay2 = await Backoffs.calculate(this.opts.backoff, this.attemptsMade + 1, err, this, opts.settings && opts.settings.backoffStrategy);
+      return [delay2 == -1 ? false : true, delay2 == -1 ? 0 : delay2];
+    } else {
+      return [false, 0];
+    }
   }
   /**
    * Moves a job to the failed queue.
@@ -25088,46 +24888,44 @@ var Job = class _Job {
    * @param fetchNext - true when wanting to fetch the next job
    * @returns Returns the jobData of the next job in the waiting queue or void.
    */
-  moveToFailed(err, token, fetchNext = false) {
-    return __async(this, null, function* () {
-      this.failedReason = err === null || err === void 0 ? void 0 : err.message;
-      const [shouldRetry, retryDelay] = yield this.shouldRetryJob(err);
-      return this.queue.trace(SpanKind.INTERNAL, this.getSpanOperation(shouldRetry, retryDelay), this.queue.name, (span, dstPropagationMedatadata) => __async(this, null, function* () {
-        var _a, _b;
-        let tm;
-        if (!((_b = (_a = this.opts) === null || _a === void 0 ? void 0 : _a.telemetry) === null || _b === void 0 ? void 0 : _b.omitContext) && dstPropagationMedatadata) {
-          tm = dstPropagationMedatadata;
-        }
-        let result;
-        this.updateStacktrace(err);
-        const fieldsToUpdate = {
-          failedReason: this.failedReason,
-          stacktrace: JSON.stringify(this.stacktrace),
-          tm
-        };
-        let finishedOn;
-        if (shouldRetry) {
-          if (retryDelay) {
-            result = yield this.scripts.moveToDelayed(this.id, Date.now(), retryDelay, token, { fieldsToUpdate });
-          } else {
-            result = yield this.scripts.retryJob(this.id, this.opts.lifo, token, {
-              fieldsToUpdate
-            });
-          }
+  async moveToFailed(err, token, fetchNext = false) {
+    this.failedReason = err === null || err === void 0 ? void 0 : err.message;
+    const [shouldRetry, retryDelay] = await this.shouldRetryJob(err);
+    return this.queue.trace(SpanKind.INTERNAL, this.getSpanOperation(shouldRetry, retryDelay), this.queue.name, async (span, dstPropagationMedatadata) => {
+      var _a, _b;
+      let tm;
+      if (!((_b = (_a = this.opts) === null || _a === void 0 ? void 0 : _a.telemetry) === null || _b === void 0 ? void 0 : _b.omitContext) && dstPropagationMedatadata) {
+        tm = dstPropagationMedatadata;
+      }
+      let result;
+      this.updateStacktrace(err);
+      const fieldsToUpdate = {
+        failedReason: this.failedReason,
+        stacktrace: JSON.stringify(this.stacktrace),
+        tm
+      };
+      let finishedOn;
+      if (shouldRetry) {
+        if (retryDelay) {
+          result = await this.scripts.moveToDelayed(this.id, Date.now(), retryDelay, token, { fieldsToUpdate });
         } else {
-          const args = this.scripts.moveToFailedArgs(this, this.failedReason, this.opts.removeOnFail, token, fetchNext, fieldsToUpdate);
-          result = yield this.scripts.moveToFinished(this.id, args);
-          finishedOn = args[this.scripts.moveToFinishedKeys.length + 1];
+          result = await this.scripts.retryJob(this.id, this.opts.lifo, token, {
+            fieldsToUpdate
+          });
         }
-        if (finishedOn && typeof finishedOn === "number") {
-          this.finishedOn = finishedOn;
-        }
-        if (retryDelay && typeof retryDelay === "number") {
-          this.delay = retryDelay;
-        }
-        this.attemptsMade += 1;
-        return result;
-      }));
+      } else {
+        const args = this.scripts.moveToFailedArgs(this, this.failedReason, this.opts.removeOnFail, token, fetchNext, fieldsToUpdate);
+        result = await this.scripts.moveToFinished(this.id, args);
+        finishedOn = args[this.scripts.moveToFinishedKeys.length + 1];
+      }
+      if (finishedOn && typeof finishedOn === "number") {
+        this.finishedOn = finishedOn;
+      }
+      if (retryDelay && typeof retryDelay === "number") {
+        this.delay = retryDelay;
+      }
+      this.attemptsMade += 1;
+      return result;
     });
   }
   getSpanOperation(shouldRetry, retryDelay) {
@@ -25172,10 +24970,8 @@ var Job = class _Job {
   /**
    * @returns true if the job is waiting.
    */
-  isWaiting() {
-    return __async(this, null, function* () {
-      return (yield this.isInList("wait")) || (yield this.isInList("paused"));
-    });
+  async isWaiting() {
+    return await this.isInList("wait") || await this.isInList("paused");
   }
   /**
    * @returns the queue name this job belongs to.
@@ -25204,11 +25000,9 @@ var Job = class _Job {
    * @param delay - milliseconds to be added to current time.
    * @returns void
    */
-  changeDelay(delay2) {
-    return __async(this, null, function* () {
-      yield this.scripts.changeDelay(this.id, delay2);
-      this.delay = delay2;
-    });
+  async changeDelay(delay2) {
+    await this.scripts.changeDelay(this.id, delay2);
+    this.delay = delay2;
   }
   /**
    * Change job priority.
@@ -25216,25 +25010,21 @@ var Job = class _Job {
    * @param opts - options containing priority and lifo values.
    * @returns void
    */
-  changePriority(opts) {
-    return __async(this, null, function* () {
-      yield this.scripts.changePriority(this.id, opts.priority, opts.lifo);
-      this.priority = opts.priority || 0;
-    });
+  async changePriority(opts) {
+    await this.scripts.changePriority(this.id, opts.priority, opts.lifo);
+    this.priority = opts.priority || 0;
   }
   /**
    * Get this jobs children result values if any.
    *
    * @returns Object mapping children job keys with their values.
    */
-  getChildrenValues() {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const result = yield client.hgetall(this.toKey(`${this.id}:processed`));
-      if (result) {
-        return parseObjectValues(result);
-      }
-    });
+  async getChildrenValues() {
+    const client = await this.queue.client;
+    const result = await client.hgetall(this.toKey(`${this.id}:processed`));
+    if (result) {
+      return parseObjectValues(result);
+    }
   }
   /**
    * Retrieves the failures of child jobs that were explicitly ignored while using ignoreDependencyOnFailure option.
@@ -25243,11 +25033,9 @@ var Job = class _Job {
    *
    * @returns Object mapping children job keys with their failure values.
    */
-  getIgnoredChildrenFailures() {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      return client.hgetall(this.toKey(`${this.id}:failed`));
-    });
+  async getIgnoredChildrenFailures() {
+    const client = await this.queue.client;
+    return client.hgetall(this.toKey(`${this.id}:failed`));
   }
   /**
    * Get job's children failure values that were ignored if any.
@@ -25256,11 +25044,9 @@ var Job = class _Job {
    *
    * @returns Object mapping children job keys with their failure values.
    */
-  getFailedChildrenValues() {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      return client.hgetall(this.toKey(`${this.id}:failed`));
-    });
+  async getFailedChildrenValues() {
+    const client = await this.queue.client;
+    return client.hgetall(this.toKey(`${this.id}:failed`));
   }
   /**
    * Get children job keys if this job is a parent and has children.
@@ -25273,123 +25059,119 @@ var Job = class _Job {
    * @see {@link https://docs.bullmq.io/guide/flows#getters}
    * @returns dependencies separated by processed, unprocessed, ignored and failed.
    */
-  getDependencies() {
-    return __async(this, arguments, function* (opts = {}) {
-      const client = yield this.queue.client;
-      const multi = client.multi();
-      if (!opts.processed && !opts.unprocessed && !opts.ignored && !opts.failed) {
-        multi.hgetall(this.toKey(`${this.id}:processed`));
-        multi.smembers(this.toKey(`${this.id}:dependencies`));
-        multi.hgetall(this.toKey(`${this.id}:failed`));
-        multi.zrange(this.toKey(`${this.id}:unsuccessful`), 0, -1);
-        const [[err1, processed], [err2, unprocessed], [err3, ignored], [err4, failed]] = yield multi.exec();
-        return {
-          processed: parseObjectValues(processed),
-          unprocessed,
-          failed,
-          ignored
-        };
-      } else {
-        const defaultOpts = {
-          cursor: 0,
-          count: 20
-        };
-        const childrenResultOrder = [];
-        if (opts.processed) {
-          childrenResultOrder.push("processed");
-          const processedOpts = Object.assign(Object.assign({}, defaultOpts), opts.processed);
-          multi.hscan(this.toKey(`${this.id}:processed`), processedOpts.cursor, "COUNT", processedOpts.count);
-        }
-        if (opts.unprocessed) {
-          childrenResultOrder.push("unprocessed");
-          const unprocessedOpts = Object.assign(Object.assign({}, defaultOpts), opts.unprocessed);
-          multi.sscan(this.toKey(`${this.id}:dependencies`), unprocessedOpts.cursor, "COUNT", unprocessedOpts.count);
-        }
-        if (opts.ignored) {
-          childrenResultOrder.push("ignored");
-          const ignoredOpts = Object.assign(Object.assign({}, defaultOpts), opts.ignored);
-          multi.hscan(this.toKey(`${this.id}:failed`), ignoredOpts.cursor, "COUNT", ignoredOpts.count);
-        }
-        let failedCursor;
-        if (opts.failed) {
-          childrenResultOrder.push("failed");
-          const failedOpts = Object.assign(Object.assign({}, defaultOpts), opts.failed);
-          failedCursor = failedOpts.cursor + failedOpts.count;
-          multi.zrange(this.toKey(`${this.id}:unsuccessful`), failedOpts.cursor, failedOpts.count - 1);
-        }
-        const results = yield multi.exec();
-        let processedCursor, processed, unprocessedCursor, unprocessed, failed, ignoredCursor, ignored;
-        childrenResultOrder.forEach((key, index) => {
-          switch (key) {
-            case "processed": {
-              processedCursor = results[index][1][0];
-              const rawProcessed = results[index][1][1];
-              const transformedProcessed = {};
-              for (let ind = 0; ind < rawProcessed.length; ++ind) {
-                if (ind % 2) {
-                  transformedProcessed[rawProcessed[ind - 1]] = JSON.parse(rawProcessed[ind]);
-                }
-              }
-              processed = transformedProcessed;
-              break;
-            }
-            case "failed": {
-              failed = results[index][1];
-              break;
-            }
-            case "ignored": {
-              ignoredCursor = results[index][1][0];
-              const rawIgnored = results[index][1][1];
-              const transformedIgnored = {};
-              for (let ind = 0; ind < rawIgnored.length; ++ind) {
-                if (ind % 2) {
-                  transformedIgnored[rawIgnored[ind - 1]] = rawIgnored[ind];
-                }
-              }
-              ignored = transformedIgnored;
-              break;
-            }
-            case "unprocessed": {
-              unprocessedCursor = results[index][1][0];
-              unprocessed = results[index][1][1];
-              break;
-            }
-          }
-        });
-        return Object.assign(Object.assign(Object.assign(Object.assign({}, processedCursor ? {
-          processed,
-          nextProcessedCursor: Number(processedCursor)
-        } : {}), ignoredCursor ? {
-          ignored,
-          nextIgnoredCursor: Number(ignoredCursor)
-        } : {}), failedCursor ? {
-          failed,
-          nextFailedCursor: failedCursor
-        } : {}), unprocessedCursor ? { unprocessed, nextUnprocessedCursor: Number(unprocessedCursor) } : {});
+  async getDependencies(opts = {}) {
+    const client = await this.queue.client;
+    const multi = client.multi();
+    if (!opts.processed && !opts.unprocessed && !opts.ignored && !opts.failed) {
+      multi.hgetall(this.toKey(`${this.id}:processed`));
+      multi.smembers(this.toKey(`${this.id}:dependencies`));
+      multi.hgetall(this.toKey(`${this.id}:failed`));
+      multi.zrange(this.toKey(`${this.id}:unsuccessful`), 0, -1);
+      const [[err1, processed], [err2, unprocessed], [err3, ignored], [err4, failed]] = await multi.exec();
+      return {
+        processed: parseObjectValues(processed),
+        unprocessed,
+        failed,
+        ignored
+      };
+    } else {
+      const defaultOpts = {
+        cursor: 0,
+        count: 20
+      };
+      const childrenResultOrder = [];
+      if (opts.processed) {
+        childrenResultOrder.push("processed");
+        const processedOpts = Object.assign(Object.assign({}, defaultOpts), opts.processed);
+        multi.hscan(this.toKey(`${this.id}:processed`), processedOpts.cursor, "COUNT", processedOpts.count);
       }
-    });
+      if (opts.unprocessed) {
+        childrenResultOrder.push("unprocessed");
+        const unprocessedOpts = Object.assign(Object.assign({}, defaultOpts), opts.unprocessed);
+        multi.sscan(this.toKey(`${this.id}:dependencies`), unprocessedOpts.cursor, "COUNT", unprocessedOpts.count);
+      }
+      if (opts.ignored) {
+        childrenResultOrder.push("ignored");
+        const ignoredOpts = Object.assign(Object.assign({}, defaultOpts), opts.ignored);
+        multi.hscan(this.toKey(`${this.id}:failed`), ignoredOpts.cursor, "COUNT", ignoredOpts.count);
+      }
+      let failedCursor;
+      if (opts.failed) {
+        childrenResultOrder.push("failed");
+        const failedOpts = Object.assign(Object.assign({}, defaultOpts), opts.failed);
+        failedCursor = failedOpts.cursor + failedOpts.count;
+        multi.zrange(this.toKey(`${this.id}:unsuccessful`), failedOpts.cursor, failedOpts.count - 1);
+      }
+      const results = await multi.exec();
+      let processedCursor, processed, unprocessedCursor, unprocessed, failed, ignoredCursor, ignored;
+      childrenResultOrder.forEach((key, index) => {
+        switch (key) {
+          case "processed": {
+            processedCursor = results[index][1][0];
+            const rawProcessed = results[index][1][1];
+            const transformedProcessed = {};
+            for (let ind = 0; ind < rawProcessed.length; ++ind) {
+              if (ind % 2) {
+                transformedProcessed[rawProcessed[ind - 1]] = JSON.parse(rawProcessed[ind]);
+              }
+            }
+            processed = transformedProcessed;
+            break;
+          }
+          case "failed": {
+            failed = results[index][1];
+            break;
+          }
+          case "ignored": {
+            ignoredCursor = results[index][1][0];
+            const rawIgnored = results[index][1][1];
+            const transformedIgnored = {};
+            for (let ind = 0; ind < rawIgnored.length; ++ind) {
+              if (ind % 2) {
+                transformedIgnored[rawIgnored[ind - 1]] = rawIgnored[ind];
+              }
+            }
+            ignored = transformedIgnored;
+            break;
+          }
+          case "unprocessed": {
+            unprocessedCursor = results[index][1][0];
+            unprocessed = results[index][1][1];
+            break;
+          }
+        }
+      });
+      return Object.assign(Object.assign(Object.assign(Object.assign({}, processedCursor ? {
+        processed,
+        nextProcessedCursor: Number(processedCursor)
+      } : {}), ignoredCursor ? {
+        ignored,
+        nextIgnoredCursor: Number(ignoredCursor)
+      } : {}), failedCursor ? {
+        failed,
+        nextFailedCursor: failedCursor
+      } : {}), unprocessedCursor ? { unprocessed, nextUnprocessedCursor: Number(unprocessedCursor) } : {});
+    }
   }
   /**
    * Get children job counts if this job is a parent and has children.
    *
    * @returns dependencies count separated by processed, unprocessed, ignored and failed.
    */
-  getDependenciesCount() {
-    return __async(this, arguments, function* (opts = {}) {
-      const types = [];
-      Object.entries(opts).forEach(([key, value]) => {
-        if (value) {
-          types.push(key);
-        }
-      });
-      const finalTypes = types.length ? types : ["processed", "unprocessed", "ignored", "failed"];
-      const responses = yield this.scripts.getDependencyCounts(this.id, finalTypes);
-      const counts = {};
-      responses.forEach((res, index) => {
-        counts[`${finalTypes[index]}`] = res || 0;
-      });
-      return counts;
+  async getDependenciesCount(opts = {}) {
+    const types = [];
+    Object.entries(opts).forEach(([key, value]) => {
+      if (value) {
+        types.push(key);
+      }
     });
+    const finalTypes = types.length ? types : ["processed", "unprocessed", "ignored", "failed"];
+    const responses = await this.scripts.getDependencyCounts(this.id, finalTypes);
+    const counts = {};
+    responses.forEach((res, index) => {
+      counts[`${finalTypes[index]}`] = res || 0;
+    });
+    return counts;
   }
   /**
    * Returns a promise the resolves when the job has completed (containing the return value of the job),
@@ -25398,48 +25180,46 @@ var Job = class _Job {
    * @param queueEvents - Instance of QueueEvents.
    * @param ttl - Time in milliseconds to wait for job to finish before timing out.
    */
-  waitUntilFinished(queueEvents, ttl) {
-    return __async(this, null, function* () {
-      yield this.queue.waitUntilReady();
-      const jobId = this.id;
-      return new Promise((resolve, reject) => __async(this, null, function* () {
-        let timeout;
-        if (ttl) {
-          timeout = setTimeout(() => onFailed(
-            /* eslint-disable max-len */
-            `Job wait ${this.name} timed out before finishing, no finish notification arrived after ${ttl}ms (id=${jobId})`
-          ), ttl);
+  async waitUntilFinished(queueEvents, ttl) {
+    await this.queue.waitUntilReady();
+    const jobId = this.id;
+    return new Promise(async (resolve, reject) => {
+      let timeout;
+      if (ttl) {
+        timeout = setTimeout(() => onFailed(
+          /* eslint-disable max-len */
+          `Job wait ${this.name} timed out before finishing, no finish notification arrived after ${ttl}ms (id=${jobId})`
+        ), ttl);
+      }
+      function onCompleted(args) {
+        removeListeners();
+        resolve(args.returnvalue);
+      }
+      function onFailed(args) {
+        removeListeners();
+        reject(new Error(args.failedReason || args));
+      }
+      const completedEvent = `completed:${jobId}`;
+      const failedEvent = `failed:${jobId}`;
+      queueEvents.on(completedEvent, onCompleted);
+      queueEvents.on(failedEvent, onFailed);
+      this.queue.on("closing", onFailed);
+      const removeListeners = () => {
+        clearInterval(timeout);
+        queueEvents.removeListener(completedEvent, onCompleted);
+        queueEvents.removeListener(failedEvent, onFailed);
+        this.queue.removeListener("closing", onFailed);
+      };
+      await queueEvents.waitUntilReady();
+      const [status, result] = await this.scripts.isFinished(jobId, true);
+      const finished = status != 0;
+      if (finished) {
+        if (status == -1 || status == 2) {
+          onFailed({ failedReason: result });
+        } else {
+          onCompleted({ returnvalue: getReturnValue(result) });
         }
-        function onCompleted(args) {
-          removeListeners();
-          resolve(args.returnvalue);
-        }
-        function onFailed(args) {
-          removeListeners();
-          reject(new Error(args.failedReason || args));
-        }
-        const completedEvent = `completed:${jobId}`;
-        const failedEvent = `failed:${jobId}`;
-        queueEvents.on(completedEvent, onCompleted);
-        queueEvents.on(failedEvent, onFailed);
-        this.queue.on("closing", onFailed);
-        const removeListeners = () => {
-          clearInterval(timeout);
-          queueEvents.removeListener(completedEvent, onCompleted);
-          queueEvents.removeListener(failedEvent, onFailed);
-          this.queue.removeListener("closing", onFailed);
-        };
-        yield queueEvents.waitUntilReady();
-        const [status, result] = yield this.scripts.isFinished(jobId, true);
-        const finished = status != 0;
-        if (finished) {
-          if (status == -1 || status == 2) {
-            onFailed({ failedReason: result });
-          } else {
-            onCompleted({ returnvalue: getReturnValue(result) });
-          }
-        }
-      }));
+      }
     });
   }
   /**
@@ -25449,15 +25229,13 @@ var Job = class _Job {
    * @param token - token to check job is locked by current worker
    * @returns
    */
-  moveToDelayed(timestamp, token) {
-    return __async(this, null, function* () {
-      const now = Date.now();
-      const delay2 = timestamp - now;
-      const finalDelay = delay2 > 0 ? delay2 : 0;
-      const movedToDelayed = yield this.scripts.moveToDelayed(this.id, now, finalDelay, token, { skipAttempt: true });
-      this.delay = finalDelay;
-      return movedToDelayed;
-    });
+  async moveToDelayed(timestamp, token) {
+    const now = Date.now();
+    const delay2 = timestamp - now;
+    const finalDelay = delay2 > 0 ? delay2 : 0;
+    const movedToDelayed = await this.scripts.moveToDelayed(this.id, now, finalDelay, token, { skipAttempt: true });
+    this.delay = finalDelay;
+    return movedToDelayed;
   }
   /**
    * Moves the job to the waiting-children set.
@@ -25466,21 +25244,17 @@ var Job = class _Job {
    * @param opts - The options bag for moving a job to waiting-children.
    * @returns true if the job was moved
    */
-  moveToWaitingChildren(_0) {
-    return __async(this, arguments, function* (token, opts = {}) {
-      const movedToWaitingChildren = yield this.scripts.moveToWaitingChildren(this.id, token, opts);
-      return movedToWaitingChildren;
-    });
+  async moveToWaitingChildren(token, opts = {}) {
+    const movedToWaitingChildren = await this.scripts.moveToWaitingChildren(this.id, token, opts);
+    return movedToWaitingChildren;
   }
   /**
    * Promotes a delayed job so that it starts to be processed as soon as possible.
    */
-  promote() {
-    return __async(this, null, function* () {
-      const jobId = this.id;
-      yield this.scripts.promote(jobId);
-      this.delay = 0;
-    });
+  async promote() {
+    const jobId = this.id;
+    await this.scripts.promote(jobId);
+    this.delay = 0;
   }
   /**
    * Attempts to retry the job. Only a job that has failed or completed can be retried.
@@ -25504,17 +25278,13 @@ var Job = class _Job {
   discard() {
     this.discarded = true;
   }
-  isInZSet(set) {
-    return __async(this, null, function* () {
-      const client = yield this.queue.client;
-      const score = yield client.zscore(this.queue.toKey(set), this.id);
-      return score !== null;
-    });
+  async isInZSet(set) {
+    const client = await this.queue.client;
+    const score = await client.zscore(this.queue.toKey(set), this.id);
+    return score !== null;
   }
-  isInList(list) {
-    return __async(this, null, function* () {
-      return this.scripts.isJobInList(this.queue.toKey(list), this.id);
-    });
+  async isInList(list) {
+    return this.scripts.isJobInList(this.queue.toKey(list), this.id);
   }
   /**
    * Adds the job to Redis.
@@ -33898,52 +33668,50 @@ var RedisConnection = class _RedisConnection extends import_events.EventEmitter 
    * Waits for a redis client to be ready.
    * @param redis - client
    */
-  static waitUntilReady(client) {
-    return __async(this, null, function* () {
-      if (client.status === "ready") {
-        return;
-      }
-      if (client.status === "wait") {
-        return client.connect();
-      }
-      if (client.status === "end") {
-        throw new Error(import_utils5.CONNECTION_CLOSED_ERROR_MSG);
-      }
-      let handleReady;
-      let handleEnd;
-      let handleError;
-      try {
-        yield new Promise((resolve, reject) => {
-          let lastError;
-          handleError = (err) => {
-            lastError = err;
-          };
-          handleReady = () => {
-            resolve();
-          };
-          handleEnd = () => {
-            if (client.status !== "end") {
-              reject(lastError || new Error(import_utils5.CONNECTION_CLOSED_ERROR_MSG));
+  static async waitUntilReady(client) {
+    if (client.status === "ready") {
+      return;
+    }
+    if (client.status === "wait") {
+      return client.connect();
+    }
+    if (client.status === "end") {
+      throw new Error(import_utils5.CONNECTION_CLOSED_ERROR_MSG);
+    }
+    let handleReady;
+    let handleEnd;
+    let handleError;
+    try {
+      await new Promise((resolve, reject) => {
+        let lastError;
+        handleError = (err) => {
+          lastError = err;
+        };
+        handleReady = () => {
+          resolve();
+        };
+        handleEnd = () => {
+          if (client.status !== "end") {
+            reject(lastError || new Error(import_utils5.CONNECTION_CLOSED_ERROR_MSG));
+          } else {
+            if (lastError) {
+              reject(lastError);
             } else {
-              if (lastError) {
-                reject(lastError);
-              } else {
-                resolve();
-              }
+              resolve();
             }
-          };
-          increaseMaxListeners(client, 3);
-          client.once("ready", handleReady);
-          client.on("end", handleEnd);
-          client.once("error", handleError);
-        });
-      } finally {
-        client.removeListener("end", handleEnd);
-        client.removeListener("error", handleError);
-        client.removeListener("ready", handleReady);
-        decreaseMaxListeners(client, 3);
-      }
-    });
+          }
+        };
+        increaseMaxListeners(client, 3);
+        client.once("ready", handleReady);
+        client.on("end", handleEnd);
+        client.once("error", handleError);
+      });
+    } finally {
+      client.removeListener("end", handleEnd);
+      client.removeListener("error", handleError);
+      client.removeListener("ready", handleReady);
+      decreaseMaxListeners(client, 3);
+    }
   }
   get client() {
     return this.initializing;
@@ -33960,125 +33728,115 @@ var RedisConnection = class _RedisConnection extends import_events.EventEmitter 
       }
     }
   }
-  init() {
-    return __async(this, null, function* () {
-      if (!this._client) {
-        const _a = this.opts, { url } = _a, rest = __rest(_a, ["url"]);
-        this._client = url ? new import_ioredis2.default(url, rest) : new import_ioredis2.default(rest);
-      }
-      increaseMaxListeners(this._client, 3);
-      this._client.on("error", this.handleClientError);
-      this._client.on("close", this.handleClientClose);
-      this._client.on("ready", this.handleClientReady);
-      if (!this.extraOptions.skipWaitingForReady) {
-        yield _RedisConnection.waitUntilReady(this._client);
-      }
-      this.loadCommands(this.packageVersion);
-      if (this._client["status"] !== "end") {
-        this.version = yield this.getRedisVersion();
-        if (this.skipVersionCheck !== true && !this.closing) {
-          if (isRedisVersionLowerThan(this.version, _RedisConnection.minimumVersion)) {
-            throw new Error(`Redis version needs to be greater or equal than ${_RedisConnection.minimumVersion} Current: ${this.version}`);
-          }
-          if (isRedisVersionLowerThan(this.version, _RedisConnection.recommendedMinimumVersion)) {
-            console.warn(`It is highly recommended to use a minimum Redis version of ${_RedisConnection.recommendedMinimumVersion}
+  async init() {
+    if (!this._client) {
+      const _a = this.opts, { url } = _a, rest = __rest(_a, ["url"]);
+      this._client = url ? new import_ioredis2.default(url, rest) : new import_ioredis2.default(rest);
+    }
+    increaseMaxListeners(this._client, 3);
+    this._client.on("error", this.handleClientError);
+    this._client.on("close", this.handleClientClose);
+    this._client.on("ready", this.handleClientReady);
+    if (!this.extraOptions.skipWaitingForReady) {
+      await _RedisConnection.waitUntilReady(this._client);
+    }
+    this.loadCommands(this.packageVersion);
+    if (this._client["status"] !== "end") {
+      this.version = await this.getRedisVersion();
+      if (this.skipVersionCheck !== true && !this.closing) {
+        if (isRedisVersionLowerThan(this.version, _RedisConnection.minimumVersion)) {
+          throw new Error(`Redis version needs to be greater or equal than ${_RedisConnection.minimumVersion} Current: ${this.version}`);
+        }
+        if (isRedisVersionLowerThan(this.version, _RedisConnection.recommendedMinimumVersion)) {
+          console.warn(`It is highly recommended to use a minimum Redis version of ${_RedisConnection.recommendedMinimumVersion}
              Current: ${this.version}`);
-          }
-        }
-        this.capabilities = {
-          canDoubleTimeout: !isRedisVersionLowerThan(this.version, "6.0.0"),
-          canBlockFor1Ms: !isRedisVersionLowerThan(this.version, "7.0.8")
-        };
-        this.status = "ready";
-      }
-      return this._client;
-    });
-  }
-  disconnect(wait = true) {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      if (client.status !== "end") {
-        let _resolve, _reject;
-        if (!wait) {
-          return client.disconnect();
-        }
-        const disconnecting = new Promise((resolve, reject) => {
-          increaseMaxListeners(client, 2);
-          client.once("end", resolve);
-          client.once("error", reject);
-          _resolve = resolve;
-          _reject = reject;
-        });
-        client.disconnect();
-        try {
-          yield disconnecting;
-        } finally {
-          decreaseMaxListeners(client, 2);
-          client.removeListener("end", _resolve);
-          client.removeListener("error", _reject);
         }
       }
-    });
+      this.capabilities = {
+        canDoubleTimeout: !isRedisVersionLowerThan(this.version, "6.0.0"),
+        canBlockFor1Ms: !isRedisVersionLowerThan(this.version, "7.0.8")
+      };
+      this.status = "ready";
+    }
+    return this._client;
   }
-  reconnect() {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      return client.connect();
-    });
+  async disconnect(wait = true) {
+    const client = await this.client;
+    if (client.status !== "end") {
+      let _resolve, _reject;
+      if (!wait) {
+        return client.disconnect();
+      }
+      const disconnecting = new Promise((resolve, reject) => {
+        increaseMaxListeners(client, 2);
+        client.once("end", resolve);
+        client.once("error", reject);
+        _resolve = resolve;
+        _reject = reject;
+      });
+      client.disconnect();
+      try {
+        await disconnecting;
+      } finally {
+        decreaseMaxListeners(client, 2);
+        client.removeListener("end", _resolve);
+        client.removeListener("error", _reject);
+      }
+    }
   }
-  close(force = false) {
-    return __async(this, null, function* () {
-      if (!this.closing) {
-        const status = this.status;
-        this.status = "closing";
-        this.closing = true;
-        try {
-          if (status === "ready") {
-            yield this.initializing;
+  async reconnect() {
+    const client = await this.client;
+    return client.connect();
+  }
+  async close(force = false) {
+    if (!this.closing) {
+      const status = this.status;
+      this.status = "closing";
+      this.closing = true;
+      try {
+        if (status === "ready") {
+          await this.initializing;
+        }
+        if (!this.extraOptions.shared) {
+          if (status == "initializing" || force) {
+            this._client.disconnect();
+          } else {
+            await this._client.quit();
           }
-          if (!this.extraOptions.shared) {
-            if (status == "initializing" || force) {
-              this._client.disconnect();
-            } else {
-              yield this._client.quit();
-            }
-            this._client["status"] = "end";
-          }
-        } catch (error) {
-          if (isNotConnectionError(error)) {
-            throw error;
-          }
-        } finally {
-          this._client.off("error", this.handleClientError);
-          this._client.off("close", this.handleClientClose);
-          this._client.off("ready", this.handleClientReady);
-          decreaseMaxListeners(this._client, 3);
-          this.removeAllListeners();
-          this.status = "closed";
+          this._client["status"] = "end";
+        }
+      } catch (error) {
+        if (isNotConnectionError(error)) {
+          throw error;
+        }
+      } finally {
+        this._client.off("error", this.handleClientError);
+        this._client.off("close", this.handleClientClose);
+        this._client.off("ready", this.handleClientReady);
+        decreaseMaxListeners(this._client, 3);
+        this.removeAllListeners();
+        this.status = "closed";
+      }
+    }
+  }
+  async getRedisVersion() {
+    const doc = await this._client.info();
+    const redisPrefix = "redis_version:";
+    const maxMemoryPolicyPrefix = "maxmemory_policy:";
+    const lines = doc.split(/\r?\n/);
+    let redisVersion;
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].indexOf(maxMemoryPolicyPrefix) === 0) {
+        const maxMemoryPolicy = lines[i].substr(maxMemoryPolicyPrefix.length);
+        if (maxMemoryPolicy !== "noeviction") {
+          console.warn(`IMPORTANT! Eviction policy is ${maxMemoryPolicy}. It should be "noeviction"`);
         }
       }
-    });
-  }
-  getRedisVersion() {
-    return __async(this, null, function* () {
-      const doc = yield this._client.info();
-      const redisPrefix = "redis_version:";
-      const maxMemoryPolicyPrefix = "maxmemory_policy:";
-      const lines = doc.split(/\r?\n/);
-      let redisVersion;
-      for (let i = 0; i < lines.length; i++) {
-        if (lines[i].indexOf(maxMemoryPolicyPrefix) === 0) {
-          const maxMemoryPolicy = lines[i].substr(maxMemoryPolicyPrefix.length);
-          if (maxMemoryPolicy !== "noeviction") {
-            console.warn(`IMPORTANT! Eviction policy is ${maxMemoryPolicy}. It should be "noeviction"`);
-          }
-        }
-        if (lines[i].indexOf(redisPrefix) === 0) {
-          redisVersion = lines[i].substr(redisPrefix.length);
-        }
+      if (lines[i].indexOf(redisPrefix) === 0) {
+        redisVersion = lines[i].substr(redisPrefix.length);
       }
-      return redisVersion;
-    });
+    }
+    return redisVersion;
   }
   get redisVersion() {
     return this.version;
@@ -34186,14 +33944,12 @@ var QueueBase = class extends import_events2.EventEmitter {
    *
    * Closes the connection and returns a promise that resolves when the connection is closed.
    */
-  close() {
-    return __async(this, null, function* () {
-      if (!this.closing) {
-        this.closing = this.connection.close();
-      }
-      yield this.closing;
-      this.closed = true;
-    });
+  async close() {
+    if (!this.closing) {
+      this.closing = this.connection.close();
+    }
+    await this.closing;
+    this.closed = true;
   }
   /**
    *
@@ -34202,21 +33958,19 @@ var QueueBase = class extends import_events2.EventEmitter {
   disconnect() {
     return this.connection.disconnect();
   }
-  checkConnectionError(_0) {
-    return __async(this, arguments, function* (fn, delayInMs = DELAY_TIME_5) {
-      try {
-        return yield fn();
-      } catch (error) {
-        if (isNotConnectionError(error)) {
-          this.emit("error", error);
-        }
-        if (!this.closing && delayInMs) {
-          yield delay(delayInMs);
-        } else {
-          return;
-        }
+  async checkConnectionError(fn, delayInMs = DELAY_TIME_5) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (isNotConnectionError(error)) {
+        this.emit("error", error);
       }
-    });
+      if (!this.closing && delayInMs) {
+        await delay(delayInMs);
+      } else {
+        return;
+      }
+    }
   }
   /**
    * Wraps the code with telemetry and provides a span for configuration.
@@ -34239,80 +33993,89 @@ var JobScheduler = class extends QueueBase {
     super(name, opts, Connection);
     this.repeatStrategy = opts.settings && opts.settings.repeatStrategy || defaultRepeatStrategy;
   }
-  upsertJobScheduler(_0, _1, _2, _3, _4, _5) {
-    return __async(this, arguments, function* (jobSchedulerId, repeatOpts, jobName, jobData, opts, { override, producerId }) {
-      const { every, limit, pattern, offset } = repeatOpts;
-      if (pattern && every) {
-        throw new Error("Both .pattern and .every options are defined for this repeatable job");
+  async upsertJobScheduler(jobSchedulerId, repeatOpts, jobName, jobData, opts, { override, producerId }) {
+    const { every, limit, pattern, offset } = repeatOpts;
+    if (pattern && every) {
+      throw new Error("Both .pattern and .every options are defined for this repeatable job");
+    }
+    if (!pattern && !every) {
+      throw new Error("Either .pattern or .every options must be defined for this repeatable job");
+    }
+    if (repeatOpts.immediately && repeatOpts.startDate) {
+      throw new Error("Both .immediately and .startDate options are defined for this repeatable job");
+    }
+    if (repeatOpts.immediately && repeatOpts.every) {
+      console.warn("Using option immediately with every does not affect the job's schedule. Job will run immediately anyway.");
+    }
+    const iterationCount = repeatOpts.count ? repeatOpts.count + 1 : 1;
+    if (typeof repeatOpts.limit !== "undefined" && iterationCount > repeatOpts.limit) {
+      return;
+    }
+    let now = Date.now();
+    const { endDate } = repeatOpts;
+    if (endDate && now > new Date(endDate).getTime()) {
+      return;
+    }
+    const prevMillis = opts.prevMillis || 0;
+    now = prevMillis < now ? now : prevMillis;
+    const { startDate, immediately } = repeatOpts, filteredRepeatOpts = __rest(repeatOpts, ["startDate", "immediately"]);
+    let startMillis = now;
+    if (startDate) {
+      startMillis = new Date(startDate).getTime();
+      startMillis = startMillis > now ? startMillis : now;
+    }
+    let nextMillis;
+    let newOffset = null;
+    if (every) {
+      const prevSlot = Math.floor(startMillis / every) * every;
+      newOffset = typeof offset === "number" ? offset : startMillis - prevSlot;
+      const nextSlot = prevSlot + every;
+      if (prevMillis || offset) {
+        nextMillis = nextSlot;
+      } else {
+        nextMillis = prevSlot;
       }
-      if (!pattern && !every) {
-        throw new Error("Either .pattern or .every options must be defined for this repeatable job");
+    } else if (pattern) {
+      nextMillis = await this.repeatStrategy(now, repeatOpts, jobName);
+      if (nextMillis < now) {
+        nextMillis = now;
       }
-      if (repeatOpts.immediately && repeatOpts.startDate) {
-        throw new Error("Both .immediately and .startDate options are defined for this repeatable job");
-      }
-      if (repeatOpts.immediately && repeatOpts.every) {
-        console.warn("Using option immediately with every does not affect the job's schedule. Job will run immediately anyway.");
-      }
-      const iterationCount = repeatOpts.count ? repeatOpts.count + 1 : 1;
-      if (typeof repeatOpts.limit !== "undefined" && iterationCount > repeatOpts.limit) {
-        return;
-      }
-      let now = Date.now();
-      const { endDate } = repeatOpts;
-      if (endDate && now > new Date(endDate).getTime()) {
-        return;
-      }
-      const prevMillis = opts.prevMillis || 0;
-      now = prevMillis < now ? now : prevMillis;
-      const { startDate, immediately } = repeatOpts, filteredRepeatOpts = __rest(repeatOpts, ["startDate", "immediately"]);
-      let startMillis = now;
-      if (startDate) {
-        startMillis = new Date(startDate).getTime();
-        startMillis = startMillis > now ? startMillis : now;
-      }
-      let nextMillis;
-      let newOffset = null;
-      if (every) {
-        const prevSlot = Math.floor(startMillis / every) * every;
-        newOffset = typeof offset === "number" ? offset : startMillis - prevSlot;
-        const nextSlot = prevSlot + every;
-        if (prevMillis || offset) {
-          nextMillis = nextSlot;
-        } else {
-          nextMillis = prevSlot;
-        }
-      } else if (pattern) {
-        nextMillis = yield this.repeatStrategy(now, repeatOpts, jobName);
-        if (nextMillis < now) {
-          nextMillis = now;
-        }
-      }
-      if (nextMillis) {
-        return this.trace(SpanKind.PRODUCER, "add", `${this.name}.${jobName}`, (span, srcPropagationMedatada) => __async(this, null, function* () {
-          var _a, _b;
-          let telemetry = opts.telemetry;
-          if (srcPropagationMedatada) {
-            const omitContext = (_a = opts.telemetry) === null || _a === void 0 ? void 0 : _a.omitContext;
-            const telemetryMetadata = ((_b = opts.telemetry) === null || _b === void 0 ? void 0 : _b.metadata) || !omitContext && srcPropagationMedatada;
-            if (telemetryMetadata || omitContext) {
-              telemetry = {
-                metadata: telemetryMetadata,
-                omitContext
-              };
-            }
+    }
+    if (nextMillis) {
+      return this.trace(SpanKind.PRODUCER, "add", `${this.name}.${jobName}`, async (span, srcPropagationMedatada) => {
+        var _a, _b;
+        let telemetry = opts.telemetry;
+        if (srcPropagationMedatada) {
+          const omitContext = (_a = opts.telemetry) === null || _a === void 0 ? void 0 : _a.omitContext;
+          const telemetryMetadata = ((_b = opts.telemetry) === null || _b === void 0 ? void 0 : _b.metadata) || !omitContext && srcPropagationMedatada;
+          if (telemetryMetadata || omitContext) {
+            telemetry = {
+              metadata: telemetryMetadata,
+              omitContext
+            };
           }
-          const mergedOpts = this.getNextJobOpts(nextMillis, jobSchedulerId, Object.assign(Object.assign({}, opts), { repeat: filteredRepeatOpts, telemetry }), iterationCount, newOffset);
-          if (override) {
-            const jobId = yield this.scripts.addJobScheduler(jobSchedulerId, nextMillis, JSON.stringify(typeof jobData === "undefined" ? {} : jobData), Job.optsAsJSON(opts), {
-              name: jobName,
-              endDate: endDate ? new Date(endDate).getTime() : void 0,
-              tz: repeatOpts.tz,
-              pattern,
-              every,
-              limit,
-              offset: newOffset
-            }, Job.optsAsJSON(mergedOpts), producerId);
+        }
+        const mergedOpts = this.getNextJobOpts(nextMillis, jobSchedulerId, Object.assign(Object.assign({}, opts), { repeat: filteredRepeatOpts, telemetry }), iterationCount, newOffset);
+        if (override) {
+          const jobId = await this.scripts.addJobScheduler(jobSchedulerId, nextMillis, JSON.stringify(typeof jobData === "undefined" ? {} : jobData), Job.optsAsJSON(opts), {
+            name: jobName,
+            endDate: endDate ? new Date(endDate).getTime() : void 0,
+            tz: repeatOpts.tz,
+            pattern,
+            every,
+            limit,
+            offset: newOffset
+          }, Job.optsAsJSON(mergedOpts), producerId);
+          const job = new this.Job(this, jobName, jobData, mergedOpts, jobId);
+          job.id = jobId;
+          span === null || span === void 0 ? void 0 : span.setAttributes({
+            [TelemetryAttributes.JobSchedulerId]: jobSchedulerId,
+            [TelemetryAttributes.JobId]: job.id
+          });
+          return job;
+        } else {
+          const jobId = await this.scripts.updateJobSchedulerNextMillis(jobSchedulerId, nextMillis, JSON.stringify(typeof jobData === "undefined" ? {} : jobData), Job.optsAsJSON(mergedOpts), producerId);
+          if (jobId) {
             const job = new this.Job(this, jobName, jobData, mergedOpts, jobId);
             job.id = jobId;
             span === null || span === void 0 ? void 0 : span.setAttributes({
@@ -34320,21 +34083,10 @@ var JobScheduler = class extends QueueBase {
               [TelemetryAttributes.JobId]: job.id
             });
             return job;
-          } else {
-            const jobId = yield this.scripts.updateJobSchedulerNextMillis(jobSchedulerId, nextMillis, JSON.stringify(typeof jobData === "undefined" ? {} : jobData), Job.optsAsJSON(mergedOpts), producerId);
-            if (jobId) {
-              const job = new this.Job(this, jobName, jobData, mergedOpts, jobId);
-              job.id = jobId;
-              span === null || span === void 0 ? void 0 : span.setAttributes({
-                [TelemetryAttributes.JobSchedulerId]: jobSchedulerId,
-                [TelemetryAttributes.JobId]: job.id
-              });
-              return job;
-            }
           }
-        }));
-      }
-    });
+        }
+      });
+    }
   }
   getNextJobOpts(nextMillis, jobSchedulerId, opts, currentCount, offset) {
     var _a;
@@ -34348,16 +34100,12 @@ var JobScheduler = class extends QueueBase {
     mergedOpts.repeat = Object.assign(Object.assign({}, opts.repeat), { offset, count: currentCount, endDate: ((_a = opts.repeat) === null || _a === void 0 ? void 0 : _a.endDate) ? new Date(opts.repeat.endDate).getTime() : void 0 });
     return mergedOpts;
   }
-  removeJobScheduler(jobSchedulerId) {
-    return __async(this, null, function* () {
-      return this.scripts.removeJobScheduler(jobSchedulerId);
-    });
+  async removeJobScheduler(jobSchedulerId) {
+    return this.scripts.removeJobScheduler(jobSchedulerId);
   }
-  getSchedulerData(client, key, next) {
-    return __async(this, null, function* () {
-      const jobData = yield client.hgetall(this.toKey("repeat:" + key));
-      return this.transformSchedulerData(key, jobData, next);
-    });
+  async getSchedulerData(client, key, next) {
+    const jobData = await client.hgetall(this.toKey("repeat:" + key));
+    return this.transformSchedulerData(key, jobData, next);
   }
   transformSchedulerData(key, jobData, next) {
     if (jobData) {
@@ -34409,11 +34157,9 @@ var JobScheduler = class extends QueueBase {
       next
     };
   }
-  getScheduler(id) {
-    return __async(this, null, function* () {
-      const [rawJobData, next] = yield this.scripts.getJobScheduler(id);
-      return this.transformSchedulerData(id, rawJobData ? array2obj(rawJobData) : null, next ? parseInt(next) : null);
-    });
+  async getScheduler(id) {
+    const [rawJobData, next] = await this.scripts.getJobScheduler(id);
+    return this.transformSchedulerData(id, rawJobData ? array2obj(rawJobData) : null, next ? parseInt(next) : null);
   }
   getTemplateFromJSON(rawData, rawOpts) {
     const template = {};
@@ -34425,24 +34171,20 @@ var JobScheduler = class extends QueueBase {
     }
     return template;
   }
-  getJobSchedulers(start = 0, end = -1, asc = false) {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      const jobSchedulersKey = this.keys.repeat;
-      const result = asc ? yield client.zrange(jobSchedulersKey, start, end, "WITHSCORES") : yield client.zrevrange(jobSchedulersKey, start, end, "WITHSCORES");
-      const jobs = [];
-      for (let i = 0; i < result.length; i += 2) {
-        jobs.push(this.getSchedulerData(client, result[i], parseInt(result[i + 1])));
-      }
-      return Promise.all(jobs);
-    });
+  async getJobSchedulers(start = 0, end = -1, asc = false) {
+    const client = await this.client;
+    const jobSchedulersKey = this.keys.repeat;
+    const result = asc ? await client.zrange(jobSchedulersKey, start, end, "WITHSCORES") : await client.zrevrange(jobSchedulersKey, start, end, "WITHSCORES");
+    const jobs = [];
+    for (let i = 0; i < result.length; i += 2) {
+      jobs.push(this.getSchedulerData(client, result[i], parseInt(result[i + 1])));
+    }
+    return Promise.all(jobs);
   }
-  getSchedulersCount() {
-    return __async(this, null, function* () {
-      const jobSchedulersKey = this.keys.repeat;
-      const client = yield this.client;
-      return client.zcard(jobSchedulersKey);
-    });
+  async getSchedulersCount() {
+    const jobSchedulersKey = this.keys.repeat;
+    const client = await this.client;
+    return client.zcard(jobSchedulersKey);
   }
   getSchedulerNextJobId({ nextMillis, jobSchedulerId }) {
     return `repeat:${jobSchedulerId}:${nextMillis}`;
@@ -34510,11 +34252,9 @@ var QueueGetters = class extends QueueBase {
     Returns the number of jobs waiting to be processed. This includes jobs that are
     "waiting" or "delayed" or "prioritized" or "waiting-children".
   */
-  count() {
-    return __async(this, null, function* () {
-      const count = yield this.getJobCountByTypes("waiting", "paused", "delayed", "prioritized", "waiting-children");
-      return count;
-    });
+  async count() {
+    const count = await this.getJobCountByTypes("waiting", "paused", "delayed", "prioritized", "waiting-children");
+    return count;
   }
   /**
    * Returns the time to live for a rate limited key in milliseconds.
@@ -34524,10 +34264,8 @@ var QueueGetters = class extends QueueBase {
    * -1 if the key exists but has no associated expire.
    * @see {@link https://redis.io/commands/pttl/}
    */
-  getRateLimitTtl(maxJobs) {
-    return __async(this, null, function* () {
-      return this.scripts.getRateLimitTtl(maxJobs);
-    });
+  async getRateLimitTtl(maxJobs) {
+    return this.scripts.getRateLimitTtl(maxJobs);
   }
   /**
    * Get jobId that starts debounced state.
@@ -34535,22 +34273,18 @@ var QueueGetters = class extends QueueBase {
    *
    * @param id - debounce identifier
    */
-  getDebounceJobId(id) {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      return client.get(`${this.keys.de}:${id}`);
-    });
+  async getDebounceJobId(id) {
+    const client = await this.client;
+    return client.get(`${this.keys.de}:${id}`);
   }
   /**
    * Get jobId from deduplicated state.
    *
    * @param id - deduplication identifier
    */
-  getDeduplicationJobId(id) {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      return client.get(`${this.keys.de}:${id}`);
-    });
+  async getDeduplicationJobId(id) {
+    const client = await this.client;
+    return client.get(`${this.keys.de}:${id}`);
   }
   /**
    * Job counts by type
@@ -34560,27 +34294,23 @@ var QueueGetters = class extends QueueBase {
    * Queue#getJobCountByTypes('completed', 'failed') =\> completed + failed count
    * Queue#getJobCountByTypes('completed', 'waiting', 'failed') =\> completed + waiting + failed count
    */
-  getJobCountByTypes(...types) {
-    return __async(this, null, function* () {
-      const result = yield this.getJobCounts(...types);
-      return Object.values(result).reduce((sum, count) => sum + count, 0);
-    });
+  async getJobCountByTypes(...types) {
+    const result = await this.getJobCounts(...types);
+    return Object.values(result).reduce((sum, count) => sum + count, 0);
   }
   /**
    * Returns the job counts for each type specified or every list/set in the queue by default.
    *
    * @returns An object, key (type) and value (count)
    */
-  getJobCounts(...types) {
-    return __async(this, null, function* () {
-      const currentTypes = this.sanitizeJobTypes(types);
-      const responses = yield this.scripts.getCounts(currentTypes);
-      const counts = {};
-      responses.forEach((res, index) => {
-        counts[currentTypes[index]] = res || 0;
-      });
-      return counts;
+  async getJobCounts(...types) {
+    const currentTypes = this.sanitizeJobTypes(types);
+    const responses = await this.scripts.getCounts(currentTypes);
+    const counts = {};
+    responses.forEach((res, index) => {
+      counts[currentTypes[index]] = res || 0;
     });
+    return counts;
   }
   /**
    * Get current job state.
@@ -34625,16 +34355,14 @@ var QueueGetters = class extends QueueBase {
   /**
    * Returns the number of jobs per priority.
    */
-  getCountsPerPriority(priorities) {
-    return __async(this, null, function* () {
-      const uniquePriorities = [...new Set(priorities)];
-      const responses = yield this.scripts.getCountsPerPriority(uniquePriorities);
-      const counts = {};
-      responses.forEach((res, index) => {
-        counts[`${uniquePriorities[index]}`] = res || 0;
-      });
-      return counts;
+  async getCountsPerPriority(priorities) {
+    const uniquePriorities = [...new Set(priorities)];
+    const responses = await this.scripts.getCountsPerPriority(uniquePriorities);
+    const counts = {};
+    responses.forEach((res, index) => {
+      counts[`${uniquePriorities[index]}`] = res || 0;
     });
+    return counts;
   }
   /**
    * Returns the number of jobs in waiting or paused statuses.
@@ -34722,46 +34450,42 @@ var QueueGetters = class extends QueueBase {
    * @returns an object with the following shape:
    * `{ items: { id: string, v?: any, err?: string } [], jobs: JobJsonRaw[], total: number}`
    */
-  getDependencies(parentId, type, start, end) {
-    return __async(this, null, function* () {
-      const key = this.toKey(type == "processed" ? `${parentId}:processed` : `${parentId}:dependencies`);
-      const { items, total, jobs } = yield this.scripts.paginate(key, {
-        start,
-        end,
-        fetchJobs: true
-      });
-      return {
-        items,
-        jobs,
-        total
-      };
+  async getDependencies(parentId, type, start, end) {
+    const key = this.toKey(type == "processed" ? `${parentId}:processed` : `${parentId}:dependencies`);
+    const { items, total, jobs } = await this.scripts.paginate(key, {
+      start,
+      end,
+      fetchJobs: true
     });
+    return {
+      items,
+      jobs,
+      total
+    };
   }
-  getRanges(types, start = 0, end = 1, asc = false) {
-    return __async(this, null, function* () {
-      const multiCommands = [];
-      this.commandByType(types, false, (key, command) => {
-        switch (command) {
-          case "lrange":
-            multiCommands.push("lrange");
-            break;
-          case "zrange":
-            multiCommands.push("zrange");
-            break;
-        }
-      });
-      const responses = yield this.scripts.getRanges(types, start, end, asc);
-      let results = [];
-      responses.forEach((response, index) => {
-        const result = response || [];
-        if (asc && multiCommands[index] === "lrange") {
-          results = results.concat(result.reverse());
-        } else {
-          results = results.concat(result);
-        }
-      });
-      return [...new Set(results)];
+  async getRanges(types, start = 0, end = 1, asc = false) {
+    const multiCommands = [];
+    this.commandByType(types, false, (key, command) => {
+      switch (command) {
+        case "lrange":
+          multiCommands.push("lrange");
+          break;
+        case "zrange":
+          multiCommands.push("zrange");
+          break;
+      }
     });
+    const responses = await this.scripts.getRanges(types, start, end, asc);
+    let results = [];
+    responses.forEach((response, index) => {
+      const result = response || [];
+      if (asc && multiCommands[index] === "lrange") {
+        results = results.concat(result.reverse());
+      } else {
+        results = results.concat(result);
+      }
+    });
+    return [...new Set(results)];
   }
   /**
    * Returns the jobs that are on the given statuses (note that JobType is synonym for job status)
@@ -34770,12 +34494,10 @@ var QueueGetters = class extends QueueBase {
    * @param end - zero based index where to stop returning jobs.
    * @param asc - if true, the jobs will be returned in ascending order.
    */
-  getJobs(types, start = 0, end = -1, asc = false) {
-    return __async(this, null, function* () {
-      const currentTypes = this.sanitizeJobTypes(types);
-      const jobIds = yield this.getRanges(currentTypes, start, end, asc);
-      return Promise.all(jobIds.map((jobId) => this.Job.fromId(this, jobId)));
-    });
+  async getJobs(types, start = 0, end = -1, asc = false) {
+    const currentTypes = this.sanitizeJobTypes(types);
+    const jobIds = await this.getRanges(currentTypes, start, end, asc);
+    return Promise.all(jobIds.map((jobId) => this.Job.fromId(this, jobId)));
   }
   /**
    * Returns the logs for a given Job.
@@ -34784,41 +34506,37 @@ var QueueGetters = class extends QueueBase {
    * @param end - zero based index where to stop returning jobs.
    * @param asc - if true, the jobs will be returned in ascending order.
    */
-  getJobLogs(jobId, start = 0, end = -1, asc = true) {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      const multi = client.multi();
-      const logsKey = this.toKey(jobId + ":logs");
-      if (asc) {
-        multi.lrange(logsKey, start, end);
-      } else {
-        multi.lrange(logsKey, -(end + 1), -(start + 1));
-      }
-      multi.llen(logsKey);
-      const result = yield multi.exec();
-      if (!asc) {
-        result[0][1].reverse();
-      }
-      return {
-        logs: result[0][1],
-        count: result[1][1]
-      };
-    });
+  async getJobLogs(jobId, start = 0, end = -1, asc = true) {
+    const client = await this.client;
+    const multi = client.multi();
+    const logsKey = this.toKey(jobId + ":logs");
+    if (asc) {
+      multi.lrange(logsKey, start, end);
+    } else {
+      multi.lrange(logsKey, -(end + 1), -(start + 1));
+    }
+    multi.llen(logsKey);
+    const result = await multi.exec();
+    if (!asc) {
+      result[0][1].reverse();
+    }
+    return {
+      logs: result[0][1],
+      count: result[1][1]
+    };
   }
-  baseGetClients(matcher) {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      try {
-        const clients = yield client.client("LIST");
-        const list = this.parseClientList(clients, matcher);
-        return list;
-      } catch (err) {
-        if (!clientCommandMessageReg.test(err.message)) {
-          throw err;
-        }
-        return [{ name: "GCP does not support client list" }];
+  async baseGetClients(matcher) {
+    const client = await this.client;
+    try {
+      const clients = await client.client("LIST");
+      const list = this.parseClientList(clients, matcher);
+      return list;
+    } catch (err) {
+      if (!clientCommandMessageReg.test(err.message)) {
+        throw err;
       }
-    });
+      return [{ name: "GCP does not support client list" }];
+    }
   }
   /**
    * Get the worker list related to the queue. i.e. all the known
@@ -34839,11 +34557,9 @@ var QueueGetters = class extends QueueBase {
    * getWorkersCount(): Promise<number>
    *
    */
-  getWorkersCount() {
-    return __async(this, null, function* () {
-      const workers = yield this.getWorkers();
-      return workers.length;
-    });
+  async getWorkersCount() {
+    const workers = await this.getWorkers();
+    return workers.length;
   }
   /**
    * Get queue events list related to the queue.
@@ -34853,11 +34569,9 @@ var QueueGetters = class extends QueueBase {
    *
    * @returns - Returns an array with queue events info.
    */
-  getQueueEvents() {
-    return __async(this, null, function* () {
-      const clientName = `${this.clientName()}${QUEUE_EVENT_SUFFIX}`;
-      return this.baseGetClients((name) => name === clientName);
-    });
+  async getQueueEvents() {
+    const clientName = `${this.clientName()}${QUEUE_EVENT_SUFFIX}`;
+    return this.baseGetClients((name) => name === clientName);
   }
   /**
    * Get queue metrics related to the queue.
@@ -34873,32 +34587,30 @@ var QueueGetters = class extends QueueBase {
    *
    * @returns - Returns an object with queue metrics.
    */
-  getMetrics(type, start = 0, end = -1) {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      const metricsKey = this.toKey(`metrics:${type}`);
-      const dataKey = `${metricsKey}:data`;
-      const multi = client.multi();
-      multi.hmget(metricsKey, "count", "prevTS", "prevCount");
-      multi.lrange(dataKey, start, end);
-      multi.llen(dataKey);
-      const [hmget, range, len] = yield multi.exec();
-      const [err, [count, prevTS, prevCount]] = hmget;
-      const [err2, data] = range;
-      const [err3, numPoints] = len;
-      if (err || err2) {
-        throw err || err2 || err3;
-      }
-      return {
-        meta: {
-          count: parseInt(count || "0", 10),
-          prevTS: parseInt(prevTS || "0", 10),
-          prevCount: parseInt(prevCount || "0", 10)
-        },
-        data,
-        count: numPoints
-      };
-    });
+  async getMetrics(type, start = 0, end = -1) {
+    const client = await this.client;
+    const metricsKey = this.toKey(`metrics:${type}`);
+    const dataKey = `${metricsKey}:data`;
+    const multi = client.multi();
+    multi.hmget(metricsKey, "count", "prevTS", "prevCount");
+    multi.lrange(dataKey, start, end);
+    multi.llen(dataKey);
+    const [hmget, range, len] = await multi.exec();
+    const [err, [count, prevTS, prevCount]] = hmget;
+    const [err2, data] = range;
+    const [err3, numPoints] = len;
+    if (err || err2) {
+      throw err || err2 || err3;
+    }
+    return {
+      meta: {
+        count: parseInt(count || "0", 10),
+        prevTS: parseInt(prevTS || "0", 10),
+        prevCount: parseInt(prevCount || "0", 10)
+      },
+      data,
+      count: numPoints
+    };
   }
   parseClientList(list, matcher) {
     const lines = list.split(/\r?\n/);
@@ -34930,18 +34642,16 @@ var QueueGetters = class extends QueueBase {
    * @see {@link https://prometheus.io/docs/instrumenting/exposition_formats/}
    *
    **/
-  exportPrometheusMetrics(globalVariables) {
-    return __async(this, null, function* () {
-      const counts = yield this.getJobCounts();
-      const metrics = [];
-      metrics.push("# HELP bullmq_job_count Number of jobs in the queue by state");
-      metrics.push("# TYPE bullmq_job_count gauge");
-      const variables = !globalVariables ? "" : Object.keys(globalVariables).reduce((acc, curr) => `${acc}, ${curr}="${globalVariables[curr]}"`, "");
-      for (const [state, count] of Object.entries(counts)) {
-        metrics.push(`bullmq_job_count{queue="${this.name}", state="${state}"${variables}} ${count}`);
-      }
-      return metrics.join("\n");
-    });
+  async exportPrometheusMetrics(globalVariables) {
+    const counts = await this.getJobCounts();
+    const metrics = [];
+    metrics.push("# HELP bullmq_job_count Number of jobs in the queue by state");
+    metrics.push("# TYPE bullmq_job_count gauge");
+    const variables = !globalVariables ? "" : Object.keys(globalVariables).reduce((acc, curr) => `${acc}, ${curr}="${globalVariables[curr]}"`, "");
+    for (const [state, count] of Object.entries(counts)) {
+      metrics.push(`bullmq_job_count{queue="${this.name}", state="${state}"${variables}} ${count}`);
+    }
+    return metrics.join("\n");
   }
 };
 
@@ -34954,60 +34664,56 @@ var Repeat = class extends QueueBase {
     this.repeatStrategy = opts.settings && opts.settings.repeatStrategy || getNextMillis;
     this.repeatKeyHashAlgorithm = opts.settings && opts.settings.repeatKeyHashAlgorithm || "md5";
   }
-  updateRepeatableJob(_0, _1, _2, _3) {
-    return __async(this, arguments, function* (name, data, opts, { override }) {
-      var _a, _b;
-      const repeatOpts = Object.assign({}, opts.repeat);
-      (_a = repeatOpts.pattern) !== null && _a !== void 0 ? _a : repeatOpts.pattern = repeatOpts.cron;
-      delete repeatOpts.cron;
-      const iterationCount = repeatOpts.count ? repeatOpts.count + 1 : 1;
-      if (typeof repeatOpts.limit !== "undefined" && iterationCount > repeatOpts.limit) {
-        return;
+  async updateRepeatableJob(name, data, opts, { override }) {
+    var _a, _b;
+    const repeatOpts = Object.assign({}, opts.repeat);
+    (_a = repeatOpts.pattern) !== null && _a !== void 0 ? _a : repeatOpts.pattern = repeatOpts.cron;
+    delete repeatOpts.cron;
+    const iterationCount = repeatOpts.count ? repeatOpts.count + 1 : 1;
+    if (typeof repeatOpts.limit !== "undefined" && iterationCount > repeatOpts.limit) {
+      return;
+    }
+    let now = Date.now();
+    const { endDate } = repeatOpts;
+    if (endDate && now > new Date(endDate).getTime()) {
+      return;
+    }
+    const prevMillis = opts.prevMillis || 0;
+    now = prevMillis < now ? now : prevMillis;
+    const nextMillis = await this.repeatStrategy(now, repeatOpts, name);
+    const { every, pattern } = repeatOpts;
+    const hasImmediately = Boolean((every || pattern) && repeatOpts.immediately);
+    const offset = hasImmediately && every ? now - nextMillis : void 0;
+    if (nextMillis) {
+      if (!prevMillis && opts.jobId) {
+        repeatOpts.jobId = opts.jobId;
       }
-      let now = Date.now();
-      const { endDate } = repeatOpts;
-      if (endDate && now > new Date(endDate).getTime()) {
-        return;
+      const legacyRepeatKey = getRepeatConcatOptions(name, repeatOpts);
+      const newRepeatKey = (_b = opts.repeat.key) !== null && _b !== void 0 ? _b : this.hash(legacyRepeatKey);
+      let repeatJobKey;
+      if (override) {
+        repeatJobKey = await this.scripts.addRepeatableJob(newRepeatKey, nextMillis, {
+          name,
+          endDate: endDate ? new Date(endDate).getTime() : void 0,
+          tz: repeatOpts.tz,
+          pattern,
+          every
+        }, legacyRepeatKey);
+      } else {
+        const client = await this.client;
+        repeatJobKey = await this.scripts.updateRepeatableJobMillis(client, newRepeatKey, nextMillis, legacyRepeatKey);
       }
-      const prevMillis = opts.prevMillis || 0;
-      now = prevMillis < now ? now : prevMillis;
-      const nextMillis = yield this.repeatStrategy(now, repeatOpts, name);
-      const { every, pattern } = repeatOpts;
-      const hasImmediately = Boolean((every || pattern) && repeatOpts.immediately);
-      const offset = hasImmediately && every ? now - nextMillis : void 0;
-      if (nextMillis) {
-        if (!prevMillis && opts.jobId) {
-          repeatOpts.jobId = opts.jobId;
-        }
-        const legacyRepeatKey = getRepeatConcatOptions(name, repeatOpts);
-        const newRepeatKey = (_b = opts.repeat.key) !== null && _b !== void 0 ? _b : this.hash(legacyRepeatKey);
-        let repeatJobKey;
-        if (override) {
-          repeatJobKey = yield this.scripts.addRepeatableJob(newRepeatKey, nextMillis, {
-            name,
-            endDate: endDate ? new Date(endDate).getTime() : void 0,
-            tz: repeatOpts.tz,
-            pattern,
-            every
-          }, legacyRepeatKey);
-        } else {
-          const client = yield this.client;
-          repeatJobKey = yield this.scripts.updateRepeatableJobMillis(client, newRepeatKey, nextMillis, legacyRepeatKey);
-        }
-        const { immediately } = repeatOpts, filteredRepeatOpts = __rest(repeatOpts, ["immediately"]);
-        return this.createNextJob(name, nextMillis, repeatJobKey, Object.assign(Object.assign({}, opts), { repeat: Object.assign({ offset }, filteredRepeatOpts) }), data, iterationCount, hasImmediately);
-      }
-    });
+      const { immediately } = repeatOpts, filteredRepeatOpts = __rest(repeatOpts, ["immediately"]);
+      return this.createNextJob(name, nextMillis, repeatJobKey, Object.assign(Object.assign({}, opts), { repeat: Object.assign({ offset }, filteredRepeatOpts) }), data, iterationCount, hasImmediately);
+    }
   }
-  createNextJob(name, nextMillis, repeatJobKey, opts, data, currentCount, hasImmediately) {
-    return __async(this, null, function* () {
-      const jobId = this.getRepeatJobKey(name, nextMillis, repeatJobKey, data);
-      const now = Date.now();
-      const delay2 = nextMillis + (opts.repeat.offset ? opts.repeat.offset : 0) - now;
-      const mergedOpts = Object.assign(Object.assign({}, opts), { jobId, delay: delay2 < 0 || hasImmediately ? 0 : delay2, timestamp: now, prevMillis: nextMillis, repeatJobKey });
-      mergedOpts.repeat = Object.assign(Object.assign({}, opts.repeat), { count: currentCount });
-      return this.Job.create(this, name, data, mergedOpts);
-    });
+  async createNextJob(name, nextMillis, repeatJobKey, opts, data, currentCount, hasImmediately) {
+    const jobId = this.getRepeatJobKey(name, nextMillis, repeatJobKey, data);
+    const now = Date.now();
+    const delay2 = nextMillis + (opts.repeat.offset ? opts.repeat.offset : 0) - now;
+    const mergedOpts = Object.assign(Object.assign({}, opts), { jobId, delay: delay2 < 0 || hasImmediately ? 0 : delay2, timestamp: now, prevMillis: nextMillis, repeatJobKey });
+    mergedOpts.repeat = Object.assign(Object.assign({}, opts.repeat), { count: currentCount });
+    return this.Job.create(this, name, data, mergedOpts);
   }
   // TODO: remove legacy code in next breaking change
   getRepeatJobKey(name, nextMillis, repeatJobKey, data) {
@@ -35024,49 +34730,43 @@ var Repeat = class extends QueueBase {
       nextMillis
     });
   }
-  removeRepeatable(name, repeat, jobId) {
-    return __async(this, null, function* () {
-      var _a;
-      const repeatConcatOptions = getRepeatConcatOptions(name, Object.assign(Object.assign({}, repeat), { jobId }));
-      const repeatJobKey = (_a = repeat.key) !== null && _a !== void 0 ? _a : this.hash(repeatConcatOptions);
-      const legacyRepeatJobId = this.getRepeatJobId({
-        name,
-        nextMillis: "",
-        namespace: this.hash(repeatConcatOptions),
-        jobId: jobId !== null && jobId !== void 0 ? jobId : repeat.jobId,
-        key: repeat.key
-      });
-      return this.scripts.removeRepeatable(legacyRepeatJobId, repeatConcatOptions, repeatJobKey);
+  async removeRepeatable(name, repeat, jobId) {
+    var _a;
+    const repeatConcatOptions = getRepeatConcatOptions(name, Object.assign(Object.assign({}, repeat), { jobId }));
+    const repeatJobKey = (_a = repeat.key) !== null && _a !== void 0 ? _a : this.hash(repeatConcatOptions);
+    const legacyRepeatJobId = this.getRepeatJobId({
+      name,
+      nextMillis: "",
+      namespace: this.hash(repeatConcatOptions),
+      jobId: jobId !== null && jobId !== void 0 ? jobId : repeat.jobId,
+      key: repeat.key
     });
+    return this.scripts.removeRepeatable(legacyRepeatJobId, repeatConcatOptions, repeatJobKey);
   }
-  removeRepeatableByKey(repeatJobKey) {
-    return __async(this, null, function* () {
-      const data = this.keyToData(repeatJobKey);
-      const legacyRepeatJobId = this.getRepeatJobId({
-        name: data.name,
-        nextMillis: "",
-        namespace: this.hash(repeatJobKey),
-        jobId: data.id
-      });
-      return this.scripts.removeRepeatable(legacyRepeatJobId, "", repeatJobKey);
+  async removeRepeatableByKey(repeatJobKey) {
+    const data = this.keyToData(repeatJobKey);
+    const legacyRepeatJobId = this.getRepeatJobId({
+      name: data.name,
+      nextMillis: "",
+      namespace: this.hash(repeatJobKey),
+      jobId: data.id
     });
+    return this.scripts.removeRepeatable(legacyRepeatJobId, "", repeatJobKey);
   }
-  getRepeatableData(client, key, next) {
-    return __async(this, null, function* () {
-      const jobData = yield client.hgetall(this.toKey("repeat:" + key));
-      if (jobData) {
-        return {
-          key,
-          name: jobData.name,
-          endDate: parseInt(jobData.endDate) || null,
-          tz: jobData.tz || null,
-          pattern: jobData.pattern || null,
-          every: jobData.every || null,
-          next
-        };
-      }
-      return this.keyToData(key, next);
-    });
+  async getRepeatableData(client, key, next) {
+    const jobData = await client.hgetall(this.toKey("repeat:" + key));
+    if (jobData) {
+      return {
+        key,
+        name: jobData.name,
+        endDate: parseInt(jobData.endDate) || null,
+        tz: jobData.tz || null,
+        pattern: jobData.pattern || null,
+        every: jobData.every || null,
+        next
+      };
+    }
+    return this.keyToData(key, next);
   }
   keyToData(key, next) {
     const data = key.split(":");
@@ -35081,23 +34781,19 @@ var Repeat = class extends QueueBase {
       next
     };
   }
-  getRepeatableJobs(start = 0, end = -1, asc = false) {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      const key = this.keys.repeat;
-      const result = asc ? yield client.zrange(key, start, end, "WITHSCORES") : yield client.zrevrange(key, start, end, "WITHSCORES");
-      const jobs = [];
-      for (let i = 0; i < result.length; i += 2) {
-        jobs.push(this.getRepeatableData(client, result[i], parseInt(result[i + 1])));
-      }
-      return Promise.all(jobs);
-    });
+  async getRepeatableJobs(start = 0, end = -1, asc = false) {
+    const client = await this.client;
+    const key = this.keys.repeat;
+    const result = asc ? await client.zrange(key, start, end, "WITHSCORES") : await client.zrevrange(key, start, end, "WITHSCORES");
+    const jobs = [];
+    for (let i = 0; i < result.length; i += 2) {
+      jobs.push(this.getRepeatableData(client, result[i], parseInt(result[i + 1])));
+    }
+    return Promise.all(jobs);
   }
-  getRepeatableCount() {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      return client.zcard(this.toKey("repeat"));
-    });
+  async getRepeatableCount() {
+    const client = await this.client;
+    return client.zcard(this.toKey("repeat"));
   }
   hash(str) {
     return (0, import_crypto3.createHash)(this.repeatKeyHashAlgorithm).update(str).digest("hex");
@@ -35139,7 +34835,7 @@ var getNextMillis = (millis, opts) => {
 };
 
 // ../../node_modules/bullmq/dist/esm/classes/queue.js
-var Queue = class _Queue extends QueueGetters {
+var Queue = class extends QueueGetters {
   constructor(name, opts, Connection) {
     var _a;
     super(name, Object.assign({}, opts), Connection);
@@ -35186,43 +34882,39 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @returns the content of the meta.library field.
    */
-  getVersion() {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      return yield client.hget(this.keys.meta, "version");
-    });
+  async getVersion() {
+    const client = await this.client;
+    return await client.hget(this.keys.meta, "version");
   }
   get repeat() {
-    return new Promise((resolve) => __async(this, null, function* () {
+    return new Promise(async (resolve) => {
       if (!this._repeat) {
-        this._repeat = new Repeat(this.name, Object.assign(Object.assign({}, this.opts), { connection: yield this.client }));
+        this._repeat = new Repeat(this.name, Object.assign(Object.assign({}, this.opts), { connection: await this.client }));
         this._repeat.on("error", (e) => this.emit.bind(this, e));
       }
       resolve(this._repeat);
-    }));
+    });
   }
   get jobScheduler() {
-    return new Promise((resolve) => __async(this, null, function* () {
+    return new Promise(async (resolve) => {
       if (!this._jobScheduler) {
-        this._jobScheduler = new JobScheduler(this.name, Object.assign(Object.assign({}, this.opts), { connection: yield this.client }));
+        this._jobScheduler = new JobScheduler(this.name, Object.assign(Object.assign({}, this.opts), { connection: await this.client }));
         this._jobScheduler.on("error", (e) => this.emit.bind(this, e));
       }
       resolve(this._jobScheduler);
-    }));
+    });
   }
   /**
    * Get global concurrency value.
    * Returns null in case no value is set.
    */
-  getGlobalConcurrency() {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      const concurrency = yield client.hget(this.keys.meta, "concurrency");
-      if (concurrency) {
-        return Number(concurrency);
-      }
-      return null;
-    });
+  async getGlobalConcurrency() {
+    const client = await this.client;
+    const concurrency = await client.hget(this.keys.meta, "concurrency");
+    if (concurrency) {
+      return Number(concurrency);
+    }
+    return null;
   }
   /**
    * Enable and set global concurrency value.
@@ -35231,20 +34923,16 @@ var Queue = class _Queue extends QueueGetters {
    * is processed at any given time. If this limit is not defined, there will be no
    * restriction on the number of concurrent jobs.
    */
-  setGlobalConcurrency(concurrency) {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      return client.hset(this.keys.meta, "concurrency", concurrency);
-    });
+  async setGlobalConcurrency(concurrency) {
+    const client = await this.client;
+    return client.hset(this.keys.meta, "concurrency", concurrency);
   }
   /**
    * Remove global concurrency value.
    */
-  removeGlobalConcurrency() {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      return client.hdel(this.keys.meta, "concurrency");
-    });
+  async removeGlobalConcurrency() {
+    const client = await this.client;
+    return client.hdel(this.keys.meta, "concurrency");
   }
   /**
    * Adds a new job to the queue.
@@ -35253,23 +34941,21 @@ var Queue = class _Queue extends QueueGetters {
    * @param data - Arbitrary data to append to the job.
    * @param opts - Job options that affects how the job is going to be processed.
    */
-  add(name, data, opts) {
-    return __async(this, null, function* () {
-      return this.trace(SpanKind.PRODUCER, "add", `${this.name}.${name}`, (span, srcPropagationMedatada) => __async(this, null, function* () {
-        var _a;
-        if (srcPropagationMedatada && !((_a = opts === null || opts === void 0 ? void 0 : opts.telemetry) === null || _a === void 0 ? void 0 : _a.omitContext)) {
-          const telemetry = {
-            metadata: srcPropagationMedatada
-          };
-          opts = Object.assign(Object.assign({}, opts), { telemetry });
-        }
-        const job = yield this.addJob(name, data, opts);
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.JobName]: name,
-          [TelemetryAttributes.JobId]: job.id
-        });
-        return job;
-      }));
+  async add(name, data, opts) {
+    return this.trace(SpanKind.PRODUCER, "add", `${this.name}.${name}`, async (span, srcPropagationMedatada) => {
+      var _a;
+      if (srcPropagationMedatada && !((_a = opts === null || opts === void 0 ? void 0 : opts.telemetry) === null || _a === void 0 ? void 0 : _a.omitContext)) {
+        const telemetry = {
+          metadata: srcPropagationMedatada
+        };
+        opts = Object.assign(Object.assign({}, opts), { telemetry });
+      }
+      const job = await this.addJob(name, data, opts);
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.JobName]: name,
+        [TelemetryAttributes.JobId]: job.id
+      });
+      return job;
     });
   }
   /**
@@ -35282,25 +34968,23 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @returns Job
    */
-  addJob(name, data, opts) {
-    return __async(this, null, function* () {
-      if (opts && opts.repeat) {
-        if (opts.repeat.endDate) {
-          if (+new Date(opts.repeat.endDate) < Date.now()) {
-            throw new Error("End date must be greater than current timestamp");
-          }
+  async addJob(name, data, opts) {
+    if (opts && opts.repeat) {
+      if (opts.repeat.endDate) {
+        if (+new Date(opts.repeat.endDate) < Date.now()) {
+          throw new Error("End date must be greater than current timestamp");
         }
-        return (yield this.repeat).updateRepeatableJob(name, data, Object.assign(Object.assign({}, this.jobsOpts), opts), { override: true });
-      } else {
-        const jobId = opts === null || opts === void 0 ? void 0 : opts.jobId;
-        if (jobId == "0" || (jobId === null || jobId === void 0 ? void 0 : jobId.startsWith("0:"))) {
-          throw new Error("JobId cannot be '0' or start with 0:");
-        }
-        const job = yield this.Job.create(this, name, data, Object.assign(Object.assign(Object.assign({}, this.jobsOpts), opts), { jobId }));
-        this.emit("waiting", job);
-        return job;
       }
-    });
+      return (await this.repeat).updateRepeatableJob(name, data, Object.assign(Object.assign({}, this.jobsOpts), opts), { override: true });
+    } else {
+      const jobId = opts === null || opts === void 0 ? void 0 : opts.jobId;
+      if (jobId == "0" || (jobId === null || jobId === void 0 ? void 0 : jobId.startsWith("0:"))) {
+        throw new Error("JobId cannot be '0' or start with 0:");
+      }
+      const job = await this.Job.create(this, name, data, Object.assign(Object.assign(Object.assign({}, this.jobsOpts), opts), { jobId }));
+      this.emit("waiting", job);
+      return job;
+    }
   }
   /**
    * Adds an array of jobs to the queue. This method may be faster than adding
@@ -35309,34 +34993,32 @@ var Queue = class _Queue extends QueueGetters {
    * @param jobs - The array of jobs to add to the queue. Each job is defined by 3
    * properties, 'name', 'data' and 'opts'. They follow the same signature as 'Queue.add'.
    */
-  addBulk(jobs) {
-    return __async(this, null, function* () {
-      return this.trace(SpanKind.PRODUCER, "addBulk", this.name, (span, srcPropagationMedatada) => __async(this, null, function* () {
-        if (span) {
-          span.setAttributes({
-            [TelemetryAttributes.BulkNames]: jobs.map((job) => job.name),
-            [TelemetryAttributes.BulkCount]: jobs.length
-          });
-        }
-        return yield this.Job.createBulk(this, jobs.map((job) => {
-          var _a, _b, _c, _d, _e, _f;
-          let telemetry = (_a = job.opts) === null || _a === void 0 ? void 0 : _a.telemetry;
-          if (srcPropagationMedatada) {
-            const omitContext = (_c = (_b = job.opts) === null || _b === void 0 ? void 0 : _b.telemetry) === null || _c === void 0 ? void 0 : _c.omitContext;
-            const telemetryMetadata = ((_e = (_d = job.opts) === null || _d === void 0 ? void 0 : _d.telemetry) === null || _e === void 0 ? void 0 : _e.metadata) || !omitContext && srcPropagationMedatada;
-            if (telemetryMetadata || omitContext) {
-              telemetry = {
-                metadata: telemetryMetadata,
-                omitContext
-              };
-            }
+  async addBulk(jobs) {
+    return this.trace(SpanKind.PRODUCER, "addBulk", this.name, async (span, srcPropagationMedatada) => {
+      if (span) {
+        span.setAttributes({
+          [TelemetryAttributes.BulkNames]: jobs.map((job) => job.name),
+          [TelemetryAttributes.BulkCount]: jobs.length
+        });
+      }
+      return await this.Job.createBulk(this, jobs.map((job) => {
+        var _a, _b, _c, _d, _e, _f;
+        let telemetry = (_a = job.opts) === null || _a === void 0 ? void 0 : _a.telemetry;
+        if (srcPropagationMedatada) {
+          const omitContext = (_c = (_b = job.opts) === null || _b === void 0 ? void 0 : _b.telemetry) === null || _c === void 0 ? void 0 : _c.omitContext;
+          const telemetryMetadata = ((_e = (_d = job.opts) === null || _d === void 0 ? void 0 : _d.telemetry) === null || _e === void 0 ? void 0 : _e.metadata) || !omitContext && srcPropagationMedatada;
+          if (telemetryMetadata || omitContext) {
+            telemetry = {
+              metadata: telemetryMetadata,
+              omitContext
+            };
           }
-          return {
-            name: job.name,
-            data: job.data,
-            opts: Object.assign(Object.assign(Object.assign({}, this.jobsOpts), job.opts), { jobId: (_f = job.opts) === null || _f === void 0 ? void 0 : _f.jobId, telemetry })
-          };
-        }));
+        }
+        return {
+          name: job.name,
+          data: job.data,
+          opts: Object.assign(Object.assign(Object.assign({}, this.jobsOpts), job.opts), { jobId: (_f = job.opts) === null || _f === void 0 ? void 0 : _f.jobId, telemetry })
+        };
       }));
     });
   }
@@ -35354,16 +35036,14 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @returns The next job to be scheduled (would normally be in delayed state).
    */
-  upsertJobScheduler(jobSchedulerId, repeatOpts, jobTemplate) {
-    return __async(this, null, function* () {
-      var _a, _b;
-      if (repeatOpts.endDate) {
-        if (+new Date(repeatOpts.endDate) < Date.now()) {
-          throw new Error("End date must be greater than current timestamp");
-        }
+  async upsertJobScheduler(jobSchedulerId, repeatOpts, jobTemplate) {
+    var _a, _b;
+    if (repeatOpts.endDate) {
+      if (+new Date(repeatOpts.endDate) < Date.now()) {
+        throw new Error("End date must be greater than current timestamp");
       }
-      return (yield this.jobScheduler).upsertJobScheduler(jobSchedulerId, repeatOpts, (_a = jobTemplate === null || jobTemplate === void 0 ? void 0 : jobTemplate.name) !== null && _a !== void 0 ? _a : jobSchedulerId, (_b = jobTemplate === null || jobTemplate === void 0 ? void 0 : jobTemplate.data) !== null && _b !== void 0 ? _b : {}, Object.assign(Object.assign({}, this.jobsOpts), jobTemplate === null || jobTemplate === void 0 ? void 0 : jobTemplate.opts), { override: true });
-    });
+    }
+    return (await this.jobScheduler).upsertJobScheduler(jobSchedulerId, repeatOpts, (_a = jobTemplate === null || jobTemplate === void 0 ? void 0 : jobTemplate.name) !== null && _a !== void 0 ? _a : jobSchedulerId, (_b = jobTemplate === null || jobTemplate === void 0 ? void 0 : jobTemplate.data) !== null && _b !== void 0 ? _b : {}, Object.assign(Object.assign({}, this.jobsOpts), jobTemplate === null || jobTemplate === void 0 ? void 0 : jobTemplate.opts), { override: true });
   }
   /**
    * Pauses the processing of this queue globally.
@@ -35376,28 +35056,24 @@ var Queue = class _Queue extends QueueGetters {
    * Adding jobs requires a LUA script to check first if the paused list exist
    * and in that case it will add it there instead of the wait list.
    */
-  pause() {
-    return __async(this, null, function* () {
-      yield this.trace(SpanKind.INTERNAL, "pause", this.name, () => __async(this, null, function* () {
-        yield this.scripts.pause(true);
-        this.emit("paused");
-      }));
+  async pause() {
+    await this.trace(SpanKind.INTERNAL, "pause", this.name, async () => {
+      await this.scripts.pause(true);
+      this.emit("paused");
     });
   }
   /**
    * Close the queue instance.
    *
    */
-  close() {
-    return __async(this, null, function* () {
-      yield this.trace(SpanKind.INTERNAL, "close", this.name, () => __async(this, null, function* () {
-        if (!this.closing) {
-          if (this._repeat) {
-            yield this._repeat.close();
-          }
+  async close() {
+    await this.trace(SpanKind.INTERNAL, "close", this.name, async () => {
+      if (!this.closing) {
+        if (this._repeat) {
+          await this._repeat.close();
         }
-        yield __superGet(_Queue.prototype, this, "close").call(this);
-      }));
+      }
+      await super.close();
     });
   }
   /**
@@ -35405,14 +35081,12 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @param expireTimeMs - expire time in ms of this rate limit.
    */
-  rateLimit(expireTimeMs) {
-    return __async(this, null, function* () {
-      yield this.trace(SpanKind.INTERNAL, "rateLimit", this.name, (span) => __async(this, null, function* () {
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.QueueRateLimit]: expireTimeMs
-        });
-        yield this.client.then((client) => client.set(this.keys.limiter, Number.MAX_SAFE_INTEGER, "PX", expireTimeMs));
-      }));
+  async rateLimit(expireTimeMs) {
+    await this.trace(SpanKind.INTERNAL, "rateLimit", this.name, async (span) => {
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.QueueRateLimit]: expireTimeMs
+      });
+      await this.client.then((client) => client.set(this.keys.limiter, Number.MAX_SAFE_INTEGER, "PX", expireTimeMs));
     });
   }
   /**
@@ -35421,23 +35095,19 @@ var Queue = class _Queue extends QueueGetters {
    * The method reverses the pause operation by resuming the processing of the
    * queue.
    */
-  resume() {
-    return __async(this, null, function* () {
-      yield this.trace(SpanKind.INTERNAL, "resume", this.name, () => __async(this, null, function* () {
-        yield this.scripts.pause(false);
-        this.emit("resumed");
-      }));
+  async resume() {
+    await this.trace(SpanKind.INTERNAL, "resume", this.name, async () => {
+      await this.scripts.pause(false);
+      this.emit("resumed");
     });
   }
   /**
    * Returns true if the queue is currently paused.
    */
-  isPaused() {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      const pausedKeyExists = yield client.hexists(this.keys.meta, "paused");
-      return pausedKeyExists === 1;
-    });
+  async isPaused() {
+    const client = await this.client;
+    const pausedKeyExists = await client.hexists(this.keys.meta, "paused");
+    return pausedKeyExists === 1;
   }
   /**
    * Returns true if the queue is currently maxed.
@@ -35455,20 +35125,16 @@ var Queue = class _Queue extends QueueGetters {
    * @param asc - Determine the order in which jobs are returned based on their
    * next execution time.
    */
-  getRepeatableJobs(start, end, asc) {
-    return __async(this, null, function* () {
-      return (yield this.repeat).getRepeatableJobs(start, end, asc);
-    });
+  async getRepeatableJobs(start, end, asc) {
+    return (await this.repeat).getRepeatableJobs(start, end, asc);
   }
   /**
    * Get Job Scheduler by id
    *
    * @param id - identifier of scheduler.
    */
-  getJobScheduler(id) {
-    return __async(this, null, function* () {
-      return (yield this.jobScheduler).getScheduler(id);
-    });
+  async getJobScheduler(id) {
+    return (await this.jobScheduler).getScheduler(id);
   }
   /**
    * Get all Job Schedulers
@@ -35478,10 +35144,8 @@ var Queue = class _Queue extends QueueGetters {
    * @param asc - Determine the order in which schedulers are returned based on their
    * next execution time.
    */
-  getJobSchedulers(start, end, asc) {
-    return __async(this, null, function* () {
-      return (yield this.jobScheduler).getJobSchedulers(start, end, asc);
-    });
+  async getJobSchedulers(start, end, asc) {
+    return (await this.jobScheduler).getJobSchedulers(start, end, asc);
   }
   /**
    *
@@ -35489,10 +35153,8 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @returns The number of job schedulers.
    */
-  getJobSchedulersCount() {
-    return __async(this, null, function* () {
-      return (yield this.jobScheduler).getSchedulersCount();
-    });
+  async getJobSchedulersCount() {
+    return (await this.jobScheduler).getSchedulersCount();
   }
   /**
    * Removes a repeatable job.
@@ -35509,17 +35171,15 @@ var Queue = class _Queue extends QueueGetters {
    * @param jobId - Job id to remove. If not provided, all jobs with the same repeatOpts
    * @returns
    */
-  removeRepeatable(name, repeatOpts, jobId) {
-    return __async(this, null, function* () {
-      return this.trace(SpanKind.INTERNAL, "removeRepeatable", `${this.name}.${name}`, (span) => __async(this, null, function* () {
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.JobName]: name,
-          [TelemetryAttributes.JobId]: jobId
-        });
-        const repeat = yield this.repeat;
-        const removed = yield repeat.removeRepeatable(name, repeatOpts, jobId);
-        return !removed;
-      }));
+  async removeRepeatable(name, repeatOpts, jobId) {
+    return this.trace(SpanKind.INTERNAL, "removeRepeatable", `${this.name}.${name}`, async (span) => {
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.JobName]: name,
+        [TelemetryAttributes.JobId]: jobId
+      });
+      const repeat = await this.repeat;
+      const removed = await repeat.removeRepeatable(name, repeatOpts, jobId);
+      return !removed;
     });
   }
   /**
@@ -35530,12 +35190,10 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @returns
    */
-  removeJobScheduler(jobSchedulerId) {
-    return __async(this, null, function* () {
-      const jobScheduler = yield this.jobScheduler;
-      const removed = yield jobScheduler.removeJobScheduler(jobSchedulerId);
-      return !removed;
-    });
+  async removeJobScheduler(jobSchedulerId) {
+    const jobScheduler = await this.jobScheduler;
+    const removed = await jobScheduler.removeJobScheduler(jobSchedulerId);
+    return !removed;
   }
   /**
    * Removes a debounce key.
@@ -35543,15 +35201,13 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @param id - debounce identifier
    */
-  removeDebounceKey(id) {
-    return __async(this, null, function* () {
-      return this.trace(SpanKind.INTERNAL, "removeDebounceKey", `${this.name}`, (span) => __async(this, null, function* () {
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.JobKey]: id
-        });
-        const client = yield this.client;
-        return yield client.del(`${this.keys.de}:${id}`);
-      }));
+  async removeDebounceKey(id) {
+    return this.trace(SpanKind.INTERNAL, "removeDebounceKey", `${this.name}`, async (span) => {
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.JobKey]: id
+      });
+      const client = await this.client;
+      return await client.del(`${this.keys.de}:${id}`);
     });
   }
   /**
@@ -35559,25 +35215,21 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @param id - identifier
    */
-  removeDeduplicationKey(id) {
-    return __async(this, null, function* () {
-      return this.trace(SpanKind.INTERNAL, "removeDeduplicationKey", `${this.name}`, (span) => __async(this, null, function* () {
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.DeduplicationKey]: id
-        });
-        const client = yield this.client;
-        return client.del(`${this.keys.de}:${id}`);
-      }));
+  async removeDeduplicationKey(id) {
+    return this.trace(SpanKind.INTERNAL, "removeDeduplicationKey", `${this.name}`, async (span) => {
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.DeduplicationKey]: id
+      });
+      const client = await this.client;
+      return client.del(`${this.keys.de}:${id}`);
     });
   }
   /**
    * Removes rate limit key.
    */
-  removeRateLimitKey() {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      return client.del(this.keys.limiter);
-    });
+  async removeRateLimitKey() {
+    const client = await this.client;
+    return client.del(this.keys.limiter);
   }
   /**
    * Removes a repeatable job by its key. Note that the key is the one used
@@ -35591,16 +35243,14 @@ var Queue = class _Queue extends QueueGetters {
    * @param repeatJobKey - To the repeatable job.
    * @returns
    */
-  removeRepeatableByKey(key) {
-    return __async(this, null, function* () {
-      return this.trace(SpanKind.INTERNAL, "removeRepeatableByKey", `${this.name}`, (span) => __async(this, null, function* () {
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.JobKey]: key
-        });
-        const repeat = yield this.repeat;
-        const removed = yield repeat.removeRepeatableByKey(key);
-        return !removed;
-      }));
+  async removeRepeatableByKey(key) {
+    return this.trace(SpanKind.INTERNAL, "removeRepeatableByKey", `${this.name}`, async (span) => {
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.JobKey]: key
+      });
+      const repeat = await this.repeat;
+      const removed = await repeat.removeRepeatableByKey(key);
+      return !removed;
     });
   }
   /**
@@ -35612,17 +35262,15 @@ var Queue = class _Queue extends QueueGetters {
    * @returns 1 if it managed to remove the job or 0 if the job or
    * any of its dependencies were locked.
    */
-  remove(_0) {
-    return __async(this, arguments, function* (jobId, { removeChildren = true } = {}) {
-      return this.trace(SpanKind.INTERNAL, "remove", this.name, (span) => __async(this, null, function* () {
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.JobId]: jobId,
-          [TelemetryAttributes.JobOptions]: JSON.stringify({
-            removeChildren
-          })
-        });
-        return yield this.scripts.remove(jobId, removeChildren);
-      }));
+  async remove(jobId, { removeChildren = true } = {}) {
+    return this.trace(SpanKind.INTERNAL, "remove", this.name, async (span) => {
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.JobId]: jobId,
+        [TelemetryAttributes.JobOptions]: JSON.stringify({
+          removeChildren
+        })
+      });
+      return await this.scripts.remove(jobId, removeChildren);
     });
   }
   /**
@@ -35631,15 +35279,13 @@ var Queue = class _Queue extends QueueGetters {
    * @param jobId - The id of the job to update
    * @param progress - Number or object to be saved as progress.
    */
-  updateJobProgress(jobId, progress) {
-    return __async(this, null, function* () {
-      yield this.trace(SpanKind.INTERNAL, "updateJobProgress", this.name, (span) => __async(this, null, function* () {
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.JobId]: jobId,
-          [TelemetryAttributes.JobProgress]: JSON.stringify(progress)
-        });
-        yield this.scripts.updateProgress(jobId, progress);
-      }));
+  async updateJobProgress(jobId, progress) {
+    await this.trace(SpanKind.INTERNAL, "updateJobProgress", this.name, async (span) => {
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.JobId]: jobId,
+        [TelemetryAttributes.JobProgress]: JSON.stringify(progress)
+      });
+      await this.scripts.updateProgress(jobId, progress);
     });
   }
   /**
@@ -35651,10 +35297,8 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @returns The total number of log entries for this job so far.
    */
-  addJobLog(jobId, logRow, keepLogs) {
-    return __async(this, null, function* () {
-      return Job.addJobLog(this, jobId, logRow, keepLogs);
-    });
+  async addJobLog(jobId, logRow, keepLogs) {
+    return Job.addJobLog(this, jobId, logRow, keepLogs);
   }
   /**
    * Drains the queue, i.e., removes all jobs that are waiting
@@ -35663,14 +35307,12 @@ var Queue = class _Queue extends QueueGetters {
    * @param delayed - Pass true if it should also clean the
    * delayed jobs.
    */
-  drain(delayed = false) {
-    return __async(this, null, function* () {
-      yield this.trace(SpanKind.INTERNAL, "drain", this.name, (span) => __async(this, null, function* () {
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.QueueDrainDelay]: delayed
-        });
-        yield this.scripts.drain(delayed);
-      }));
+  async drain(delayed = false) {
+    await this.trace(SpanKind.INTERNAL, "drain", this.name, async (span) => {
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.QueueDrainDelay]: delayed
+      });
+      await this.scripts.drain(delayed);
     });
   }
   /**
@@ -35683,31 +35325,29 @@ var Queue = class _Queue extends QueueGetters {
    * Possible values are completed, wait, active, paused, delayed, failed. Defaults to completed.
    * @returns Id jobs from the deleted records
    */
-  clean(grace, limit, type = "completed") {
-    return __async(this, null, function* () {
-      return this.trace(SpanKind.INTERNAL, "clean", this.name, (span) => __async(this, null, function* () {
-        const maxCount = limit || Infinity;
-        const maxCountPerCall = Math.min(1e4, maxCount);
-        const timestamp = Date.now() - grace;
-        let deletedCount = 0;
-        const deletedJobsIds = [];
-        while (deletedCount < maxCount) {
-          const jobsIds = yield this.scripts.cleanJobsInSet(type, timestamp, maxCountPerCall);
-          this.emit("cleaned", jobsIds, type);
-          deletedCount += jobsIds.length;
-          deletedJobsIds.push(...jobsIds);
-          if (jobsIds.length < maxCountPerCall) {
-            break;
-          }
+  async clean(grace, limit, type = "completed") {
+    return this.trace(SpanKind.INTERNAL, "clean", this.name, async (span) => {
+      const maxCount = limit || Infinity;
+      const maxCountPerCall = Math.min(1e4, maxCount);
+      const timestamp = Date.now() - grace;
+      let deletedCount = 0;
+      const deletedJobsIds = [];
+      while (deletedCount < maxCount) {
+        const jobsIds = await this.scripts.cleanJobsInSet(type, timestamp, maxCountPerCall);
+        this.emit("cleaned", jobsIds, type);
+        deletedCount += jobsIds.length;
+        deletedJobsIds.push(...jobsIds);
+        if (jobsIds.length < maxCountPerCall) {
+          break;
         }
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.QueueGrace]: grace,
-          [TelemetryAttributes.JobType]: type,
-          [TelemetryAttributes.QueueCleanLimit]: maxCount,
-          [TelemetryAttributes.JobIds]: deletedJobsIds
-        });
-        return deletedJobsIds;
-      }));
+      }
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.QueueGrace]: grace,
+        [TelemetryAttributes.JobType]: type,
+        [TelemetryAttributes.QueueCleanLimit]: maxCount,
+        [TelemetryAttributes.JobIds]: deletedJobsIds
+      });
+      return deletedJobsIds;
     });
   }
   /**
@@ -35721,15 +35361,13 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @param opts - Obliterate options.
    */
-  obliterate(opts) {
-    return __async(this, null, function* () {
-      yield this.trace(SpanKind.INTERNAL, "obliterate", this.name, () => __async(this, null, function* () {
-        yield this.pause();
-        let cursor = 0;
-        do {
-          cursor = yield this.scripts.obliterate(Object.assign({ force: false, count: 1e3 }, opts));
-        } while (cursor);
-      }));
+  async obliterate(opts) {
+    await this.trace(SpanKind.INTERNAL, "obliterate", this.name, async () => {
+      await this.pause();
+      let cursor = 0;
+      do {
+        cursor = await this.scripts.obliterate(Object.assign({ force: false, count: 1e3 }, opts));
+      } while (cursor);
     });
   }
   /**
@@ -35742,17 +35380,15 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @returns
    */
-  retryJobs() {
-    return __async(this, arguments, function* (opts = {}) {
-      yield this.trace(SpanKind.PRODUCER, "retryJobs", this.name, (span) => __async(this, null, function* () {
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.QueueOptions]: JSON.stringify(opts)
-        });
-        let cursor = 0;
-        do {
-          cursor = yield this.scripts.retryJobs(opts.state, opts.count, opts.timestamp);
-        } while (cursor);
-      }));
+  async retryJobs(opts = {}) {
+    await this.trace(SpanKind.PRODUCER, "retryJobs", this.name, async (span) => {
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.QueueOptions]: JSON.stringify(opts)
+      });
+      let cursor = 0;
+      do {
+        cursor = await this.scripts.retryJobs(opts.state, opts.count, opts.timestamp);
+      } while (cursor);
     });
   }
   /**
@@ -35763,17 +35399,15 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @returns
    */
-  promoteJobs() {
-    return __async(this, arguments, function* (opts = {}) {
-      yield this.trace(SpanKind.INTERNAL, "promoteJobs", this.name, (span) => __async(this, null, function* () {
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.QueueOptions]: JSON.stringify(opts)
-        });
-        let cursor = 0;
-        do {
-          cursor = yield this.scripts.promoteJobs(opts.count);
-        } while (cursor);
-      }));
+  async promoteJobs(opts = {}) {
+    await this.trace(SpanKind.INTERNAL, "promoteJobs", this.name, async (span) => {
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.QueueOptions]: JSON.stringify(opts)
+      });
+      let cursor = 0;
+      do {
+        cursor = await this.scripts.promoteJobs(opts.count);
+      } while (cursor);
     });
   }
   /**
@@ -35781,25 +35415,21 @@ var Queue = class _Queue extends QueueGetters {
    *
    * @param maxLength -
    */
-  trimEvents(maxLength) {
-    return __async(this, null, function* () {
-      return this.trace(SpanKind.INTERNAL, "trimEvents", this.name, (span) => __async(this, null, function* () {
-        span === null || span === void 0 ? void 0 : span.setAttributes({
-          [TelemetryAttributes.QueueEventMaxLength]: maxLength
-        });
-        const client = yield this.client;
-        return yield client.xtrim(this.keys.events, "MAXLEN", "~", maxLength);
-      }));
+  async trimEvents(maxLength) {
+    return this.trace(SpanKind.INTERNAL, "trimEvents", this.name, async (span) => {
+      span === null || span === void 0 ? void 0 : span.setAttributes({
+        [TelemetryAttributes.QueueEventMaxLength]: maxLength
+      });
+      const client = await this.client;
+      return await client.xtrim(this.keys.events, "MAXLEN", "~", maxLength);
     });
   }
   /**
    * Delete old priority helper key.
    */
-  removeDeprecatedPriorityKey() {
-    return __async(this, null, function* () {
-      const client = yield this.client;
-      return client.del(this.toKey("priority"));
-    });
+  async removeDeprecatedPriorityKey() {
+    const client = await this.client;
+    return client.del(this.toKey("priority"));
   }
 };
 
@@ -35813,7 +35443,23 @@ var ClientType;
   ClientType2["normal"] = "normal";
 })(ClientType || (ClientType = {}));
 
-// ../queue/src/config.ts
+// ../queue/dist/index.mjs
+var __defProp2 = Object.defineProperty;
+var __getOwnPropSymbols2 = Object.getOwnPropertySymbols;
+var __hasOwnProp2 = Object.prototype.hasOwnProperty;
+var __propIsEnum2 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp2 = (obj, key, value) => key in obj ? __defProp2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues2 = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp2.call(b, prop))
+      __defNormalProp2(a, prop, b[prop]);
+  if (__getOwnPropSymbols2)
+    for (var prop of __getOwnPropSymbols2(b)) {
+      if (__propIsEnum2.call(b, prop))
+        __defNormalProp2(a, prop, b[prop]);
+    }
+  return a;
+};
 function getRedisConnection() {
   const redisHost = process.env.REDIS_HOST;
   if (redisHost && redisHost.startsWith("https://")) {
@@ -35857,12 +35503,10 @@ var QUEUE_NAMES = {
   RENDER: "renderQueue",
   NOTIFICATION: "notificationQueue"
 };
-
-// ../queue/src/queues/render.queue.ts
 var renderQueue = null;
 function getRenderQueue(connection) {
   if (!renderQueue) {
-    renderQueue = new Queue(QUEUE_NAMES.RENDER, __spreadValues(__spreadValues({}, defaultQueueOptions), connection && { connection }));
+    renderQueue = new Queue(QUEUE_NAMES.RENDER, __spreadValues2(__spreadValues2({}, defaultQueueOptions), connection && { connection }));
   }
   return renderQueue;
 }
@@ -35877,183 +35521,171 @@ var RenderServiceImpl = class {
       ultra: 4
     };
   }
-  createRenderJob(projectId, options) {
-    return __async(this, null, function* () {
-      var _a, _b;
-      const creditsRequired = yield this.estimateCredits({
-        quality: options.quality,
-        resolution: `${options.width}x${options.height}`,
-        style: options.style
-      });
-      const { data: org } = yield import_db3.supabase.from("organizations").select("*, subscriptions(*, subscription_plans(*))").eq("id", options.organizationId).single();
-      if (!org) {
-        throw new Error("Organization not found");
+  async createRenderJob(projectId, options) {
+    var _a, _b;
+    const creditsRequired = await this.estimateCredits({
+      quality: options.quality,
+      resolution: `${options.width}x${options.height}`,
+      style: options.style
+    });
+    const { data: org } = await import_db3.supabase.from("organizations").select("*, subscriptions(*, subscription_plans(*))").eq("id", options.organizationId).single();
+    if (!org) {
+      throw new Error("Organization not found");
+    }
+    const plan = (_b = (_a = org.subscriptions) == null ? void 0 : _a[0]) == null ? void 0 : _b.subscription_plans;
+    if (!plan) {
+      throw new Error("No active subscription");
+    }
+    const currentPeriodStart = new Date(org.subscriptions[0].current_period_start);
+    const usage = await this.getCreditsUsage(options.organizationId, {
+      start: currentPeriodStart,
+      end: /* @__PURE__ */ new Date()
+    });
+    if (usage.total + creditsRequired > plan.render_credits_monthly) {
+      throw new Error("Insufficient render credits");
+    }
+    const renderData = {
+      project_id: projectId,
+      organization_id: options.organizationId,
+      user_id: options.userId,
+      prompt: options.prompt || "",
+      style: options.style || "default",
+      quality: options.quality,
+      resolution: `${options.width}x${options.height}`,
+      status: "pending",
+      credits_used: creditsRequired,
+      metadata: {
+        format: options.format,
+        width: options.width,
+        height: options.height
+      },
+      created_at: /* @__PURE__ */ new Date(),
+      updated_at: /* @__PURE__ */ new Date()
+    };
+    const { data: result, error } = await import_db3.supabase.from("renders").insert(renderData).select().single();
+    if (error) throw error;
+    const queue = getRenderQueue();
+    await queue.add("process-render", {
+      renderId: result.id,
+      projectId,
+      sceneId: "default",
+      // TODO: Add scene support
+      userId: options.userId,
+      organizationId: options.organizationId,
+      subscriptionTier: plan.tier || "starter",
+      sourceImageUrl: "",
+      // TODO: Add source image support
+      prompt: {
+        system: `Style: ${options.style || "default"}, Quality: ${options.quality}`,
+        user: options.prompt || "Generate landscape design"
+      },
+      annotations: [],
+      settings: {
+        provider: "openai-gpt-image",
+        // Default provider
+        resolution: "1024x1024",
+        // TODO: Map from width/height
+        format: options.format.toUpperCase(),
+        quality: options.quality === "ultra" ? 100 : options.quality === "high" ? 90 : 80
       }
-      const plan = (_b = (_a = org.subscriptions) == null ? void 0 : _a[0]) == null ? void 0 : _b.subscription_plans;
-      if (!plan) {
-        throw new Error("No active subscription");
-      }
-      const currentPeriodStart = new Date(org.subscriptions[0].current_period_start);
-      const usage = yield this.getCreditsUsage(options.organizationId, {
-        start: currentPeriodStart,
-        end: /* @__PURE__ */ new Date()
-      });
-      if (usage.total + creditsRequired > plan.render_credits_monthly) {
-        throw new Error("Insufficient render credits");
-      }
-      const renderData = {
-        project_id: projectId,
-        organization_id: options.organizationId,
-        user_id: options.userId,
-        prompt: options.prompt || "",
-        style: options.style || "default",
-        quality: options.quality,
-        resolution: `${options.width}x${options.height}`,
-        status: "pending",
-        credits_used: creditsRequired,
-        metadata: {
-          format: options.format,
-          width: options.width,
-          height: options.height
-        },
-        created_at: /* @__PURE__ */ new Date(),
-        updated_at: /* @__PURE__ */ new Date()
-      };
-      const { data: result, error } = yield import_db3.supabase.from("renders").insert(renderData).select().single();
-      if (error) throw error;
-      const queue = getRenderQueue();
-      yield queue.add("process-render", {
-        renderId: result.id,
-        projectId,
-        sceneId: "default",
-        // TODO: Add scene support
-        userId: options.userId,
-        organizationId: options.organizationId,
-        subscriptionTier: plan.tier || "starter",
-        sourceImageUrl: "",
-        // TODO: Add source image support
-        prompt: {
-          system: `Style: ${options.style || "default"}, Quality: ${options.quality}`,
-          user: options.prompt || "Generate landscape design"
-        },
-        annotations: [],
-        settings: {
-          provider: "openai-gpt-image",
-          // Default provider
-          resolution: "1024x1024",
-          // TODO: Map from width/height
-          format: options.format.toUpperCase(),
-          quality: options.quality === "ultra" ? 100 : options.quality === "high" ? 90 : 80
-        }
-      });
+    });
+    return {
+      id: result.id,
+      projectId: result.project_id,
+      status: result.status,
+      options,
+      createdAt: result.created_at,
+      creditsUsed: result.credits_used
+    };
+  }
+  async getRenderStatus(jobId) {
+    const { data: result, error } = await import_db3.supabase.from("renders").select("status").eq("id", jobId).single();
+    if (error) throw new Error("Render job not found");
+    return result.status;
+  }
+  async cancelRender(jobId) {
+    const { error } = await import_db3.supabase.from("renders").update({
+      status: "cancelled",
+      updated_at: /* @__PURE__ */ new Date()
+    }).eq("id", jobId).in("status", ["pending", "processing"]);
+    if (error) throw error;
+  }
+  async getRenderHistory(projectId) {
+    const { data: results, error } = await import_db3.supabase.from("renders").select("*").eq("project_id", projectId).order("created_at", { ascending: false });
+    if (error) throw error;
+    return (results || []).map((render) => {
+      var _a, _b, _c;
       return {
-        id: result.id,
-        projectId: result.project_id,
-        status: result.status,
-        options,
-        createdAt: result.created_at,
-        creditsUsed: result.credits_used
+        id: render.id,
+        projectId: render.project_id,
+        status: render.status,
+        options: {
+          quality: render.quality,
+          format: ((_a = render.metadata) == null ? void 0 : _a.format) || "png",
+          width: ((_b = render.metadata) == null ? void 0 : _b.width) || 1920,
+          height: ((_c = render.metadata) == null ? void 0 : _c.height) || 1080,
+          prompt: render.prompt,
+          style: render.style,
+          userId: render.user_id,
+          organizationId: render.organization_id
+        },
+        createdAt: render.created_at,
+        completedAt: render.completed_at || void 0,
+        outputUrl: render.output_url || void 0,
+        error: render.error_message || void 0,
+        creditsUsed: render.credits_used
       };
     });
   }
-  getRenderStatus(jobId) {
-    return __async(this, null, function* () {
-      const { data: result, error } = yield import_db3.supabase.from("renders").select("status").eq("id", jobId).single();
-      if (error) throw new Error("Render job not found");
-      return result.status;
-    });
-  }
-  cancelRender(jobId) {
-    return __async(this, null, function* () {
-      const { error } = yield import_db3.supabase.from("renders").update({
-        status: "cancelled",
-        updated_at: /* @__PURE__ */ new Date()
-      }).eq("id", jobId).in("status", ["pending", "processing"]);
-      if (error) throw error;
-    });
-  }
-  getRenderHistory(projectId) {
-    return __async(this, null, function* () {
-      const { data: results, error } = yield import_db3.supabase.from("renders").select("*").eq("project_id", projectId).order("created_at", { ascending: false });
-      if (error) throw error;
-      return (results || []).map((render) => {
-        var _a, _b, _c;
-        return {
-          id: render.id,
-          projectId: render.project_id,
-          status: render.status,
-          options: {
-            quality: render.quality,
-            format: ((_a = render.metadata) == null ? void 0 : _a.format) || "png",
-            width: ((_b = render.metadata) == null ? void 0 : _b.width) || 1920,
-            height: ((_c = render.metadata) == null ? void 0 : _c.height) || 1080,
-            prompt: render.prompt,
-            style: render.style,
-            userId: render.user_id,
-            organizationId: render.organization_id
-          },
-          createdAt: render.created_at,
-          completedAt: render.completed_at || void 0,
-          outputUrl: render.output_url || void 0,
-          error: render.error_message || void 0,
-          creditsUsed: render.credits_used
-        };
-      });
-    });
-  }
-  getCreditsUsage(organizationId, period) {
-    return __async(this, null, function* () {
-      const { data: renders } = yield import_db3.supabase.from("renders").select("*, projects(name)").eq("organization_id", organizationId).gte("created_at", period.start.toISOString()).lte("created_at", period.end.toISOString()).in("status", ["completed", "processing"]);
-      const total = (renders == null ? void 0 : renders.reduce((sum, render) => sum + (render.credits_used || 0), 0)) || 0;
-      const byQuality = (renders == null ? void 0 : renders.reduce((acc, render) => {
-        const quality = render.quality || "standard";
-        acc[quality] = (acc[quality] || 0) + (render.credits_used || 0);
-        return acc;
-      }, {})) || {};
-      const projectMap = /* @__PURE__ */ new Map();
-      renders == null ? void 0 : renders.forEach((render) => {
-        var _a;
-        const existing = projectMap.get(render.project_id) || {
-          name: ((_a = render.projects) == null ? void 0 : _a.name) || "Unknown Project",
-          credits: 0
-        };
-        existing.credits += render.credits_used || 0;
-        projectMap.set(render.project_id, existing);
-      });
-      const byProject = Array.from(projectMap.entries()).map(([projectId, data]) => ({
-        projectId,
-        projectName: data.name,
-        credits: data.credits
-      })).sort((a, b) => b.credits - a.credits);
-      const dailyMap = /* @__PURE__ */ new Map();
-      renders == null ? void 0 : renders.forEach((render) => {
-        const date = new Date(render.created_at).toISOString().split("T")[0];
-        dailyMap.set(date, (dailyMap.get(date) || 0) + (render.credits_used || 0));
-      });
-      const dailyUsage = Array.from(dailyMap.entries()).map(([date, credits]) => ({ date, credits })).sort((a, b) => a.date.localeCompare(b.date));
-      return {
-        total,
-        byQuality,
-        byProject,
-        dailyUsage
+  async getCreditsUsage(organizationId, period) {
+    const { data: renders } = await import_db3.supabase.from("renders").select("*, projects(name)").eq("organization_id", organizationId).gte("created_at", period.start.toISOString()).lte("created_at", period.end.toISOString()).in("status", ["completed", "processing"]);
+    const total = (renders == null ? void 0 : renders.reduce((sum, render) => sum + (render.credits_used || 0), 0)) || 0;
+    const byQuality = (renders == null ? void 0 : renders.reduce((acc, render) => {
+      const quality = render.quality || "standard";
+      acc[quality] = (acc[quality] || 0) + (render.credits_used || 0);
+      return acc;
+    }, {})) || {};
+    const projectMap = /* @__PURE__ */ new Map();
+    renders == null ? void 0 : renders.forEach((render) => {
+      var _a;
+      const existing = projectMap.get(render.project_id) || {
+        name: ((_a = render.projects) == null ? void 0 : _a.name) || "Unknown Project",
+        credits: 0
       };
+      existing.credits += render.credits_used || 0;
+      projectMap.set(render.project_id, existing);
     });
+    const byProject = Array.from(projectMap.entries()).map(([projectId, data]) => ({
+      projectId,
+      projectName: data.name,
+      credits: data.credits
+    })).sort((a, b) => b.credits - a.credits);
+    const dailyMap = /* @__PURE__ */ new Map();
+    renders == null ? void 0 : renders.forEach((render) => {
+      const date = new Date(render.created_at).toISOString().split("T")[0];
+      dailyMap.set(date, (dailyMap.get(date) || 0) + (render.credits_used || 0));
+    });
+    const dailyUsage = Array.from(dailyMap.entries()).map(([date, credits]) => ({ date, credits })).sort((a, b) => a.date.localeCompare(b.date));
+    return {
+      total,
+      byQuality,
+      byProject,
+      dailyUsage
+    };
   }
-  estimateCredits(params) {
-    return __async(this, null, function* () {
-      let credits = this.creditCosts[params.quality] || 1;
-      const [width, height] = params.resolution.split("x").map(Number);
-      const pixels = width * height;
-      if (pixels > 3840 * 2160) {
-        credits *= 2;
-      } else if (pixels > 2560 * 1440) {
-        credits *= 1.5;
-      }
-      if (params.style && ["photorealistic", "hyperrealistic"].includes(params.style.toLowerCase())) {
-        credits *= 1.5;
-      }
-      return Math.ceil(credits);
-    });
+  async estimateCredits(params) {
+    let credits = this.creditCosts[params.quality] || 1;
+    const [width, height] = params.resolution.split("x").map(Number);
+    const pixels = width * height;
+    if (pixels > 3840 * 2160) {
+      credits *= 2;
+    } else if (pixels > 2560 * 1440) {
+      credits *= 1.5;
+    }
+    if (params.style && ["photorealistic", "hyperrealistic"].includes(params.style.toLowerCase())) {
+      credits *= 1.5;
+    }
+    return Math.ceil(credits);
   }
 };
 var renderService = new RenderServiceImpl();
@@ -36061,93 +35693,77 @@ var renderService = new RenderServiceImpl();
 // src/team.service.ts
 var import_db4 = require("@terrashaper/db");
 var TeamServiceImpl = class {
-  createTeam(data) {
-    return __async(this, null, function* () {
-      const { data: team, error } = yield import_db4.supabase.from("teams").insert(__spreadProps(__spreadValues({}, data), {
-        created_at: /* @__PURE__ */ new Date(),
-        updated_at: /* @__PURE__ */ new Date()
-      })).select().single();
-      if (error) throw error;
-      return team;
-    });
+  async createTeam(data) {
+    const { data: team, error } = await import_db4.supabase.from("teams").insert(__spreadProps(__spreadValues({}, data), {
+      created_at: /* @__PURE__ */ new Date(),
+      updated_at: /* @__PURE__ */ new Date()
+    })).select().single();
+    if (error) throw error;
+    return team;
   }
-  findTeamById(id) {
-    return __async(this, null, function* () {
-      const { data: team, error } = yield import_db4.supabase.from("teams").select("*").eq("id", id).single();
-      if (error && error.code !== "PGRST116") throw error;
-      return team;
-    });
+  async findTeamById(id) {
+    const { data: team, error } = await import_db4.supabase.from("teams").select("*").eq("id", id).single();
+    if (error && error.code !== "PGRST116") throw error;
+    return team;
   }
-  updateTeam(id, data) {
-    return __async(this, null, function* () {
-      const { data: team, error } = yield import_db4.supabase.from("teams").update(__spreadProps(__spreadValues({}, data), {
-        updated_at: /* @__PURE__ */ new Date()
-      })).eq("id", id).select().single();
-      if (error) throw error;
-      return team;
-    });
+  async updateTeam(id, data) {
+    const { data: team, error } = await import_db4.supabase.from("teams").update(__spreadProps(__spreadValues({}, data), {
+      updated_at: /* @__PURE__ */ new Date()
+    })).eq("id", id).select().single();
+    if (error) throw error;
+    return team;
   }
-  deleteTeam(id) {
-    return __async(this, null, function* () {
-      const { error } = yield import_db4.supabase.from("teams").delete().eq("id", id);
-      if (error) throw error;
-    });
+  async deleteTeam(id) {
+    const { error } = await import_db4.supabase.from("teams").delete().eq("id", id);
+    if (error) throw error;
   }
-  addMember(teamId, userId, role) {
-    return __async(this, null, function* () {
-      const { data: member, error } = yield import_db4.supabase.from("team_members").insert({
-        team_id: teamId,
-        user_id: userId,
-        role,
-        joined_at: /* @__PURE__ */ new Date()
-      }).select().single();
-      if (error) throw error;
-      return {
-        id: member.id,
-        userId: member.user_id,
-        teamId: member.team_id,
-        role: member.role,
-        joinedAt: member.joined_at
-      };
-    });
+  async addMember(teamId, userId, role) {
+    const { data: member, error } = await import_db4.supabase.from("team_members").insert({
+      team_id: teamId,
+      user_id: userId,
+      role,
+      joined_at: /* @__PURE__ */ new Date()
+    }).select().single();
+    if (error) throw error;
+    return {
+      id: member.id,
+      userId: member.user_id,
+      teamId: member.team_id,
+      role: member.role,
+      joinedAt: member.joined_at
+    };
   }
-  removeMember(teamId, userId) {
-    return __async(this, null, function* () {
-      const { error } = yield import_db4.supabase.from("team_members").delete().eq("team_id", teamId).eq("user_id", userId);
-      if (error) throw error;
-    });
+  async removeMember(teamId, userId) {
+    const { error } = await import_db4.supabase.from("team_members").delete().eq("team_id", teamId).eq("user_id", userId);
+    if (error) throw error;
   }
-  updateMemberRole(teamId, userId, role) {
-    return __async(this, null, function* () {
-      const { data: member, error } = yield import_db4.supabase.from("team_members").update({ role }).eq("team_id", teamId).eq("user_id", userId).select().single();
-      if (error) throw error;
-      return {
-        id: member.id,
-        userId: member.user_id,
-        teamId: member.team_id,
-        role: member.role,
-        joinedAt: member.joined_at
-      };
-    });
+  async updateMemberRole(teamId, userId, role) {
+    const { data: member, error } = await import_db4.supabase.from("team_members").update({ role }).eq("team_id", teamId).eq("user_id", userId).select().single();
+    if (error) throw error;
+    return {
+      id: member.id,
+      userId: member.user_id,
+      teamId: member.team_id,
+      role: member.role,
+      joinedAt: member.joined_at
+    };
   }
-  getTeamMembers(teamId) {
-    return __async(this, null, function* () {
-      const { data: members, error } = yield import_db4.supabase.from("team_members").select("*, users(id, email, name, avatar_url)").eq("team_id", teamId).order("joined_at", { ascending: false });
-      if (error) throw error;
-      return (members || []).map((member) => ({
-        id: member.id,
-        userId: member.user_id,
-        teamId: member.team_id,
-        role: member.role,
-        joinedAt: member.joined_at,
-        user: member.users ? {
-          id: member.users.id,
-          email: member.users.email,
-          name: member.users.name,
-          avatar: member.users.avatar_url
-        } : void 0
-      }));
-    });
+  async getTeamMembers(teamId) {
+    const { data: members, error } = await import_db4.supabase.from("team_members").select("*, users(id, email, name, avatar_url)").eq("team_id", teamId).order("joined_at", { ascending: false });
+    if (error) throw error;
+    return (members || []).map((member) => ({
+      id: member.id,
+      userId: member.user_id,
+      teamId: member.team_id,
+      role: member.role,
+      joinedAt: member.joined_at,
+      user: member.users ? {
+        id: member.users.id,
+        email: member.users.email,
+        name: member.users.name,
+        avatar: member.users.avatar_url
+      } : void 0
+    }));
   }
 };
 var teamService = new TeamServiceImpl();

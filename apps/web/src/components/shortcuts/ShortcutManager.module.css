@@ -1,0 +1,116 @@
+.shortcutManager {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 20px;
+  max-height: 80vh;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 800px;
+}
+
+.categories {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.category {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 16px;
+}
+
+.category:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.category h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.shortcuts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.shortcutItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.shortcutItem:hover {
+  background: var(--color-surface-hover);
+}
+
+.shortcutInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.shortcutIcon {
+  font-size: 16px;
+  line-height: 1;
+  min-width: 20px;
+  text-align: center;
+}
+
+.shortcutDescription {
+  font-size: 13px;
+  color: var(--color-text);
+}
+
+.shortcutKey {
+  font-size: 12px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  min-width: 80px;
+  text-align: center;
+}
+
+/* Responsive design */
+@media (min-width: 768px) {
+  .shortcuts {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 4px 16px;
+  }
+}
+
+/* Color variables */
+.shortcutManager {
+  --color-background: #fff;
+  --color-surface: #f8f9fa;
+  --color-surface-hover: #e9ecef;
+  --color-border: #dee2e6;
+  --color-text: #212529;
+  --color-text-secondary: #6c757d;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .shortcutManager {
+    --color-background: #1a1a1a;
+    --color-surface: #2a2a2a;
+    --color-surface-hover: #3a3a3a;
+    --color-border: #333;
+    --color-text: #fff;
+    --color-text-secondary: #ccc;
+  }
+}

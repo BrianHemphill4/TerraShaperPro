@@ -4,17 +4,7 @@ export declare const router: import("@trpc/server").TRPCRouterBuilder<{
         supabase: import("./context").SupabaseClient;
     };
     meta: object;
-    errorShape: {
-        data: {
-            zodError: import("zod").typeToFlattenedError<any, string> | null;
-            code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-            httpStatus: number;
-            path?: string;
-            stack?: string;
-        };
-        message: string;
-        code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-    };
+    errorShape: import("@trpc/server").TRPCDefaultErrorShape;
     transformer: false;
 }>;
 export declare const publicProcedure: import("@trpc/server").TRPCProcedureBuilder<{

@@ -3,7 +3,7 @@
 import type { fabric } from 'fabric';
 import { useCallback, useState } from 'react';
 
-import { toast } from '@terrashaper/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 import styles from './ExportPanel.module.css';
 

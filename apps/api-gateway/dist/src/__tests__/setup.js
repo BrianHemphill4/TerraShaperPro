@@ -6,6 +6,8 @@ process.env.NODE_ENV = 'test';
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
 process.env.SUPABASE_URL = 'http://localhost:54321';
 process.env.SUPABASE_ANON_KEY = 'test-anon-key';
+process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://localhost:54321';
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 process.env.REDIS_URL = 'redis://localhost:6379';
 process.env.STRIPE_SECRET_KEY = 'sk_test_123';
 process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_123';
@@ -91,8 +93,8 @@ vitest_1.vi.mock('@terrashaper/queue', () => ({
     },
 }));
 // Mock ioredis to prevent connection attempts
-vitest_1.vi.mock('ioredis', () => ({
-    default: vitest_1.vi.fn().mockImplementation(() => ({
+vitest_1.vi.mock('ioredis', () => {
+    const mockRedis = vitest_1.vi.fn().mockImplementation(() => ({
         connect: vitest_1.vi.fn(),
         disconnect: vitest_1.vi.fn(),
         on: vitest_1.vi.fn(),
@@ -105,8 +107,12 @@ vitest_1.vi.mock('ioredis', () => ({
         zadd: vitest_1.vi.fn().mockResolvedValue(1),
         expire: vitest_1.vi.fn().mockResolvedValue(1),
         del: vitest_1.vi.fn().mockResolvedValue(1),
-    })),
-}));
+    }));
+    return {
+        default: mockRedis,
+        Redis: mockRedis,
+    };
+});
 // Mock storage
 vitest_1.vi.mock('@terrashaper/storage', () => ({
     StorageService: vitest_1.vi.fn().mockImplementation(() => ({
@@ -143,6 +149,16 @@ vitest_1.vi.mock('@terrashaper/stripe', () => ({
 }));
 // Mock the metrics module
 vitest_1.vi.mock('../lib/metrics', () => ({
+    apiMetrics: {
+        recordTrpcCall: vitest_1.vi.fn(),
+        recordHttpRequest: vitest_1.vi.fn(),
+        recordDatabaseQuery: vitest_1.vi.fn(),
+        recordCacheOperation: vitest_1.vi.fn(),
+        recordApiCall: vitest_1.vi.fn(),
+        recordBusinessMetric: vitest_1.vi.fn(),
+        flushMetrics: vitest_1.vi.fn(),
+        destroy: vitest_1.vi.fn(),
+    },
     ApiMetrics: {
         getInstance: vitest_1.vi.fn(() => ({
             recordHttpRequest: vitest_1.vi.fn(),
@@ -150,11 +166,103 @@ vitest_1.vi.mock('../lib/metrics', () => ({
             recordCacheOperation: vitest_1.vi.fn(),
             recordApiCall: vitest_1.vi.fn(),
             recordBusinessMetric: vitest_1.vi.fn(),
+            recordTrpcCall: vitest_1.vi.fn(),
             flushMetrics: vitest_1.vi.fn(),
             destroy: vitest_1.vi.fn(),
         })),
     },
     metricsMiddleware: vitest_1.vi.fn(() => (req, res, next) => next()),
+}));
+// Mock shared services
+vitest_1.vi.mock('@terrashaper/shared', () => ({
+    sceneService: {
+        createScene: vitest_1.vi.fn(),
+        updateScene: vitest_1.vi.fn(),
+        deleteScene: vitest_1.vi.fn(),
+        getSceneById: vitest_1.vi.fn(),
+        getScenesByProject: vitest_1.vi.fn(),
+        reorderScenes: vitest_1.vi.fn(),
+    },
+    maskService: {
+        saveMasks: vitest_1.vi.fn(),
+        getMasksByScene: vitest_1.vi.fn(),
+        getMaskHistory: vitest_1.vi.fn(),
+        exportMasks: vitest_1.vi.fn(),
+    },
+    quotaService: {
+        checkQuota: vitest_1.vi.fn(),
+        incrementUsage: vitest_1.vi.fn(),
+        resetQuota: vitest_1.vi.fn(),
+    },
+}));
+// Enhanced storage mock  
+vitest_1.vi.mock('@terrashaper/storage', () => ({
+    StorageService: vitest_1.vi.fn().mockImplementation(() => ({
+        uploadFile: vitest_1.vi.fn().mockResolvedValue({
+            url: 'https://storage.test/file.png',
+            key: 'test-key',
+            size: 1024,
+        }),
+        deleteFile: vitest_1.vi.fn().mockResolvedValue(undefined),
+        getSignedUrl: vitest_1.vi.fn().mockResolvedValue('https://storage.test/signed-url'),
+        getUsage: vitest_1.vi.fn().mockResolvedValue({
+            used: 100,
+            total: 1000,
+            remaining: 900,
+        }),
+    })),
+    storageService: {
+        uploadFile: vitest_1.vi.fn().mockResolvedValue({
+            url: 'https://storage.test/file.png',
+            key: 'test-key',
+            size: 1024,
+        }),
+        deleteFile: vitest_1.vi.fn().mockResolvedValue(undefined),
+        getSignedUrl: vitest_1.vi.fn().mockResolvedValue('https://storage.test/signed-url'),
+        getUsage: vitest_1.vi.fn().mockResolvedValue({
+            used: 100,
+            total: 1000,
+            remaining: 900,
+        }),
+    },
+}));
+// Enhanced Stripe mock
+vitest_1.vi.mock('@terrashaper/stripe', () => ({
+    CustomerService: vitest_1.vi.fn().mockImplementation(() => ({
+        createCustomer: vitest_1.vi.fn().mockResolvedValue({ id: 'cus_test' }),
+        getCustomer: vitest_1.vi.fn().mockResolvedValue({ id: 'cus_test' }),
+    })),
+    SubscriptionService: vitest_1.vi.fn().mockImplementation(() => ({
+        createSubscription: vitest_1.vi.fn().mockResolvedValue({ id: 'sub_test' }),
+        getSubscription: vitest_1.vi.fn().mockResolvedValue({ id: 'sub_test' }),
+        updateSubscription: vitest_1.vi.fn().mockResolvedValue({ id: 'sub_test' }),
+        cancelSubscription: vitest_1.vi.fn().mockResolvedValue({ id: 'sub_test' }),
+        getCurrentPlan: vitest_1.vi.fn().mockResolvedValue({
+            maxProjects: 10,
+            maxTeamMembers: 5,
+            renderCreditsMonthly: 100,
+        }),
+    })),
+    subscriptionService: {
+        createSubscription: vitest_1.vi.fn().mockResolvedValue({ id: 'sub_test' }),
+        getSubscription: vitest_1.vi.fn().mockResolvedValue({ id: 'sub_test' }),
+        updateSubscription: vitest_1.vi.fn().mockResolvedValue({ id: 'sub_test' }),
+        cancelSubscription: vitest_1.vi.fn().mockResolvedValue({ id: 'sub_test' }),
+        getCurrentPlan: vitest_1.vi.fn().mockResolvedValue({
+            maxProjects: 10,
+            maxTeamMembers: 5,
+            renderCreditsMonthly: 100,
+        }),
+    },
+    PaymentService: vitest_1.vi.fn().mockImplementation(() => ({
+        createPaymentIntent: vitest_1.vi.fn().mockResolvedValue({ id: 'pi_test' }),
+    })),
+    InvoiceService: vitest_1.vi.fn().mockImplementation(() => ({
+        listInvoices: vitest_1.vi.fn().mockResolvedValue([]),
+    })),
+    PortalService: vitest_1.vi.fn().mockImplementation(() => ({
+        createSession: vitest_1.vi.fn().mockResolvedValue({ url: 'https://billing.stripe.com/test' }),
+    })),
 }));
 (0, vitest_1.afterAll)(() => {
     // Clear all timers

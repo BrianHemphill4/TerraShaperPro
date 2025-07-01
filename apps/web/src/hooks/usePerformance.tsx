@@ -21,7 +21,7 @@ export function usePerformanceMonitor() {
   }, []);
 
   const measure = useCallback(
-    <T>(name: string, fn: () => T): T => {
+    <T,>(name: string, fn: () => T): T => {
       const start = performance.now();
       const result = fn();
       const end = performance.now();
@@ -33,7 +33,7 @@ export function usePerformanceMonitor() {
   );
 
   const measureAsync = useCallback(
-    async <T>(name: string, fn: () => Promise<T>): Promise<T> => {
+    async <T,>(name: string, fn: () => Promise<T>): Promise<T> => {
       const start = performance.now();
       const result = await fn();
       const end = performance.now();
@@ -194,7 +194,7 @@ export function useClientCache<T>(key: string, ttl = 300000) {
   }, [key]);
 
   const fetchWithCache = useCallback(
-    async <R>(fetchFn: () => Promise<R>, customTtl?: number): Promise<R> => {
+    async <R,>(fetchFn: () => Promise<R>, customTtl?: number): Promise<R> => {
       const cached = get() as R | null;
       if (cached) return cached;
 

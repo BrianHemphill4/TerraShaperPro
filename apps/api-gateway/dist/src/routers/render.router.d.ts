@@ -1,54 +1,43 @@
-import { z } from 'zod';
 export declare const renderRouter: import("@trpc/server").TRPCBuiltRouter<{
     ctx: {
         session: import("../context").Session;
         supabase: import("../context").SupabaseClient;
     };
     meta: object;
-    errorShape: {
-        data: {
-            zodError: z.typeToFlattenedError<any, string> | null;
-            code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-            httpStatus: number;
-            path?: string;
-            stack?: string;
-        };
-        message: string;
-        code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-    };
+    errorShape: import("@trpc/server").TRPCDefaultErrorShape;
     transformer: false;
 }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
     create: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            projectId: string;
-            sceneId: string;
-            sourceImageUrl: string;
-            prompt: {
-                user: string;
-                system: string;
+            projectId?: string;
+            sceneId?: string;
+            sourceImageUrl?: string;
+            maskImageUrl?: string;
+            prompt?: {
+                system?: string;
+                user?: string;
             };
-            annotations: {
-                type: "mask" | "assetInstance" | "textLabel";
+            annotations?: {
+                type?: "mask" | "assetInstance" | "textLabel";
                 data?: any;
             }[];
-            settings: {
-                resolution: "1024x1024" | "2048x2048" | "4096x4096";
-                provider: "google-imagen" | "openai-gpt-image";
-                format?: "PNG" | "JPEG" | undefined;
-                quality?: number | undefined;
+            settings?: {
+                provider?: "google-imagen" | "openai-gpt-image";
+                resolution?: "1024x1024" | "2048x2048" | "4096x4096";
+                format?: "PNG" | "JPEG";
+                quality?: number;
             };
-            maskImageUrl?: string | undefined;
         };
         output: {
             renderId: string;
-            jobId: string | undefined;
+            jobId: string;
             status: string;
         };
         meta: object;
     }>;
     status: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            renderId: string;
+            renderId?: string;
         };
         output: {
             renderId: any;
@@ -63,7 +52,7 @@ export declare const renderRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     subscribe: import("@trpc/server/dist/unstable-core-do-not-import.d-CSxj_rbP.cjs").LegacyObservableSubscriptionProcedure<{
         input: {
-            renderId: string;
+            renderId?: string;
         };
         output: {
             type: "progress" | "completed" | "failed" | "ping";
@@ -88,11 +77,11 @@ export declare const renderRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     retry: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            renderId: string;
+            renderId?: string;
         };
         output: {
             renderId: string;
-            jobId: string | undefined;
+            jobId: string;
             status: string;
         };
         meta: object;

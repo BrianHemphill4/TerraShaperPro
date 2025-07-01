@@ -1,27 +1,16 @@
-import { z } from 'zod';
 export declare const teamRouter: import("@trpc/server").TRPCBuiltRouter<{
     ctx: {
         session: import("../context").Session;
         supabase: import("../context").SupabaseClient;
     };
     meta: object;
-    errorShape: {
-        data: {
-            zodError: z.typeToFlattenedError<any, string> | null;
-            code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-            httpStatus: number;
-            path?: string;
-            stack?: string;
-        };
-        message: string;
-        code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-    };
+    errorShape: import("@trpc/server").TRPCDefaultErrorShape;
     transformer: false;
 }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
     listMembers: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            limit?: number | undefined;
-            offset?: number | undefined;
+            limit?: number;
+            offset?: number;
         };
         output: {
             members: any;
@@ -34,15 +23,15 @@ export declare const teamRouter: import("@trpc/server").TRPCBuiltRouter<{
     createInvitation: import("@trpc/server").TRPCMutationProcedure<{
         input: {
             email: string;
-            role: "member" | "owner" | "admin" | "designer" | "viewer";
+            role: "admin" | "member" | "owner" | "designer" | "viewer";
         };
         output: any;
         meta: object;
     }>;
     listInvitations: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            limit?: number | undefined;
-            offset?: number | undefined;
+            limit?: number;
+            offset?: number;
         };
         output: {
             invitations: any;
@@ -53,7 +42,7 @@ export declare const teamRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     cancelInvitation: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            invitationId: string;
+            invitationId?: string;
         };
         output: {
             success: boolean;
@@ -62,7 +51,7 @@ export declare const teamRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     updateUserRole: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            role: "member" | "owner" | "admin" | "designer" | "viewer";
+            role: "admin" | "member" | "owner" | "designer" | "viewer";
             userId: string;
         };
         output: any;
@@ -70,7 +59,7 @@ export declare const teamRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     removeUser: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            userId: string;
+            userId?: string;
         };
         output: {
             success: boolean;
@@ -79,10 +68,10 @@ export declare const teamRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     getActivityLogs: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            userId?: string | undefined;
-            limit?: number | undefined;
-            offset?: number | undefined;
-            action?: string | undefined;
+            limit?: number;
+            offset?: number;
+            userId?: string;
+            action?: string;
         };
         output: {
             logs: any;

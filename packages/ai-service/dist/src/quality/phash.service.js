@@ -1,64 +1,54 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-import { Buffer } from 'node:buffer';
-import { promisify } from 'node:util';
-import { imageHash } from 'image-hash';
-import sharp from 'sharp';
-const getImageHash = promisify(imageHash);
-export class PerceptualHashService {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PerceptualHashService = void 0;
+const node_buffer_1 = require("node:buffer");
+const node_util_1 = require("node:util");
+const image_hash_1 = require("image-hash");
+const sharp_1 = __importDefault(require("sharp"));
+const getImageHash = (0, node_util_1.promisify)(image_hash_1.imageHash);
+class PerceptualHashService {
+    hashCache;
     constructor() {
         this.hashCache = new Map();
     }
-    generateHash(imageData) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = typeof imageData === 'string' ? Buffer.from(imageData, 'base64') : imageData;
-            // Use image-hash library for better perceptual hashing
-            const hash = (yield getImageHash({
-                data,
-                ext: 'png',
-            }, 16, true));
-            return hash;
-        });
+    async generateHash(imageData) {
+        const data = typeof imageData === 'string' ? node_buffer_1.Buffer.from(imageData, 'base64') : imageData;
+        // Use image-hash library for better perceptual hashing
+        const hash = (await getImageHash({
+            data,
+            ext: 'png',
+        }, 16, true));
+        return hash;
     }
-    compareHashes(hash1, hash2) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (hash1.length !== hash2.length) {
-                throw new Error('Hash lengths must be equal');
+    async compareHashes(hash1, hash2) {
+        if (hash1.length !== hash2.length) {
+            throw new Error('Hash lengths must be equal');
+        }
+        let distance = 0;
+        for (let i = 0; i < hash1.length; i++) {
+            if (hash1[i] !== hash2[i]) {
+                distance++;
             }
-            let distance = 0;
-            for (let i = 0; i < hash1.length; i++) {
-                if (hash1[i] !== hash2[i]) {
-                    distance++;
-                }
-            }
-            // Calculate similarity as percentage
-            const similarity = 1 - distance / (hash1.length * 4); // 4 bits per hex char
-            return similarity;
-        });
+        }
+        // Calculate similarity as percentage
+        const similarity = 1 - distance / (hash1.length * 4); // 4 bits per hex char
+        return similarity;
     }
-    isDuplicate(hash1_1, hash2_1) {
-        return __awaiter(this, arguments, void 0, function* (hash1, hash2, threshold = 0.95) {
-            const similarity = yield this.compareHashes(hash1, hash2);
-            return similarity >= threshold;
-        });
+    async isDuplicate(hash1, hash2, threshold = 0.95) {
+        const similarity = await this.compareHashes(hash1, hash2);
+        return similarity >= threshold;
     }
-    simplifyImage(imageData) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Resize image to 32x32 for DCT calculation
-            const resized = yield sharp(imageData)
-                .resize(32, 32, { fit: 'fill' })
-                .greyscale()
-                .raw()
-                .toBuffer();
-            return resized;
-        });
+    async simplifyImage(imageData) {
+        // Resize image to 32x32 for DCT calculation
+        const resized = await (0, sharp_1.default)(imageData)
+            .resize(32, 32, { fit: 'fill' })
+            .greyscale()
+            .raw()
+            .toBuffer();
+        return resized;
     }
     discreteCosineTransform(matrix) {
         const size = matrix.length;
@@ -115,3 +105,4 @@ export class PerceptualHashService {
         this.hashCache.clear();
     }
 }
+exports.PerceptualHashService = PerceptualHashService;

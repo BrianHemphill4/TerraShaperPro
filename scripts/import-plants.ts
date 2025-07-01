@@ -2,9 +2,19 @@ import { createAdminClient } from '@terrashaper/db';
 import { parse } from 'csv-parse';
 import { promises as fs } from 'fs';
 import path from 'path';
-import sharp from 'sharp';
 import { Storage } from '@google-cloud/storage';
 import * as dotenv from 'dotenv';
+import {
+  type PlantRecord,
+  extractDominantColor,
+  generateThumbnail,
+  generateWebPImage,
+  generateJPEGFallback,
+  processPlantRecord,
+  validateImageFile,
+  cleanupTempFiles,
+  ensureDirectory,
+} from './utils/plant-processing';
 
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '../.env') });
@@ -17,70 +27,6 @@ const storage = new Storage({
 });
 
 const bucket = storage.bucket(process.env.GCS_BUCKET_NAME!);
-
-interface PlantRecord {
-  ref: string;
-  p1: string;
-  underscore: string;
-  speciesName: string;
-  commonName: string;
-  nicknames: string;
-  sunPreference: string;
-  maintenanceLevel: string;
-  droughtResistant: string;
-  diseaseRisk: string;
-  avgLifespan: string;
-  nickname: string;
-  plantType: string;
-}
-
-// Parse sun requirements
-function parseSunRequirements(sunPref: string): string {
-  const lower = sunPref.toLowerCase();
-  if (lower.includes('full sun')) return 'full_sun';
-  if (lower.includes('partial')) return 'partial_sun';
-  if (lower.includes('shade')) return 'shade';
-  return 'full_sun';
-}
-
-// Parse water needs based on drought resistance
-function parseWaterNeeds(droughtLevel: string): string {
-  const level = parseInt(droughtLevel) || 3;
-  if (level >= 4) return 'low';
-  if (level >= 2) return 'moderate';
-  return 'high';
-}
-
-// Parse USDA zones (Texas is primarily zones 6b-10a)
-function getTexasZones(plantType: string): string[] {
-  // Default Texas zones
-  return ['6b', '7a', '7b', '8a', '8b', '9a', '9b', '10a'];
-}
-
-// Extract dominant color from image
-async function extractDominantColor(imagePath: string): Promise<string> {
-  try {
-    const { dominant } = await sharp(imagePath)
-      .resize(50, 50)
-      .stats();
-    
-    return `#${dominant.r.toString(16).padStart(2, '0')}${dominant.g.toString(16).padStart(2, '0')}${dominant.b.toString(16).padStart(2, '0')}`;
-  } catch (error) {
-    console.error(`Error extracting color from ${imagePath}:`, error);
-    return '#4A5568'; // Default gray
-  }
-}
-
-// Generate WebP thumbnail
-async function generateThumbnail(inputPath: string, outputPath: string): Promise<void> {
-  await sharp(inputPath)
-    .resize(300, 300, {
-      fit: 'cover',
-      position: 'center',
-    })
-    .webp({ quality: 80 })
-    .toFile(outputPath);
-}
 
 // Upload image to GCS
 async function uploadImage(localPath: string, gcsPath: string): Promise<string> {
@@ -136,8 +82,13 @@ async function processPlants() {
 
   console.log(`Found ${records.length} plants to process`);
 
+  const tempDir = path.join(__dirname, '../temp');
+  await ensureDirectory(tempDir);
+
   // Process each plant
   for (const record of records) {
+    const tempFiles: string[] = [];
+    
     try {
       console.log(`Processing ${record.commonName}...`);
 
@@ -145,7 +96,7 @@ async function processPlants() {
       const imagePath = path.join(__dirname, '../Assets/Plant Images', imageFileName);
 
       // Check if image exists
-      const imageExists = await fs.access(imagePath).then(() => true).catch(() => false);
+      const imageExists = await validateImageFile(imagePath);
       
       if (!imageExists) {
         console.warn(`Image not found for ${record.commonName}: ${imageFileName}`);
@@ -153,15 +104,19 @@ async function processPlants() {
       }
 
       // Generate thumbnail
-      const thumbnailPath = path.join(__dirname, '../temp', `${record.underscore}_thumb.webp`);
-      await fs.mkdir(path.dirname(thumbnailPath), { recursive: true });
+      const thumbnailPath = path.join(tempDir, `${record.underscore}_thumb.webp`);
       await generateThumbnail(imagePath, thumbnailPath);
+      tempFiles.push(thumbnailPath);
 
       // Convert original to WebP
-      const webpPath = path.join(__dirname, '../temp', `${record.underscore}.webp`);
-      await sharp(imagePath)
-        .webp({ quality: 90 })
-        .toFile(webpPath);
+      const webpPath = path.join(tempDir, `${record.underscore}.webp`);
+      await generateWebPImage(imagePath, webpPath);
+      tempFiles.push(webpPath);
+
+      // Generate JPEG fallback
+      const jpegPath = path.join(tempDir, `${record.underscore}.jpg`);
+      await generateJPEGFallback(imagePath, jpegPath);
+      tempFiles.push(jpegPath);
 
       // Extract dominant color
       const dominantColor = await extractDominantColor(imagePath);
@@ -175,27 +130,13 @@ async function processPlants() {
         thumbnailPath,
         `plants/${record.underscore}_thumb.webp`
       );
+      const fallbackUrl = await uploadImage(
+        jpegPath,
+        `plants/${record.underscore}.jpg`
+      );
 
-      // Prepare plant data
-      const plantData = {
-        scientific_name: record.speciesName,
-        common_names: [record.commonName, ...record.nicknames.split(/[,-]/).filter(n => n.trim())],
-        usda_zones: getTexasZones(record.plantType),
-        water_needs: parseWaterNeeds(record.droughtResistant),
-        sun_requirements: parseSunRequirements(record.sunPreference),
-        mature_height_ft: null, // Not in CSV
-        mature_width_ft: null, // Not in CSV
-        growth_rate: 'moderate', // Default
-        texas_native: true, // Assuming all plants in DB are Texas-appropriate
-        drought_tolerant: parseInt(record.droughtResistant) >= 3,
-        image_url: imageUrl,
-        thumbnail_url: thumbnailUrl,
-        dominant_color: dominantColor,
-        description: `${record.commonName} is a ${record.plantType.toLowerCase()} suitable for Texas landscapes.`,
-        care_instructions: `Maintenance Level: ${record.maintenanceLevel}/5. Average lifespan: ${record.avgLifespan} years.`,
-        category: record.plantType,
-        tags: [record.plantType.toLowerCase(), 'texas', parseSunRequirements(record.sunPreference)],
-      };
+      // Process plant data using utility function
+      const plantData = processPlantRecord(record, imageUrl, thumbnailUrl, dominantColor);
 
       // Insert into database
       const { error } = await supabase
@@ -209,11 +150,12 @@ async function processPlants() {
       }
 
       // Clean up temp files
-      await fs.unlink(thumbnailPath);
-      await fs.unlink(webpPath);
+      await cleanupTempFiles(tempFiles);
 
     } catch (error) {
       console.error(`Error processing ${record.commonName}:`, error);
+      // Still try to clean up temp files on error
+      await cleanupTempFiles(tempFiles);
     }
   }
 

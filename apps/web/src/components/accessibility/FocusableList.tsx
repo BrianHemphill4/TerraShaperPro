@@ -1,6 +1,6 @@
 'use client';
 
-import { useArrowKeyNavigation } from '@terrashaper/hooks';
+import { useArrowKeyNavigation } from '@/hooks';
 import { useRef } from 'react';
 
 import { cn } from '@/lib/utils';

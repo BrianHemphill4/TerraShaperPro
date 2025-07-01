@@ -1,21 +1,10 @@
-import { z } from 'zod';
 export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
     ctx: {
         session: import("./context").Session;
         supabase: import("./context").SupabaseClient;
     };
     meta: object;
-    errorShape: {
-        data: {
-            zodError: z.typeToFlattenedError<any, string> | null;
-            code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-            httpStatus: number;
-            path?: string;
-            stack?: string;
-        };
-        message: string;
-        code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-    };
+    errorShape: import("@trpc/server").TRPCDefaultErrorShape;
     transformer: false;
 }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
     health: import("@trpc/server").TRPCBuiltRouter<{
@@ -24,17 +13,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
             supabase: import("./context").SupabaseClient;
         };
         meta: object;
-        errorShape: {
-            data: {
-                zodError: z.typeToFlattenedError<any, string> | null;
-                code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-                httpStatus: number;
-                path?: string;
-                stack?: string;
-            };
-            message: string;
-            code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-        };
+        errorShape: import("@trpc/server").TRPCDefaultErrorShape;
         transformer: false;
     }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
         healthz: import("@trpc/server").TRPCQueryProcedure<{
@@ -49,50 +28,40 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
             supabase: import("./context").SupabaseClient;
         };
         meta: object;
-        errorShape: {
-            data: {
-                zodError: z.typeToFlattenedError<any, string> | null;
-                code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-                httpStatus: number;
-                path?: string;
-                stack?: string;
-            };
-            message: string;
-            code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-        };
+        errorShape: import("@trpc/server").TRPCDefaultErrorShape;
         transformer: false;
     }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
         create: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                projectId: string;
-                sceneId: string;
-                sourceImageUrl: string;
-                prompt: {
-                    user: string;
-                    system: string;
+                projectId?: string;
+                sceneId?: string;
+                sourceImageUrl?: string;
+                maskImageUrl?: string;
+                prompt?: {
+                    system?: string;
+                    user?: string;
                 };
-                annotations: {
-                    type: "mask" | "assetInstance" | "textLabel";
+                annotations?: {
+                    type?: "mask" | "assetInstance" | "textLabel";
                     data?: any;
                 }[];
-                settings: {
-                    resolution: "1024x1024" | "2048x2048" | "4096x4096";
-                    provider: "google-imagen" | "openai-gpt-image";
-                    format?: "PNG" | "JPEG" | undefined;
-                    quality?: number | undefined;
+                settings?: {
+                    provider?: "google-imagen" | "openai-gpt-image";
+                    resolution?: "1024x1024" | "2048x2048" | "4096x4096";
+                    format?: "PNG" | "JPEG";
+                    quality?: number;
                 };
-                maskImageUrl?: string | undefined;
             };
             output: {
                 renderId: string;
-                jobId: string | undefined;
+                jobId: string;
                 status: string;
             };
             meta: object;
         }>;
         status: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                renderId: string;
+                renderId?: string;
             };
             output: {
                 renderId: any;
@@ -107,7 +76,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         subscribe: import("@trpc/server/dist/unstable-core-do-not-import.d-CSxj_rbP.cjs").LegacyObservableSubscriptionProcedure<{
             input: {
-                renderId: string;
+                renderId?: string;
             };
             output: {
                 type: "progress" | "completed" | "failed" | "ping";
@@ -132,11 +101,11 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         retry: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                renderId: string;
+                renderId?: string;
             };
             output: {
                 renderId: string;
-                jobId: string | undefined;
+                jobId: string;
                 status: string;
             };
             meta: object;
@@ -148,29 +117,19 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
             supabase: import("./context").SupabaseClient;
         };
         meta: object;
-        errorShape: {
-            data: {
-                zodError: z.typeToFlattenedError<any, string> | null;
-                code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-                httpStatus: number;
-                path?: string;
-                stack?: string;
-            };
-            message: string;
-            code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-        };
+        errorShape: import("@trpc/server").TRPCDefaultErrorShape;
         transformer: false;
     }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
         generateUploadUrl: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                fileName: string;
-                contentType: string;
-                bucketType: "renders" | "assets";
-                expiresInMinutes?: number | undefined;
+                fileName?: string;
+                contentType?: string;
+                bucketType?: "renders" | "assets";
+                expiresInMinutes?: number;
             };
             output: {
-                uploadUrl: string;
-                fileName: string;
+                uploadUrl: any;
+                fileName: any;
                 publicUrl: string;
                 expiresAt: Date;
             };
@@ -178,12 +137,12 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         generateDownloadUrl: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                fileName: string;
-                bucketType: "renders" | "assets";
-                expiresInMinutes?: number | undefined;
+                fileName?: string;
+                bucketType?: "renders" | "assets";
+                expiresInMinutes?: number;
             };
             output: {
-                downloadUrl: string;
+                downloadUrl: any;
                 fileName: string;
                 expiresAt: Date;
             };
@@ -191,34 +150,34 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         fileExists: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                fileName: string;
-                bucketType: "renders" | "assets";
+                fileName?: string;
+                bucketType?: "renders" | "assets";
             };
             output: {
-                exists: boolean;
+                exists: any;
                 fileName: string;
             };
             meta: object;
         }>;
         getFileMetadata: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                fileName: string;
-                bucketType: "renders" | "assets";
+                fileName?: string;
+                bucketType?: "renders" | "assets";
             };
             output: {
                 fileName: string;
-                size: string | number | undefined;
-                contentType: string | undefined;
-                created: string | undefined;
-                updated: string | undefined;
-                etag: string | undefined;
+                size: any;
+                contentType: any;
+                created: any;
+                updated: any;
+                etag: any;
             };
             meta: object;
         }>;
         deleteFile: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                fileName: string;
-                bucketType: "renders" | "assets";
+                fileName?: string;
+                bucketType?: "renders" | "assets";
             };
             output: {
                 success: boolean;
@@ -228,9 +187,9 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         generateFileName: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                type: "render" | "upload" | "asset";
-                id?: string | undefined;
-                originalFileName?: string | undefined;
+                type?: "render" | "asset" | "upload";
+                id?: string;
+                originalFileName?: string;
             };
             output: {
                 fileName: string;
@@ -254,17 +213,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
             supabase: import("./context").SupabaseClient;
         };
         meta: object;
-        errorShape: {
-            data: {
-                zodError: z.typeToFlattenedError<any, string> | null;
-                code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-                httpStatus: number;
-                path?: string;
-                stack?: string;
-            };
-            message: string;
-            code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-        };
+        errorShape: import("@trpc/server").TRPCDefaultErrorShape;
         transformer: false;
     }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
         balance: import("@trpc/server").TRPCQueryProcedure<{
@@ -276,8 +225,8 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         transactions: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                limit?: number | undefined;
-                offset?: number | undefined;
+                limit?: number;
+                offset?: number;
             };
             output: {
                 transactions: any;
@@ -288,7 +237,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         usage: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                period?: "day" | "week" | "month" | "year" | undefined;
+                period?: "day" | "week" | "month" | "year";
             };
             output: {
                 chartData: {
@@ -314,36 +263,26 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
             supabase: import("./context").SupabaseClient;
         };
         meta: object;
-        errorShape: {
-            data: {
-                zodError: z.typeToFlattenedError<any, string> | null;
-                code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-                httpStatus: number;
-                path?: string;
-                stack?: string;
-            };
-            message: string;
-            code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-        };
+        errorShape: import("@trpc/server").TRPCDefaultErrorShape;
         transformer: false;
     }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
         list: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                limit?: number | undefined;
-                offset?: number | undefined;
+                limit?: number;
+                offset?: number;
                 filters?: {
-                    tags?: string[] | undefined;
-                    search?: string | undefined;
-                    category?: string | undefined;
-                    sunRequirements?: ("full_sun" | "partial_sun" | "shade")[] | undefined;
-                    waterNeeds?: ("low" | "moderate" | "high")[] | undefined;
-                    usdaZones?: string[] | undefined;
-                    texasNative?: boolean | undefined;
-                    droughtTolerant?: boolean | undefined;
-                    favoritesOnly?: boolean | undefined;
-                } | undefined;
-                sortBy?: "name" | "category" | "scientific" | "water" | "sun" | undefined;
-                sortOrder?: "asc" | "desc" | undefined;
+                    search?: string;
+                    category?: string;
+                    sunRequirements?: ("full_sun" | "partial_sun" | "shade")[];
+                    waterNeeds?: ("low" | "moderate" | "high")[];
+                    usdaZones?: string[];
+                    texasNative?: boolean;
+                    droughtTolerant?: boolean;
+                    tags?: string[];
+                    favoritesOnly?: boolean;
+                };
+                sortBy?: "category" | "name" | "scientific" | "water" | "sun";
+                sortOrder?: "asc" | "desc";
             };
             output: {
                 plants: any;
@@ -354,7 +293,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         get: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                id: string;
+                id?: string;
             };
             output: any;
             meta: object;
@@ -369,7 +308,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         toggleFavorite: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                plantId: string;
+                plantId?: string;
             };
             output: {
                 isFavorite: boolean;
@@ -390,26 +329,16 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
             supabase: import("./context").SupabaseClient;
         };
         meta: object;
-        errorShape: {
-            data: {
-                zodError: z.typeToFlattenedError<any, string> | null;
-                code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-                httpStatus: number;
-                path?: string;
-                stack?: string;
-            };
-            message: string;
-            code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-        };
+        errorShape: import("@trpc/server").TRPCDefaultErrorShape;
         transformer: false;
     }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
         list: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                search?: string | undefined;
-                limit?: number | undefined;
-                offset?: number | undefined;
-                sortBy?: "status" | "name" | "recent" | undefined;
-                filterStatus?: "active" | "all" | "completed" | "archived" | undefined;
+                search?: string;
+                limit?: number;
+                offset?: number;
+                sortBy?: "status" | "name" | "recent";
+                filterStatus?: "completed" | "all" | "active" | "archived";
             };
             output: {
                 projects: any;
@@ -430,40 +359,40 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         get: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                id: string;
+                id?: string;
             };
             output: any;
             meta: object;
         }>;
         create: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                name: string;
-                description?: string | undefined;
-                address?: string | undefined;
-                client_name?: string | undefined;
-                client_email?: string | undefined;
-                canvas_data?: Record<string, any> | undefined;
+                description?: string;
+                name?: string;
+                address?: string;
+                client_name?: string;
+                client_email?: string;
+                canvas_data?: Record<string, any>;
             };
             output: any;
             meta: object;
         }>;
         update: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                id: string;
-                description?: string | undefined;
-                status?: "active" | "completed" | "archived" | undefined;
-                name?: string | undefined;
-                address?: string | undefined;
-                client_name?: string | undefined;
-                client_email?: string | undefined;
-                canvas_data?: Record<string, any> | undefined;
+                description?: string;
+                status?: "completed" | "active" | "archived";
+                id?: string;
+                name?: string;
+                address?: string;
+                client_name?: string;
+                client_email?: string;
+                canvas_data?: Record<string, any>;
             };
             output: any;
             meta: object;
         }>;
         delete: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                id: string;
+                id?: string;
             };
             output: {
                 success: boolean;
@@ -472,9 +401,9 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         listVersions: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                projectId: string;
-                limit?: number | undefined;
-                offset?: number | undefined;
+                projectId?: string;
+                limit?: number;
+                offset?: number;
             };
             output: {
                 versions: any;
@@ -485,17 +414,17 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         createVersion: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                projectId: string;
-                snapshot: Record<string, any>;
-                comment?: string | undefined;
+                projectId?: string;
+                snapshot?: Record<string, any>;
+                comment?: string;
             };
             output: any;
             meta: object;
         }>;
         getVersionDiff: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                versionIdA: string;
-                versionIdB: string;
+                versionIdA?: string;
+                versionIdB?: string;
             };
             output: {
                 diff: Record<string, {
@@ -509,7 +438,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         restoreVersion: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                versionId: string;
+                versionId?: string;
             };
             output: {
                 restored: boolean;
@@ -523,31 +452,21 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
             supabase: import("./context").SupabaseClient;
         };
         meta: object;
-        errorShape: {
-            data: {
-                zodError: z.typeToFlattenedError<any, string> | null;
-                code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-                httpStatus: number;
-                path?: string;
-                stack?: string;
-            };
-            message: string;
-            code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-        };
+        errorShape: import("@trpc/server").TRPCDefaultErrorShape;
         transformer: false;
     }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
         upload: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                projectId: string;
-                imageUrl: string;
-                order?: number | undefined;
+                projectId?: string;
+                imageUrl?: string;
+                order?: number;
             };
             output: {
                 success: boolean;
                 scene: {
-                    id: string;
                     projectId: string;
                     imageUrl: string;
+                    id: string;
                     order: number;
                     isDefault: boolean;
                     createdAt: Date;
@@ -558,8 +477,8 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         reorder: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                projectId: string;
-                sceneIds: string[];
+                projectId?: string;
+                sceneIds?: string[];
             };
             output: {
                 success: boolean;
@@ -568,12 +487,12 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         list: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                projectId: string;
+                projectId?: string;
             };
             output: {
-                id: string;
                 projectId: string;
                 imageUrl: string;
+                id: string;
                 order: number;
                 isDefault: boolean;
                 createdAt: Date;
@@ -583,14 +502,14 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         getWithMasks: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                sceneId: string;
+                sceneId?: string;
             };
-            output: import("@terrashaper/shared").SceneWithMasks;
+            output: import("packages/shared/dist").SceneWithMasks;
             meta: object;
         }>;
         delete: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                sceneId: string;
+                sceneId?: string;
             };
             output: {
                 success: boolean;
@@ -599,8 +518,8 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         setDefault: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                projectId: string;
-                sceneId: string;
+                projectId?: string;
+                sceneId?: string;
             };
             output: {
                 success: boolean;
@@ -614,27 +533,17 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
             supabase: import("./context").SupabaseClient;
         };
         meta: object;
-        errorShape: {
-            data: {
-                zodError: z.typeToFlattenedError<any, string> | null;
-                code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-                httpStatus: number;
-                path?: string;
-                stack?: string;
-            };
-            message: string;
-            code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-        };
+        errorShape: import("@trpc/server").TRPCDefaultErrorShape;
         transformer: false;
     }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
         save: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                sceneId: string;
-                masks: {
-                    category: string;
+                sceneId?: string;
+                masks?: {
                     path?: any;
-                    id?: string | undefined;
-                    authorId?: string | undefined;
+                    id?: string;
+                    category?: string;
+                    authorId?: string;
                 }[];
             };
             output: {
@@ -645,45 +554,45 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         getByCategory: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                sceneId: string;
-                category: string;
+                sceneId?: string;
+                category?: string;
             };
             output: {
                 path: unknown;
-                id: string;
                 sceneId: string;
-                createdAt: Date;
+                id: string;
                 category: string;
+                createdAt: Date;
+                authorId: string;
                 deleted: boolean;
-                authorId: string | null;
             }[];
             meta: object;
         }>;
         getByScene: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                sceneId: string;
+                sceneId?: string;
             };
             output: {
                 path: unknown;
-                id: string;
                 sceneId: string;
-                createdAt: Date;
+                id: string;
                 category: string;
+                createdAt: Date;
+                authorId: string;
                 deleted: boolean;
-                authorId: string | null;
             }[];
             meta: object;
         }>;
         history: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                sceneId: string;
+                sceneId?: string;
             };
-            output: import("@terrashaper/shared").MaskHistory[];
+            output: import("packages/shared/dist").MaskHistory[];
             meta: object;
         }>;
         delete: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                maskId: string;
+                maskId?: string;
             };
             output: {
                 success: boolean;
@@ -692,14 +601,14 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         exportGeoJSON: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                sceneId: string;
+                sceneId?: string;
             };
             output: any;
             meta: object;
         }>;
         getCategories: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                sceneId?: string | undefined;
+                sceneId?: string;
             };
             output: string[];
             meta: object;
@@ -711,22 +620,12 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
             supabase: import("./context").SupabaseClient;
         };
         meta: object;
-        errorShape: {
-            data: {
-                zodError: z.typeToFlattenedError<any, string> | null;
-                code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-                httpStatus: number;
-                path?: string;
-                stack?: string;
-            };
-            message: string;
-            code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-        };
+        errorShape: import("@trpc/server").TRPCDefaultErrorShape;
         transformer: false;
     }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
         projectGeoJSON: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                projectId: string;
+                projectId?: string;
             };
             output: {
                 type: string;
@@ -742,9 +641,9 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         sceneSprite: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                sceneId: string;
-                format?: "png" | "svg" | undefined;
-                resolution?: "1x" | "2x" | "4x" | undefined;
+                sceneId?: string;
+                resolution?: "1x" | "2x" | "4x";
+                format?: "png" | "svg";
             };
             output: {
                 spriteSheetUrl: string;
@@ -761,21 +660,14 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         projectSummary: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                projectId: string;
+                projectId?: string;
             };
             output: {
                 projectId: string;
                 totalScenes: number;
                 totalMasks: number;
                 categoryStats: Record<string, number>;
-                sceneStats: {
-                    sceneId: string;
-                    imageUrl: string;
-                    order: number;
-                    isDefault: boolean;
-                    maskCount: number;
-                    categories: Record<string, number>;
-                }[];
+                sceneStats: any[];
                 exportedAt: string;
             };
             meta: object;
@@ -787,23 +679,13 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
             supabase: import("./context").SupabaseClient;
         };
         meta: object;
-        errorShape: {
-            data: {
-                zodError: z.typeToFlattenedError<any, string> | null;
-                code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-                httpStatus: number;
-                path?: string;
-                stack?: string;
-            };
-            message: string;
-            code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-        };
+        errorShape: import("@trpc/server").TRPCDefaultErrorShape;
         transformer: false;
     }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
         listMembers: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                limit?: number | undefined;
-                offset?: number | undefined;
+                limit?: number;
+                offset?: number;
             };
             output: {
                 members: any;
@@ -816,15 +698,15 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         createInvitation: import("@trpc/server").TRPCMutationProcedure<{
             input: {
                 email: string;
-                role: "member" | "owner" | "admin" | "designer" | "viewer";
+                role: "admin" | "member" | "owner" | "designer" | "viewer";
             };
             output: any;
             meta: object;
         }>;
         listInvitations: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                limit?: number | undefined;
-                offset?: number | undefined;
+                limit?: number;
+                offset?: number;
             };
             output: {
                 invitations: any;
@@ -835,7 +717,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         cancelInvitation: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                invitationId: string;
+                invitationId?: string;
             };
             output: {
                 success: boolean;
@@ -844,7 +726,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         updateUserRole: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                role: "member" | "owner" | "admin" | "designer" | "viewer";
+                role: "admin" | "member" | "owner" | "designer" | "viewer";
                 userId: string;
             };
             output: any;
@@ -852,7 +734,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         removeUser: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                userId: string;
+                userId?: string;
             };
             output: {
                 success: boolean;
@@ -861,10 +743,10 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         getActivityLogs: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                userId?: string | undefined;
-                limit?: number | undefined;
-                offset?: number | undefined;
-                action?: string | undefined;
+                userId?: string;
+                limit?: number;
+                offset?: number;
+                action?: string;
             };
             output: {
                 logs: any;
@@ -881,17 +763,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
             supabase: import("./context").SupabaseClient;
         };
         meta: object;
-        errorShape: {
-            data: {
-                zodError: z.typeToFlattenedError<any, string> | null;
-                code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-                httpStatus: number;
-                path?: string;
-                stack?: string;
-            };
-            message: string;
-            code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-        };
+        errorShape: import("@trpc/server").TRPCDefaultErrorShape;
         transformer: false;
     }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
         createAccessLink: import("@trpc/server").TRPCMutationProcedure<{
@@ -911,14 +783,14 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         listAccessLinks: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                projectId: string;
+                projectId?: string;
             };
             output: any;
             meta: object;
         }>;
         revokeAccessLink: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                linkId: string;
+                linkId?: string;
             };
             output: {
                 success: boolean;
@@ -936,8 +808,8 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         listApprovals: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                projectId: string;
-                status?: string | undefined;
+                status?: string;
+                projectId?: string;
             };
             output: any;
             meta: object;
@@ -967,8 +839,8 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         listComments: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                projectId: string;
-                includeResolved?: boolean | undefined;
+                projectId?: string;
+                includeResolved?: boolean;
             };
             output: any;
             meta: object;
@@ -983,7 +855,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         getClientProject: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                token: string;
+                token?: string;
             };
             output: {
                 project: any;
@@ -994,27 +866,27 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         createClientComment: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                projectId: string;
-                token: string;
-                content: string;
-                authorEmail: string;
-                authorName: string;
+                projectId?: string;
+                token?: string;
+                content?: string;
+                authorEmail?: string;
+                authorName?: string;
                 position?: {
-                    x: number;
-                    y: number;
-                } | undefined;
+                    x?: number;
+                    y?: number;
+                };
             };
             output: any;
             meta: object;
         }>;
         submitClientApproval: import("@trpc/server").TRPCMutationProcedure<{
             input: {
-                status: "approved" | "rejected" | "revision_requested";
-                token: string;
-                approvalId: string;
-                approverEmail: string;
-                approverName: string;
-                notes?: string | undefined;
+                status?: "approved" | "rejected" | "revision_requested";
+                token?: string;
+                approvalId?: string;
+                notes?: string;
+                approverEmail?: string;
+                approverName?: string;
             };
             output: any;
             meta: object;
@@ -1026,17 +898,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
             supabase: import("./context").SupabaseClient;
         };
         meta: object;
-        errorShape: {
-            data: {
-                zodError: z.typeToFlattenedError<any, string> | null;
-                code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-                httpStatus: number;
-                path?: string;
-                stack?: string;
-            };
-            message: string;
-            code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-        };
+        errorShape: import("@trpc/server").TRPCDefaultErrorShape;
         transformer: false;
     }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
         getPlans: import("@trpc/server").TRPCQueryProcedure<{
@@ -1046,7 +908,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         getCurrentSubscription: import("@trpc/server").TRPCQueryProcedure<{
             input: void;
-            output: any;
+            output: import("stripe").Stripe.Subscription;
             meta: object;
         }>;
         createCheckoutSession: import("@trpc/server").TRPCMutationProcedure<{
@@ -1056,8 +918,8 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
                 cancelUrl: string;
             };
             output: {
-                sessionId: any;
-                url: any;
+                sessionId: string;
+                url: string;
             };
             meta: object;
         }>;
@@ -1066,7 +928,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
                 returnUrl: string;
             };
             output: {
-                url: any;
+                url: string;
             };
             meta: object;
         }>;
@@ -1075,7 +937,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
                 priceId: string;
                 prorationBehavior?: "create_prorations" | "none" | "always_invoice" | undefined;
             };
-            output: any;
+            output: import("stripe").Stripe.Subscription;
             meta: object;
         }>;
         cancelSubscription: import("@trpc/server").TRPCMutationProcedure<{
@@ -1083,12 +945,20 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
                 cancelAtPeriodEnd?: boolean | undefined;
                 reason?: string | undefined;
             };
-            output: any;
+            output: import("stripe").Stripe.Subscription;
             meta: object;
         }>;
         getPaymentMethods: import("@trpc/server").TRPCQueryProcedure<{
             input: void;
-            output: any;
+            output: {
+                id: any;
+                type: any;
+                brand: any;
+                last4: any;
+                expMonth: any;
+                expYear: any;
+                isDefault: any;
+            }[];
             meta: object;
         }>;
         addPaymentMethod: import("@trpc/server").TRPCMutationProcedure<{
@@ -1096,13 +966,13 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
                 paymentMethodId: string;
                 setAsDefault?: boolean | undefined;
             };
-            output: any;
+            output: import("stripe").Stripe.PaymentMethod;
             meta: object;
         }>;
         getInvoices: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                limit?: number | undefined;
-                offset?: number | undefined;
+                limit?: number;
+                offset?: number;
             };
             output: {
                 invoices: any;
@@ -1148,7 +1018,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         checkFeature: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                feature: string;
+                feature?: string;
             };
             output: {
                 hasAccess: any;
@@ -1158,8 +1028,8 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         checkUsageLimit: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                limitType: "projects" | "team_members" | "renders" | "storage_gb";
-                currentUsage?: number | undefined;
+                limitType?: "renders" | "projects" | "team_members" | "storage_gb";
+                currentUsage?: number;
             };
             output: any;
             meta: object;
@@ -1171,8 +1041,8 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
         }>;
         getOverageHistory: import("@trpc/server").TRPCQueryProcedure<{
             input: {
-                limit?: number | undefined;
-                offset?: number | undefined;
+                limit?: number;
+                offset?: number;
             };
             output: {
                 charges: any;
@@ -1185,7 +1055,7 @@ export declare const appRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>>;
     hello: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            name: string;
+            name?: string;
         };
         output: {
             text: string;

@@ -1,25 +1,28 @@
-import { z } from 'zod';
-export const AnnotationSchema = z.object({
-    id: z.string(),
-    type: z.enum(['plant', 'hardscape', 'feature', 'lighting', 'water']),
-    name: z.string(),
-    position: z.object({
-        x: z.number(),
-        y: z.number(),
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PromptTemplateSchema = exports.AnnotationSchema = void 0;
+const zod_1 = require("zod");
+exports.AnnotationSchema = zod_1.z.object({
+    id: zod_1.z.string(),
+    type: zod_1.z.enum(['plant', 'hardscape', 'feature', 'lighting', 'water']),
+    name: zod_1.z.string(),
+    position: zod_1.z.object({
+        x: zod_1.z.number(),
+        y: zod_1.z.number(),
     }),
-    size: z.object({
-        width: z.number(),
-        height: z.number(),
+    size: zod_1.z.object({
+        width: zod_1.z.number(),
+        height: zod_1.z.number(),
     }),
-    attributes: z.record(z.string(), z.any()).optional(),
+    attributes: zod_1.z.record(zod_1.z.string(), zod_1.z.any()).optional(),
 });
-export const PromptTemplateSchema = z.object({
-    base: z.string(),
-    style: z.string().optional(),
-    quality: z.string().optional(),
-    lighting: z.string().optional(),
-    season: z.string().optional(),
-    timeOfDay: z.string().optional(),
-    weather: z.string().optional(),
-    cameraAngle: z.string().optional(),
+exports.PromptTemplateSchema = zod_1.z.object({
+    base: zod_1.z.string(),
+    style: zod_1.z.string().optional(),
+    quality: zod_1.z.string().optional(),
+    lighting: zod_1.z.string().optional(),
+    season: zod_1.z.string().optional(),
+    timeOfDay: zod_1.z.string().optional(),
+    weather: zod_1.z.string().optional(),
+    cameraAngle: zod_1.z.string().optional(),
 });

@@ -1,4 +1,3 @@
-"use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
@@ -30,26 +29,6 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
 
 // src/index.ts
 var index_exports = {};
@@ -140,15 +119,13 @@ function getRenderQueueEvents(connection) {
   }
   return renderQueueEvents;
 }
-function addRenderJob(data, options) {
-  return __async(this, null, function* () {
-    var _a;
-    const queue = getRenderQueue();
-    const priority = (_a = options == null ? void 0 : options.priority) != null ? _a : QUEUE_PRIORITIES[data.subscriptionTier.toUpperCase()];
-    return queue.add("render", data, {
-      priority,
-      delay: options == null ? void 0 : options.delay
-    });
+async function addRenderJob(data, options) {
+  var _a;
+  const queue = getRenderQueue();
+  const priority = (_a = options == null ? void 0 : options.priority) != null ? _a : QUEUE_PRIORITIES[data.subscriptionTier.toUpperCase()];
+  return queue.add("render", data, {
+    priority,
+    delay: options == null ? void 0 : options.delay
   });
 }
 function createRenderWorker(processFunction, connection, concurrency = 5) {
@@ -158,72 +135,64 @@ function createRenderWorker(processFunction, connection, concurrency = 5) {
     autorun: true
   });
 }
-function getRenderJobCount(userId, windowMs = 6e4) {
-  return __async(this, null, function* () {
-    const queue = getRenderQueue();
-    const jobs = yield queue.getJobs(["active", "waiting", "delayed"]);
-    const cutoff = Date.now() - windowMs;
-    return jobs.filter((job) => job.data.userId === userId && (job.timestamp || 0) > cutoff).length;
-  });
+async function getRenderJobCount(userId, windowMs = 6e4) {
+  const queue = getRenderQueue();
+  const jobs = await queue.getJobs(["active", "waiting", "delayed"]);
+  const cutoff = Date.now() - windowMs;
+  return jobs.filter((job) => job.data.userId === userId && (job.timestamp || 0) > cutoff).length;
 }
-function canUserSubmitRender(userId, subscriptionTier) {
-  return __async(this, null, function* () {
-    const limits = {
-      starter: { perMinute: 2, perHour: 20 },
-      pro: { perMinute: 10, perHour: 100 },
-      growth: { perMinute: 20, perHour: 300 }
-    };
-    const limit = limits[subscriptionTier];
-    const minuteCount = yield getRenderJobCount(userId, 6e4);
-    const hourCount = yield getRenderJobCount(userId, 36e5);
-    if (minuteCount >= limit.perMinute) {
-      return {
-        allowed: false,
-        reason: `Rate limit exceeded: ${limit.perMinute} renders per minute`
-      };
-    }
-    if (hourCount >= limit.perHour) {
-      return {
-        allowed: false,
-        reason: `Rate limit exceeded: ${limit.perHour} renders per hour`
-      };
-    }
-    return { allowed: true };
-  });
-}
-function getQueueMetrics() {
-  return __async(this, null, function* () {
-    const queue = getRenderQueue();
-    const [waiting, active, completed, failed, delayed] = yield Promise.all([
-      queue.getWaitingCount(),
-      queue.getActiveCount(),
-      queue.getCompletedCount(),
-      queue.getFailedCount(),
-      queue.getDelayedCount()
-    ]);
-    const paused = 0;
+async function canUserSubmitRender(userId, subscriptionTier) {
+  const limits = {
+    starter: { perMinute: 2, perHour: 20 },
+    pro: { perMinute: 10, perHour: 100 },
+    growth: { perMinute: 20, perHour: 300 }
+  };
+  const limit = limits[subscriptionTier];
+  const minuteCount = await getRenderJobCount(userId, 6e4);
+  const hourCount = await getRenderJobCount(userId, 36e5);
+  if (minuteCount >= limit.perMinute) {
     return {
-      waiting,
-      active,
-      completed,
-      failed,
-      delayed,
-      paused,
-      total: waiting + active + delayed + paused
+      allowed: false,
+      reason: `Rate limit exceeded: ${limit.perMinute} renders per minute`
     };
-  });
+  }
+  if (hourCount >= limit.perHour) {
+    return {
+      allowed: false,
+      reason: `Rate limit exceeded: ${limit.perHour} renders per hour`
+    };
+  }
+  return { allowed: true };
 }
-function closeRenderQueue() {
-  return __async(this, null, function* () {
-    if (renderQueue) {
-      yield renderQueue.close();
-      renderQueue = null;
-    }
-    if (renderQueueEvents) {
-      yield renderQueueEvents.close();
-      renderQueueEvents = null;
-    }
-  });
+async function getQueueMetrics() {
+  const queue = getRenderQueue();
+  const [waiting, active, completed, failed, delayed] = await Promise.all([
+    queue.getWaitingCount(),
+    queue.getActiveCount(),
+    queue.getCompletedCount(),
+    queue.getFailedCount(),
+    queue.getDelayedCount()
+  ]);
+  const paused = 0;
+  return {
+    waiting,
+    active,
+    completed,
+    failed,
+    delayed,
+    paused,
+    total: waiting + active + delayed + paused
+  };
+}
+async function closeRenderQueue() {
+  if (renderQueue) {
+    await renderQueue.close();
+    renderQueue = null;
+  }
+  if (renderQueueEvents) {
+    await renderQueueEvents.close();
+    renderQueueEvents = null;
+  }
 }
 
 // src/events.ts
@@ -257,13 +226,11 @@ var QueueEventEmitter = class extends import_events.EventEmitter {
     });
     this.initialized = true;
   }
-  close() {
-    return __async(this, null, function* () {
-      if (this.queueEvents) {
-        yield this.queueEvents.close();
-      }
-      this.removeAllListeners();
-    });
+  async close() {
+    if (this.queueEvents) {
+      await this.queueEvents.close();
+    }
+    this.removeAllListeners();
   }
 };
 var queueEventEmitter = null;

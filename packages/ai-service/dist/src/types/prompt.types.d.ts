@@ -7,49 +7,49 @@ export declare const AnnotationSchema: z.ZodObject<{
         x: z.ZodNumber;
         y: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
-        x: number;
-        y: number;
+        x?: number;
+        y?: number;
     }, {
-        x: number;
-        y: number;
+        x?: number;
+        y?: number;
     }>;
     size: z.ZodObject<{
         width: z.ZodNumber;
         height: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
-        width: number;
-        height: number;
+        width?: number;
+        height?: number;
     }, {
-        width: number;
-        height: number;
+        width?: number;
+        height?: number;
     }>;
     attributes: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
 }, "strip", z.ZodTypeAny, {
-    id: string;
-    type: "plant" | "hardscape" | "feature" | "lighting" | "water";
-    name: string;
-    position: {
-        x: number;
-        y: number;
+    id?: string;
+    type?: "plant" | "hardscape" | "feature" | "lighting" | "water";
+    name?: string;
+    position?: {
+        x?: number;
+        y?: number;
     };
-    size: {
-        width: number;
-        height: number;
+    size?: {
+        width?: number;
+        height?: number;
     };
-    attributes?: Record<string, any> | undefined;
+    attributes?: Record<string, any>;
 }, {
-    id: string;
-    type: "plant" | "hardscape" | "feature" | "lighting" | "water";
-    name: string;
-    position: {
-        x: number;
-        y: number;
+    id?: string;
+    type?: "plant" | "hardscape" | "feature" | "lighting" | "water";
+    name?: string;
+    position?: {
+        x?: number;
+        y?: number;
     };
-    size: {
-        width: number;
-        height: number;
+    size?: {
+        width?: number;
+        height?: number;
     };
-    attributes?: Record<string, any> | undefined;
+    attributes?: Record<string, any>;
 }>;
 export type Annotation = z.infer<typeof AnnotationSchema>;
 export declare const PromptTemplateSchema: z.ZodObject<{
@@ -62,23 +62,23 @@ export declare const PromptTemplateSchema: z.ZodObject<{
     weather: z.ZodOptional<z.ZodString>;
     cameraAngle: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    base: string;
-    lighting?: string | undefined;
-    style?: string | undefined;
-    quality?: string | undefined;
-    season?: string | undefined;
-    timeOfDay?: string | undefined;
-    weather?: string | undefined;
-    cameraAngle?: string | undefined;
+    lighting?: string;
+    base?: string;
+    style?: string;
+    quality?: string;
+    season?: string;
+    timeOfDay?: string;
+    weather?: string;
+    cameraAngle?: string;
 }, {
-    base: string;
-    lighting?: string | undefined;
-    style?: string | undefined;
-    quality?: string | undefined;
-    season?: string | undefined;
-    timeOfDay?: string | undefined;
-    weather?: string | undefined;
-    cameraAngle?: string | undefined;
+    lighting?: string;
+    base?: string;
+    style?: string;
+    quality?: string;
+    season?: string;
+    timeOfDay?: string;
+    weather?: string;
+    cameraAngle?: string;
 }>;
 export type PromptTemplate = z.infer<typeof PromptTemplateSchema>;
 export type PromptGenerationContext = {

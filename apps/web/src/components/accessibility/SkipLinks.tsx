@@ -1,6 +1,6 @@
 'use client';
 
-import { useSkipLinks } from '@terrashaper/hooks/use-focus-management';
+import { useSkipLinks } from '@/hooks/use-focus-management';
 
 export function SkipLinks() {
   const { skipToMain, skipToNav } = useSkipLinks();

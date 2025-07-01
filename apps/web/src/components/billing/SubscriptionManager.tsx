@@ -1,6 +1,6 @@
 'use client';
 
-import { useToast } from '@terrashaper/hooks';
+import { useToast } from '@/hooks';
 import type { SubscriptionTier } from '@terrashaper/shared';
 import { FeatureGateService, PlanFeatures } from '@terrashaper/shared';
 import { AlertTriangle, ArrowUp, Check, Zap } from 'lucide-react';

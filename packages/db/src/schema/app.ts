@@ -45,8 +45,24 @@ export const plants = pgTable('plants', {
   texasNative: boolean('texas_native').default(false),
   droughtTolerant: boolean('drought_tolerant').default(false),
   imageUrl: text('image_url'),
+  thumbnailUrl: text('thumbnail_url'),
+  dominantColor: varchar('dominant_color', { length: 7 }),
+  category: varchar('category', { length: 100 }),
+  tags: text('tags').array().default([]),
+  searchVector: text('search_vector'),
   description: text('description'),
   careInstructions: text('care_instructions'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const plantFavorites = pgTable('plant_favorites', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  plantId: uuid('plant_id')
+    .references(() => plants.id, { onDelete: 'cascade' })
+    .notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 

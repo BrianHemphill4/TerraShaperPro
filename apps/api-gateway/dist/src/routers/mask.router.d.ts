@@ -1,21 +1,10 @@
-import { z } from 'zod';
 export declare const maskRouter: import("@trpc/server").TRPCBuiltRouter<{
     ctx: {
         session: import("../context").Session;
         supabase: import("../context").SupabaseClient;
     };
     meta: object;
-    errorShape: {
-        data: {
-            zodError: z.typeToFlattenedError<any, string> | null;
-            code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-            httpStatus: number;
-            path?: string;
-            stack?: string;
-        };
-        message: string;
-        code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-    };
+    errorShape: import("@trpc/server").TRPCDefaultErrorShape;
     transformer: false;
 }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
     /**
@@ -23,12 +12,12 @@ export declare const maskRouter: import("@trpc/server").TRPCBuiltRouter<{
      */
     save: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            sceneId: string;
-            masks: {
-                category: string;
+            sceneId?: string;
+            masks?: {
+                category?: string;
                 path?: any;
-                id?: string | undefined;
-                authorId?: string | undefined;
+                id?: string;
+                authorId?: string;
             }[];
         };
         output: {
@@ -42,17 +31,17 @@ export declare const maskRouter: import("@trpc/server").TRPCBuiltRouter<{
      */
     getByCategory: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            sceneId: string;
-            category: string;
+            category?: string;
+            sceneId?: string;
         };
         output: {
+            category: string;
             path: unknown;
             id: string;
             sceneId: string;
             createdAt: Date;
-            category: string;
             deleted: boolean;
-            authorId: string | null;
+            authorId: string;
         }[];
         meta: object;
     }>;
@@ -61,16 +50,16 @@ export declare const maskRouter: import("@trpc/server").TRPCBuiltRouter<{
      */
     getByScene: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            sceneId: string;
+            sceneId?: string;
         };
         output: {
+            category: string;
             path: unknown;
             id: string;
             sceneId: string;
             createdAt: Date;
-            category: string;
             deleted: boolean;
-            authorId: string | null;
+            authorId: string;
         }[];
         meta: object;
     }>;
@@ -79,7 +68,7 @@ export declare const maskRouter: import("@trpc/server").TRPCBuiltRouter<{
      */
     history: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            sceneId: string;
+            sceneId?: string;
         };
         output: import("@terrashaper/shared").MaskHistory[];
         meta: object;
@@ -89,7 +78,7 @@ export declare const maskRouter: import("@trpc/server").TRPCBuiltRouter<{
      */
     delete: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            maskId: string;
+            maskId?: string;
         };
         output: {
             success: boolean;
@@ -101,7 +90,7 @@ export declare const maskRouter: import("@trpc/server").TRPCBuiltRouter<{
      */
     exportGeoJSON: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            sceneId: string;
+            sceneId?: string;
         };
         output: any;
         meta: object;
@@ -111,7 +100,7 @@ export declare const maskRouter: import("@trpc/server").TRPCBuiltRouter<{
      */
     getCategories: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            sceneId?: string | undefined;
+            sceneId?: string;
         };
         output: string[];
         meta: object;

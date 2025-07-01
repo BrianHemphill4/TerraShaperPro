@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import { ToggleMenuButton } from '@/components/ToggleMenuButton';
-import { useMenu } from '@terrashaper/hooks/UseMenu';
+import { useMenu } from '@/hooks/UseMenu';
 import { cn } from '@/utils/helpers';
 
 export const CenteredMenu = (props: {

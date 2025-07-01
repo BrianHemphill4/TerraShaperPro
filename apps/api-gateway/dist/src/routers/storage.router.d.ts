@@ -1,33 +1,22 @@
-import { z } from 'zod';
 export declare const storageRouter: import("@trpc/server").TRPCBuiltRouter<{
     ctx: {
         session: import("../context").Session;
         supabase: import("../context").SupabaseClient;
     };
     meta: object;
-    errorShape: {
-        data: {
-            zodError: z.typeToFlattenedError<any, string> | null;
-            code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-            httpStatus: number;
-            path?: string;
-            stack?: string;
-        };
-        message: string;
-        code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-    };
+    errorShape: import("@trpc/server").TRPCDefaultErrorShape;
     transformer: false;
 }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
     generateUploadUrl: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            fileName: string;
-            contentType: string;
-            bucketType: "renders" | "assets";
-            expiresInMinutes?: number | undefined;
+            fileName?: string;
+            contentType?: string;
+            bucketType?: "renders" | "assets";
+            expiresInMinutes?: number;
         };
         output: {
-            uploadUrl: string;
-            fileName: string;
+            uploadUrl: any;
+            fileName: any;
             publicUrl: string;
             expiresAt: Date;
         };
@@ -35,12 +24,12 @@ export declare const storageRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     generateDownloadUrl: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            fileName: string;
-            bucketType: "renders" | "assets";
-            expiresInMinutes?: number | undefined;
+            fileName?: string;
+            bucketType?: "renders" | "assets";
+            expiresInMinutes?: number;
         };
         output: {
-            downloadUrl: string;
+            downloadUrl: any;
             fileName: string;
             expiresAt: Date;
         };
@@ -48,34 +37,34 @@ export declare const storageRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     fileExists: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            fileName: string;
-            bucketType: "renders" | "assets";
+            fileName?: string;
+            bucketType?: "renders" | "assets";
         };
         output: {
-            exists: boolean;
+            exists: any;
             fileName: string;
         };
         meta: object;
     }>;
     getFileMetadata: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            fileName: string;
-            bucketType: "renders" | "assets";
+            fileName?: string;
+            bucketType?: "renders" | "assets";
         };
         output: {
             fileName: string;
-            size: string | number | undefined;
-            contentType: string | undefined;
-            created: string | undefined;
-            updated: string | undefined;
-            etag: string | undefined;
+            size: any;
+            contentType: any;
+            created: any;
+            updated: any;
+            etag: any;
         };
         meta: object;
     }>;
     deleteFile: import("@trpc/server").TRPCMutationProcedure<{
         input: {
-            fileName: string;
-            bucketType: "renders" | "assets";
+            fileName?: string;
+            bucketType?: "renders" | "assets";
         };
         output: {
             success: boolean;
@@ -85,9 +74,9 @@ export declare const storageRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     generateFileName: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            type: "render" | "upload" | "asset";
-            id?: string | undefined;
-            originalFileName?: string | undefined;
+            type?: "render" | "asset" | "upload";
+            id?: string;
+            originalFileName?: string;
         };
         output: {
             fileName: string;

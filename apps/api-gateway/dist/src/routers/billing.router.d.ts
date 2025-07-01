@@ -1,21 +1,10 @@
-import { z } from 'zod';
 export declare const billingRouter: import("@trpc/server").TRPCBuiltRouter<{
     ctx: {
         session: import("../context").Session;
         supabase: import("../context").SupabaseClient;
     };
     meta: object;
-    errorShape: {
-        data: {
-            zodError: z.typeToFlattenedError<any, string> | null;
-            code: import("@trpc/server").TRPC_ERROR_CODE_KEY;
-            httpStatus: number;
-            path?: string;
-            stack?: string;
-        };
-        message: string;
-        code: import("@trpc/server").TRPC_ERROR_CODE_NUMBER;
-    };
+    errorShape: import("@trpc/server").TRPCDefaultErrorShape;
     transformer: false;
 }, import("@trpc/server").TRPCDecorateCreateRouterOptions<{
     getPlans: import("@trpc/server").TRPCQueryProcedure<{
@@ -25,7 +14,7 @@ export declare const billingRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     getCurrentSubscription: import("@trpc/server").TRPCQueryProcedure<{
         input: void;
-        output: any;
+        output: import("stripe").Stripe.Subscription;
         meta: object;
     }>;
     createCheckoutSession: import("@trpc/server").TRPCMutationProcedure<{
@@ -35,8 +24,8 @@ export declare const billingRouter: import("@trpc/server").TRPCBuiltRouter<{
             cancelUrl: string;
         };
         output: {
-            sessionId: any;
-            url: any;
+            sessionId: string;
+            url: string;
         };
         meta: object;
     }>;
@@ -45,7 +34,7 @@ export declare const billingRouter: import("@trpc/server").TRPCBuiltRouter<{
             returnUrl: string;
         };
         output: {
-            url: any;
+            url: string;
         };
         meta: object;
     }>;
@@ -54,7 +43,7 @@ export declare const billingRouter: import("@trpc/server").TRPCBuiltRouter<{
             priceId: string;
             prorationBehavior?: "create_prorations" | "none" | "always_invoice" | undefined;
         };
-        output: any;
+        output: import("stripe").Stripe.Subscription;
         meta: object;
     }>;
     cancelSubscription: import("@trpc/server").TRPCMutationProcedure<{
@@ -62,12 +51,20 @@ export declare const billingRouter: import("@trpc/server").TRPCBuiltRouter<{
             cancelAtPeriodEnd?: boolean | undefined;
             reason?: string | undefined;
         };
-        output: any;
+        output: import("stripe").Stripe.Subscription;
         meta: object;
     }>;
     getPaymentMethods: import("@trpc/server").TRPCQueryProcedure<{
         input: void;
-        output: any;
+        output: {
+            id: any;
+            type: any;
+            brand: any;
+            last4: any;
+            expMonth: any;
+            expYear: any;
+            isDefault: any;
+        }[];
         meta: object;
     }>;
     addPaymentMethod: import("@trpc/server").TRPCMutationProcedure<{
@@ -75,13 +72,13 @@ export declare const billingRouter: import("@trpc/server").TRPCBuiltRouter<{
             paymentMethodId: string;
             setAsDefault?: boolean | undefined;
         };
-        output: any;
+        output: import("stripe").Stripe.PaymentMethod;
         meta: object;
     }>;
     getInvoices: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            limit?: number | undefined;
-            offset?: number | undefined;
+            limit?: number;
+            offset?: number;
         };
         output: {
             invoices: any;
@@ -127,7 +124,7 @@ export declare const billingRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     checkFeature: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            feature: string;
+            feature?: string;
         };
         output: {
             hasAccess: any;
@@ -137,8 +134,8 @@ export declare const billingRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     checkUsageLimit: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            limitType: "projects" | "team_members" | "renders" | "storage_gb";
-            currentUsage?: number | undefined;
+            limitType?: "projects" | "team_members" | "renders" | "storage_gb";
+            currentUsage?: number;
         };
         output: any;
         meta: object;
@@ -150,8 +147,8 @@ export declare const billingRouter: import("@trpc/server").TRPCBuiltRouter<{
     }>;
     getOverageHistory: import("@trpc/server").TRPCQueryProcedure<{
         input: {
-            limit?: number | undefined;
-            offset?: number | undefined;
+            limit?: number;
+            offset?: number;
         };
         output: {
             charges: any;

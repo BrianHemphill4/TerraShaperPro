@@ -106,10 +106,10 @@ packages/db/src/schema/
 
 **Interface**:
 ```typescript
-interface AIProvider {
-  generateImage(params: GenerationParams): Promise<GenerationResult>
-  validateConfig(): Promise<boolean>
-  getProviderInfo(): ProviderInfo
+type AIProvider = {
+  generateImage: (params: GenerationParams) => Promise<GenerationResult>
+  validateConfig: () => Promise<boolean>
+  getProviderInfo: () => ProviderInfo
 }
 ```
 
@@ -207,15 +207,15 @@ Move types to dedicated files when:
 
 ```typescript
 // types/project.ts
-export interface Project {
+// services/project.service.ts
+import type { Project } from '../types/project'
+
+export type Project = {
   id: string
   name: string
   ownerId: string
   // ... other fields
 }
-
-// services/project.service.ts
-import type { Project } from '../types/project'
 ```
 
 ### Utility Function Organization
@@ -300,17 +300,16 @@ src/
 ### Import Organization
 ```typescript
 // 1. Node modules
-import React from 'react'
-import { NextPage } from 'next'
-
+import { useProject } from '@terrashaper/hooks'
 // 2. Internal packages
 import { Button } from '@terrashaper/ui'
-import { useProject } from '@terrashaper/hooks'
+import { NextPage } from 'next'
+import React from 'react'
 
-// 3. Relative imports (closest to farthest)
-import { ProjectCard } from './ProjectCard'
 import { validateProject } from '../lib/validation'
 import type { Project } from '../types/project'
+// 3. Relative imports (closest to farthest)
+import { ProjectCard } from './ProjectCard'
 ```
 
 ## Error Handling Patterns
@@ -385,7 +384,7 @@ const DesignCanvas = lazy(() => import('./DesignCanvas'))
 
 // Conditional exports
 export { ProjectService } from './project.service'
-export type { Project, CreateProjectData } from './project.types'
+export type { CreateProjectData,Project } from './project.types'
 ```
 
 ### Database Optimization

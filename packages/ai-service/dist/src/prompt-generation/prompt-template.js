@@ -1,4 +1,7 @@
-export const defaultPromptTemplates = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PromptTemplateManager = exports.defaultPromptTemplates = void 0;
+exports.defaultPromptTemplates = {
     landscape: {
         base: 'A beautiful landscape design featuring',
         style: 'professional landscape architecture visualization',
@@ -50,9 +53,10 @@ export const defaultPromptTemplates = {
         cameraAngle: 'contemplative viewing angle',
     },
 };
-export class PromptTemplateManager {
+class PromptTemplateManager {
+    templates;
     constructor() {
-        this.templates = new Map(Object.entries(defaultPromptTemplates));
+        this.templates = new Map(Object.entries(exports.defaultPromptTemplates));
     }
     getTemplate(name) {
         return this.templates.get(name);
@@ -64,6 +68,10 @@ export class PromptTemplateManager {
         return new Map(this.templates);
     }
     mergeTemplates(base, overrides) {
-        return Object.assign(Object.assign({}, base), overrides);
+        return {
+            ...base,
+            ...overrides,
+        };
     }
 }
+exports.PromptTemplateManager = PromptTemplateManager;

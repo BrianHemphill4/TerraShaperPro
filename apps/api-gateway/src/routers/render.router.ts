@@ -17,7 +17,12 @@ const renderSettingsSchema = z.object({
   resolution: z.enum(['1024x1024', '2048x2048', '4096x4096']),
   format: z.enum(['PNG', 'JPEG']).default('PNG'),
   quality: z.number().min(1).max(100).optional(),
-});
+}).transform((data) => ({
+  provider: data.provider,
+  resolution: data.resolution,
+  format: data.format,
+  quality: data.quality,
+}));
 
 const annotationSchema = z.object({
   type: z.enum(['mask', 'assetInstance', 'textLabel']),

@@ -1,13 +1,7 @@
+"use strict";
 // Simple console logger for now
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.withRetry = withRetry;
 const logger = {
     // eslint-disable-next-line no-console
     debug: (message, data) => console.debug(message, data),
@@ -34,30 +28,28 @@ const defaultOptions = {
         );
     },
 };
-export function withRetry(fn_1) {
-    return __awaiter(this, arguments, void 0, function* (fn, options = {}) {
-        const opts = Object.assign(Object.assign({}, defaultOptions), options);
-        let lastError;
-        let delay = opts.initialDelay;
-        for (let attempt = 1; attempt <= opts.maxAttempts; attempt++) {
-            try {
-                return yield fn();
-            }
-            catch (error) {
-                lastError = error;
-                if (attempt === opts.maxAttempts || !opts.shouldRetry(lastError)) {
-                    throw lastError;
-                }
-                logger.debug('Retry attempt failed', {
-                    attempt,
-                    maxAttempts: opts.maxAttempts,
-                    error: lastError.message,
-                    nextDelay: delay,
-                });
-                yield new Promise((resolve) => setTimeout(resolve, delay));
-                delay = Math.min(delay * opts.backoffMultiplier, opts.maxDelay);
-            }
+async function withRetry(fn, options = {}) {
+    const opts = { ...defaultOptions, ...options };
+    let lastError;
+    let delay = opts.initialDelay;
+    for (let attempt = 1; attempt <= opts.maxAttempts; attempt++) {
+        try {
+            return await fn();
         }
-        throw new Error(`All retry attempts failed: ${lastError.message}`);
-    });
+        catch (error) {
+            lastError = error;
+            if (attempt === opts.maxAttempts || !opts.shouldRetry(lastError)) {
+                throw lastError;
+            }
+            logger.debug('Retry attempt failed', {
+                attempt,
+                maxAttempts: opts.maxAttempts,
+                error: lastError.message,
+                nextDelay: delay,
+            });
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            delay = Math.min(delay * opts.backoffMultiplier, opts.maxDelay);
+        }
+    }
+    throw new Error(`All retry attempts failed: ${lastError.message}`);
 }

@@ -10,7 +10,11 @@ import {
   PenTool,
   Save,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Square,
+  Minus,
+  Ruler,
+  RotateCcw
 } from 'lucide-react';
 import {
   Tooltip,
@@ -18,7 +22,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-export type ToolType = 'select' | 'mask-polygon' | 'mask-brush' | 'pen-freehand' | 'move';
+export type ToolType = 'select' | 'mask-polygon' | 'mask-brush' | 'pen-freehand' | 'move' | 'area' | 'line' | 'distance' | 'area-measure';
 
 export type ToolPaletteProps = {
   className?: string;
@@ -36,7 +40,21 @@ const tools = [
     name: 'Select / Move',
     icon: MousePointer2,
     shortcut: 'S',
-    description: 'Select and move existing masks'
+    description: 'Select and move existing objects'
+  },
+  {
+    id: 'area' as const,
+    name: 'Area Tool',
+    icon: Square,
+    shortcut: 'A',
+    description: 'Draw landscape areas with materials'
+  },
+  {
+    id: 'line' as const,
+    name: 'Line Tool',
+    icon: Minus,
+    shortcut: 'L',
+    description: 'Draw edges, borders, and paths'
   },
   {
     id: 'mask-polygon' as const,
@@ -65,6 +83,20 @@ const tools = [
     icon: Move,
     shortcut: 'V',
     description: 'Pan and zoom the canvas'
+  },
+  {
+    id: 'distance' as const,
+    name: 'Distance Tool',
+    icon: Ruler,
+    shortcut: 'D',
+    description: 'Measure distances and dimensions'
+  },
+  {
+    id: 'area-measure' as const,
+    name: 'Area Measurement',
+    icon: RotateCcw,
+    shortcut: 'Shift+A',
+    description: 'Measure areas and perimeters'
   }
 ];
 
@@ -87,8 +119,15 @@ export function ToolPalette({
         return;
       }
 
+      // Handle special case for Shift+A (area measurement)
+      if (e.shiftKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        onToolChange?.('area-measure');
+        return;
+      }
+      
       const tool = tools.find(t => t.shortcut.toLowerCase() === e.key.toLowerCase());
-      if (tool && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      if (tool && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
         e.preventDefault();
         onToolChange?.(tool.id);
       }

@@ -132,7 +132,6 @@ var require_postgres_array = __commonJS({
 // ../../node_modules/pg-types/lib/arrayParser.js
 var require_arrayParser = __commonJS({
   "../../node_modules/pg-types/lib/arrayParser.js"(exports, module) {
-    "use strict";
     var array = require_postgres_array();
     module.exports = {
       create: function(source, transform) {
@@ -236,7 +235,6 @@ var require_postgres_date = __commonJS({
 // ../../node_modules/xtend/mutable.js
 var require_mutable = __commonJS({
   "../../node_modules/xtend/mutable.js"(exports, module) {
-    "use strict";
     module.exports = extend;
     var hasOwnProperty = Object.prototype.hasOwnProperty;
     function extend(target) {
@@ -382,7 +380,6 @@ var require_postgres_bytea = __commonJS({
 // ../../node_modules/pg-types/lib/textParsers.js
 var require_textParsers = __commonJS({
   "../../node_modules/pg-types/lib/textParsers.js"(exports, module) {
-    "use strict";
     var array = require_postgres_array();
     var arrayParser = require_arrayParser();
     var parseDate = require_postgres_date();
@@ -663,7 +660,6 @@ var require_pg_int8 = __commonJS({
 // ../../node_modules/pg-types/lib/binaryParsers.js
 var require_binaryParsers = __commonJS({
   "../../node_modules/pg-types/lib/binaryParsers.js"(exports, module) {
-    "use strict";
     var parseInt64 = require_pg_int8();
     var parseBits = function(data, bits, offset, invert, callback) {
       offset = offset || 0;
@@ -864,7 +860,6 @@ var require_binaryParsers = __commonJS({
 // ../../node_modules/pg-types/lib/builtins.js
 var require_builtins = __commonJS({
   "../../node_modules/pg-types/lib/builtins.js"(exports, module) {
-    "use strict";
     module.exports = {
       BOOL: 16,
       BYTEA: 17,
@@ -933,7 +928,6 @@ var require_builtins = __commonJS({
 // ../../node_modules/pg-types/index.js
 var require_pg_types = __commonJS({
   "../../node_modules/pg-types/index.js"(exports) {
-    "use strict";
     var textParsers = require_textParsers();
     var binaryParsers = require_binaryParsers();
     var arrayParser = require_arrayParser();
@@ -1225,7 +1219,6 @@ var require_utils_legacy = __commonJS({
 // ../../node_modules/pg/lib/crypto/utils-webcrypto.js
 var require_utils_webcrypto = __commonJS({
   "../../node_modules/pg/lib/crypto/utils-webcrypto.js"(exports, module) {
-    "use strict";
     var nodeCrypto = __require("crypto");
     module.exports = {
       postgresMd5PasswordHash,
@@ -1290,7 +1283,6 @@ var require_utils2 = __commonJS({
 // ../../node_modules/pg/lib/crypto/cert-signatures.js
 var require_cert_signatures = __commonJS({
   "../../node_modules/pg/lib/crypto/cert-signatures.js"(exports, module) {
-    "use strict";
     function x509Error(msg, cert) {
       return new Error("SASL channel binding: " + msg + " when parsing public certificate " + cert.toString("base64"));
     }
@@ -3187,7 +3179,6 @@ var require_dist2 = __commonJS({
 // ../../node_modules/pg/lib/stream.js
 var require_stream = __commonJS({
   "../../node_modules/pg/lib/stream.js"(exports, module) {
-    "use strict";
     var { getStream, getSecureStream } = getStreamFuncs();
     module.exports = {
       /**
@@ -5166,7 +5157,6 @@ var require_package = __commonJS({
 // ../../node_modules/dotenv/lib/main.js
 var require_main = __commonJS({
   "../../node_modules/dotenv/lib/main.js"(exports, module) {
-    "use strict";
     var fs = __require("fs");
     var path = __require("path");
     var os = __require("os");
@@ -15185,7 +15175,8 @@ var PlanFeatures = {
     bulkExport: false,
     advancedAnalytics: false,
     clientPortal: false,
-    teamCollaboration: false
+    teamCollaboration: false,
+    newAnnotationSystem: false
   },
   professional: {
     watermark: false,
@@ -15204,7 +15195,8 @@ var PlanFeatures = {
     bulkExport: true,
     advancedAnalytics: false,
     clientPortal: true,
-    teamCollaboration: true
+    teamCollaboration: true,
+    newAnnotationSystem: true
   },
   growth: {
     watermark: false,
@@ -15223,7 +15215,8 @@ var PlanFeatures = {
     bulkExport: true,
     advancedAnalytics: true,
     clientPortal: true,
-    teamCollaboration: true
+    teamCollaboration: true,
+    newAnnotationSystem: true
   },
   enterprise: {
     watermark: false,
@@ -15249,7 +15242,8 @@ var PlanFeatures = {
     customContract: true,
     dedicatedAccountManager: true,
     sla: true,
-    customIntegrations: true
+    customIntegrations: true,
+    newAnnotationSystem: true
   }
 };
 var PlanLimitsSchema = z.object({
@@ -22063,6 +22057,7 @@ __export(schema_exports, {
   masks: () => masks,
   organizations: () => organizations,
   perceptualHashes: () => perceptualHashes,
+  plantFavorites: () => plantFavorites,
   plants: () => plants,
   projectStatusEnum: () => projectStatusEnum,
   projects: () => projects,
@@ -22247,8 +22242,19 @@ var plants = pgTable("plants", {
   texasNative: boolean("texas_native").default(false),
   droughtTolerant: boolean("drought_tolerant").default(false),
   imageUrl: text("image_url"),
+  thumbnailUrl: text("thumbnail_url"),
+  dominantColor: varchar("dominant_color", { length: 7 }),
+  category: varchar("category", { length: 100 }),
+  tags: text("tags").array().default([]),
+  searchVector: text("search_vector"),
   description: text("description"),
   careInstructions: text("care_instructions"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull()
+});
+var plantFavorites = pgTable("plant_favorites", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  plantId: uuid("plant_id").references(() => plants.id, { onDelete: "cascade" }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull()
 });
 var apiKeys = pgTable("api_keys", {
@@ -27641,12 +27647,35 @@ var logger = new Logger();
 var createServiceLogger = (serviceName) => {
   return new Logger({ service: serviceName });
 };
+
+// src/constants/annotation.ts
+var ANNOTATION_CATEGORIES = [
+  "Plants & Trees",
+  "Mulch & Rocks",
+  "Hardscape",
+  "Other"
+];
+var CATEGORY_COLORS = {
+  "Plants & Trees": "#22c55e",
+  "Mulch & Rocks": "#a855f7",
+  "Hardscape": "#3b82f6",
+  "Other": "#f59e0b"
+};
+var CATEGORY_SHORTCUTS = {
+  "Plants & Trees": "1",
+  "Mulch & Rocks": "2",
+  "Hardscape": "3",
+  "Other": "4"
+};
 export {
+  ANNOTATION_CATEGORIES,
   AcceptInvitationSchema,
   ActivityActions,
   ActivityLogSchema,
   AddPaymentMethodSchema,
   ApprovalStatusEnum,
+  CATEGORY_COLORS,
+  CATEGORY_SHORTCUTS,
   CancelSubscriptionSchema,
   ClientAccessLinkSchema,
   ClientPermissionsSchema,

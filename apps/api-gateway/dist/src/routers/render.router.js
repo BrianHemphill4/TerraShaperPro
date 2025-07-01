@@ -13,7 +13,12 @@ const renderSettingsSchema = zod_1.z.object({
     resolution: zod_1.z.enum(['1024x1024', '2048x2048', '4096x4096']),
     format: zod_1.z.enum(['PNG', 'JPEG']).default('PNG'),
     quality: zod_1.z.number().min(1).max(100).optional(),
-});
+}).transform((data) => ({
+    provider: data.provider,
+    resolution: data.resolution,
+    format: data.format,
+    quality: data.quality,
+}));
 const annotationSchema = zod_1.z.object({
     type: zod_1.z.enum(['mask', 'assetInstance', 'textLabel']),
     data: zod_1.z.any(),

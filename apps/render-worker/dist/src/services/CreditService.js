@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreditService = void 0;
 const db_1 = require("@terrashaper/db");
@@ -41,59 +32,53 @@ class CreditService {
     /**
      * Consume credits for a render operation
      */
-    consumeCredits(organizationId, userId, renderId, settings) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const creditCost = this.calculateCreditCost(settings);
-            const { data: consumeResult, error: consumeError } = yield this.supabase.rpc('consume_credits', {
-                p_organization_id: organizationId,
-                p_user_id: userId,
-                p_render_id: renderId,
-                p_amount: creditCost,
-                p_description: `Render: ${settings.resolution} @ ${settings.quality || 'high'} quality`,
-            });
-            if (consumeError || !consumeResult) {
-                throw new Error('Insufficient credits');
-            }
-            return true;
+    async consumeCredits(organizationId, userId, renderId, settings) {
+        const creditCost = this.calculateCreditCost(settings);
+        const { data: consumeResult, error: consumeError } = await this.supabase.rpc('consume_credits', {
+            p_organization_id: organizationId,
+            p_user_id: userId,
+            p_render_id: renderId,
+            p_amount: creditCost,
+            p_description: `Render: ${settings.resolution} @ ${settings.quality || 'high'} quality`,
         });
+        if (consumeError || !consumeResult) {
+            throw new Error('Insufficient credits');
+        }
+        return true;
     }
     /**
      * Refund credits when render fails
      */
-    refundCredits(organizationId, userId, renderId, settings, reason) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const creditCost = this.calculateCreditCost(settings);
-            yield this.supabase.rpc('refund_credits', {
-                p_organization_id: organizationId,
-                p_user_id: userId,
-                p_render_id: renderId,
-                p_amount: creditCost,
-                p_reason: reason,
-            });
+    async refundCredits(organizationId, userId, renderId, settings, reason) {
+        const creditCost = this.calculateCreditCost(settings);
+        await this.supabase.rpc('refund_credits', {
+            p_organization_id: organizationId,
+            p_user_id: userId,
+            p_render_id: renderId,
+            p_amount: creditCost,
+            p_reason: reason,
         });
     }
     /**
      * Record usage for billing tracking
      */
-    recordUsage(organizationId, renderId, projectId, settings) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const creditCost = this.calculateCreditCost(settings);
-            yield this.supabase.from('usage_records').insert({
-                organization_id: organizationId,
-                record_type: 'render',
-                quantity: 1,
-                unit_amount: creditCost,
-                total_amount: creditCost,
-                description: `Render completed: ${settings.resolution} @ ${settings.quality || 'high'} quality`,
-                metadata: {
-                    render_id: renderId,
-                    project_id: projectId,
-                    resolution: settings.resolution,
-                    quality: settings.quality,
-                    format: settings.format,
-                    provider: settings.provider,
-                },
-            });
+    async recordUsage(organizationId, renderId, projectId, settings) {
+        const creditCost = this.calculateCreditCost(settings);
+        await this.supabase.from('usage_records').insert({
+            organization_id: organizationId,
+            record_type: 'render',
+            quantity: 1,
+            unit_amount: creditCost,
+            total_amount: creditCost,
+            description: `Render completed: ${settings.resolution} @ ${settings.quality || 'high'} quality`,
+            metadata: {
+                render_id: renderId,
+                project_id: projectId,
+                resolution: settings.resolution,
+                quality: settings.quality,
+                format: settings.format,
+                provider: settings.provider,
+            },
         });
     }
 }

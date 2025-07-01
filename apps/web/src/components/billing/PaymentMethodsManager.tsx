@@ -15,7 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useToast } from '@terrashaper/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
 
 export function PaymentMethodsManager() {
